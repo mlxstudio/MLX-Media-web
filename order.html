@@ -176,33 +176,43 @@
             <label for="orderDetails">Jakou službu chcete?</label>
             <textarea id="orderDetails" name="orderDetails" rows="4" required></textarea>
 
-            <label>
-                <input type="checkbox" id="nataseni" name="nataseni">
-                Natáčení
-            </label>
             
-            <div class="map-section" id="mapSection" style="display: none;">
-                <label for="location">Location:</label>
-                <input id="location" name="location" type="text" placeholder="napište adresu..." />
-                <div class="map-container">
-                    <iframe 
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d242222.43857222228!2d14.324413493345219!3d50.05586478445109!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x470b939c0970798b%3A0x400af0f66164090!2sPraha!5e1!3m2!1scs!2scz!4v1754743220287!5m2!1scs!2scz" 
-                        allowfullscreen="" 
-                        loading="lazy" 
-                        referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
+                 <label>
+                    <input type="checkbox" id="nataseni" name="nataseni">
+                    Natáčení
+                </label>
+                
+                <!-- Hidden container for Natáčení content -->
+                <div id="nataseniSection" style="display: none;">
+                
+                    <!-- Map first -->
+                    <div class="map-section">
+                        <label for="location">Location:</label>
+                        <input id="location" name="location" type="text" placeholder="napište adresu..." />
+                        <div class="map-container">
+                            <iframe 
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d242222.43857222228!2d14.324413493345219!3d50.05586478445109!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x470b939c0970798b%3A0x400af0f66164090!2sPraha!5e1!3m2!1scs!2scz!4v1754743220287!5m2!1scs!2scz" 
+                                allowfullscreen="" 
+                                loading="lazy" 
+                                referrerpolicy="no-referrer-when-downgrade">
+                            </iframe>
+                        </div>
+                    </div>
+                
+                    <!-- Date picker -->
+                    <label for="orderDate">Vyberte si datum:</label>
+                    <input type="date" id="orderDate" name="orderDate" />
+                    <div class="error" id="errorMsg"></div>
+                
+                    <!-- Calendar -->
+                    <div class="calendar-container">
+                        <iframe 
+                            src="https://calendar.google.com/calendar/embed?height=450&wkst=1&ctz=Europe%2FPrague&showPrint=0&showTabs=0&showCalendars=0&mode=MONTH&src=bWx4LnN0dWRpbzIyMjJAZ21haWwuY29t&src=Y3MuY3plY2gjaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23039be5&color=%230b8043" 
+                            style="border:solid 1px #777" width="100%" height="450" frameborder="0" scrolling="no">
+                        </iframe>
+                    </div>
+                
                 </div>
-            </div>
-            <label for="orderDate">Vyberte si datum:</label>
-            <input type="date" id="orderDate" name="orderDate" required />
-            <div class="error" id="errorMsg"></div>
-
-            <div class="calendar-container">
-                <iframe 
-                    src="https://calendar.google.com/calendar/embed?height=450&wkst=1&ctz=Europe%2FPrague&showPrint=0&showTabs=0&showCalendars=0&mode=MONTH&src=bWx4LnN0dWRpbzIyMjJAZ21haWwuY29t&src=Y3MuY3plY2gjaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23039be5&color=%230b8043" 
-                    style="border:solid 1px #777" width="100%" height="450" frameborder="0" scrolling="no">
-                </iframe>
-            </div>
 
             <button type="submit"><i class="fas fa-paper-plane"></i> Send Order</button>
         </form>
@@ -241,23 +251,40 @@ const nav = document.getElementById('mainNav');
 window.addEventListener('scroll', () => {
     nav.classList.toggle('scrolled', window.scrollY > 10);
 });
-</script>
-
     <script>
-document.getElementById("nataseni").addEventListener("change", function() {
-    const mapSection = document.getElementById("mapSection");
-    const locationInput = document.getElementById("location");
+    const bookedDates = ["2025-08-11", "2025-08-12", "2025-08-13", "2025-08-14", "2025-08-15", "2025-08-18", "2025-08-19", "2025-08-20", "2025-08-21", "2025-08-22", "2025-08-25", "2025-08-26", "2025-08-27", "2025-08-28", "2025-08-29"];
     
-    if (this.checked) {
-        mapSection.style.display = "block";
-        locationInput.required = true;
-    } else {
-        mapSection.style.display = "none";
-        locationInput.required = false;
-        locationInput.value = "";
-    }
-});
-</script>
+    const nataseniCheckbox = document.getElementById("nataseni");
+    const nataseniSection = document.getElementById("nataseniSection");
+    const locationInput = document.getElementById("location");
+    const orderDateInput = document.getElementById("orderDate");
+    const errorMsg = document.getElementById("errorMsg");
+    
+    nataseniCheckbox.addEventListener("change", function() {
+        if (this.checked) {
+            nataseniSection.style.display = "block";
+            locationInput.required = true;
+            orderDateInput.required = true;
+        } else {
+            nataseniSection.style.display = "none";
+            locationInput.required = false;
+            orderDateInput.required = false;
+            locationInput.value = "";
+            orderDateInput.value = "";
+            errorMsg.textContent = "";
+        }
+    });
+    
+    // Keep your existing date validation here if needed
+    orderDateInput.addEventListener("input", function() {
+        if (bookedDates.includes(this.value)) {
+            errorMsg.textContent = "Tento termín je již obsazený, vyberte jiný.";
+            this.value = "";
+        } else {
+            errorMsg.textContent = "";
+        }
+    });
+    </script>
 
 
 <script async
