@@ -257,6 +257,7 @@ const orderDate = document.getElementById("orderDate");
 const extraDate = document.getElementById("extraDate");
 const locationInput = document.getElementById("location");
 const errorMsg = document.getElementById("errorMsg");
+const phoneInput = document.getElementById("phone");
 
 checkbox.addEventListener("change", function() {
   if (this.checked) {
@@ -286,10 +287,25 @@ extraDate.addEventListener("input", function () {
   }
 });
 
-// Odeslání dat na Google Apps Script
+// Better phone formatting from first script
+phoneInput.addEventListener("input", function (e) {
+  let digits = e.target.value.replace(/[^\d+]/g, "");
+  if (!digits.startsWith("+420")) {
+    digits = digits.replace(/^\+?/, "");
+    digits = "+420" + digits;
+  }
+  const core = digits.replace(/\D/g, "").slice(3);
+  const groups = [
+    core.slice(0, 3),
+    core.slice(3, 6),
+    core.slice(6, 9)
+  ].filter(Boolean);
+  e.target.value = "+420 " + groups.join(" ");
+});
+
+// Google Apps Script submission
 document.getElementById("orderForm").addEventListener("submit", function(e) {
   e.preventDefault();
-
   const data = {
     name: document.getElementById("name").value,
     email: document.getElementById("email").value,
@@ -300,7 +316,6 @@ document.getElementById("orderForm").addEventListener("submit", function(e) {
     location: document.getElementById("location").value,
     extraDate: document.getElementById("extraDate").value
   };
-
   fetch("https://script.google.com/macros/s/AKfycbwz54htq155OPFhh8fD8KhRLXCDW_C6HWr4gFg8KGYYQf8NEM-j1DqNBakuaqsLwCWBDg/exec", {
     method: "POST",
     mode: "no-cors",
