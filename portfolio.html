@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio – MLX Media</title>
+
+    <!-- Font Awesome pro ikony -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9f9;
+            color: #00334e;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        header {
+            background: linear-gradient(120deg, #00BFA6, orange);
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            color: white;
+            animation: fadeIn 1.5s ease-in-out, fadeDown 1.2s cubic-bezier(.4,0,.2,1);
+        }
+        header h1 {
+            font-size: 2.8em;
+            margin: 0;
+            z-index: 1;
+            animation: slideDown 1s ease forwards;
+        }
+        nav {
+            display: flex;
+            gap: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            justify-content: center;
+            padding: 12px 20px;
+            background: linear-gradient(120deg, rgba(0,191,166,0.9), rgba(255,165,0,0.9));
+            backdrop-filter: blur(5px);
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            transition: box-shadow 0.3s ease;
+        }
+        nav.scrolled {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        nav a {
+            padding: 8px 14px;
+            color: white;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1em;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+        nav a:hover {
+            background: white;
+            color: #00BFA6;
+            transform: translateY(-2px);
+        }
+        main {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            animation: fadeIn 1.2s ease-in-out, fadeUp 1s ease-in-out;
+        }
+        .intro-text {
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto 50px auto;
+            padding: 0 20px;
+            font-size: 1.4em;
+            font-weight: 300;
+            color: #00334e;
+            line-height: 1.8;
+            animation: fadeUp 1.2s ease-in-out;
+        }
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+        }
+        .portfolio-item {
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .portfolio-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+        }
+        iframe {
+            width: 100%;
+            height: 300px;
+            border: none;
+        }
+        .portfolio-content {
+            padding: 20px;
+        }
+        .portfolio-content h3 {
+            margin-top: 0;
+        }
+        .rating {
+            color: gold;
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+
+        /* Tlačítko Více informací */
+        .toggle-details {
+            background: none;
+            border: none;
+            color: #00BFA6;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.3s ease;
+        }
+        .toggle-details:hover {
+            color: orange;
+        }
+
+        /* Detaily skryté */
+        .details {
+            display: none;
+            margin-top: 15px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+
+        /* Tagy */
+        .tag {
+            display: inline-block;
+            background: #f1f1f1;
+            border-radius: 20px;
+            padding: 6px 12px;
+            margin: 5px 5px 0 0;
+            font-size: 0.9em;
+            color: #00334e;
+            border: 1px solid #ddd;
+        }
+        .tag i {
+            margin-right: 5px;
+            color: #00BFA6;
+        }
+
+        .role-icons {
+            margin: 8px 0;
+            font-size: 1.2em;
+            color: #00BFA6;
+        }
+
+        .role-icons i {
+            margin-right: 8px;
+            cursor: pointer;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .role-icons i:hover {
+            color: orange;
+            animation: icon-spin 0.6s ease;
+        }
+
+
+        .rating-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        /* Keep these styles for stars and icons */
+        .rating {
+            color: gold;
+            font-size: 1.2em;
+        }
+
+        .role-icons {
+            font-size: 1.2em;
+            color: #00BFA6;
+        }
+
+        .role-icons i {
+            margin-left: 8px;
+            cursor: pointer;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .role-icons i:hover {
+            color: orange;
+            animation: icon-spin 0.6s ease;
+        }
+
+
+        /* Animation keyframes */
+        @keyframes icon-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        @keyframes icon-spin {
+            from { transform: rotate(0); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes icon-pop {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+        @keyframes slideDown {
+            from {transform: translateY(-30px); opacity: 0;}
+            to {transform: translateY(0); opacity: 1;}
+        }
+        @keyframes fadeUp {
+            from {transform: translateY(20px); opacity: 0;}
+            to {transform: translateY(0); opacity: 1;}
+        }
+
+        /* Default icon style */
+        .tag i {
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+        /* Hover animation on tags */
+        .tag:hover i {
+            animation: icon-bounce 0.4s ease;
+            color: orange;
+        }
+
+        /* When details open, icons pop in */
+        .details .tag i {
+            animation: icon-pop 0.3s ease forwards;
+        }
+
+                /* Make all icons spin on hover */
+        .tag:hover i {
+            animation: icon-spin 0.6s ease;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 40px 20px 30px 20px;
+            font-size: 1.08em;
+            color: #00334e;
+            background: #f1f1f1;
+            margin-top: 60px;
+            border-top: 2px solid #e0e0e0;
+            box-shadow: 0 -2px 12px rgba(0,191,166,0.07);
+        }
+
+        .footer-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Email link styles */
+        .footer-link {
+            display: inline-block;
+            margin: 12px 0 22px 0;
+            color: #00BFA6;
+            font-weight: 600;
+            font-size: 1.08em;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-link i {
+            margin-right: 7px;
+            color: orange;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        /* Swap icon/text colors on hover */
+        .footer-link:hover {
+            color: orange;
+        }
+
+        .footer-link:hover i {
+            color: #00BFA6;
+        }
+
+        /* Button container */
+        .footer-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        /* Shared button styles (equal size fix) */
+        .order-btn,
+        .youtube-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 28px;
+            font-size: 1.08em;
+            font-weight: 600;
+            border: none;
+            border-radius: 30px;
+            text-decoration: none;
+            box-shadow: 0 2px 8px rgba(0,191,166,0.13), 0 1.5px 8px rgba(0,0,0,0.08);
+            transition: background 0.3s, transform 0.2s;
+            text-align: center;
+        }
+
+        /* Order button style */
+        .order-btn {
+            background: linear-gradient(120deg, #00BFA6, orange);
+            color: white;
+        }
+
+        .order-btn:hover {
+            background: linear-gradient(120deg, orange, #00BFA6);
+            color: #fff;
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 6px 18px rgba(0,191,166,0.18);
+        }
+
+        /* YouTube button style */
+        .youtube-btn {
+            background: linear-gradient(120deg, #ff0000, #ff9900);
+            color: white;
+            box-shadow: 0 2px 8px rgba(255,0,0,0.13), 0 1.5px 8px rgba(0,0,0,0.08);
+        }
+
+        .youtube-btn:hover {
+            background: linear-gradient(120deg, #ff9900, #ff0000);
+            color: #fff;
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 6px 18px rgba(255,0,0,0.18);
+        }
+
+        .youtube-btn i {
+            margin-right: 7px;
+        }
+
+        /* Keep same margin for both icons */
+        .order-btn i {
+            margin-right: 7px;
+        }
+
+        /* Icon spin animation */
+        .footer-link:hover i,
+        .order-btn:hover i,
+        .youtube-btn:hover i {
+            animation: icon-spin 0.6s ease;
+        }
+
+        @keyframes icon-spin {
+            100% { transform: rotate(360deg); }
+        }
+
+
+        .scroll-animate {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.scroll-animate.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+    </style>
+</head>
+<body>
+    <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("visible");
+      } else {
+        entry.target.classList.remove("visible"); // reset when out of view
+      }
+    });
+  }, { threshold: 0.2 }); // 20% visible triggers
+
+  document.querySelectorAll(".scroll-animate").forEach(el => {
+    observer.observe(el);
+  });
+});
+</script>
+    <!-- Navigation -->
+    <nav id="mainNav">
+        <a href="home.html">Domovská stránka</a>
+        <a href="portfolio.html">Portfolio</a>
+        <a href="technika.html">Technika</a>
+        <a href="praicing.html">Ceník</a>
+        <a href="order.html">Objednávka</a>
+    </nav>
+
+    <!-- Header -->
+    <header>
+        <h1>Moje portfolio</h1>
+    </header>
+    <main>
+        <section class="intro-text scroll-animate">
+            <p>
+                Zde je mé celé portfolio filmů, klipů a videí, kde se můžete podívat, co už jsem dokázal. 
+                Také abych vám ukázal, čeho jsem schopný.
+            </p>
+        </section>
+
+        <div class="portfolio-grid">
+            <!-- Video 1 -->
+            <div class="portfolio-item scroll-animate">
+                <iframe src="https://www.youtube.com/embed/15GEOKTmj4k" allowfullscreen></iframe>
+                <div class="portfolio-content">
+                    <h3>Dva z nás</h3>
+                    <div class="rating-row">
+                    <div class="rating">⭐⭐⭐⭐⭐</div>
+                    <div class="role-icons">
+                        <i class="fas fa-user"></i>
+                        <i class="fas fa-cut"></i>
+                        <i class="fas fa-mask"></i>
+                    </div>
+                    </div>
+                    <p>Film, na který jsem obzvlášť hrdý. Skvělá spolupráce a kvalitní vizuál.</p>
+                    <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
+                    <div class="details">
+                        <p><strong>Moje role:</strong> Kameraman, režisér</p>
+                        <p><strong>Místo:</strong> Praha, Česká republika</p>
+                        <p><strong>Popis:</strong> Projekt byl natočen během dvou týdnů, obsahuje scénáře, které jsem sám napsal.</p>
+                        <div class="tags">
+                            <span class="tag"><i class="fas fa-user"></i> Pomoc</span>
+                            <span class="tag"><i class="fas fa-cut"></i> Střih</span>
+                            <span class="tag"><i class="fas fa-mask"></i> Herec</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Video 2 -->
+            <div class="portfolio-item scroll-animate">
+                <iframe src="https://www.youtube.com/embed/H-L_SnH6_Sc" allowfullscreen></iframe>
+                <div class="portfolio-content">
+                    <h3>Rázná střela</h3>
+                    <div class="rating-row">
+                    <div class="rating">⭐⭐⭐⭐⭐</div>
+                    <div class="role-icons">
+                        <i class="fas fa-video"></i>
+                        <i class="fas fa-user"></i>
+                    </div>
+                    </div>
+                    <p>Dynamické a akční natáčení, které bylo výzvou i zábavou.</p>
+                    <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
+                    <div class="details">
+                        <p><strong>Moje role:</strong> Kameraman</p>
+                        <p><strong>Místo:</strong> Brno, Česká republika</p>
+                        <p><strong>Popis:</strong> Akční scény vyžadovaly speciální kamerové rigy a koordinaci týmu.</p>
+                        <div class="tags">
+                            <span class="tag"><i class="fas fa-video"></i> Kamera</span>
+                            <span class="tag"><i class="fas fa-user"></i> Pomoc</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+             <!-- Video 3 -->
+            <div class="portfolio-item scroll-animate">
+                <iframe src="https://www.youtube.com/embed/YoNbkuia6VA" allowfullscreen></iframe>
+                <div class="portfolio-content">
+                    <h3>Hystorka</h3>
+                    <div class="rating-row">
+                    <div class="rating">⭐⭐⭐</div>
+                    <div class="role-icons">
+                        <i class="fas fa-mask"></i>
+                    </div>
+                    </div>
+                    <p>Dynamické a akční natáčení, které bylo výzvou i zábavou.</p>
+                    <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
+                    <div class="details">
+                        <p><strong>Moje role:</strong> Kameraman</p>
+                        <p><strong>Místo:</strong> Brno, Česká republika</p>
+                        <p><strong>Popis:</strong> Akční scény vyžadovaly speciální kamerové rigy a koordinaci týmu.</p>
+                        <div class="tags">
+                            <span class="tag"><i class="fas fa-mask"></i> Herec</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Video 4 -->
+            <div class="portfolio-item scroll-animate">
+                <iframe src="https://www.youtube.com/embed/a6D3BlhOM-o" allowfullscreen></iframe>
+                <div class="portfolio-content">
+                    <h3>Ani kapka</h3>
+                    <div class="rating-row">
+                    <div class="rating">⭐⭐⭐⭐⭐</div>
+                    <div class="role-icons">
+                        <i class="fas fa-user"></i>
+                        <i class="fas fa-mask"></i>
+                    </div>
+                    </div>
+                    <p>Dynamické a akční natáčení, které bylo výzvou i zábavou.</p>
+                    <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
+                    <div class="details">
+                        <p><strong>Moje role:</strong> Kameraman</p>
+                        <p><strong>Místo:</strong> Brno, Česká republika</p>
+                        <p><strong>Popis:</strong> Akční scény vyžadovaly speciální kamerové rigy a koordinaci týmu.</p>
+                        <div class="tags">
+                            <span class="tag"><i class="fas fa-user"></i> Pomoc</span>
+                            <span class="tag"><i class="fas fa-mask"></i> Herec</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Video 5 -->
+            <div class="portfolio-item scroll-animate">
+                <iframe src="https://www.youtube.com/embed/zaCiNBq4c0I" allowfullscreen></iframe>
+                <div class="portfolio-content">
+                    <h3>Eiréné</h3>
+                    <div class="rating-row">
+                    <div class="rating">⭐⭐⭐⭐⭐</div>
+                    <div class="role-icons">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    </div>
+                    <p>Dynamické a akční natáčení, které bylo výzvou i zábavou.</p>
+                    <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
+                    <div class="details">
+                        <p><strong>Moje role:</strong> Kameraman</p>
+                        <p><strong>Místo:</strong> Brno, Česká republika</p>
+                        <p><strong>Popis:</strong> Akční scény vyžadovaly speciální kamerové rigy a koordinaci týmu.</p>
+                        <div class="tags">
+                            <span class="tag"><i class="fas fa-user"></i> Pomoc</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Video 6 -->
+            <div class="portfolio-item scroll-animate">
+                <iframe src="https://www.youtube.com/embed/fm08JltjGLI" allowfullscreen></iframe>
+                <div class="portfolio-content">
+                    <h3>IFHY</h3>
+                    <div class="rating-row">
+                    <div class="rating">⭐⭐⭐⭐⭐</div>
+                    <div class="role-icons">
+                        <i class="fas fa-user"></i>
+                        <i class="fas fa-cut"></i>
+                        <i class="fas fa-video"></i>
+                    </div>
+                    </div>
+                    <p>Dynamické a akční natáčení, které bylo výzvou i zábavou.</p>
+                    <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
+                    <div class="details">
+                        <p><strong>Moje role:</strong> Kameraman</p>
+                        <p><strong>Místo:</strong> Brno, Česká republika</p>
+                        <p><strong>Popis:</strong> Akční scény vyžadovaly speciální kamerové rigy a koordinaci týmu.</p>
+                        <div class="tags">
+                            <span class="tag"><i class="fas fa-user"></i> Pomoc</span>
+                            <span class="tag"><i class="fas fa-cut"></i> Střich</span>
+                            <span class="tag"><i class="fas fa-video"></i> Kamera</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Další videa můžeš doplnit stejným stylem -->
+        </div>
+    </main>
+    <footer>
+    <div class="footer-content scroll-animate">
+        <p>Máte otázky nebo zájem o spolupráci?</p>
+        <a href="mailto:mlx.studio2222@gmail.com" class="footer-link">
+            <i class="fas fa-envelope"></i> mlx.studio2222@gmail.com
+        </a>
+        <div class="footer-buttons">
+            <a href="order.html" class="order-btn">
+                <i class="fas fa-calendar-plus"></i> Objednat službu
+            </a>
+            <a href="https://www.youtube.com/@MLX-Media" class="youtube-btn" target="_blank">
+                <i class="fab fa-youtube"></i> YouTube kanál
+            </a>
+        </div>
+    </div>
+</footer>
+
+
+    <script>
+    document.querySelectorAll('.toggle-details').forEach(button => {
+        button.addEventListener('click', () => {
+            const details = button.nextElementSibling;
+            const icon = button.querySelector('i');
+            details.style.display = details.style.display === 'block' ? 'none' : 'block';
+            icon.classList.toggle('fa-chevron-down');
+            icon.classList.toggle('fa-chevron-up');
+        });
+    });
+
+    const nav = document.getElementById('mainNav');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 10) {
+            nav.classList.add('scrolled');
+        } else {
+            nav.classList.remove('scrolled');
+        }
+    });
+    </script>
+</body>
+</html>

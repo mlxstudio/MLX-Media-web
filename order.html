@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Place Your Order – MLX Media</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f9f9f9;
+        color: #00334e;
+        line-height: 1.6;
+    }
+    nav {
+        display: flex;
+        gap: 15px;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        justify-content: center;
+        padding: 12px 20px;
+        background: linear-gradient(120deg, rgba(0,191,166,0.9), rgba(255,165,0,0.9));
+        backdrop-filter: blur(5px);
+        border-bottom: 2px solid rgba(255,255,255,0.2);
+        transition: box-shadow 0.3s ease;
+    }
+    nav.scrolled {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    nav a {
+        padding: 8px 14px;
+        color: white;
+        border-radius: 20px;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 1em;
+        transition: background 0.3s ease, transform 0.2s ease;
+    }
+    nav a:hover {
+        background: white;
+        color: #00BFA6;
+        transform: translateY(-2px);
+    }
+    header {
+        background: linear-gradient(120deg, #00BFA6, orange);
+        height: 180px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        text-align: center;
+        animation: fadeIn 1.5s ease-in-out;
+    }
+    header h1 {
+        font-size: 2.4em;
+        margin: 0;
+        animation: slideDown 1s ease forwards;
+    }
+    main {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 0 20px;
+        animation: fadeUp 1s ease-in-out;
+    }
+    .form-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    }
+    label {
+        display: block;
+        margin-top: 15px;
+        font-weight: 600;
+    }
+    input, textarea, button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 6px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        font-size: 1em;
+        box-sizing: border-box;
+    }
+    input:focus, textarea:focus {
+        outline: none;
+        border-color: #00BFA6;
+        box-shadow: 0 0 6px rgba(0,191,166,0.3);
+    }
+    button {
+        margin-top: 20px;
+        background: linear-gradient(120deg, #00BFA6, orange);
+        color: white;
+        border: none;
+        font-size: 1.1em;
+        font-weight: bold;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+    button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+    }
+    #map {
+        height: 350px;
+        margin-top: 10px;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    .error {
+        color: red;
+        margin-top: 10px;
+        font-weight: bold;
+    }
+    @keyframes fadeIn {
+        from {opacity: 0;}
+        to {opacity: 1;}
+    }
+    @keyframes slideDown {
+        from {transform: translateY(-30px); opacity: 0;}
+        to {transform: translateY(0); opacity: 1;}
+    }
+    @keyframes fadeUp {
+        from {transform: translateY(20px); opacity: 0;}
+        to {transform: translateY(0); opacity: 1;}
+    }
+    .calendar-container {
+        margin-top: 20px;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+    .map-container {
+        margin: 18px 0;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 18px rgba(0,191,166,0.13), 0 1.5px 8px rgba(0,0,0,0.08);
+        background: #fff;
+        max-width: 100%;
+    }
+    .map-container iframe {
+        display: block;
+        width: 100%;
+        min-height: 350px;
+        border: none;
+    }
+
+</style>
+</head>
+<body>
+
+<nav>
+    <a href="home.html">Domovská stránka</a>
+    <a href="portfolio.html">Portfolio</a>
+    <a href="technika.html">Technika</a>
+    <a href="praicing.html">Ceník</a>
+    <a href="order.html">Objednávka</a>
+</nav>
+
+<header>
+    <h1>📍 Objednávka</h1>
+</header>
+
+<main>
+    <div class="form-card">
+        <form id="orderForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" required />
+
+            <label for="orderDetails">What do you want to order?</label>
+            <textarea id="orderDetails" rows="4" required></textarea>
+
+            <label for="location">Location:</label>
+            <input id="location" type="text" placeholder="Type address..." required />
+
+            <div class="map-container">
+                <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d242222.43857222228!2d14.324413493345219!3d50.05586478445109!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x470b939c0970798b%3A0x400af0f66164090!2sPraha!5e1!3m2!1scs!2scz!4v1754743220287!5m2!1scs!2scz" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+
+            <label for="orderDate">Choose a date:</label>
+            <input type="date" id="orderDate" required />
+            <div class="error" id="errorMsg"></div>
+
+            <div class="calendar-container">
+                <iframe 
+                    src="https://calendar.google.com/calendar/embed?height=450&wkst=1&ctz=Europe%2FPrague&showPrint=0&showTabs=0&showCalendars=0&mode=MONTH&src=bWx4LnN0dWRpbzIyMjJAZ21haWwuY29t&src=Y3MuY3plY2gjaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23039be5&color=%230b8043" 
+                    style="border:solid 1px #777" width="100%" height="450" frameborder="0" scrolling="no">
+                </iframe>
+            </div>
+
+            <button type="submit"><i class="fas fa-paper-plane"></i> Send Order</button>
+        </form>
+    </div>
+</main>
+
+<script>
+const bookedDates = ["2025-08-11", "2025-08-12", "2025-08-13", "2025-08-14", "2025-08-15", "2025-08-18", "2025-08-19", "2025-08-20", "2025-08-21", "2025-08-22", "2025-08-25", "2025-08-26", "2025-08-27", "2025-08-28", "2025-08-29"];
+const orderDateInput = document.getElementById("orderDate");
+const errorMsg = document.getElementById("errorMsg");
+
+orderDateInput.addEventListener("input", () => {
+    if (bookedDates.includes(orderDateInput.value)) {
+        errorMsg.textContent = "❌ This date is already booked. Please choose another.";
+        orderDateInput.value = "";
+    } else {
+        errorMsg.textContent = "";
+    }
+});
+
+document.getElementById("orderForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    if (!orderDateInput.value) {
+        errorMsg.textContent = "Please select a valid date.";
+        return;
+    }
+    if (bookedDates.includes(orderDateInput.value)) {
+        errorMsg.textContent = "❌ This date is already booked.";
+        return;
+    }
+    errorMsg.textContent = "";
+    alert("Order submitted! (Demo mode)");
+});
+
+const nav = document.getElementById('mainNav');
+window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 10);
+});
+</script>
+
+<script async
+    src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap">
+</script>
+</body>
+</html>
