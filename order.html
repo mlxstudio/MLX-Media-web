@@ -165,6 +165,16 @@
           border-radius: 4px;
         }
 
+            input[type="tel"] {
+          box-sizing: border-box;
+          width: 100%;
+          padding: 10px;
+          margin-top: 6px;
+          border-radius: 8px;
+          border: 1px solid #ddd;
+        }
+
+
 
 </style>
 </head>
@@ -190,6 +200,16 @@
 
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" placeholder="your@email.com" required />
+
+                            <label for="phone">Telefon:</label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  placeholder="+420 123 456 789"
+                  required
+                />
+
 
             <label for="phone">Telefon:</label>
             <input type="tel" id="phone" name="phone" placeholder="+420 123 456 789" 
@@ -303,6 +323,33 @@ phoneInput.addEventListener("input", function(e) {
     e.target.value = value.trim();
 });
 </script>
+
+    <script>
+const phoneInput = document.getElementById("phone");
+
+phoneInput.addEventListener("input", function (e) {
+  // Remove non-digits except plus
+  let digits = e.target.value.replace(/[^\d+]/g, "");
+
+  // Ensure it always starts with +420
+  if (!digits.startsWith("+420")) {
+    // If user typed a digit that isn't part of +420 yet
+    digits = digits.replace(/^\+?/, "");
+    digits = "+420" + digits;
+  }
+
+  // Format spacing: +420 123 456 789
+  const core = digits.replace(/\D/g, "").slice(3); // after +420
+  const groups = [
+    core.slice(0, 3),
+    core.slice(3, 6),
+    core.slice(6, 9)
+  ].filter(Boolean);
+
+  e.target.value = "+420 " + groups.join(" ");
+});
+</script>
+
 
 </body>
 </html>
