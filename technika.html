@@ -400,9 +400,13 @@ nav.category-nav .category-card .icon {
     text-decoration: none !important;
 }
 
-#kamera, #zvuk, #osvetleni, #ostatni {
-    scroll-margin-top: 80px; /* adjust value until it aligns perfectly */
+[id="kamera scroll-animate"],
+[id="zvuk scroll-animate"],
+[id="osvetleni scroll-animate"],
+[id="ostatni scroll-animate"] {
+    scroll-margin-top: 70px; /* adjust until it lines up perfectly */
 }
+
 
 .scroll-animate {
   opacity: 0;
@@ -458,19 +462,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <!-- Navigace kategorií v Apple-like kartách -->
 <nav class="category-nav scroll-animate">
-    <a href="#kamera" class="category-card">
+    <a href="#kamera scroll-animate" class="category-card">
         <i class="fas fa-video icon"></i>
         <span>Kamera</span>
     </a>
-    <a href="#zvuk" class="category-card">
+    <a href="#zvuk scroll-animate" class="category-card">
         <i class="fas fa-microphone icon"></i>
         <span>Zvuk</span>
     </a>
-    <a href="#osvetleni" class="category-card">
+    <a href="#osvetleni scroll-animate" class="category-card">
         <i class="fas fa-lightbulb icon"></i>
         <span>Osvětlení</span>
     </a>
-    <a href="#ostatni" class="category-card">
+    <a href="#ostatni scroll-animate" class="category-card">
         <i class="fas fa-cogs icon"></i>
         <span>Ostatní</span>
         
