@@ -165,15 +165,15 @@
 
 <main>
     <div class="form-card">
-        <form id="orderForm">
+        <form id="orderForm" action="https://formspree.io/f/xjkojawq" method="POST" enctype="multipart/form-data">
             <label for="name">Name:</label>
-            <input type="text" id="name" required />
+            <input type="text" id="name" name="name" required />
 
             <label for="orderDetails">What do you want to order?</label>
-            <textarea id="orderDetails" rows="4" required></textarea>
+            <textarea id="orderDetails" name="orderDetails" rows="4" required></textarea>
 
             <label for="location">Location:</label>
-            <input id="location" type="text" placeholder="Type address..." required />
+            <input id="location" name="location" type="text" placeholder="Type address..." required />
 
             <div class="map-container">
                 <iframe 
@@ -185,7 +185,7 @@
             </div>
 
             <label for="orderDate">Choose a date:</label>
-            <input type="date" id="orderDate" required />
+            <input type="date" id="orderDate" name="orderDate" required />
             <div class="error" id="errorMsg"></div>
 
             <div class="calendar-container">
@@ -213,19 +213,19 @@ orderDateInput.addEventListener("input", () => {
         errorMsg.textContent = "";
     }
 });
-
 document.getElementById("orderForm").addEventListener("submit", function(e){
-    e.preventDefault();
     if (!orderDateInput.value) {
+        e.preventDefault();
         errorMsg.textContent = "Please select a valid date.";
         return;
     }
     if (bookedDates.includes(orderDateInput.value)) {
+        e.preventDefault();
         errorMsg.textContent = "❌ This date is already booked.";
         return;
     }
     errorMsg.textContent = "";
-    alert("Order submitted! (Demo mode)");
+    // Let the form submit normally to Formspree
 });
 
 const nav = document.getElementById('mainNav');
