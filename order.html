@@ -251,40 +251,39 @@ const nav = document.getElementById('mainNav');
 window.addEventListener('scroll', () => {
     nav.classList.toggle('scrolled', window.scrollY > 10);
 });
-    <script>
-    const bookedDates = ["2025-08-11", "2025-08-12", "2025-08-13", "2025-08-14", "2025-08-15", "2025-08-18", "2025-08-19", "2025-08-20", "2025-08-21", "2025-08-22", "2025-08-25", "2025-08-26", "2025-08-27", "2025-08-28", "2025-08-29"];
-    
-    const nataseniCheckbox = document.getElementById("nataseni");
-    const nataseniSection = document.getElementById("nataseniSection");
-    const locationInput = document.getElementById("location");
-    const orderDateInput = document.getElementById("orderDate");
-    const errorMsg = document.getElementById("errorMsg");
-    
-    nataseniCheckbox.addEventListener("change", function() {
-        if (this.checked) {
-            nataseniSection.style.display = "block";
-            locationInput.required = true;
-            orderDateInput.required = true;
-        } else {
-            nataseniSection.style.display = "none";
-            locationInput.required = false;
-            orderDateInput.required = false;
-            locationInput.value = "";
-            orderDateInput.value = "";
-            errorMsg.textContent = "";
-        }
-    });
-    
-    // Keep your existing date validation here if needed
-    orderDateInput.addEventListener("input", function() {
-        if (bookedDates.includes(this.value)) {
-            errorMsg.textContent = "Tento termín je již obsazený, vyberte jiný.";
-            this.value = "";
-        } else {
-            errorMsg.textContent = "";
-        }
-    });
-    </script>
+<script>
+const bookedDates = ["2025-08-11","2025-08-12","2025-08-13","2025-08-14","2025-08-15","2025-08-18","2025-08-19","2025-08-20","2025-08-21","2025-08-22","2025-08-25","2025-08-26","2025-08-27","2025-08-28","2025-08-29"];
+
+const nataseniCheckbox = document.getElementById("nataseni");
+const nataseniSection = document.getElementById("nataseniSection");
+const locationInput = document.getElementById("location");
+const orderDateInput = document.getElementById("orderDate");
+const errorMsg = document.getElementById("errorMsg");
+
+nataseniCheckbox.addEventListener("change", function() {
+    if (this.checked) {
+        nataseniSection.style.display = "block";
+        locationInput.required = true;
+        orderDateInput.required = true;
+    } else {
+        nataseniSection.style.display = "none";
+        locationInput.required = false;
+        orderDateInput.required = false;
+        locationInput.value = "";
+        orderDateInput.value = "";
+        errorMsg.textContent = "";
+    }
+});
+
+orderDateInput.addEventListener("input", function() {
+    if (bookedDates.includes(this.value)) {
+        errorMsg.textContent = "❌ Tento termín je již obsazený.";
+        this.value = "";
+    } else {
+        errorMsg.textContent = "";
+    }
+});
+</script>
 
 
 <script async
