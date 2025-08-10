@@ -164,7 +164,6 @@
 </header>
 
 <main>
-<main>
     <div class="form-card">
         <form id="orderForm" action="https://formspree.io/f/xjkojawq" method="POST" enctype="multipart/form-data">
             <label for="name">Jméno:</label>
@@ -181,12 +180,31 @@
                 Natáčení
             </label>
 
+            <!-- Section for NON-Natáčení -->
+            <div id="normalSection">
+                <label for="orderDate">When do you need this project done?</label>
+                <input type="date" id="orderDate" name="orderDate" />
+                <div class="calendar-container">
+                    <iframe 
+                        src="https://calendar.google.com/calendar/embed?height=450&wkst=1&ctz=Europe%2FPrague&showPrint=0&showTabs=0&showCalendars=0&mode=MONTH&src=bWx4LnN0dWRpbzIyMjJAZ21haWwuY29t&src=Y3MuY3plY2gjaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23039be5&color=%230b8043" 
+                        style="border:solid 1px #777" width="100%" height="450" frameborder="0" scrolling="no">
+                    </iframe>
+                </div>
+            </div>
+
+            <!-- Section for Natáčení -->
             <div id="nataseniSection" style="display: none;">
                 <label for="location">Location:</label>
                 <input id="location" name="location" type="text" placeholder="napište adresu..." />
 
-                <label for="extraDate">Datum natáčení:</label>
+                <label for="extraDate">Kdy bude natáčecí den?</label>
                 <input type="date" id="extraDate" name="extraDate" />
+                <div class="calendar-container">
+                    <iframe 
+                        src="https://calendar.google.com/calendar/embed?height=450&wkst=1&ctz=Europe%2FPrague&showPrint=0&showTabs=0&showCalendars=0&mode=MONTH&src=bWx4LnN0dWRpbzIyMjJAZ21haWwuY29t&src=Y3MuY3plY2gjaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23039be5&color=%230b8043" 
+                        style="border:solid 1px #777" width="100%" height="450" frameborder="0" scrolling="no">
+                    </iframe>
+                </div>
 
                 <div class="map-container">
                     <iframe 
@@ -198,17 +216,7 @@
                 </div>
             </div>
 
-            <label for="orderDate">Vyberte si datum:</label>
-            <input type="date" id="orderDate" name="orderDate" required />
             <div class="error" id="errorMsg"></div>
-
-            <div class="calendar-container">
-                <iframe 
-                    src="https://calendar.google.com/calendar/embed?height=450&wkst=1&ctz=Europe%2FPrague&showPrint=0&showTabs=0&showCalendars=0&mode=MONTH&src=bWx4LnN0dWRpbzIyMjJAZ21haWwuY29t&src=Y3MuY3plY2gjaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23039be5&color=%230b8043" 
-                    style="border:solid 1px #777" width="100%" height="450" frameborder="0" scrolling="no">
-                </iframe>
-            </div>
-
             <button type="submit"><i class="fas fa-paper-plane"></i> Send Order</button>
         </form>
     </div>
@@ -221,36 +229,43 @@ const bookedDates = [
     "2025-08-25", "2025-08-26", "2025-08-27", "2025-08-28", "2025-08-29"
 ];
 
-const orderDateInput = document.getElementById("orderDate");
+const checkbox = document.getElementById("nataseni");
+const normalSection = document.getElementById("normalSection");
+const nataseniSection = document.getElementById("nataseniSection");
+const orderDate = document.getElementById("orderDate");
+const extraDate = document.getElementById("extraDate");
+const locationInput = document.getElementById("location");
 const errorMsg = document.getElementById("errorMsg");
 
-orderDateInput.addEventListener("input", function () {
+checkbox.addEventListener("change", function() {
+    if (this.checked) {
+        normalSection.style.display = "none";
+        nataseniSection.style.display = "block";
+        locationInput.required = true;
+        extraDate.required = true;
+        orderDate.required = false;
+        orderDate.value = "";
+        errorMsg.textContent = "";
+    } else {
+        normalSection.style.display = "block";
+        nataseniSection.style.display = "none";
+        locationInput.required = false;
+        extraDate.required = false;
+        extraDate.value = "";
+        errorMsg.textContent = "";
+    }
+});
+
+// Block booked dates ONLY for Natáčení date
+extraDate.addEventListener("input", function () {
     if (bookedDates.includes(this.value)) {
-        errorMsg.textContent = "Tento den je již obsazený. Vyberte jiný.";
+        errorMsg.textContent = "Tento den je již obsazený pro natáčení. Vyberte jiný.";
         this.value = "";
     } else {
         errorMsg.textContent = "";
     }
 });
-
-// Toggle Natáčení section
-document.getElementById("nataseni").addEventListener("change", function() {
-    const nataseniSection = document.getElementById("nataseniSection");
-    const locationInput = document.getElementById("location");
-    const extraDateInput = document.getElementById("extraDate");
-
-    if (this.checked) {
-        nataseniSection.style.display = "block";
-        locationInput.required = true;
-        extraDateInput.required = true;
-    } else {
-        nataseniSection.style.display = "none";
-        locationInput.required = false;
-        extraDateInput.required = false;
-        locationInput.value = "";
-        extraDateInput.value = "";
-    }
-});
 </script>
+
 </body>
 </html>
