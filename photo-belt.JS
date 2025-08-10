@@ -29,10 +29,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const slideWidth = slider.clientWidth;
 
     slides.forEach((slide, index) => {
-      if (
-        scrollPos >= index * slideWidth - slideWidth / 2 &&
-        scrollPos < (index + 1) * slideWidth - slideWidth / 2
-      ) {
+      slider.addEventListener("scroll", () => {
+  const scrollPos = slider.scrollLeft;
+  const slideWidth = slider.clientWidth;
+
+  let activeIndex = Math.round(scrollPos / slideWidth);
+
+  navLinks.forEach(link => link.classList.remove("active"));
+  if (activeIndex >= 0 && activeIndex < navLinks.length) {
+    navLinks[activeIndex].classList.add("active");
+  }
+});
+  {
         navLinks.forEach(link => link.classList.remove("active"));
         navLinks[index].classList.add("active");
       }
