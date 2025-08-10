@@ -193,81 +193,61 @@
 </header>
 
 <main>
-    <div class="form-card">
-        <form id="orderForm" action="send-order.php" method="POST" enctype="multipart/form-data">
-            <label for="name">Jméno:</label>
-            <input type="text" id="name" name="name" required />
+  <div class="form-card">
+    <form id="orderForm">
+      <label for="name">Jméno:</label>
+      <input type="text" id="name" name="name" required />
 
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" placeholder="your@email.com" required />
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" placeholder="your@email.com" required />
 
-                            <label for="phone">Telefon:</label>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  placeholder="+420 123 456 789"
-                  required
-                />
+      <label for="phone">Telefon:</label>
+      <input type="tel" id="phone" name="phone" placeholder="+420 123 456 789" required />
 
+      <label for="orderDetails">Jakou službu chcete?</label>
+      <textarea id="orderDetails" name="orderDetails" rows="4" required></textarea>
 
-            <label for="orderDetails">Jakou službu chcete?</label>
-            <textarea id="orderDetails" name="orderDetails" rows="4" required></textarea>
+      <label class="checkbox-inline" for="nataseni">
+        <input type="checkbox" id="nataseni" name="nataseni">
+        Chcete také natáčení?
+      </label>
 
-            <label class="checkbox-inline" for="nataseni">
-            <input type="checkbox" id="nataseni" name="nataseni">
-              Chcete také natáčení?
-            </label>
+      <!-- Section for NON-Natáčení -->
+      <div id="normalSection">
+        <label for="orderDate">Do kdy potřebujete tento projekt hotový?</label>
+        <input type="date" id="orderDate" name="orderDate" />
+        <div class="calendar-container">
+          <iframe src="https://calendar.google.com/calendar/embed?height=450&wkst=1&ctz=Europe%2FPrague&showPrint=0&showTabs=0&showCalendars=0&mode=MONTH&src=bWx4LnN0dWRpbzIyMjJAZ21haWwuY29t&src=Y3MuY3plY2kjaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23039be5&color=%230b8043" style="border:solid 1px #777" width="100%" height="450" frameborder="0" scrolling="no"></iframe>
+        </div>
+      </div>
 
+      <!-- Section for Natáčení -->
+      <div id="nataseniSection" style="display: none;">
+        <label for="location">Lokalita natáčení:</label>
+        <input id="location" name="location" type="text" placeholder="napište adresu..." />
 
-            <!-- Section for NON-Natáčení -->
-            <div id="normalSection">
-                <label for="orderDate">Do kdy potřebujete tento projekt hotový?</label>
-                <input type="date" id="orderDate" name="orderDate" />
-                <div class="calendar-container">
-                    <iframe 
-                        src="https://calendar.google.com/calendar/embed?height=450&wkst=1&ctz=Europe%2FPrague&showPrint=0&showTabs=0&showCalendars=0&mode=MONTH&src=bWx4LnN0dWRpbzIyMjJAZ21haWwuY29t&src=Y3MuY3plY2kjaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23039be5&color=%230b8043" 
-                        style="border:solid 1px #777" width="100%" height="450" frameborder="0" scrolling="no">
-                    </iframe>
-                </div>
-            </div>
+        <div class="map-container" style="margin-bottom: 15px;">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d242222.43857222228!2d14.324413493345219!3d50.05586478445109!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x470b939c0970798b%3A0x400af0f66164090!2sPraha!5e1!3m2!1scs!2scz!4v1754743220287!5m2!1scs!2scz" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" width="100%" height="300"></iframe>
+        </div>
 
-            <!-- Section for Natáčení -->
-            <div id="nataseniSection" style="display: none;">
-                <label for="location">Lokalita natáčení:</label>
-                <input id="location" name="location" type="text" placeholder="napište adresu..." />
+        <label for="extraDate">Kdy bude natáčecí den?</label>
+        <input type="date" id="extraDate" name="extraDate" />
+        <div class="calendar-container">
+          <iframe src="https://calendar.google.com/calendar/embed?height=450&wkst=1&ctz=Europe%2FPrague&showPrint=0&showTabs=0&showCalendars=0&mode=MONTH&src=bWx4LnN0dWRpbzIyMjJAZ21haWwuY29t&src=Y3MuY3plY2kjaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23039be5&color=%230b8043" style="border:solid 1px #777" width="100%" height="450" frameborder="0" scrolling="no"></iframe>
+        </div>
+      </div>
 
-                <div class="map-container" style="margin-bottom: 15px;">
-                    <iframe 
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d242222.43857222228!2d14.324413493345219!3d50.05586478445109!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x470b939c0970798b%3A0x400af0f66164090!2sPraha!5e1!3m2!1scs!2scz!4v1754743220287!5m2!1scs!2scz" 
-                        allowfullscreen="" 
-                        loading="lazy" 
-                        referrerpolicy="no-referrer-when-downgrade"
-                        width="100%" height="300">
-                    </iframe>
-                </div>
-
-                <label for="extraDate">Kdy bude natáčecí den?</label>
-                <input type="date" id="extraDate" name="extraDate" />
-                <div class="calendar-container">
-                    <iframe 
-                        src="https://calendar.google.com/calendar/embed?height=450&wkst=1&ctz=Europe%2FPrague&showPrint=0&showTabs=0&showCalendars=0&mode=MONTH&src=bWx4LnN0dWRpbzIyMjJAZ21haWwuY29t&src=Y3MuY3plY2kjaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23039be5&color=%230b8043" 
-                        style="border:solid 1px #777" width="100%" height="450" frameborder="0" scrolling="no">
-                    </iframe>
-                </div>
-            </div>
-
-            <div class="error" id="errorMsg"></div>
-            <button type="submit"><i class="fas fa-paper-plane"></i> Send Order</button>
-        </form>
-    </div>
+      <div class="error" id="errorMsg"></div>
+      <button type="submit"><i class="fas fa-paper-plane"></i> Send Order</button>
+    </form>
+  </div>
 </main>
 
 <script>
 const bookedDates = [
-    "2025-08-11", "2025-08-12", "2025-08-13", "2025-08-14", "2025-08-15",
-    "2025-08-18", "2025-08-19", "2025-08-20", "2025-08-21", "2025-08-22",
-    "2025-08-25", "2025-08-26", "2025-08-27", "2025-08-28", "2025-08-29"
+  "2025-08-11","2025-08-12","2025-08-13","2025-08-14","2025-08-15",
+  "2025-08-18","2025-08-19","2025-08-20","2025-08-21","2025-08-22",
+  "2025-08-25","2025-08-26","2025-08-27","2025-08-28","2025-08-29"
 ];
 
 const checkbox = document.getElementById("nataseni");
@@ -277,75 +257,62 @@ const orderDate = document.getElementById("orderDate");
 const extraDate = document.getElementById("extraDate");
 const locationInput = document.getElementById("location");
 const errorMsg = document.getElementById("errorMsg");
-const phoneInput = document.getElementById("phone");
 
 checkbox.addEventListener("change", function() {
-    if (this.checked) {
-        normalSection.style.display = "none";
-        nataseniSection.style.display = "block";
-        locationInput.required = true;
-        extraDate.required = true;
-        orderDate.required = false;
-        orderDate.value = "";
-        errorMsg.textContent = "";
-    } else {
-        normalSection.style.display = "block";
-        nataseniSection.style.display = "none";
-        locationInput.required = false;
-        extraDate.required = false;
-        extraDate.value = "";
-        errorMsg.textContent = "";
-    }
-});
-
-// Block booked dates ONLY for Natáčení date
-extraDate.addEventListener("input", function () {
-    if (bookedDates.includes(this.value)) {
-        errorMsg.textContent = "Tento den je již obsazený pro natáčení. Vyberte jiný.";
-        this.value = "";
-    } else {
-        errorMsg.textContent = "";
-    }
-});
-
-// Live phone formatting to +420 123 456 789
-phoneInput.addEventListener("input", function(e) {
-    let value = e.target.value.replace(/\D/g, "");
-    if (value.startsWith("420")) {
-        value = "+" + value.slice(0, 3) + " " + value.slice(3, 6) + (value.length > 6 ? " " + value.slice(6, 9) : "") + (value.length > 9 ? " " + value.slice(9, 12) : "");
-    } else if (value.length > 0) {
-        value = "+420 " + value.slice(0, 3) + (value.length > 3 ? " " + value.slice(3, 6) : "") + (value.length > 6 ? " " + value.slice(6, 9) : "");
-    }
-    e.target.value = value.trim();
-});
-</script>
-
-    <script>
-const phoneInput = document.getElementById("phone");
-
-phoneInput.addEventListener("input", function (e) {
-  // Remove non-digits except plus
-  let digits = e.target.value.replace(/[^\d+]/g, "");
-
-  // Ensure it always starts with +420
-  if (!digits.startsWith("+420")) {
-    // If user typed a digit that isn't part of +420 yet
-    digits = digits.replace(/^\+?/, "");
-    digits = "+420" + digits;
+  if (this.checked) {
+    normalSection.style.display = "none";
+    nataseniSection.style.display = "block";
+    locationInput.required = true;
+    extraDate.required = true;
+    orderDate.required = false;
+    orderDate.value = "";
+    errorMsg.textContent = "";
+  } else {
+    normalSection.style.display = "block";
+    nataseniSection.style.display = "none";
+    locationInput.required = false;
+    extraDate.required = false;
+    extraDate.value = "";
+    errorMsg.textContent = "";
   }
+});
 
-  // Format spacing: +420 123 456 789
-  const core = digits.replace(/\D/g, "").slice(3); // after +420
-  const groups = [
-    core.slice(0, 3),
-    core.slice(3, 6),
-    core.slice(6, 9)
-  ].filter(Boolean);
+extraDate.addEventListener("input", function () {
+  if (bookedDates.includes(this.value)) {
+    errorMsg.textContent = "Tento den je již obsazený pro natáčení. Vyberte jiný.";
+    this.value = "";
+  } else {
+    errorMsg.textContent = "";
+  }
+});
 
-  e.target.value = "+420 " + groups.join(" ");
+// Odeslání dat na Google Apps Script
+document.getElementById("orderForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const data = {
+    name: document.getElementById("name").value,
+    email: document.getElementById("email").value,
+    phone: document.getElementById("phone").value,
+    orderDetails: document.getElementById("orderDetails").value,
+    nataseni: document.getElementById("nataseni").checked,
+    orderDate: document.getElementById("orderDate").value,
+    location: document.getElementById("location").value,
+    extraDate: document.getElementById("extraDate").value
+  };
+
+  fetch("https://script.google.com/macros/s/AKfycbwz54htq155OPFhh8fD8KhRLXCDW_C6HWr4gFg8KGYYQf8NEM-j1DqNBakuaqsLwCWBDg/exec", {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  })
+  .then(() => {
+    alert("Objednávka byla odeslána!");
+    document.getElementById("orderForm").reset();
+  })
+  .catch(err => {
+    alert("Chyba při odesílání: " + err);
+  });
 });
 </script>
-
-
-</body>
-</html>
