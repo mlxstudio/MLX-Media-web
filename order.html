@@ -146,6 +146,25 @@
         min-height: 350px;
         border: none;
     }
+    /* checkbox inline + small styling */
+        .checkbox-inline {
+          display: inline-flex;     /* sits inline with text */
+          align-items: center;
+          gap: 10px;                /* space between box and text */
+          margin-top: 8px;          /* smaller than default label margin */
+          font-weight: 600;
+          cursor: pointer;
+        }
+        
+        /* native checkbox sizing + modern color */
+        .checkbox-inline input[type="checkbox"] {
+          width: 20px;
+          height: 20px;
+          flex-shrink: 0;
+          accent-color: #00BFA6;    /* colors the checkbox in modern browsers */
+          border-radius: 4px;
+        }
+
 
 </style>
 </head>
@@ -179,10 +198,11 @@
             <label for="orderDetails">Jakou službu chcete?</label>
             <textarea id="orderDetails" name="orderDetails" rows="4" required></textarea>
 
-            <label>
-                <input type="checkbox" id="nataseni" name="nataseni">
-                Natáčení
+            <label class="checkbox-inline" for="nataseni">
+            <input type="checkbox" id="nataseni" name="nataseni">
+              Natáčení
             </label>
+
 
             <!-- Section for NON-Natáčení -->
             <div id="normalSection">
