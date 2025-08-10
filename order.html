@@ -166,29 +166,34 @@
 <main>
     <div class="form-card">
         <form id="orderForm" action="https://formspree.io/f/xjkojawq" method="POST" enctype="multipart/form-data">
-            <label for="name">Name:</label>
+            <label for="name">Jméno:</label>
             <input type="text" id="name" name="name" required />
 
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" placeholder="your@email.com" required />
 
 
-            <label for="orderDetails">What do you want to order?</label>
+            <label for="orderDetails">Jakou službu chcete?</label>
             <textarea id="orderDetails" name="orderDetails" rows="4" required></textarea>
 
-            <label for="location">Location:</label>
-            <input id="location" name="location" type="text" placeholder="Type address..." required />
-
-            <div class="map-container">
-                <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d242222.43857222228!2d14.324413493345219!3d50.05586478445109!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x470b939c0970798b%3A0x400af0f66164090!2sPraha!5e1!3m2!1scs!2scz!4v1754743220287!5m2!1scs!2scz" 
-                    allowfullscreen="" 
-                    loading="lazy" 
-                    referrerpolicy="no-referrer-when-downgrade">
-                </iframe>
+            <label>
+                <input type="checkbox" id="nataseni" name="nataseni">
+                Natáčení
+            </label>
+            
+            <div class="map-section" id="mapSection" style="display: none;">
+                <label for="location">Location:</label>
+                <input id="location" name="location" type="text" placeholder="napište adresu..." />
+                <div class="map-container">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d242222.43857222228!2d14.324413493345219!3d50.05586478445109!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x470b939c0970798b%3A0x400af0f66164090!2sPraha!5e1!3m2!1scs!2scz!4v1754743220287!5m2!1scs!2scz" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
             </div>
-
-            <label for="orderDate">Choose a date:</label>
+            <label for="orderDate">Vyberte si datum:</label>
             <input type="date" id="orderDate" name="orderDate" required />
             <div class="error" id="errorMsg"></div>
 
