@@ -27,7 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
   slider.addEventListener("scroll", () => {
     const scrollPos = slider.scrollLeft;
     const slideWidth = slider.clientWidth;
-
     let activeIndex = Math.round(scrollPos / slideWidth);
 
     navLinks.forEach(link => link.classList.remove("active"));
@@ -37,6 +36,3 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-    });
-  });
-});
