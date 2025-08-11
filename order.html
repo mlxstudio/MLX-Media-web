@@ -316,18 +316,17 @@ document.getElementById("orderForm").addEventListener("submit", function(e) {
     location: document.getElementById("location").value,
     extraDate: document.getElementById("extraDate").value
   };
-  fetch("https://script.google.com/macros/s/AKfycbwz54htq155OPFhh8fD8KhRLXCDW_C6HWr4gFg8KGYYQf8NEM-j1DqNBakuaqsLwCWBDg/exec", {
-    method: "POST",
-    mode: "no-cors",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  })
-  .then(() => {
-    alert("Objednávka byla odeslána!");
-    document.getElementById("orderForm").reset();
-  })
-  .catch(err => {
-    alert("Chyba při odesílání: " + err);
-  });
+fetch("https://script.google.com/macros/s/AKfycbwz54htq155OPFhh8fD8KhRLXCDW_C6HWr4gFg8KGYYQf8NEM-j1DqNBakuaqsLwCWBDg/exec", {
+  method: "POST",
+  mode: "no-cors",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(data)
+})
+.then(() => {
+  window.location.href = "thank-you.html";
+})
+.catch(err => {
+  alert("Chyba při odesílání: " + err);
+});
 });
 </script>
