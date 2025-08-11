@@ -28,22 +28,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const scrollPos = slider.scrollLeft;
     const slideWidth = slider.clientWidth;
 
-    slides.forEach((slide, index) => {
-      slider.addEventListener("scroll", () => {
-  const scrollPos = slider.scrollLeft;
-  const slideWidth = slider.clientWidth;
+    let activeIndex = Math.round(scrollPos / slideWidth);
 
-  let activeIndex = Math.round(scrollPos / slideWidth);
-
-  navLinks.forEach(link => link.classList.remove("active"));
-  if (activeIndex >= 0 && activeIndex < navLinks.length) {
-    navLinks[activeIndex].classList.add("active");
-  }
+    navLinks.forEach(link => link.classList.remove("active"));
+    if (activeIndex >= 0 && activeIndex < navLinks.length) {
+      navLinks[activeIndex].classList.add("active");
+    }
+  });
 });
-  {
-        navLinks.forEach(link => link.classList.remove("active"));
-        navLinks[index].classList.add("active");
-      }
+
     });
   });
 });
