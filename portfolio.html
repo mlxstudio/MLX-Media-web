@@ -386,6 +386,159 @@
   transform: translateY(0);
 }
 
+.tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translate(-50%, 6px);
+    background: white;
+    border: 2px solid #00BFA6; /* teal outline */
+    color: #333;
+    padding: 6px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+    font-size: 0.85em;
+    font-weight: 500;
+    opacity: 0;
+    pointer-events: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    z-index: 10;
+}
+
+/* Subtle arrow matching teal outline */
+.tooltip::before {
+    content: "";
+    position: absolute;
+    bottom: 115%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px;
+    border-style: solid;
+    border-color: transparent transparent white transparent;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+/* Hover state — fade in & slide up */
+.tooltip:hover::after,
+.tooltip:hover::before {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+/* When JS is enabled we hide the CSS pseudo-tooltips so only the JS tooltip shows */
+html.js-tooltip-enabled .tooltip::after,
+html.js-tooltip-enabled .tooltip::before {
+  display: none !important;
+}
+
+/* The JS-generated tooltip element */
+.js-tooltip {
+  position: absolute;
+  background: white;
+  border: 2px solid #00BFA6; /* teal outline */
+  color: #333;
+  padding: 6px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  font-size: 0.85em;
+  font-weight: 500;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(6px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  z-index: 9999;
+}
+
+/* Arrow pointing up (when tooltip is above icon) */
+.js-tooltip::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 100%;
+  border-width: 6px;
+  border-style: solid;
+  border-color: white transparent transparent transparent;
+  display: block;
+}
+
+/* When tooltip is placed below the icon we add .below to flip arrow */
+.js-tooltip.below::after {
+  top: auto;
+  bottom: 100%;
+  border-color: transparent transparent white transparent;
+}
+
+/* show state helper (we toggle opacity/transform in JS) */
+.js-tooltip.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.role-subtext {
+    font-size: 0.85em;
+    color: #888; /* vybledlý text */
+    margin-top: 4px;
+    margin-bottom: 8px;
+}
+
+.badge {
+    font-size: 0.7em;
+    font-weight: 500;
+    background: #eee;
+    color: #555;
+    padding: 3px 6px;
+    border-radius: 8px;
+    margin-left: 6px;
+}
+
+
+.badge {
+    font-size: 0.7em;
+    font-weight: 500;
+    background: #eee;
+    color: #555;
+    padding: 3px 6px;
+    border-radius: 8px;
+    margin-left: 6px;
+}
+
+.badge-genre {
+    background: #dfe9ff; /* světle modrá */
+    color: #2a4a7f;
+}
+
+.role-subtext {
+    font-size: 0.85em;
+    color: #888; /* vybledlý text */
+    margin-top: 4px;
+    margin-bottom: 8px;
+}
+
+.portfolio-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.portfolio-header h3 {
+    margin: 0;
+    font-size: 1.4em;
+}
+
+
+
+
     </style>
 </head>
 <body>
@@ -422,157 +575,223 @@ document.addEventListener("DOMContentLoaded", () => {
     <main>
         <section class="intro-text scroll-animate">
             <p>
-                Zde je mé portfolio filmů, klipů a videí, kde se můžete podívat
+                Zde je mé portfolio filmů, klipů a videí, kde se můžete podívat, co už jsem dokázal. 
             </p>
         </section>
 
         <div class="portfolio-grid">
-            <!-- Video 1 -->
-            <div class="portfolio-item scroll-animate">
-                <iframe src="https://www.youtube.com/embed/15GEOKTmj4k" allowfullscreen></iframe>
-                <div class="portfolio-content">
-                    <h3>Dva z nás</h3>
-                    <div class="role-icons"> ... </div>
-                        <i class="fas fa-user"></i>
-                        <i class="fas fa-cut"></i>
-                        <i class="fas fa-mask"></i>
-                    </div>
-                    </div>
-                    <p>Film, na který jsem obzvlášť hrdý. Skvělá spolupráce a kvalitní vizuál.</p>
-                    <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
-                    <div class="details">
-                        <p><strong>Moje role:</strong> Kameraman, režisér</p>
-                        <p><strong>Místo:</strong> Praha, Česká republika</p>
-                        <p><strong>Popis:</strong> Projekt byl natočen během dvou týdnů, obsahuje scénáře, které jsem sám napsal.</p>
-                        <div class="tags">
-                            <span class="tag"><i class="fas fa-user"></i> Pomoc</span>
-                            <span class="tag"><i class="fas fa-cut"></i> Střih</span>
-                            <span class="tag"><i class="fas fa-mask"></i> Herec</span>
-                        </div>
-                    </div>
-                </div>
+<!-- Video 1 -->
+<div class="portfolio-item scroll-animate">
+    <iframe src="https://www.youtube.com/embed/15GEOKTmj4k" allowfullscreen></iframe>
+    <div class="portfolio-content">
+        <div class="portfolio-header">
+            <h3>
+                Dva z nás
+                <span class="badge">Krátký film</span>
+                <span class="badge badge-genre">Thriller</span>
+            </h3>
+            <div class="role-icons">
+                <span class="tooltip" data-tooltip="Já jsem pomáhal s tímto filmem">
+                    <i class="fas fa-user"></i>
+                </span>
+                <span class="tooltip" data-tooltip="Já jsem film stříhal">
+                    <i class="fas fa-cut"></i>
+                </span>
+                <span class="tooltip" data-tooltip="Já jsem v tomto filmu hrál">
+                    <i class="fas fa-mask"></i>
+                </span>
             </div>
+        </div>
 
-            <!-- Video 2 -->
-            <div class="portfolio-item scroll-animate">
-                <iframe src="https://www.youtube.com/embed/H-L_SnH6_Sc" allowfullscreen></iframe>
-                <div class="portfolio-content">
-                    <h3>Rázná střela</h3>
-                    <div class="role-icons"> ... </div>
-                        <i class="fas fa-video"></i>
-                        <i class="fas fa-user"></i>
-                    </div>
-                    </div>
-                    <p>Dynamické a akční natáčení, které bylo výzvou i zábavou.</p>
-                    <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
-                    <div class="details">
-                        <p><strong>Moje role:</strong> Kameraman</p>
-                        <p><strong>Místo:</strong> Brno, Česká republika</p>
-                        <p><strong>Popis:</strong> Akční scény vyžadovaly speciální kamerové rigy a koordinaci týmu.</p>
-                        <div class="tags">
-                            <span class="tag"><i class="fas fa-video"></i> Kamera</span>
-                            <span class="tag"><i class="fas fa-user"></i> Pomoc</span>
-                        </div>
-                    </div>
-                </div>
+        <p>Napínavý film o přátelství, které dostane nečekanou zkoušku.</p>
+        <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
+        <div class="details">
+            <p><strong>Místo:</strong> Praha, Česká republika</p>
+            <p><strong>Popis:</strong> Skupina starých kamarádů vyráží na společný výlet. To, co začne jako bezstarostná cesta, se brzy promění v napjatou atmosféru plnou otázek o důvěře a loajalitě.</p>
+            
+            <p class="role-subtext">Moje úkoly na projektu:</p>
+            <div class="tags">
+                <span class="tag"><i class="fas fa-user"></i> Pomoc</span>
+                <span class="tag"><i class="fas fa-cut"></i> Střih</span>
+                <span class="tag"><i class="fas fa-mask"></i> Herec</span>
             </div>
+        </div>
+    </div>
+</div>
 
-             <!-- Video 3 -->
-            <div class="portfolio-item scroll-animate">
-                <iframe src="https://www.youtube.com/embed/YoNbkuia6VA" allowfullscreen></iframe>
-                <div class="portfolio-content">
-                    <h3>Hystorka</h3>
-                    <div class="role-icons"> ... </div>
-                        <i class="fas fa-mask"></i>
-                    </div>
-                    </div>
-                    <p>Dynamické a akční natáčení, které bylo výzvou i zábavou.</p>
-                    <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
-                    <div class="details">
-                        <p><strong>Moje role:</strong> Kameraman</p>
-                        <p><strong>Místo:</strong> Brno, Česká republika</p>
-                        <p><strong>Popis:</strong> Akční scény vyžadovaly speciální kamerové rigy a koordinaci týmu.</p>
-                        <div class="tags">
-                            <span class="tag"><i class="fas fa-mask"></i> Herec</span>
-                        </div>
-                    </div>
-                </div>
+<!-- Video 2 -->
+<div class="portfolio-item scroll-animate">
+    <iframe src="https://www.youtube.com/embed/H-L_SnH6_Sc" allowfullscreen></iframe>
+    <div class="portfolio-content">
+        <div class="portfolio-header">
+            <h3>
+                Rázná střela
+                <span class="badge">Krátký film</span>
+                <span class="badge badge-genre">Akční</span>
+            </h3>
+            <div class="role-icons">
+                <span class="tooltip" data-tooltip="Já jsem natáčel tento film">
+                    <i class="fas fa-video"></i>
+                </span>
+                <span class="tooltip" data-tooltip="Já jsem pomáhal s filmem">
+                    <i class="fas fa-user"></i>
+                </span>
             </div>
+        </div>
 
-            <!-- Video 4 -->
-            <div class="portfolio-item scroll-animate">
-                <iframe src="https://www.youtube.com/embed/a6D3BlhOM-o" allowfullscreen></iframe>
-                <div class="portfolio-content">
-                    <h3>Ani kapka</h3>
-                        <div class="role-icons"> ... </div>
-                        <i class="fas fa-user"></i>
-                        <i class="fas fa-mask"></i>
-                    </div>
-                    </div>
-                    <p>Dynamické a akční natáčení, které bylo výzvou i zábavou.</p>
-                    <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
-                    <div class="details">
-                        <p><strong>Moje role:</strong> Kameraman</p>
-                        <p><strong>Místo:</strong> Brno, Česká republika</p>
-                        <p><strong>Popis:</strong> Akční scény vyžadovaly speciální kamerové rigy a koordinaci týmu.</p>
-                        <div class="tags">
-                            <span class="tag"><i class="fas fa-user"></i> Pomoc</span>
-                            <span class="tag"><i class="fas fa-mask"></i> Herec</span>
-                        </div>
-                    </div>
-                </div>
+        <p>Rychlá akce, špionážní napětí a nebezpečná hra o čas.</p>
+        <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
+        <div class="details">
+            <p><strong>Místo:</strong> Brno, Česká republika</p>
+            <p><strong>Popis:</strong> Akční film inspirovaný Jamesem Bondem a sérií Die Hard. Rychlá auta, špionážní atmosféra a nebezpečná mise, kde jde o víc než jen o peníze.</p>
+            
+            <p class="role-subtext">Moje úkoly na projektu:</p>
+            <div class="tags">
+                <span class="tag"><i class="fas fa-video"></i> Kamera</span>
+                <span class="tag"><i class="fas fa-user"></i> Pomoc</span>
             </div>
+        </div>
+    </div>
+</div>
 
-            <!-- Video 5 -->
-            <div class="portfolio-item scroll-animate">
-                <iframe src="https://www.youtube.com/embed/zaCiNBq4c0I" allowfullscreen></iframe>
-                <div class="portfolio-content">
-                    <h3>Eiréné</h3>
-                    <div class="role-icons"> ... </div>
-                        <i class="fas fa-user"></i>
-                    </div>
-                    </div>
-                    <p>Dynamické a akční natáčení, které bylo výzvou i zábavou.</p>
-                    <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
-                    <div class="details">
-                        <p><strong>Moje role:</strong> Kameraman</p>
-                        <p><strong>Místo:</strong> Brno, Česká republika</p>
-                        <p><strong>Popis:</strong> Akční scény vyžadovaly speciální kamerové rigy a koordinaci týmu.</p>
-                        <div class="tags">
-                            <span class="tag"><i class="fas fa-user"></i> Pomoc</span>
-                        </div>
-                    </div>
-                </div>
+<!-- Video 3 -->
+<div class="portfolio-item scroll-animate">
+    <iframe src="https://www.youtube.com/embed/YoNbkuia6VA" allowfullscreen></iframe>
+    <div class="portfolio-content">
+        <div class="portfolio-header">
+            <h3>
+                Hystorka
+                <span class="badge">Krátký film</span>
+                <span class="badge badge-genre">Drama</span>
+            </h3>
+            <div class="role-icons">
+                <span class="tooltip" data-tooltip="Já jsem hrál v tomto filmu">
+                    <i class="fas fa-mask"></i>
+                </span>
             </div>
+        </div>
 
-            <!-- Video 6 -->
-            <div class="portfolio-item scroll-animate">
-                <iframe src="https://www.youtube.com/embed/fm08JltjGLI" allowfullscreen></iframe>
-                <div class="portfolio-content">
-                    <h3>IFHY</h3>
-                        <div class="role-icons"> ... </div>
-
-                      <i class="fas fa-user"></i>
-                        <i class="fas fa-cut"></i>
-                        <i class="fas fa-video"></i>
-                    </div>
-                    </div>
-                    <p>Dynamické a akční natáčení, které bylo výzvou i zábavou.</p>
-                    <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
-                    <div class="details">
-                        <p><strong>Moje role:</strong> Kameraman</p>
-                        <p><strong>Místo:</strong> Brno, Česká republika</p>
-                        <p><strong>Popis:</strong> Akční scény vyžadovaly speciální kamerové rigy a koordinaci týmu.</p>
-                        <div class="tags">
-                            <span class="tag"><i class="fas fa-user"></i> Pomoc</span>
-                            <span class="tag"><i class="fas fa-cut"></i> Střich</span>
-                            <span class="tag"><i class="fas fa-video"></i> Kamera</span>
-                        </div>
-                    </div>
-                </div>
+        <p>Chill atmosférický film o přátelství a vzpomínkách.</p>
+        <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
+        <div class="details">
+            <p><strong>Místo:</strong> Brno, Česká republika</p>
+            <p><strong>Popis:</strong> Parta kamarádů se setká u piva a vzpomíná na první zážitky s dospíváním. Nostalgie, humor a jemně hořkosladký podtón tvoří komorní filmový portrét jednoho přátelství.</p>
+            
+            <p class="role-subtext">Moje úkoly na projektu:</p>
+            <div class="tags">
+                <span class="tag"><i class="fas fa-mask"></i> Herec</span>
             </div>
+        </div>
+    </div>
+</div>
 
-            <!-- Další videa můžeš doplnit stejným stylem -->
+<!-- Video 4 -->
+<div class="portfolio-item scroll-animate">
+    <iframe src="https://www.youtube.com/embed/a6D3BlhOM-o" allowfullscreen></iframe>
+    <div class="portfolio-content">
+        <div class="portfolio-header">
+            <h3>
+                Ani kapka
+                <span class="badge">Krátký film</span>
+                <span class="badge badge-genre">Drama</span>
+            </h3>
+            <div class="role-icons">
+                <span class="tooltip" data-tooltip="Já jsem pomáhal s tímto filmem">
+                    <i class="fas fa-user"></i>
+                </span>
+                <span class="tooltip" data-tooltip="Já jsem hrál v tomto filmu">
+                    <i class="fas fa-mask"></i>
+                </span>
+            </div>
+        </div>
+
+        <p>Příběh o sourozencích, jejich vztahu a hledání důvěry.</p>
+        <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
+        <div class="details">
+            <p><strong>Místo:</strong> Brno, Česká republika</p>
+            <p><strong>Popis:</strong> Krátký film o dvou sourozencích, jejich cestě přírodou a malých konfliktech, které prověří jejich vzájemnou důvěru a sounáležitost.</p>
+            
+            <p class="role-subtext">Moje úkoly na projektu:</p>
+            <div class="tags">
+                <span class="tag"><i class="fas fa-user"></i> Pomoc</span>
+                <span class="tag"><i class="fas fa-mask"></i> Herec</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Video 6 -->
+<div class="portfolio-item scroll-animate">
+    <iframe src="https://www.youtube.com/embed/fm08JltjGLI" allowfullscreen></iframe>
+    <div class="portfolio-content">
+        <div class="portfolio-header">
+            <h3>
+                IFHY
+                <span class="badge">Krátký film</span>
+                <span class="badge badge-genre">Drama</span>
+            </h3>
+            <div class="role-icons">
+                <span class="tooltip" data-tooltip="Já jsem natáčel tento film">
+                    <i class="fas fa-video"></i>
+                </span>
+                <span class="tooltip" data-tooltip="Já jsem hrál v tomto filmu">
+                    <i class="fas fa-mask"></i>
+                </span>
+                <span class="tooltip" data-tooltip="Já jsem film stříhal">
+                    <i class="fas fa-cut"></i>
+                </span>
+            </div>
+        </div>
+
+        <p>Silný příběh o lásce, přátelství a varování před špatnými rozhodnutími.</p>
+        <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
+        <div class="details">
+            <p><strong>Místo:</strong> Brno, Česká republika</p>
+            <p><strong>Popis:</strong> Drama založené na skutečných zkušenostech, které ukazuje, jak může první zamilovanost ovlivnit důvěru mezi přáteli a prověřit jejich vztah.</p>
+            
+            <p class="role-subtext">Moje úkoly na projektu:</p>
+            <div class="tags">
+                <span class="tag"><i class="fas fa-video"></i> Kamera</span>
+                <span class="tag"><i class="fas fa-mask"></i> Herec</span>
+                <span class="tag"><i class="fas fa-cut"></i> Střih</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Video 5 -->
+<div class="portfolio-item scroll-animate">
+    <iframe src="https://www.youtube.com/embed/zaCiNBq4c0I" allowfullscreen></iframe>
+    <div class="portfolio-content">
+        <div class="portfolio-header">
+            <h3>
+                Eiréné
+                <span class="badge">Krátký film</span>
+                <span class="badge badge-genre">Experimentální</span>
+            </h3>
+            <div class="role-icons">
+                <span class="tooltip" data-tooltip="Já jsem pomáhal s tímto filmem"><i class="fas fa-user"></i></span>
+            </div>
+        </div>
+        <p>Projekt s hlubším poselstvím, kde jsem měl menší, ale důležitou roli.</p>
+        <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
+        <div class="details">
+            <p><strong>Moje role:</strong> Pomoc</p>
+            <p><strong>Místo:</strong> Brno, Česká republika</p>
+            <p><strong>Popis:</strong> Byl jsem součástí štábu a pomáhal s technickým zajištěním během natáčení.</p>
+            <p class="role-subtext">Zde je vše, co jsem ve filmu dělal:</p>
+            <div class="tags">
+                <span class="tag"><i class="fas fa-user"></i> Pomoc</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
         </div>
     </main>
     <footer>
@@ -613,5 +832,113 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
     </script>
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+  // tweak this to set minimum distance from viewport edges (px)
+  const EDGE_MARGIN = 12;
+
+  // enable JS mode (hides CSS pseudo-tooltips)
+  document.documentElement.classList.add('js-tooltip-enabled');
+
+  // select tooltip triggers
+  const triggers = document.querySelectorAll('.tooltip');
+
+  // helper to remove popup safely
+  function removePopup(popup) {
+    if (!popup) return;
+    popup.classList.remove('show');
+    // give transition time to fade out
+    setTimeout(() => {
+      if (popup.parentNode) popup.parentNode.removeChild(popup);
+    }, 180);
+  }
+
+  triggers.forEach(trigger => {
+    let popup = null;
+
+    function createAndShow() {
+      // don't create twice
+      if (popup) return;
+
+      // create popup element
+      popup = document.createElement('div');
+      popup.className = 'js-tooltip';
+      popup.textContent = trigger.getAttribute('data-tooltip') || '';
+      document.body.appendChild(popup);
+
+      // measure and position
+      const trigRect = trigger.getBoundingClientRect();
+      const pRect = popup.getBoundingClientRect();
+
+      // desired centered left position relative to viewport
+      let left = trigRect.left + (trigRect.width / 2) - (pRect.width / 2);
+      let top  = trigRect.top - pRect.height - 8; // 8px gap above icon
+      let placeBelow = false;
+
+      // if tooltip would cross left edge, move it right
+      const minLeft = EDGE_MARGIN;
+      const maxLeft = window.innerWidth - pRect.width - EDGE_MARGIN;
+      if (left < minLeft) left = minLeft;
+      if (left > maxLeft) left = maxLeft;
+
+      // if tooltip would be off top of viewport, place below the icon
+      if (top < EDGE_MARGIN) {
+        placeBelow = true;
+        top = trigRect.bottom + 8; // 8px gap below icon
+      }
+
+      // apply position (consider page scroll offset)
+      popup.style.left = (left + window.scrollX) + 'px';
+      popup.style.top  = (top  + window.scrollY) + 'px';
+
+      // add class if below (for arrow flip)
+      if (placeBelow) popup.classList.add('below');
+      else popup.classList.remove('below');
+
+      // show with CSS transition
+      // force reflow then add show
+      // eslint-disable-next-line no-unused-expressions
+      popup.offsetHeight;
+      popup.classList.add('show');
+
+      // hide on scroll (so it won't stay in wrong place)
+      window.addEventListener('scroll', onScroll, true);
+      window.addEventListener('resize', onScroll);
+    }
+
+    function onScroll() {
+      removePopup(popup);
+      popup = null;
+      window.removeEventListener('scroll', onScroll, true);
+      window.removeEventListener('resize', onScroll);
+    }
+
+    function hide() {
+      if (!popup) return;
+      removePopup(popup);
+      popup = null;
+      window.removeEventListener('scroll', onScroll, true);
+      window.removeEventListener('resize', onScroll);
+    }
+
+    // show/hide handlers
+    trigger.addEventListener('mouseenter', createAndShow);
+    trigger.addEventListener('mouseleave', hide);
+    trigger.addEventListener('focus', createAndShow); // keyboard
+    trigger.addEventListener('blur', hide);
+
+    // optional: support touch devices (tap to show)
+    trigger.addEventListener('touchstart', (e) => {
+      createAndShow();
+      // prevent the touch from immediately triggering mouse events in some browsers
+      e.stopPropagation();
+      // hide on the next document touch
+      const docHide = () => { hide(); document.removeEventListener('touchstart', docHide); };
+      document.addEventListener('touchstart', docHide);
+    }, { passive: false });
+  });
+});
+</script>
+
 </body>
 </html>
