@@ -20,8 +20,10 @@
     nav.main-nav {
         display: flex;
         gap: 15px;
-        position: sticky;
+        position: fixed;
         top: 0;
+        left: 0;
+        width: 100%;
         z-index: 1000;
         justify-content: center;
         padding: 12px 20px;
@@ -418,6 +420,37 @@ nav.category-nav .category-card .icon {
   opacity: 1;
   transform: translateY(0);
 }
+
+/* Fix horizontal overflow */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Optimize navigation for small screens without changing design */
+@media (max-width: 768px) {
+  nav a {
+    font-size: 0.9em; /* shrink font slightly */
+    padding: 6px 10px; /* reduce padding so links fit */
+  }
+}
+@media (max-width: 480px) {
+  nav a {
+    font-size: 0.85em;
+    padding: 5px 8px;
+  }
+}
+
+/* Scale slider properly on phones */
+@media (max-width: 768px) {
+  .slider-wrapper {
+    max-width: 100%;
+  }
+  .slider {
+    aspect-ratio: 16 / 9; /* better for mobile */
+  }
+}
+
 
 
 </style>
