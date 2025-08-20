@@ -634,46 +634,48 @@
   transform: translateY(0);
 }
 
-/* Fix horizontal overflow (white strip on right) */
+/* Fix horizontal overflow */
 html, body {
   max-width: 100%;
   overflow-x: hidden;
 }
 
-/* Responsive header text */
+/* Header text - just a little smaller on smaller screens */
 @media (max-width: 768px) {
   header h1 {
-    font-size: 2.8em; /* smaller on tablets */
+    font-size: 4em; /* instead of 5.2em */
   }
 }
 @media (max-width: 480px) {
   header h1 {
-    font-size: 2em; /* even smaller on phones */
+    font-size: 3.5em; /* slightly smaller, but still big */
   }
 }
 
-/* Responsive navigation */
+/* Optimize navigation for small screens without changing design */
 @media (max-width: 768px) {
-  nav {
-    flex-direction: column;
-    align-items: center;
-  }
   nav a {
-    display: block;
-    padding: 10px;
-    font-size: 1.1em;
+    font-size: 0.9em; /* shrink font slightly */
+    padding: 6px 10px; /* reduce padding so links fit */
+  }
+}
+@media (max-width: 480px) {
+  nav a {
+    font-size: 0.85em;
+    padding: 5px 8px;
   }
 }
 
-/* Scale MLX Media container (slider) on small screens */
+/* Scale slider properly on phones */
 @media (max-width: 768px) {
   .slider-wrapper {
     max-width: 100%;
   }
   .slider {
-    aspect-ratio: 16 / 9; /* more natural for phones */
+    aspect-ratio: 16 / 9; /* better for mobile */
   }
 }
+
 
 
 
