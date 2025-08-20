@@ -634,6 +634,46 @@
   transform: translateY(0);
 }
 
+/* Fix horizontal overflow (white strip on right) */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Responsive header text */
+@media (max-width: 768px) {
+  header h1 {
+    font-size: 2.8em; /* smaller on tablets */
+  }
+}
+@media (max-width: 480px) {
+  header h1 {
+    font-size: 2em; /* even smaller on phones */
+  }
+}
+
+/* Responsive navigation */
+@media (max-width: 768px) {
+  nav {
+    flex-direction: column;
+    align-items: center;
+  }
+  nav a {
+    display: block;
+    padding: 10px;
+    font-size: 1.1em;
+  }
+}
+
+/* Scale MLX Media container (slider) on small screens */
+@media (max-width: 768px) {
+  .slider-wrapper {
+    max-width: 100%;
+  }
+  .slider {
+    aspect-ratio: 16 / 9; /* more natural for phones */
+  }
+}
 
 
 
