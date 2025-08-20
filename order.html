@@ -205,6 +205,32 @@ html, body {
   .slider {
     aspect-ratio: 16 / 9; /* better for mobile */
   }
+
+/* Make nav fully responsive */
+nav {
+  display: flex;
+  flex-wrap: wrap;       /* allow links to wrap instead of overflowing */
+  justify-content: center; /* center links on small screens */
+  padding: 0 10px;       /* reduce horizontal padding */
+  box-sizing: border-box; /* include padding in width */
+}
+
+/* Shrink links on smaller screens */
+@media (max-width: 768px) {
+  nav a {
+    font-size: 0.9em;
+    padding: 6px 8px; /* slightly smaller to fit */
+  }
+}
+
+@media (max-width: 480px) {
+  nav a {
+    font-size: 0.85em;
+    padding: 5px 6px;
+  }
+}
+
+
 }
 header {
     padding-top: 60px; /* or however tall your nav is */
