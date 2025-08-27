@@ -930,6 +930,88 @@ document.addEventListener("DOMContentLoaded", () => {
       bottom: 80px;
     }
   }
+<!-- Floating Chat Widget -->
+<style>
+  #chat-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: linear-gradient(120deg, #00BFA6, orange);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 26px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    cursor: pointer;
+    z-index: 9999;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  #chat-toggle:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  }
+  #botpress-container {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 350px;
+    height: 520px;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+    display: none;
+    z-index: 9999;
+    background: white;
+    overflow: hidden;
+    flex-direction: column;
+  }
+  #botpress-chat {
+    width: 100%;
+    height: 100%;
+    border: none;
+    flex: 1;
+  }
+  .chat-info {
+    background: rgba(0,191,166,0.1);
+    padding: 8px 12px;
+    font-size: 0.85em;
+    color: #00334e;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+  }
+  .chat-info button {
+    background: none;
+    border: none;
+    color: #00BFA6;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 6px;
+  }
+  .chat-details {
+    display: none;
+    font-size: 0.8em;
+    padding: 8px 12px;
+    color: #444;
+    line-height: 1.4;
+  }
+
+  /* Mobilní úpravy */
+  @media (max-width: 600px) {
+    #chat-toggle {
+      width: 50px;
+      height: 50px;
+      font-size: 22px;
+    }
+    #botpress-container {
+      width: 85%;
+      height: 75%;
+      right: 7.5%;
+      bottom: 80px;
+    }
+  }
 </style>
 
 <!-- Chat toggle button -->
@@ -937,25 +1019,46 @@ document.addEventListener("DOMContentLoaded", () => {
   <i class="fas fa-comments"></i>
 </button>
 
-<!-- Botpress iframe -->
-<iframe 
-  id="botpress-chat"
-  src="https://cdn.botpress.cloud/webchat/v3.2/shareable.html?configUrl=https://files.bpcontent.cloud/2025/08/27/15/20250827155816-YLTQHGWF.json">
-</iframe>
+<!-- Botpress container with info -->
+<div id="botpress-container">
+  <div class="chat-info">
+    AI je určeno na shrnutí a pomoc,
+    <button id="info-toggle">Více info</button>
+  </div>
+  <div class="chat-details" id="chat-details">
+    <p>1. AI nemůže objednávat, ale může pomoci s procesem.</p>
+    <p>2. AI je určeno vám pomoci se vyznat a shrnout informace na stránce, ale může se mýlit – proto doporučujeme si všechny informace dále ověřovat.</p>
+    <p>3. AI nemůže dávat přesné ceny, pouze orientační. Pro přesné ceny nám zavolejte a domluvíme se.</p>
+  </div>
+  <iframe 
+    id="botpress-chat"
+    src="https://cdn.botpress.cloud/webchat/v3.2/shareable.html?configUrl=https://files.bpcontent.cloud/2025/08/27/15/20250827155816-YLTQHGWF.json">
+  </iframe>
+</div>
 
 <script>
   const chatToggle = document.getElementById('chat-toggle');
-  const chatFrame = document.getElementById('botpress-chat');
+  const chatContainer = document.getElementById('botpress-container');
+  const infoToggle = document.getElementById('info-toggle');
+  const chatDetails = document.getElementById('chat-details');
   let chatOpen = false;
+  let infoOpen = false;
 
   chatToggle.addEventListener('click', () => {
     chatOpen = !chatOpen;
-    chatFrame.style.display = chatOpen ? 'block' : 'none';
+    chatContainer.style.display = chatOpen ? 'flex' : 'none';
     chatToggle.innerHTML = chatOpen 
       ? '<i class="fas fa-times"></i>' 
       : '<i class="fas fa-comments"></i>';
   });
+
+  infoToggle.addEventListener('click', () => {
+    infoOpen = !infoOpen;
+    chatDetails.style.display = infoOpen ? 'block' : 'none';
+    infoToggle.innerText = infoOpen ? 'Méně info' : 'Více info';
+  });
 </script>
+
 
 </body>
 
