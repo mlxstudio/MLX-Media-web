@@ -909,27 +909,32 @@ document.addEventListener("DOMContentLoaded", () => {
     transform: scale(1.08);
     box-shadow: 0 6px 20px rgba(0,0,0,0.25);
   }
+
+  /* Main chat container */
   #botpress-container {
     position: fixed;
     bottom: 90px;
     right: 20px;
     width: 350px;
-    height: 520px;
+    height: 480px;
     border-radius: 14px;
     box-shadow: 0 4px 18px rgba(0,0,0,0.25);
     display: none;
     z-index: 9999;
     background: white;
     overflow: hidden;
-    display: flex;
     flex-direction: column;
   }
+
+  /* Chat iframe takes full space below info */
   #botpress-chat {
-    border: none;
     width: 100%;
     height: 100%;
-    flex-grow: 1;
+    border: none;
+    flex: 1;
   }
+
+  /* Info bar */
   .chat-info {
     background: rgba(0,191,166,0.1);
     padding: 8px 12px;
@@ -945,16 +950,17 @@ document.addEventListener("DOMContentLoaded", () => {
     cursor: pointer;
     margin-left: 6px;
   }
+
+  /* Expandable details */
   .chat-details {
     display: none;
     font-size: 0.8em;
     padding: 8px 12px;
     color: #444;
     line-height: 1.4;
-    border-bottom: 1px solid rgba(0,0,0,0.1);
   }
 
-  /* Mobilní úpravy */
+  /* Mobile scaling */
   @media (max-width: 600px) {
     #chat-toggle {
       width: 50px;
@@ -962,9 +968,9 @@ document.addEventListener("DOMContentLoaded", () => {
       font-size: 22px;
     }
     #botpress-container {
-      width: 85%;
-      height: 75%;
-      right: 7.5%;
+      width: 95%;
+      height: 80%;
+      right: 2.5%;
       bottom: 80px;
     }
   }
@@ -1014,7 +1020,6 @@ document.addEventListener("DOMContentLoaded", () => {
     infoToggle.innerText = infoOpen ? 'Méně info' : 'Více info';
   });
 </script>
-
 
 </body>
 
