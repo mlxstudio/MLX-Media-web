@@ -884,6 +884,79 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     </script>
+    <!-- Floating Chat Widget -->
+<style>
+  #chat-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: linear-gradient(120deg, #00BFA6, orange);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 26px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    cursor: pointer;
+    z-index: 9999;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  #chat-toggle:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  }
+  #botpress-chat {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 350px;
+    height: 480px;
+    border: none;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+    display: none;
+    z-index: 9999;
+    overflow: hidden;
+  }
+  @media (max-width: 600px) {
+    #botpress-chat {
+      width: 95%;
+      height: 80%;
+      right: 2.5%;
+      bottom: 80px;
+    }
+  }
+</style>
+
+<!-- Chat toggle button -->
+<button id="chat-toggle">
+  <i class="fas fa-comments"></i>
+</button>
+
+<!-- Botpress iframe -->
+<iframe 
+  id="botpress-chat"
+  src="https://cdn.botpress.cloud/webchat/v3.2/shareable.html?configUrl=https://files.bpcontent.cloud/2025/08/27/15/20250827155816-YLTQHGWF.json">
+</iframe>
+
+<script>
+  const chatToggle = document.getElementById('chat-toggle');
+  const chatFrame = document.getElementById('botpress-chat');
+  let chatOpen = false;
+
+  chatToggle.addEventListener('click', () => {
+    chatOpen = !chatOpen;
+    chatFrame.style.display = chatOpen ? 'block' : 'none';
+    chatToggle.innerHTML = chatOpen 
+      ? '<i class="fas fa-times"></i>' 
+      : '<i class="fas fa-comments"></i>';
+  });
+</script>
+
 </body>
 
 </html>
