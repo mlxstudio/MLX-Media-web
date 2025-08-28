@@ -964,16 +964,18 @@ document.addEventListener("DOMContentLoaded", () => {
     margin-left: 6px;
   }
 
-  /* Mobile header with close button */
-  #mobile-header {
-    display: none;
-    justify-content: space-between;
-    align-items: center;
-    background: linear-gradient(120deg, #00BFA6, orange);
-    color: white;
-    padding: 12px;
-    font-size: 1.1em;
-  }
+#mobile-header {
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(120deg, #00BFA6, orange);
+  color: white;
+  padding: 12px;
+  font-size: 1.1em;
+  flex-shrink: 0;       /* <-- zabrání schování */
+  z-index: 10000;       /* <-- vždy nad obsahem */
+}
+
   #mobile-close {
     background: none;
     border: none;
@@ -1166,6 +1168,16 @@ document.addEventListener("DOMContentLoaded", () => {
     chatLog.appendChild(div);
     chatLog.scrollTop = chatLog.scrollHeight;
   }
+
+// dynamická úprava výšky chatu na mobilu při otevření klávesnice
+if (window.visualViewport) {
+  const viewport = window.visualViewport;
+  viewport.addEventListener("resize", () => {
+    const vh = viewport.height + "px";
+    chatContainer.style.height = vh; 
+  });
+}
+
 </script>
 
 
