@@ -1,1 +1,275 @@
+<!-- chatbot.html -->
+<div id="mlx-chat">
+  <style>
+    #chat-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: linear-gradient(120deg, #00BFA6, orange);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 26px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      cursor: pointer;
+      z-index: 9999;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    #chat-toggle:hover {
+      transform: scale(1.08);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    }
+
+    #botpress-container {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 350px;
+      height: 480px;
+      border-radius: 14px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+      display: none;
+      z-index: 9999;
+      background: white;
+      overflow: hidden;
+      flex-direction: column;
+    }
+
+    @media (max-width: 600px) {
+      #botpress-container {
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 0;
+      }
+      #chat-toggle {
+        width: 50px;
+        height: 50px;
+        font-size: 22px;
+      }
+      #mobile-header {
+        display: flex;
+      }
+    }
+
+    .chat-info {
+      background: rgba(0,191,166,0.1);
+      padding: 8px 12px;
+      font-size: 0.85em;
+      color: #00334e;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+    .chat-info button {
+      background: none;
+      border: none;
+      color: #00BFA6;
+      font-weight: bold;
+      cursor: pointer;
+      margin-left: 6px;
+    }
+
+    #mobile-header {
+      display: none;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(120deg, #00BFA6, orange);
+      color: white;
+      padding: 12px;
+      font-size: 1.1em;
+    }
+    #mobile-close {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    .chat-details {
+      display: none;
+      font-size: 0.8em;
+      padding: 8px 12px;
+      color: #444;
+      line-height: 1.4;
+    }
+
+    #chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    #chat-log {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      font-size: 14px;
+      max-height: 100%;
+      scrollbar-width: thin;
+    }
+    #chat-log::-webkit-scrollbar { width: 6px; }
+    #chat-log::-webkit-scrollbar-thumb {
+      background: rgba(0,0,0,0.2);
+      border-radius: 6px;
+    }
+    #chat-input {
+      border: none;
+      border-top: 1px solid #ddd;
+      padding: 8px;
+      font-size: 14px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .msg {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin: 6px 0;
+      animation: fadeIn 0.4s ease;
+    }
+    .msg .icon {
+      flex-shrink: 0;
+      font-size: 16px;
+      margin-top: 2px;
+    }
+    .msg.user .icon { color: #333; }
+    .msg.bot .icon { color: #00BFA6; }
+
+    .msg .text {
+      max-width: 80%;
+      padding: 8px 12px;
+      border-radius: 12px;
+      line-height: 1.4;
+      font-size: 14px;
+    }
+    .msg.user .text { background: #f1f1f1; color: #333; }
+    .msg.bot .text { background: #e8fdf9; color: #00334e; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+
+  <button id="chat-toggle">
+    <i class="fas fa-comments"></i>
+  </button>
+
+  <div id="botpress-container">
+    <div id="mobile-header">
+      <span>MLX Chat Bot</span>
+      <button id="mobile-close"><i class="fas fa-times"></i></button>
+    </div>
+
+    <div class="chat-info">
+      AI je určeno na shrnutí a pomoc,
+      <button id="info-toggle">Více info</button>
+    </div>
+    <div class="chat-details" id="chat-details">
+      <p>1. AI nemůže objednávat, ale může pomoci s procesem.</p>
+      <p>2. AI je určeno vám pomoci se vyznat a shrnout informace na stránce, ale může se mýlit – proto doporučujeme si všechny informace dále ověřovat.</p>
+      <p>3. AI nemůže dávat přesné ceny, pouze orientační. Pro přesné ceny nám zavolejte a domluvíme se.</p>
+    </div>
+
+    <div id="chat-container">
+      <div id="chat-log"></div>
+      <input id="chat-input" placeholder="Zeptejte se na cokoliv..." />
+    </div>
+  </div>
+
+  <script>
+    const knowledge = {
+      "cena": "Naše ceny závisí na projektu. Zavolejte nám pro přesnou nabídku.",
+      "objednávka": "Pro objednávku nás kontaktujte přes stránku nebo telefonicky.",
+      "kontakt": "Můžete nás zastihnout na info@mlxmedia.com nebo +420 123 456 789.",
+      "portfolio": "Podívejte se na naši stránku Portfolio pro ukázky projektů.",
+      "film": "Tvoříme promo videa, eventové záznamy a kreativní projekty."
+    };
+
+    function getAnswer(msg) {
+      msg = msg.toLowerCase();
+      for (let key in knowledge) {
+        if (msg.includes(key)) return knowledge[key];
+      }
+      return "Tady si nejsem jistý. Kontaktujte nás prosím přímo!";
+    }
+
+    const chatToggle = document.getElementById('chat-toggle');
+    const chatContainer = document.getElementById('botpress-container');
+    const mobileClose = document.getElementById('mobile-close');
+    const infoToggle = document.getElementById('info-toggle');
+    const chatDetails = document.getElementById('chat-details');
+    const chatLog = document.getElementById('chat-log');
+    const chatInput = document.getElementById('chat-input');
+
+    let chatOpen = false;
+    let infoOpen = false;
+
+    function openChat() {
+      chatOpen = true;
+      chatContainer.style.display = 'flex';
+      chatToggle.innerHTML = '<i class="fas fa-times"></i>';
+      if (chatLog.children.length === 0) {
+        addMessage("bot", "Dobrý den, jsem MLX Chat Bot. Mohu vám pomoci najít informace, objednat služby nebo zobrazit portfolio na této stránce.");
+      }
+    }
+
+    function closeChat() {
+      chatOpen = false;
+      chatContainer.style.display = 'none';
+      chatToggle.innerHTML = '<i class="fas fa-comments"></i>';
+    }
+
+    chatToggle.addEventListener('click', () => {
+      chatOpen ? closeChat() : openChat();
+    });
+
+    mobileClose.addEventListener('click', () => {
+      closeChat();
+    });
+
+    infoToggle.addEventListener('click', () => {
+      infoOpen = !infoOpen;
+      chatDetails.style.display = infoOpen ? 'block' : 'none';
+      infoToggle.innerText = infoOpen ? 'Méně info' : 'Více info';
+    });
+
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter') return;
+      const msg = e.target.value.trim();
+      if (!msg) return;
+      addMessage("user", msg);
+      const answer = getAnswer(msg) + " (Poznámka: MLX AI je zde jen pro shrnutí informací, vše si prosím ověřte.)";
+      setTimeout(() => addMessage("bot", answer), 400);
+      e.target.value = "";
+    });
+
+    function addMessage(sender, text) {
+      const div = document.createElement('div');
+      div.className = "msg " + sender;
+
+      const icon = document.createElement('span');
+      icon.className = "icon";
+      icon.innerHTML = sender === "user" ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>';
+
+      const span = document.createElement('div');
+      span.className = "text";
+      span.textContent = text;
+
+      div.appendChild(icon);
+      div.appendChild(span);
+      chatLog.appendChild(div);
+      chatLog.scrollTop = chatLog.scrollHeight;
+    }
+  </script>
+</div>
 
