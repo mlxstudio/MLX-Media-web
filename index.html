@@ -1024,6 +1024,36 @@ document.addEventListener("DOMContentLoaded", () => {
       bottom: 80px;
     }
   }
+
+    #botpress-container {
+  overflow: hidden; /* to necháme, aby nelezl ven input apod. */
+  display: flex;
+  flex-direction: column;
+}
+
+#chat-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* klíčové, aby se scrollovalo jen v #chat-log */
+}
+
+#chat-log {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  font-size: 14px;
+  max-height: 100%; /* jistota, že nepřeroste */
+  scrollbar-width: thin;        /* Firefox */
+}
+#chat-log::-webkit-scrollbar {
+  width: 6px;                   /* Chrome/Safari */
+}
+#chat-log::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.2);
+  border-radius: 6px;
+}
+
 </style>
 
 <!-- Chat toggle button -->
