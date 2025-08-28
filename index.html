@@ -728,8 +728,67 @@ document.addEventListener("DOMContentLoaded", () => {
     observer.observe(el);
   });
 });
+
+      #chat-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: linear-gradient(120deg, #00BFA6, orange);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 26px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    cursor: pointer;
+    z-index: 9999;
+  }
+  #chat-container {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 320px;
+    height: 400px;
+    display: none;
+    flex-direction: column;
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+    background: #fff;
+    overflow: hidden;
+    z-index: 9999;
+  }
+  #chat-log {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    font-size: 14px;
+  }
+  #chat-input {
+    border: none;
+    border-top: 1px solid #ddd;
+    padding: 8px;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .msg { margin: 4px 0; }
+  .user { font-weight: bold; color: #333; }
+  .bot { color: #00BFA6; }
+
 </script>
 
+<!-- Button to open/close chat -->
+<button id="chat-toggle">💬</button>
+
+<!-- Chat box -->
+<div id="chat-container">
+  <div id="chat-log"></div>
+  <input id="chat-input" placeholder="Ask me anything..." />
+</div>
 
     <!-- Navigation -->
     <nav id="mainNav">
@@ -884,143 +943,54 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     </script>
-<!-- Floating Chat Widget -->
-<style>
-  #chat-toggle {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: linear-gradient(120deg, #00BFA6, orange);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    font-size: 26px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-    cursor: pointer;
-    z-index: 9999;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-  #chat-toggle:hover {
-    transform: scale(1.08);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
-  }
 
-  /* Main chat container */
-  #botpress-container {
-    position: fixed;
-    bottom: 90px;
-    right: 20px;
-    width: 350px;
-    height: 480px;
-    border-radius: 14px;
-    box-shadow: 0 4px 18px rgba(0,0,0,0.25);
-    display: none;
-    z-index: 9999;
-    background: white;
-    overflow: hidden;
-    flex-direction: column;
-  }
-
-  /* Chat iframe takes full space below info */
-  #botpress-chat {
-    width: 100%;
-    height: 100%;
-    border: none;
-    flex: 1;
-  }
-
-  /* Info bar */
-  .chat-info {
-    background: rgba(0,191,166,0.1);
-    padding: 8px 12px;
-    font-size: 0.85em;
-    color: #00334e;
-    border-bottom: 1px solid rgba(0,0,0,0.1);
-  }
-  .chat-info button {
-    background: none;
-    border: none;
-    color: #00BFA6;
-    font-weight: bold;
-    cursor: pointer;
-    margin-left: 6px;
-  }
-
-  /* Expandable details */
-  .chat-details {
-    display: none;
-    font-size: 0.8em;
-    padding: 8px 12px;
-    color: #444;
-    line-height: 1.4;
-  }
-
-  /* Mobile scaling */
-  @media (max-width: 600px) {
-    #chat-toggle {
-      width: 50px;
-      height: 50px;
-      font-size: 22px;
-    }
-    #botpress-container {
-      width: 95%;
-      height: 80%;
-      right: 2.5%;
-      bottom: 80px;
-    }
-  }
-</style>
-
-<!-- Chat toggle button -->
-<button id="chat-toggle">
-  <i class="fas fa-comments"></i>
-</button>
-
-<!-- Botpress container with info -->
-<div id="botpress-container">
-  <div class="chat-info">
-    AI je určeno na shrnutí a pomoc,
-    <button id="info-toggle">Více info</button>
-  </div>
-  <div class="chat-details" id="chat-details">
-    <p>1. AI nemůže objednávat, ale může pomoci s procesem.</p>
-    <p>2. AI je určeno vám pomoci se vyznat a shrnout informace na stránce, ale může se mýlit – proto doporučujeme si všechny informace dále ověřovat.</p>
-    <p>3. AI nemůže dávat přesné ceny, pouze orientační. Pro přesné ceny nám zavolejte a domluvíme se.</p>
-  </div>
-  <iframe 
-    id="botpress-chat"
-    src="https://cdn.botpress.cloud/webchat/v3.2/shareable.html?configUrl=https://files.bpcontent.cloud/2025/08/27/15/20250827155816-YLTQHGWF.json">
-  </iframe>
-</div>
-
-<script>
-  const chatToggle = document.getElementById('chat-toggle');
-  const chatContainer = document.getElementById('botpress-container');
-  const infoToggle = document.getElementById('info-toggle');
-  const chatDetails = document.getElementById('chat-details');
-  let chatOpen = false;
-  let infoOpen = false;
-
-  chatToggle.addEventListener('click', () => {
-    chatOpen = !chatOpen;
-    chatContainer.style.display = chatOpen ? 'flex' : 'none';
-    chatToggle.innerHTML = chatOpen 
-      ? '<i class="fas fa-times"></i>' 
-      : '<i class="fas fa-comments"></i>';
-  });
-
-  infoToggle.addEventListener('click', () => {
-    infoOpen = !infoOpen;
-    chatDetails.style.display = infoOpen ? 'block' : 'none';
-    infoToggle.innerText = infoOpen ? 'Méně info' : 'Více info';
-  });
-</script>
 
 </body>
 
 </html>
+
+<script>
+const knowledge = {
+  "price": "Our prices depend on the project. Please call us for an exact quote.",
+  "ordering": "To order, send us a message via the Contact page or call us directly.",
+  "contact": "You can reach us at info@mlxmedia.com or +420 123 456 789.",
+  "portfolio": "Check out our portfolio page for past projects and films.",
+  "film": "We create promotional films, event coverage, and creative projects."
+};
+
+function getAnswer(msg) {
+  msg = msg.toLowerCase();
+  for (let key in knowledge) {
+    if (msg.includes(key)) return knowledge[key];
+  }
+  return "I’m not sure about that. Please contact us for details!";
+}
+
+const chatToggle = document.getElementById('chat-toggle');
+const chatContainer = document.getElementById('chat-container');
+const chatLog = document.getElementById('chat-log');
+const chatInput = document.getElementById('chat-input');
+
+chatToggle.onclick = () => {
+  chatContainer.style.display = chatContainer.style.display === 'flex' ? 'none' : 'flex';
+};
+
+chatInput.addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter') return;
+  const msg = e.target.value.trim();
+  if (!msg) return;
+  addMessage("user", msg);
+  const answer = getAnswer(msg);
+  setTimeout(() => addMessage("bot", answer), 400);
+  e.target.value = "";
+});
+
+function addMessage(sender, text) {
+  const div = document.createElement('div');
+  div.className = "msg " + sender;
+  div.textContent = (sender === "user" ? "You: " : "Bot: ") + text;
+  chatLog.appendChild(div);
+  chatLog.scrollTop = chatLog.scrollHeight;
+}
+</script>
+
