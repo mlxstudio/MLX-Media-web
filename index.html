@@ -926,6 +926,27 @@ document.addEventListener("DOMContentLoaded", () => {
     flex-direction: column;
   }
 
+  /* Mobilní fullscreen */
+  @media (max-width: 600px) {
+    #botpress-container {
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 0;
+    }
+    #chat-toggle {
+      width: 50px;
+      height: 50px;
+      font-size: 22px;
+    }
+    #mobile-header {
+      display: flex;
+    }
+  }
+
   /* Info bar */
   .chat-info {
     background: rgba(0,191,166,0.1);
@@ -943,6 +964,24 @@ document.addEventListener("DOMContentLoaded", () => {
     margin-left: 6px;
   }
 
+  /* Mobile header with close button */
+  #mobile-header {
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(120deg, #00BFA6, orange);
+    color: white;
+    padding: 12px;
+    font-size: 1.1em;
+  }
+  #mobile-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 22px;
+    cursor: pointer;
+  }
+
   /* Expandable details */
   .chat-details {
     display: none;
@@ -957,12 +996,20 @@ document.addEventListener("DOMContentLoaded", () => {
     flex: 1;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
   }
   #chat-log {
     flex: 1;
     padding: 10px;
     overflow-y: auto;
     font-size: 14px;
+    max-height: 100%;
+    scrollbar-width: thin;
+  }
+  #chat-log::-webkit-scrollbar { width: 6px; }
+  #chat-log::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.2);
+    border-radius: 6px;
   }
   #chat-input {
     border: none;
@@ -996,64 +1043,13 @@ document.addEventListener("DOMContentLoaded", () => {
     line-height: 1.4;
     font-size: 14px;
   }
-  .msg.user .text {
-    background: #f1f1f1;
-    color: #333;
-  }
-  .msg.bot .text {
-    background: #e8fdf9;
-    color: #00334e;
-  }
+  .msg.user .text { background: #f1f1f1; color: #333; }
+  .msg.bot .text { background: #e8fdf9; color: #00334e; }
 
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
   }
-
-  /* Mobile scaling */
-  @media (max-width: 600px) {
-    #chat-toggle {
-      width: 50px;
-      height: 50px;
-      font-size: 22px;
-    }
-    #botpress-container {
-      width: 95%;
-      height: 80%;
-      right: 2.5%;
-      bottom: 80px;
-    }
-  }
-
-    #botpress-container {
-  overflow: hidden; /* to necháme, aby nelezl ven input apod. */
-  display: flex;
-  flex-direction: column;
-}
-
-#chat-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden; /* klíčové, aby se scrollovalo jen v #chat-log */
-}
-
-#chat-log {
-  flex: 1;
-  padding: 10px;
-  overflow-y: auto;
-  font-size: 14px;
-  max-height: 100%; /* jistota, že nepřeroste */
-  scrollbar-width: thin;        /* Firefox */
-}
-#chat-log::-webkit-scrollbar {
-  width: 6px;                   /* Chrome/Safari */
-}
-#chat-log::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,0.2);
-  border-radius: 6px;
-}
-
 </style>
 
 <!-- Chat toggle button -->
@@ -1063,6 +1059,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <!-- Chat container -->
 <div id="botpress-container">
+  <!-- mobile header -->
+  <div id="mobile-header">
+    <span>MLX Chat Bot</span>
+    <button id="mobile-close"><i class="fas fa-times"></i></button>
+  </div>
+
   <div class="chat-info">
     AI je určeno na shrnutí a pomoc,
     <button id="info-toggle">Více info</button>
@@ -1081,7 +1083,6 @@ document.addEventListener("DOMContentLoaded", () => {
 </div>
 
 <script>
-  // Knowledge base
   const knowledge = {
     "cena": "Naše ceny závisí na projektu. Zavolejte nám pro přesnou nabídku.",
     "objednávka": "Pro objednávku nás kontaktujte přes stránku nebo telefonicky.",
@@ -1100,6 +1101,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const chatToggle = document.getElementById('chat-toggle');
   const chatContainer = document.getElementById('botpress-container');
+  const mobileClose = document.getElementById('mobile-close');
   const infoToggle = document.getElementById('info-toggle');
   const chatDetails = document.getElementById('chat-details');
   const chatLog = document.getElementById('chat-log');
@@ -1108,17 +1110,27 @@ document.addEventListener("DOMContentLoaded", () => {
   let chatOpen = false;
   let infoOpen = false;
 
-  chatToggle.addEventListener('click', () => {
-    chatOpen = !chatOpen;
-    chatContainer.style.display = chatOpen ? 'flex' : 'none';
-    chatToggle.innerHTML = chatOpen
-      ? '<i class="fas fa-times"></i>'
-      : '<i class="fas fa-comments"></i>';
-
-    // uvítací zpráva jen při prvním otevření
-    if (chatOpen && chatLog.children.length === 0) {
+  function openChat() {
+    chatOpen = true;
+    chatContainer.style.display = 'flex';
+    chatToggle.innerHTML = '<i class="fas fa-times"></i>';
+    if (chatLog.children.length === 0) {
       addMessage("bot", "Dobrý den, jsem MLX Chat Bot. Mohu vám pomoci najít informace, objednat služby nebo zobrazit portfolio na této stránce.");
     }
+  }
+
+  function closeChat() {
+    chatOpen = false;
+    chatContainer.style.display = 'none';
+    chatToggle.innerHTML = '<i class="fas fa-comments"></i>';
+  }
+
+  chatToggle.addEventListener('click', () => {
+    chatOpen ? closeChat() : openChat();
+  });
+
+  mobileClose.addEventListener('click', () => {
+    closeChat();
   });
 
   infoToggle.addEventListener('click', () => {
@@ -1155,6 +1167,7 @@ document.addEventListener("DOMContentLoaded", () => {
     chatLog.scrollTop = chatLog.scrollHeight;
   }
 </script>
+
 
 
 
