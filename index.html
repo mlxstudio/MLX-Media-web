@@ -972,9 +972,43 @@ document.addEventListener("DOMContentLoaded", () => {
     width: 100%;
     box-sizing: border-box;
   }
-  .msg { margin: 4px 0; }
-  .user { font-weight: bold; color: #333; }
-  .bot { color: #00BFA6; }
+
+  /* zprávy */
+  .msg {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin: 6px 0;
+    animation: fadeIn 0.4s ease;
+  }
+  .msg .icon {
+    flex-shrink: 0;
+    font-size: 16px;
+    margin-top: 2px;
+  }
+  .msg.user .icon { color: #333; }
+  .msg.bot .icon { color: #00BFA6; }
+
+  .msg .text {
+    max-width: 80%;
+    padding: 8px 12px;
+    border-radius: 12px;
+    line-height: 1.4;
+    font-size: 14px;
+  }
+  .msg.user .text {
+    background: #f1f1f1;
+    color: #333;
+  }
+  .msg.bot .text {
+    background: #e8fdf9;
+    color: #00334e;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 
   /* Mobile scaling */
   @media (max-width: 600px) {
@@ -1017,7 +1051,7 @@ document.addEventListener("DOMContentLoaded", () => {
 </div>
 
 <script>
-  // Your knowledge base
+  // Knowledge base
   const knowledge = {
     "cena": "Naše ceny závisí na projektu. Zavolejte nám pro přesnou nabídku.",
     "objednávka": "Pro objednávku nás kontaktujte přes stránku nebo telefonicky.",
@@ -1050,6 +1084,11 @@ document.addEventListener("DOMContentLoaded", () => {
     chatToggle.innerHTML = chatOpen
       ? '<i class="fas fa-times"></i>'
       : '<i class="fas fa-comments"></i>';
+
+    // uvítací zpráva jen při prvním otevření
+    if (chatOpen && chatLog.children.length === 0) {
+      addMessage("bot", "Dobrý den, jsem MLX Chat Bot. Mohu vám pomoci najít informace, objednat služby nebo zobrazit portfolio na této stránce.");
+    }
   });
 
   infoToggle.addEventListener('click', () => {
@@ -1063,7 +1102,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const msg = e.target.value.trim();
     if (!msg) return;
     addMessage("user", msg);
-    const answer = getAnswer(msg);
+    const answer = getAnswer(msg) + " (Poznámka: MLX AI je zde jen pro shrnutí informací, vše si prosím ověřte.)";
     setTimeout(() => addMessage("bot", answer), 400);
     e.target.value = "";
   });
@@ -1071,11 +1110,22 @@ document.addEventListener("DOMContentLoaded", () => {
   function addMessage(sender, text) {
     const div = document.createElement('div');
     div.className = "msg " + sender;
-    div.textContent = (sender === "user" ? "Vy: " : "Bot: ") + text;
+
+    const icon = document.createElement('span');
+    icon.className = "icon";
+    icon.innerHTML = sender === "user" ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>';
+
+    const span = document.createElement('div');
+    span.className = "text";
+    span.textContent = text;
+
+    div.appendChild(icon);
+    div.appendChild(span);
     chatLog.appendChild(div);
     chatLog.scrollTop = chatLog.scrollHeight;
   }
 </script>
+
 
 
 </body>
