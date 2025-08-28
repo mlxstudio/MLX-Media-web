@@ -883,17 +883,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     </script>
-    
-<!-- Sem se načte chatbot -->
-<div id="chat-overlay"></div>
 
-<script>
-  fetch("chat/chatbot.html")
-    .then(res => res.text())
-    .then(html => {
-      document.getElementById("chat-overlay").innerHTML = html;
-    });
-</script>
 
 
 </body>
