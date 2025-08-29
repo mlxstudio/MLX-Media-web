@@ -1089,7 +1089,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // --- Databáze ---
 const knowledge = {
 
-  // ---- 1. POZDRAV / ÚVOD ----
+    // ---- 1. POZDRAV / ÚVOD ----
   "ahoj, čau, dobrý den, zdravím, nazdar, hezký den, čus, servus, zdar, čauko": [
     "Dobrý den, jsem MLX AI – asistent pro klienty MLX Media. Mohu vám pomoct s informacemi nebo objednávkou?",
     "Ahoj, vítejte u MLX Media! Rád vám shrnu ceny, služby nebo kontakt.",
@@ -1291,35 +1291,48 @@ const knowledge = {
 
   // ---- 8. TECHNIKA ----
 "technika, vybavení, gear, vaše vybavení, čím natáčíte, co používáte, vaše technika, technické vybavení, výbava, gear list": [
-  "🎬 Používám Blackmagic 6K kameru, profi světla a zvuk.<br><small>Ukázky kvality jsou v <button onclick=\"scrollToSection('portfolio')\">portfoliu</button>.</small>"
+  "🎬 Používám profesionální filmovou techniku – kameru **Blackmagic Pocket Cinema Camera 6K**, kvalitní objektivy, zvukovou techniku, světla i speciální efekty.<br><small>Kompletní seznam najdete v sekci <a href='technika.html'>Technika</a>. Pokud chcete mít jistotu, doporučuji napsat nebo zavolat.</small>"
 ],
+
 "kamera, kamery, vaše kamera, jakou kameru, čím točíte, jak točíte, kamera vybavení, kamera info, natáčíte na co, kamera technika": [
-  "📸 Natáčím na Blackmagic 6K – filmový obraz ve vysoké kvalitě."
+  "📸 Hlavní kamera je **Blackmagic 6K** – nabízí filmový obraz ve vysoké kvalitě.<br><small>Více v sekci <a href='technika.html#kamera'>Kamera</a>.</small>"
 ],
-"střih, editace, edit, editování, jak stříháte, čím stříháte, program střih, software střih, střih program, postprodukce": [
-  "✂️ Stříhám v DaVinci Resolve – profesionální střih, barvy i hudba."
-],
-"zvuk, mikrofon, nahrávání, audio, vaše mikrofony, jaký mikrofon, audio záznam, zvuková technika, nahrávací zařízení, čistý zvuk": [
-  "🎤 Používám Zoom rekordér a profi mikrofony.<br><small>Čistý zvuk je pro mě priorita.</small>"
-],
-"světla, osvětlení, nasvícení, vaše světla, čím svítíte, světelná technika, nasvícení scény, osvětlení technika, jak svítíte, světla info": [
-  "💡 Pracuji s Neewer světly a RGB trubicemi.<br><small>Scény nasvěcuji kreativně a profesionálně.</small>"
-],
+
 "objektivy, čočky, vaše objektivy, jaké objektivy, lens, čočka, optika, objektivy kamera, jaká skla, výbava objektivy": [
-  "🔭 Používám kvalitní filmové objektivy s širokým rozsahem."
+  "🔭 Používám více **objektivů s velkým rozsahem** – pro detailní portréty i širokoúhlé záběry.<br><small>Seznam objektivů je v <a href='technika.html#kamera'>kameře</a>.</small>"
 ],
-"příslušenství, gear, doplňky, držáky, stabilizace, příslušenství kamera, gear navíc, filmové vybavení, ostatní technika, extra gear": [
-  "🎒 Mám i stabilizátory, rigy, kouřostroj a odrazky.<br><small>Vhodné pro kreativní záběry.</small>"
+
+"zvuk, mikrofon, nahrávání, audio, vaše mikrofony, jaký mikrofon, audio záznam, zvuková technika, nahrávací zařízení, čistý zvuk": [
+  "🎤 Pro zvuk používám **Zoom F1**, směrové mikrofony (shotgun) a další audio vybavení.<br><small>Podrobnosti v sekci <a href='technika.html#zvuk'>Zvuk</a>.</small>"
 ],
-"napájení, baterie, zdroj, energie, napájení kamery, napájení techniky, velké baterie, malé baterie, energie, napájecí systém": [
-  "🔋 Používám velké i malé baterie – natáčení zvládne i delší akce."
+
+"světla, osvětlení, nasvícení, vaše světla, čím svítíte, světelná technika, nasvícení scény, osvětlení technika, jak svítíte, světla info": [
+  "💡 K dispozici mám **Neewer 80C s Bowens mountem, RGB tube light, panelová světla s nastavitelnou teplotou, 90 cm softbox, kužel na světla a stojany**.<br><small>Více najdete v sekci <a href='technika.html#osvetleni'>Osvětlení</a>.</small>"
 ],
+
 "softbox, světelný box, rozptyl světla, měkké světlo, světlo na portrét, softbox info, světelný difuzor, světlo rozptýlené, box světlo, světelný doplněk": [
-  "📦 Softbox 90 cm pro přirozené měkké světlo – ideální na portréty i produkty."
+  "📦 Používám **90 cm softbox** pro měkké, přirozené světlo – ideální na portréty i produktové focení."
 ],
+
+"napájení, baterie, zdroj, energie, napájení kamery, napájení techniky, velké baterie, malé baterie, energie, napájecí systém": [
+  "🔋 Mám **velkou powerbanku pro světla i techniku** a dostatek **NPF baterií** pro delší natáčení.<br><small>Více v sekci <a href='technika.html#ostatni'>Ostatní</a>.</small>"
+],
+
+"příslušenství, gear, doplňky, držáky, stabilizace, příslušenství kamera, gear navíc, filmové vybavení, ostatní technika, extra gear": [
+  "🎒 Kromě hlavní techniky používám **rigy, stabilizátory, držáky, odrazky a kouřostroj**.<br><small>Seznam je v sekci <a href='technika.html#ostatni'>Ostatní</a>.</small>"
+],
+
+"dron, dron natáčení, vaše dron, máte dron, dron vybavení, natáčení dronem": [
+  "🚁 K dispozici mám i **dron DJI Phantom** (FullHD, neumí 4K).<br><small>Pokud potřebujete dron ve 4K, je lepší se domluvit individuálně.</small>"
+],
+
+"střih, editace, edit, editování, jak stříháte, čím stříháte, program střih, software střih, střih program, postprodukce": [
+  "✂️ Stříhám v **DaVinci Resolve** – profesionální střih, barvy i hudba."
+],
+
 "programy, software, editing software, co používáte, v čem stříháte, software technika, jaký software, editing program, program střih, technika program": [
-  "💻 Stříhám v DaVinci Resolve – profi color grading a postprodukce."
-],
+  "💻 Používám **DaVinci Resolve** – profi color grading a postprodukce."
+], 
 
 
 // ---- 9. PORTFOLIO A UKÁZKY ----
@@ -1388,113 +1401,115 @@ const knowledge = {
 ],
 
 
-  // ---- 11. PROBLÉMY / NEDOSTUPNOST ----
-  "nezvedá, neberete, proč nezvedáte, nezvedáte, nevoláte, nezvedli, neodpovídáte, proč nevoláte, neozýváte, neozvete": [
-    "Někdy jsem na natáčení a nemůžu hned zvednout.",
-    "Pokud nezvedám, zkuste napsat email.",
-    "Ozvu se hned, jak to půjde."
-  ],
-  "čekání, dlouho čekám, neozýváte se, čekám na vás, čekám dlouho, proč čekám, čekám odpověď, čekám reakci, dlouhé čekání, žádná reakce": [
-    "Odpovídám obvykle do 24 hodin.",
-    "Když se neozvu, může to být kvůli natáčení.",
-    "Ozvu se co nejdřív, děkuji za trpělivost."
-  ],
-  "offline, nejste dostupný, nejste tu, proč offline, offline režim, nefungujete, nejede to, nejde to, nejste online, vypnuto": [
-    "Pokud jsem offline, zkuste email.",
-    "Někdy systém neběží, ale email vždy funguje.",
-    "Offline jsem, když natáčím."
-  ],
-  "problém, chyba, nefunguje, něco nefunguje, chyba systém, problém stránky, problém web, chyba chatbot, problém objednávka, problém kontakt": [
-    "Pokud něco nefunguje, dejte mi vědět emailem.",
-    "Může jít o dočasnou chybu.",
-    "Problémy řeším co nejdřív."
-  ],
-  "nevíte, nerozumíte, nejste jistý, nechápete, nechápu, nevím, zmatený, nechápu otázku, nejistý, nerozumím": [
-    "Můžete to prosím zopakovat jinak?",
-    "Tomu nerozumím, zkuste to formulovat jinak.",
-    "Nejsem si jistý, zkuste email."
-  ],
-  "nepřišel email, žádný email, chybí email, email nepřišel, potvrzení nepřišlo, nepřišlo nic, mail nepřišel, žádný mail, mail chybí, mail potvrzení": [
-    "Podívejte se i do spamu.",
-    "Potvrzovací email někdy dorazí později.",
-    "Pokud nic nepřišlo, ozvěte se mi přímo."
-  ],
-  "nefunguje formulář, chyba formulář, formulář nejde, formulář problém, formulář chybí, formulář nefunguje, formulář chyba, nejde vyplnit, formulář neodesílá, formulář neodešle": [
-    "Pokud formulář nefunguje, napište mi email.",
-    "Můžete objednat i přímo přes email.",
-    "Formulář je jen jedna z možností."
-  ],
-  "proč tak dlouho, dlouhá doba, kdy to bude, kdy přijde, kdy hotovo, kdy dodáte, kdy dokončíte, kdy pošlete, jak dlouho to trvá, dlouho to trvá": [
-    "Doba dodání záleží na projektu.",
-    "Malé projekty trvají pár dní, velké i týdny.",
-    "Odhad doby vám pošlu po objednávce."
-  ],
-  "proč to nebere, proč to nefunguje, nejde to, proč to nejde, systém nejde, služba nejde, proč služba nejde, nebere to, server nejde, stránka nejde": [
-    "Pokud něco nefunguje, dejte vědět emailem.",
-    "Občas má systém výpadek.",
-    "Email je vždy spolehlivý způsob."
-  ],
-  "pomalý, pomalu, proč pomalu, pomalu odpovídáte, pomalu reagujete, pomalu dodáváte, proč pomalé, pomalá reakce, pomalé dodání, pomalý systém": [
-    "Snažím se odpovídat rychle.",
-    "Pomalost je někdy kvůli vytížení.",
-    "Děkuji za trpělivost, ozvu se co nejdřív."
-  ],
+ // ---- 11. PROBLÉMY / NEDOSTUPNOST ----
+"nezvedá, neberete, proč nezvedáte, nezvedáte, nevoláte, nezvedli, neodpovídáte, proč nevoláte, neozýváte, neozvete": [
+  "📵 Někdy jsem na natáčení a nemůžu hned zvednout.<br>👉 Zkuste mi napsat na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a>."
+],
+"čekání, dlouho čekám, neozýváte se, čekám na vás, čekám dlouho, proč čekám, čekám odpověď, čekám reakci, dlouhé čekání, žádná reakce": [
+  "⏳ Odpovídám obvykle do 24 hodin.<br><small>Pokud to trvá déle, jsem nejspíš na natáčení.</small>"
+],
+"offline, nejste dostupný, nejste tu, proč offline, offline režim, nefungujete, nejede to, nejde to, nejste online, vypnuto": [
+  "🌙 Když jsem offline, napište mi email.<br><small>Email vždy funguje i mimo systém.</small>"
+],
+"problém, chyba, nefunguje, něco nefunguje, chyba systém, problém stránky, problém web, chyba chatbot, problém objednávka, problém kontakt": [
+  "⚠️ Pokud něco nefunguje, dejte mi vědět na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a>."
+],
+"nevíte, nerozumíte, nejste jistý, nechápete, nechápu, nevím, zmatený, nechápu otázku, nejistý, nerozumím": [
+  "❓ Tomu nerozumím, zkuste to napsat jinak.<br>👉 Nebo mi napište přímo email."
+],
+"nepřišel email, žádný email, chybí email, email nepřišel, potvrzení nepřišlo, nepřišlo nic, mail nepřišel, žádný mail, mail chybí, mail potvrzení": [
+  "📩 Podívejte se i do složky Spam.<br><small>Pokud potvrzení nedorazí, napište mi rovnou email.</small>"
+],
+"nefunguje formulář, chyba formulář, formulář nejde, formulář problém, formulář chybí, formulář nefunguje, formulář chyba, nejde vyplnit, formulář neodesílá, formulář neodešle": [
+  "📝 Pokud formulář nefunguje, klidně napište rovnou na email.<br><small>Formulář je jen jedna z možností.</small>"
+],
+"proč tak dlouho, dlouhá doba, kdy to bude, kdy přijde, kdy hotovo, kdy dodáte, kdy dokončíte, kdy pošlete, jak dlouho to trvá, dlouho to trvá": [
+  "📦 Doba dodání záleží na projektu.<br><small>Menší zakázky pár dní, větší týdny.</small>"
+],
+"proč to nebere, proč to nefunguje, nejde to, proč to nejde, systém nejde, služba nejde, proč služba nejde, nebere to, server nejde, stránka nejde": [
+  "🔧 Pokud něco nejde, napište mi prosím email.<br><small>Občas má systém výpadek.</small>"
+],
+"pomalý, pomalu, proč pomalu, pomalu odpovídáte, pomalu reagujete, pomalu dodáváte, proč pomalé, pomalá reakce, pomalé dodání, pomalý systém": [
+  "🐢 Odpovídám jak nejrychleji to jde.<br><small>Pomalost může být kvůli natáčení.</small>"
+],
 
-  // ---- 12. FALLBACK ----
-  "nevím, nechápu, nerozumím, zmatený, nejasné, neznám, cože, jak, co, pomoc": [
-    "Tady si nejsem jistý. Kontaktujte mě prosím přímo na mlx.studio2222@gmail.com.",
-    "Tomu nerozumím, ale rád vám poradím přes email.",
-    "Můžete to prosím upřesnit?"
-  ],
-  "otázka, dotaz, mám dotaz, potřebuji poradit, potřebuji info, otázka prosím, otázka k vám, potřebuji něco, chci vědět, dotaz info": [
-    "Dotaz můžete položit tady nebo přes email.",
-    "Rád odpovím na váš dotaz.",
-    "Pokud je dotaz složitější, řešíme ho emailem."
-  ],
-  "hledám, nemůžu najít, kde to je, kde najdu, hledám info, kde je to, nevím kde, nemůžu najít info, hledám stránku, kde najít": [
-    "Rád vás nasměruju k informacím na webu.",
-    "Portfolio najdete v horním menu.",
-    "Ceník a služby jsou v sekci Ceník."
-  ],
-  "kontakt osobně, osobní setkání, setkat se, domluvit osobně, potkat, osobní schůzka, osobně, osobní domluva, schůzka, osobní kontakt": [
-    "Osobní setkání lze domluvit po emailu.",
-    "Schůzky si plánuji podle kalendáře.",
-    "Rád se domluvím osobně, pokud je to potřeba."
-  ],
-  "nefunguje, chyba, něco se pokazilo, bug, problém, systém nejde, nefunguje služba, nejde stránka, nejde systém, problém služba": [
-    "Může to být technická chyba.",
-    "Pokud něco nejde, dejte mi vědět emailem.",
-    "Systém se někdy obnoví po chvíli."
-  ],
-  "jak začít, kde začít, chci začít, potřebuji začít, první krok, začínám, jak začnu, od čeho začít, začít spolupráci, začít projekt": [
-    "Začít můžete objednávkou přes formulář.",
-    "Stačí napsat základní informace.",
-    "Pak spolu doladíme detaily."
-  ],
-  "co nabízíte, co děláte, co umíte, vaše služby, služby info, služby vaše, jaké služby, nabídka služeb, vaše nabídka, nabídka info": [
-    "Nabízím natáčení, střih a kompletní video produkci.",
-    "Moje služby jsou na stránce Ceník.",
-    "Rád vysvětlím, co všechno dělám."
-  ],
-  "co je mlx media, mlx media, kdo jste, co to je, mlx info, mlx media info, vaše značka, vaše studio, mlx co, mlx media kdo": [
-    "MLX Media je moje značka – kameraman a střihač.",
-    "Za MLX Media stojí Matouš Lexa.",
-    "Specializuji se na video produkci."
-  ],
-  "pomoc, potřebuji pomoc, help, pomoc prosím, potřebuju pomoc, potřebuju radu, pomoc rada, help me, potřebuji radu, potřebuji podporu": [
-    "Rád vám pomůžu – zkuste popsat problém.",
-    "Pomoc poskytnu emailem i tady.",
-    "Napište mi více, a najdeme řešení."
-  ],
-  "děkuji, díky, díky moc, děkuji vám, dík, děkujeme, děkuji mockrát, dík moc, moc díky, velké díky": [
-    "Já děkuji, jsem rád, že jsem mohl pomoci.",
-    "Rádo se stalo!",
-    "Děkuji za milá slova."
-  ]
+// ---- 12. FALLBACK ----
+"nevím, nechápu, nerozumím, zmatený, nejasné, neznám, cože, jak, co, pomoc": [
+  "🤔 Tomu nerozumím, zkuste to napsat jinak.<br>👉 Nebo napište na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a>."
+],
+"otázka, dotaz, mám dotaz, potřebuji poradit, potřebuji info, otázka prosím, otázka k vám, potřebuji něco, chci vědět, dotaz info": [
+  "❓ Dotaz můžete napsat sem nebo emailem.<br><small>Složitější věci řeším přes email.</small>"
+],
+"hledám, nemůžu najít, kde to je, kde najdu, hledám info, kde je to, nevím kde, nemůžu najít info, hledám stránku, kde najít": [
+  "🔎 Mrkněte do horního menu.<br>👉 <button onclick=\"scrollToSection('portfolio')\">Portfolio</button> | <button onclick=\"scrollToSection('cenik')\">Ceník</button>"
+],
+"kontakt osobně, osobní setkání, setkat se, domluvit osobně, potkat, osobní schůzka, osobně, osobní domluva, schůzka, osobní kontakt": [
+  "🤝 Osobní setkání lze domluvit po emailu.<br><small>Schůzky si plánuji podle kalendáře.</small>"
+],
+"nefunguje, chyba, něco se pokazilo, bug, problém, systém nejde, nefunguje služba, nejde stránka, nejde systém, problém služba": [
+  "⚠️ Může to být technická chyba.<br>👉 Pokud něco nejde, napište email."
+],
+"jak začít, kde začít, chci začít, potřebuji začít, první krok, začínám, jak začnu, od čeho začít, začít spolupráci, začít projekt": [
+  "🚀 Začít můžete objednávkou přes <button onclick=\"scrollToSection('objednavka')\">formulář</button>.<br><small>Stačí pár základních informací a domluvíme detaily.</small>"
+],
+"co nabízíte, co děláte, co umíte, vaše služby, služby info, služby vaše, jaké služby, nabídka služeb, vaše nabídka, nabídka info": [
+  "🎬 Nabízím natáčení, střih a kompletní video produkci.<br>👉 Mrkněte na <button onclick=\"scrollToSection('cenik')\">Ceník</button>."
+],
+"co je mlx media, mlx media, kdo jste, co to je, mlx info, mlx media info, vaše značka, vaše studio, mlx co, mlx media kdo": [
+  "🎥 MLX Media je moje značka – kameraman a střihač Matouš Lexa.<br><small>Specializuji se na video produkci.</small>"
+],
+"pomoc, potřebuji pomoc, help, pomoc prosím, potřebuju pomoc, potřebuju radu, pomoc rada, help me, potřebuji radu, potřebuji podporu": [
+  "🆘 Rád vám pomůžu – napište mi víc o problému.<br>👉 Email: <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a>"
+],
+"děkuji, díky, díky moc, děkuji vám, dík, děkujeme, děkuji mockrát, dík moc, moc díky, velké díky": [
+  "🙏 Já děkuji, jsem rád, že jsem mohl pomoci.<br><small>Rádo se stalo!</small>"
+],
+
+// ---- 13. DODÁNÍ / FORMÁTY ----
+"dodání, jak dostanu video, formát videa, jak pošlete, posíláte video, video dodání, export, hotové video, v jaké kvalitě, v čem video": [
+  "📦 Hotové video posílám přes online odkaz (Drive / YouTube neveřejně).",
+  "🎬 Standardně dodávám ve FullHD nebo 4K.",
+  "📂 Formáty MP4 (H.264) – další formáty na přání. jsem v celku flexibilní ohledně formátů."
+],
+"více verzí, kolik verzí, různé formáty, více formátů, export více, export varianty, různé varianty": [
+  "📑 Dodávám více verzí (např. horizontální i vertikální).",
+  "🎯 Vždy přizpůsobím formáty podle použití (sítě, web, prezentace)."
+],
+"archivace, uchování, jak dlouho uchováváte, archiv, zůstane video, dostupnost souborů": [
+  "💾 Soubory uchovávám minimálně 1 měsíc.",
+  "🔄 Doporučuji si je stáhnout a zálohovat pro jistotu."
+],
+
+// ---- 14. PLATEBNÍ PODMÍNKY ----
+"platba, jak se platí, způsob platby, platební metody, faktura, účet, hotově, převodem": [
+  "💳 Platba probíhá převodem na účet (faktura).",
+  "🧾 Vystavuji fakturu pro firmy i jednotlivce.",
+  "💵 Hotovost je možná jen výjimečně po domluvě."
+],
+"záloha, předem, platba předem, rezervační platba, platba před, rezervační záloha": [
+  "🔒 U větších zakázek beru zálohu (obvykle 30–50%).",
+  "💡 Záloha slouží k rezervaci termínu."
+],
+"splatnost, kdy platit, kdy zaplatit, do kdy zaplatit, splatnost faktury, termín platby": [
+  "📅 Standardní splatnost faktur je 14 dní.",
+  "⚡ U expresních zakázek je platba ihned po dodání."
+],
+
+// ---- 15. REVIZE / ÚPRAVY ----
+"revize, změny, úpravy, opravy, opravíte, můžu změnit, dodatečné změny, další úpravy, editace navíc, změna videa": [
+  "✏️ V ceně je 1 základní revize zdarma.",
+  "🔄 Další úpravy jsou možné po domluvě.",
+  "💡 Chci, abyste byli spokojení – proto vítám připomínky."
+],
+"kolik revizí, počet revizí, kolik oprav, kolik změn, revize zdarma, opravy zdarma": [
+  "✅ Standardně nabízím 1 revizi zdarma.",
+  "📌 Více revizí je možné dle rozsahu zakázky."
+],
+"dodatečné náklady, příplatek za změny, cena úprav, kolik za úpravy, úpravy cena": [
+  "💰 Dodatečné úpravy nad rámec jsou účtovány podle času.",
+  "🕒 Cena závisí na rozsahu změn."
+],
 };
-
-
-
 
 // --- Normalizace: odstraní diakritiku + lowercase ---
 function normalizeInput(str) {
@@ -1585,6 +1600,34 @@ const synonymMap = {
   fallback: [
     "nevím","nechápu","nerozeznám","cože","jak to","pomoc","help","zmatený",
     "nejasné","co","jak","dotaz","mám otázku","otázka"
+  ],
+
+    dodani: [
+    "dodání","dodani","dostat video","jak dostanu","jak obdržím","obdrzet",
+    "obdržím video","pošlete video","poslete video","jak pošlete","pošlete odkaz",
+    "formát","format","v jakém formátu","formát videa","kvalita videa","rozlišení",
+    "export","exportovat","jaký export","fullhd","4k","mp4","soubor","soubory",
+    "archiv","uložení","ulozit","jak dlouho uchováváte","jak dlouho bude dostupné",
+    "drive","google drive","odkaz","link","stažení","download","stáhnout"
+  ],
+
+  platba: [
+    "platba","platit","zaplatit","platím","zaplatím","úhrada","uhrada","jak se platí",
+    "způsob platby","jak zaplatit","platba převodem","bankovní převod","na účet",
+    "číslo účtu","iban","faktura","účtenka","paragon","doklad","hotově","hotovost",
+    "platební metoda","splatnost","termín platby","kdy platit","kdy zaplatit",
+    "záloha","platba předem","předem","rezervační platba","rezervacni zaloha",
+    "doplatek","doplatit","doplatek faktura"
+  ],
+
+  revize: [
+    "revize","revizi","opravit","opravy","opravíte","udělat změny","změny",
+    "změnit video","můžu změnit","upravit","úprava","úpravy","dodatečné úpravy",
+    "úpravy navíc","další úpravy","další verze","oprava","revizní verze",
+    "kolik revizí","počet revizí","kolik změn","kolik oprav","revize zdarma",
+    "opravy zdarma","více verzí","víc verzí","jiná verze","jiný střih","verze navíc",
+    "dodatečné náklady","příplatek","příplatek za změny","cena úprav",
+    "kolik stojí úpravy","úpravy cena"
   ]
 };
 
