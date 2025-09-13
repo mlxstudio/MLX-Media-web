@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="cs">
+    <link rel="stylesheet" href="ChatBotC.css">
+<!-- Font Awesome Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="photo-belt.JS"></script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MLX Media</title>
+    <style>
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9f9;
+            color: #00334e;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header with gradient background */
+        header {
+            background: linear-gradient(120deg, #00BFA6, orange);
+            height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            color: white;
+        }
+
+        /* Sticky navigation bar */
+        nav {
+            display: flex;
+            gap: 15px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            justify-content: center;
+            padding: 12px 20px;
+            background: linear-gradient(120deg, rgba(0,191,166,0.9), rgba(255,165,0,0.9));
+            backdrop-filter: blur(5px);
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            transition: box-shadow 0.3s ease;
+        }
+
+        nav.scrolled {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        nav a {
+            padding: 8px 14px;
+            color: white;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1em;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        nav a:hover {
+            background: white;
+            color: #00BFA6;
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+
+        header h1 {
+            font-size: 5.2em;
+            margin: 0;
+            z-index: 1;
+            animation: slideDown 1s ease forwards;
+            color: rgba(0,191,166,0.9);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.6); /* soft black shadow */
+        }
+
+
+        header h1 span {
+            color: orange;
+            -webkit-text-stroke: 0px rgba(255, 255, 255, 0.43); /* same stroke for consistency */
+        }
+
+
+
+        main {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+            animation: fadeUp 1s ease-in-out;
+        }
+        main h2 {
+            font-size: 2.2em;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .highlight-text {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #006699;
+            margin-bottom: 30px;
+        }
+        .offers {
+            background: #ffffff;
+            padding: 25px 30px;
+            border-radius: 14px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+            margin-bottom: 40px;
+            animation: fadeUp 1.2s ease-in-out;
+        }
+
+        .offers h3 {
+            font-size: 1.9em;
+            margin-bottom: 18px;
+            color: #00BFA6;
+            text-align: center;
+        }
+
+        .offers ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .offers li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #f9f9f9;
+            padding: 14px 18px;
+            border-radius: 10px;
+            margin-bottom: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            transition: transform 300ms cubic-bezier(.2,.9,.2,1),
+                        box-shadow 300ms cubic-bezier(.2,.9,.2,1);
+        }
+
+        .offers li:hover {
+            transform: translateX(6px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+
+        .offers .icon {
+            font-size: 1.4em;
+            color: #00BFA6;
+            transition: transform 300ms ease, color 300ms ease;
+        }
+
+        .offers li:hover .icon {
+            transform: rotate(8deg) scale(1.15);
+            color: orange;
+        }
+
+        .offer-note {
+            margin-top: 18px;
+            font-size: 1.05em;
+            text-align: center;
+            color: #00334e;
+        }
+
+        .offer-contact {
+            margin-top: 6px;
+            text-align: center;
+            font-size: 1.05em;
+        }
+
+        .offer-contact a {
+            color: #00BFA6;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .offer-contact a:hover {
+            color: orange;
+        }
+
+        a {
+            color: #0073e6;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            font-size: 1em;
+            color: #666;
+            background: #f1f1f1;
+            margin-top: 50px;
+            border-top: 2px solid #e0e0e0;
+        }
+        footer p {
+            margin: 8px 0;
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+        @keyframes slideDown {
+            from {transform: translateY(-30px); opacity: 0;}
+            to {transform: translateY(0); opacity: 1;}
+        }
+        @keyframes fadeUp {
+            from {transform: translateY(20px); opacity: 0;}
+            to {transform: translateY(0); opacity: 1;}
+        }
+        footer {
+    text-align: center;
+    padding: 40px 20px 30px 20px;
+    font-size: 1.08em;
+    color: #00334e;
+    background: #f1f1f1;
+    margin-top: 60px;
+    border-top: 2px solid #e0e0e0;
+    box-shadow: 0 -2px 12px rgba(0,191,166,0.07);
+}
+
+.footer-content {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Email link styles */
+.footer-link {
+    display: inline-block;
+    margin: 12px 0 22px 0;
+    color: #00BFA6;
+    font-weight: 600;
+    font-size: 1.08em;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.footer-link i {
+    margin-right: 7px;
+    color: orange;
+    transition: color 0.3s, transform 0.3s;
+}
+
+/* Swap icon/text colors on hover */
+.footer-link:hover {
+    color: orange;
+}
+
+.footer-link:hover i {
+    color: #00BFA6;
+}
+
+/* Button container */
+.footer-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+/* Shared button styles (equal size fix) */
+.order-btn,
+.youtube-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 28px;
+    font-size: 1.08em;
+    font-weight: 600;
+    border: none;
+    border-radius: 30px;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(0,191,166,0.13), 0 1.5px 8px rgba(0,0,0,0.08);
+    transition: background 0.3s, transform 0.2s;
+    text-align: center;
+}
+
+        /* Order button style */
+        .order-btn {
+            background: linear-gradient(120deg, #00BFA6, orange);
+            color: white;
+        }
+
+        .order-btn:hover {
+            background: linear-gradient(120deg, orange, #00BFA6);
+            color: #fff;
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 6px 18px rgba(0,191,166,0.18);
+        }
+
+        /* YouTube button style */
+        .youtube-btn {
+            background: linear-gradient(120deg, #ff0000, #ff9900);
+            color: white;
+        }
+
+        .youtube-btn:hover {
+            background: linear-gradient(120deg, #ff9900, #ff0000);
+            color: #fff;
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 6px 18px rgba(255,0,0,0.18);
+
+        }
+        .youtube-btn i {
+            margin-right: 7px;
+        }
+
+        /* Keep same margin for both icons */
+        .order-btn i {
+            margin-right: 7px;
+        }
+
+        /* Icon spin animation */
+        .footer-link:hover i,
+        .order-btn:hover i,
+        .youtube-btn:hover i {
+            animation: icon-spin 0.6s ease;
+        }
+
+        @keyframes icon-spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        .youtube-btn,
+        .youtube-btn:hover,
+        .youtube-btn span {
+            text-decoration: none !important;
+        }
+
+        .footer-link,
+        .footer-link:hover,
+        .order-btn,
+        .order-btn:hover {
+            text-decoration: none !important;
+        }
+
+/* 2. Small subtle category underline */
+    .separator-small {
+        width: 500px; /* shorter line */
+        height: 8px; /* thinner */
+        margin: -10px auto 0 auto; /* space under category name */
+        background: rgba(0, 0, 0, 0); /* teal, translucent */
+        border-radius: 50px; /* curved edges */
+    }
+
+    .about-me {
+    background: #ffffff;
+    padding: 26px 30px;
+    border-radius: 14px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+    margin-bottom: 40px;
+    transition: transform 300ms cubic-bezier(.2,.9,.2,1), 
+                box-shadow 300ms cubic-bezier(.2,.9,.2,1),
+                filter 300ms ease;
+    will-change: transform, box-shadow;
+    transform: translateY(0) scale(1);
+    animation: fadeUp 1.2s ease-in-out;
+    outline: none; /* vizuální fokus řešíme jinak níže */
+}
+
+        /* hover + keyboard focus */
+        .about-me:hover,
+        .about-me:focus-within,
+        .about-me:focus {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+            filter: saturate(1.02);
+        }
+
+        /* jemný efekt pro nadpis */
+        .about-me h2 {
+            font-size: 2em;
+            margin-bottom: 14px;
+            color: #00BFA6;
+            text-align: center;
+            transition: color 260ms ease, transform 260ms ease;
+        }
+
+        /* změna barvy nadpisu při hover */
+        .about-me:hover h2,
+        .about-me:focus-within h2 {
+            color: orange;
+            transform: translateY(-3px);
+        }
+
+        /* text */
+        .about-me p {
+            font-size: 1.08em;
+            color: #00334e;
+            text-align: justify;
+            line-height: 1.7;
+        }
+
+        /* přístupnost: viditelný fokus pro klávesnici */
+        .about-me:focus {
+            box-shadow: 0 0 0 4px rgba(0,191,166,0.12), 0 8px 20px rgba(0,0,0,0.08);
+            border-radius: 14px;
+        }
+
+        /* mobil: zmenšíme efekt aby bylo vše stabilní na malých obrazovkách */
+        @media (max-width: 600px) {
+            .about-me {
+                padding: 20px;
+                transform: none;
+            }
+            .about-me:hover,
+            .about-me:focus-within {
+                transform: none;
+                box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+            }
+            .about-me h2 { font-size: 1.6em; }
+        }
+
+        .why-me {
+            background: #ffffff;
+            padding: 25px 30px;
+            border-radius: 14px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+            margin-bottom: 40px;
+            animation: fadeUp 1.2s ease-in-out;
+        }
+
+
+
+.why-me .icon {
+    font-size: 1.6em;
+    flex-shrink: 0;
+    color: #00BFA6; /* základní barva */
+    transition: transform 300ms ease, color 300ms ease;
+}
+
+.why-me li:hover .icon {
+    transform: rotate(10deg) scale(1.15);
+    color: orange; /* při hoveru oranžová */
+}
+
+
+        .why-me h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #00BFA6;
+            text-align: center;
+        }
+
+        .why-me ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .why-me li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            background: #f9f9f9;
+            padding: 14px 18px;
+            border-radius: 10px;
+            margin-bottom: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            transition: transform 300ms cubic-bezier(.2,.9,.2,1),
+                        box-shadow 300ms cubic-bezier(.2,.9,.2,1);
+            will-change: transform, box-shadow;
+        }
+
+        .why-me li:hover {
+            transform: translateX(6px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+
+        .why-me .icon {
+            font-size: 1.6em;
+            flex-shrink: 0;
+            transition: transform 300ms ease;
+        }
+
+        .why-me li:hover .icon {
+            transform: rotate(10deg) scale(1.15);
+        }
+
+        /* Text styling */
+        .why-me strong {
+            color: #00334e;
+        }
+
+        /* Responsivita pro mobily */
+        @media (max-width: 600px) {
+            .why-me {
+                padding: 20px;
+            }
+            .why-me h2 {
+                font-size: 1.6em;
+            }
+            .why-me li {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+            .intro-section {
+        background: linear-gradient(135deg, #ffffff, #f8f8f8);
+        padding: 35px 30px;
+        border-radius: 14px;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.05);
+        margin-bottom: 40px;
+        animation: fadeIn 1.2s ease-out;
+    }
+
+    .intro-section h2 {
+        font-size: 1.8em;
+        margin-bottom: 14px;
+        line-height: 1.4;
+        color: #00334e;
+        border-left: 5px solid #00BFA6;
+        padding-left: 12px;
+    }
+
+    .intro-section h2 i {
+        color: #00BFA6;
+        margin-right: 8px;
+    }
+
+    .highlight-text {
+        font-size: 1.1em;
+        color: #000000;
+        background: rgba(0, 191, 166, 0.08);
+        padding: 12px 16px;
+        border-radius: 8px;
+        display: inline-block;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        transition: transform 0.3s ease, background 0.3s ease;
+    }
+
+
+
+
+    /* Animace */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .highlight-button {
+        font-size: 1.1em;
+        color: #555;
+        background: rgba(0, 191, 166, 0.08);
+        padding: 12px 16px;
+        border-radius: 8px;
+        display: inline-block;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        transition: transform 0.3s ease, background 0.3s ease;
+        text-decoration: none; /* remove underline */
+    }
+
+    .highlight-button i {
+        color: #00BFA6;
+        margin-right: 8px;
+    }
+
+    .highlight-button:hover {
+        transform: translateY(-3px);
+        background: rgba(0, 191, 166, 0.12);
+    }
+
+.container {
+  padding: 2rem;
+}
+
+.slider-wrapper {
+  position: relative;
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+.slider {
+  display: flex;
+  aspect-ratio: 21 / 9;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  box-shadow: 0 1.5rem 3rem -0.75rem hsla(0, 0%, 0%, 0.25);
+  border-radius: 0.5rem;
+  scrollbar-width: none;
+}
+.slider::-webkit-scrollbar {
+  display: none;
+}
+
+.slider img {
+  flex: 1 0 100%;
+  scroll-snap-align: start;
+  object-fit: cover;
+}
+
+.slider-nav {
+  display: flex;
+  column-gap: 1rem;
+  position: absolute;
+  bottom: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+
+.slider-nav a {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.6);
+  opacity: 0.5;
+  transition: background-color 0.3s ease, opacity 0.3s ease;
+}
+
+.slider-nav a.active {
+  opacity: 0.8;
+  background-color: rgba(255, 152, 0, 0.6); /* subtle orange */
+  transform: none; /* same size as other dots */
+  box-shadow: none;
+}
+
+
+.slider-nav a:hover {
+  opacity: 0.8;
+}
+
+.scroll-animate {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.scroll-animate.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Fix horizontal overflow */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Header text - just a little smaller on smaller screens */
+@media (max-width: 768px) {
+  header h1 {
+    font-size: 4em; /* instead of 5.2em */
+  }
+}
+@media (max-width: 480px) {
+  header h1 {
+    font-size: 3.5em; /* slightly smaller, but still big */
+  }
+}
+
+/* Optimize navigation for small screens without changing design */
+@media (max-width: 768px) {
+  nav a {
+    font-size: 0.9em; /* shrink font slightly */
+    padding: 6px 10px; /* reduce padding so links fit */
+  }
+}
+@media (max-width: 480px) {
+  nav a {
+    font-size: 0.85em;
+    padding: 5px 8px;
+  }
+}
+
+/* Scale slider properly on phones */
+@media (max-width: 768px) {
+  .slider-wrapper {
+    max-width: 100%;
+  }
+  .slider {
+    aspect-ratio: 16 / 9; /* better for mobile */
+  }
+}
+
+/* Make nav fully responsive */
+nav {
+  display: flex;
+  flex-wrap: wrap;       /* allow links to wrap instead of overflowing */
+  justify-content: center; /* center links on small screens */
+  padding: 0 10px;       /* reduce horizontal padding */
+  box-sizing: border-box; /* include padding in width */
+}
+
+/* Shrink links on smaller screens */
+@media (max-width: 768px) {
+  nav a {
+    font-size: 0.9em;
+    padding: 6px 8px; /* slightly smaller to fit */
+  }
+}
+
+@media (max-width: 480px) {
+  nav a {
+    font-size: 0.85em;
+    padding: 5px 6px;
+  }
+}
+
+
+header {
+    padding-top: 60px; /* or however tall your nav is */
+}
+
+    </style>
+</head>
+<body>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("visible");
+      } else {
+        entry.target.classList.remove("visible"); // reset when out of view
+      }
+    });
+  }, { threshold: 0.2 }); // 20% visible triggers
+
+  document.querySelectorAll(".scroll-animate").forEach(el => {
+    observer.observe(el);
+  });
+});
+</script>
+
+
+    <!-- Navigation -->
+    <nav id="mainNav">
+        <a href="index.html">Domovská stránka</a>
+        <a href="portfolio.html">Portfolio</a>
+        <a href="technika.html">Technika</a>
+        <a href="praicing.html">Ceník</a>
+        <a href="order.html">Objednávka</a>
+    </nav>
+
+    <!-- Header -->
+    <header>
+        <h1>MLX <span>Media</span></h1>
+        <div class="separator-small"></div>
+    </header>
+
+    <!-- Main content -->
+    <main>
+<main>
+    <section class="intro-section scroll-animate">
+        <h2>
+            <i class="fas fa-film"></i> Jsem začínající kameraman a střihač, 
+            který i přes mladý věk pracuje se seriózní technikou
+        </h2>
+        
+        <a href="order.html" class="highlight-button">
+            <i class="fas fa-user-plus"></i> Hledám nové klienty
+        </a>
+    </section>
+</main>
+
+
+
+
+
+        <section class="about-me scroll-animate">
+    <h2>Něco o mně</h2>
+    <p>
+            Jmenuji se Matouš Lexa a stojím za značkou <strong>MLX Media</strong>.
+            Věřím, že každý příběh si zaslouží být vyprávěn – a já ho pomáhám
+            zachytit prostřednictvím filmu. Specializuji se na tvorbu reklam,
+            firemních videí a projektů, které dokáží spojit technickou kvalitu
+            s vizuální originalitou. Dbám na precizní obraz, čistý zvuk a atmosféru,
+            která zaujme diváka od první sekundy. Mým cílem je vytvářet videa,
+            která nejen splní očekávání, ale především zanechají dojem.
+            </p>
+        </section>
+
+        <section class="why-me scroll-animate">
+            <h2>Proč si mě vybrat?</h2>
+            <ul>
+                <li>
+                    <span class="icon"><i class="fas fa-camera"></i></span>
+                    <strong>Jsem mladý, ale vášnivý a odhodlaný</strong> – každému projektu věnuji maximální energii a nasazení.
+                </li>
+                <li>
+                    <span class="icon"><i class="fas fa-video"></i></span>
+                    <strong>Profesionální technika</strong> – pracuji s Blackmagic 6K kamerou, kvalitním zvukem a světly.
+                </li>
+                <li>
+                    <span class="icon"><i class="fas fa-lightbulb"></i></span>
+                    <strong>Kreativní přístup</strong> – vždy hledám originální úhly pohledu a vizuální řešení.
+                </li>
+                <li>
+                    <span class="icon"><i class="fas fa-hand-holding-usd"></i></span>
+                    <strong>Férová cena</strong> – nabízím kvalitu dostupnou pro menší i větší rozpočty.
+                </li>
+                <li>
+                    <span class="icon"><i class="fas fa-handshake"></i></span>
+                    <strong>Osobní spolupráce</strong> – naslouchám potřebám klienta a přizpůsobuji se jeho vizi.
+                </li>
+            </ul>
+        </section>
+
+<section class="container scroll-animate">
+  <div class="slider-wrapper">
+    <div class="slider" id="photoBelt">
+      <img id="slide-1" src="Snímek obrazovky (54).png" alt="Screenshot 54">
+      <img id="slide-2" src="Snímek obrazovky (55).png" alt="Screenshot 55">
+      <img id="slide-3" src="Snímek obrazovky (56).png" alt="Screenshot 56">
+      <img id="slide-4" src="Snímek obrazovky (57).png" alt="Screenshot 57">
+    </div>
+    <div class="slider-nav" id="photoNav">
+      <a href="#slide-1" class="active"></a>
+      <a href="#slide-2"></a>
+      <a href="#slide-3"></a>
+      <a href="#slide-4"></a>
+    </div>
+  </div>
+</section>
+
+
+
+        
+        <section class="offers scroll-animate">
+    <h3>Co nabízím?</h3>
+    <ul>
+        <li>
+            <span class="icon"><i class="fas fa-video"></i></span>
+            <strong>Filmování s kamerou Blackmagic 6K</strong>
+        </li>
+        <li>
+            <span class="icon"><i class="fas fa-laptop-code"></i></span>
+            <strong>Profesionální střih v DaVinci Resolve</strong>
+        </li>
+        <li>
+            <span class="icon"><i class="fas fa-microphone-alt"></i></span>
+            <strong>Záznam zvuku i nasvícení scény</strong>
+        </li>
+        <li>
+            <span class="icon"><i class="fas fa-hand-holding-usd"></i></span>
+            <strong>Cenově dostupné natáčení</strong>
+        </li>
+    </ul>
+    <p class="offer-note"><i class="fas fa-bullseye"></i> Nechci být nejdražší – chci být nejlepší volba...</p>
+    <p class="offer-contact"><i class="fas fa-envelope"></i> Pokud máš zájem o mou službu napiš mi <a href="order.html">zde</a></p>
+</section>
+    </main>
+
+
+    <!-- Footer -->
+     <footer id="footer">
+    <div class="footer-content scroll-animate">
+        <p>Máte otázky nebo zájem o spolupráci?</p>
+        <a href="mailto:mlx.studio2222@gmail.com" class="footer-link">
+            <i class="fas fa-envelope"></i> mlx.studio2222@gmail.com
+        </a>
+        <div class="footer-buttons">
+            <a href="order.html" class="order-btn">
+                <i class="fas fa-calendar-plus"></i> Objednat službu
+            </a>
+            <a href="https://www.youtube.com/@MLX-Media" class="youtube-btn" target="_blank">
+            <i class="fab fa-youtube"></i> <span>YouTube kanál</span>
+        </a>
+
+        </div>
+    </div>
+</footer>
+
+
+    <script src="photo-belt.JS" defer></script>
+
+    
+
+    <!-- Sticky nav shadow effect -->
+    <script>
+        const nav = document.getElementById('mainNav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 10) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+</script>
+
+<!-- Chat toggle button -->
+<button id="chat-toggle">
+  <i class="fas fa-comments"></i>
+</button>
+
+<!-- Chat container -->
+<div id="botpress-container">
+  <!-- mobile header -->
+  <div id="mobile-header">
+    <span>MLX Chat Bot</span>
+    <button id="mobile-close"><i class="fas fa-times"></i></button>
+  </div>
+
+  <div class="chat-info">
+    AI je určeno na shrnutí a pomoc,
+    <button id="info-toggle">Více info</button>
+  </div>
+  <div class="chat-details" id="chat-details">
+    <p>1. AI nemůže objednávat, ale může pomoci s procesem.</p>
+    <p>2. AI je určeno vám pomoci se vyznat a shrnout informace na stránce, ale může se mýlit – proto doporučujeme si všechny informace dále ověřovat.</p>
+    <p>3. AI nemůže dávat přesné ceny, pouze orientační. Pro přesné ceny nám zavolejte a domluvíme se.</p>
+  </div>
+
+  <!-- Local chatbot UI -->
+  <div id="chat-container">
+    <div id="chat-log"></div>
+    <input id="chat-input" placeholder="Zeptejte se na cokoliv..." />
+  </div>
+</div>
+
+<!-- Scripts (order matters) -->
+<script src="mlx_highlight.js"></script>
+<script src="ChatBotKnowledge.js"></script>
+<script src="ChatBot.js" defer></script>
+
+
+
+</body>
+
+</html>
