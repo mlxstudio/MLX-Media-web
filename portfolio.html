@@ -1003,5 +1003,42 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
+    <!-- Chat toggle button -->
+<button id="chat-toggle">
+  <i class="fas fa-comments"></i>
+</button>
+
+<!-- Chat container -->
+<div id="botpress-container">
+  <!-- mobile header -->
+  <div id="mobile-header">
+    <span>MLX Chat Bot</span>
+    <button id="mobile-close"><i class="fas fa-times"></i></button>
+  </div>
+
+  <div class="chat-info">
+    AI je určeno na shrnutí a pomoc,
+    <button id="info-toggle">Více info</button>
+  </div>
+  <div class="chat-details" id="chat-details">
+    <p>1. AI nemůže objednávat, ale může pomoci s procesem.</p>
+    <p>2. AI je určeno vám pomoci se vyznat a shrnout informace na stránce, ale může se mýlit – proto doporučujeme si všechny informace dále ověřovat.</p>
+    <p>3. AI nemůže dávat přesné ceny, pouze orientační. Pro přesné ceny nám zavolejte a domluvíme se.</p>
+  </div>
+
+  <!-- Local chatbot UI -->
+  <div id="chat-container">
+    <div id="chat-log"></div>
+    <input id="chat-input" placeholder="Zeptejte se na cokoliv..." />
+  </div>
+</div>
+
+<!-- Scripts (order matters) -->
+<script src="mlx_highlight.js"></script>
+<script src="ChatBotKnowledge.js"></script>
+<script src="ChatBot.js" defer></script>
+
+
+
 </body>
 </html>
