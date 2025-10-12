@@ -9,34 +9,34 @@ const knowledge = {
     "Zdravím vás! Jsem MLX AI a poradím vám, kde najdete objednávku nebo jak získat kalkulaci."
   ],
 
-  // ---- 2. OBJEDNÁVKA ----
-"objednávka, objednat, objednej, rezervace, chci objednat, jak objednat, můžu objednat, objednávku, objednání, rezervovat": [
-  "Objednávku provedete jednoduše vyplněním <a href='objednavka.html'>online formuláře</a> . Ihned po odeslání dostanete potvrzovací email. Během téhož nebo následujícího dne vám zavoláme a domluvíme podrobnosti. Pokud by formulář nefungoval, můžete napsat na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a> nebo zavolat na <a href='tel:+420123456789'>+420 123 456 789</a>. 😊"
-],
-"formulář, vyplnit formulář, kde je formulář, formulář objednávka, online formulář, objednávkový formulář, rezervační formulář, kde najdu formulář, formulář na webu, vyplňování formuláře": [
-  "Formulář pro objednávku najdete na stránce <a href='objednavka.html'>Objednávka</a>. Po jeho vyplnění se objednávka automaticky zaregistruje a přijde vám ověřovací email."
-],
-"potvrzení objednávky, potvrzení, ověřovací email, ověření, schválení, potvrdit objednávku, potvrzení termínu, potvrzovací zpráva, ověření objednávky, email potvrzení": [
-  "Po vyplnění formuláře vám dorazí ověřovací email. Ten potvrzuje, že systém objednávku správně přijal a že vaše údaje sedí. Následně se vám ozveme telefonicky pro doladění detailů."
-],
-"po objednávce, co se stane po objednávce, reakce, jak dlouho čekat, ozvete se, kdy zavoláte, co dál, postup po objednávce, co následuje, reakce na objednávku": [
-  "Jakmile odešlete formulář, přijde potvrzovací email. Poté vám zavoláme – většinou ten samý den, maximálně následující pracovní den. Domluvíme spolu všechny detaily natáčení či služby."
-],
-"telefonát, zavoláte mi, kdy zavoláte, budete volat, kdy voláte, ozvete se, voláte, volání, zpětný hovor, čekám na telefon": [
-  "Telefonicky se ozýváme po každé objednávce – někdy hned během pár hodin, jindy až následující den (podle času odeslání). Pokud bychom se dlouho neozývali, napište prosím na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a>."
-],
-"ai objednávka, můžeš objednat, udělej objednávku, rezervuj mi termín, objednej to, můžeš to za mě objednat, objednávku za mě, zarezervuj, zkus objednat, objednávka přes AI": [
-  "Já jsem MLX AI 😊 – rád vám vysvětlím postup, ale objednávku za vás vytvořit neumím. Vyplňte prosím <a href='objednavka.html'>formulář</a>, nebo napište na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a>. Rezervace probíhá vždy ručně."
-],
-"jak rezervovat, rezervace, rezervovat termín, rezervace služby, rezervace natáčení, rezervovat, rezervace přes web, rezervace přes formulář, rezervace email, rezervace online": [
-  "Rezervaci provedete vyplněním <a href='objednavka.html'>formuláře</a>. Pokud by to nešlo, napište mi na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a>. Potvrzení rezervace dostanete zpět emailem a následně i telefonicky."
-],
-"problém s objednávkou, nejde objednat, formulář nefunguje, neodeslalo se, problém formulář, nefunguje objednávka, chyba objednávka, objednávka se nezdařila, neodesláno, nejde vyplnit": [
-  "Pokud by formulář nefungoval, napište mi prosím rovnou na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a> nebo zavolejte na <a href='tel:+420123456789'>+420 123 456 789</a>. Občas může být krátký výpadek, ale email i telefon fungují vždy."
-],
-"storno, zrušení objednávky, chci zrušit, zrušit rezervaci, zrušit objednávku, storno objednávky, odhlásit, zrušit termín, ruším objednávku, zrušení": [
-  "Pokud potřebujete objednávku zrušit, stačí napsat email na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a>. Storno řešíme vždy individuálně a férově. 🙂"
-],
+// ---- 2. OBJEDNÁVKA ----
+  "objednávka, objednat, objednej, rezervace, chci objednat, jak objednat, můžu objednat, objednávku, objednání, rezervovat": [
+    "Objednávku provedete jednoduše vyplněním online formuláře. Ihned po odeslání dostanete potvrzovací email. Během téhož nebo následujícího dne vám zavoláme a domluvíme podrobnosti. Pokud by formulář nefungoval, můžete napsat na email nebo zavolat.<br><button class='mlx-ai-btn' data-dest='order.html' data-nav='nav a[href=\"order.html\"]'><span class='mlx-icon'>📝</span> Vyplnit formulář</button><br><button class='mlx-ai-btn' data-dest='mailto:mlx.studio2222@gmail.com' data-nav='nav a[href=\"mailto:mlx.studio2222@gmail.com\"]'><span class='mlx-icon'>✉️</span> Napsat email</button><br><button class='mlx-ai-btn' data-dest='tel:+420123456789' data-nav='nav a[href=\"tel:+420123456789\"]'><span class='mlx-icon'>📞</span> Zavolat</button> 😊"
+  ],
+  "formulář, vyplnit formulář, kde je formulář, formulář objednávka, online formulář, objednávkový formulář, rezervační formulář, kde najdu formulář, formulář na webu, vyplňování formuláře": [
+    "Formulář pro objednávku najdete na stránce Objednávka. Po jeho vyplnění se objednávka automaticky zaregistruje a přijde vám ověřovací email.<br><button class='mlx-ai-btn' data-dest='objednavka.html' data-nav='nav a[href=\"objednavka.html\"]'><span class='mlx-icon'>📝</span> Otevřít formulář</button>"
+  ],
+  "potvrzení objednávky, potvrzení, ověřovací email, ověření, schválení, potvrdit objednávku, potvrzení termínu, potvrzovací zpráva, ověření objednávky, email potvrzení": [
+    "Po vyplnění formuláře vám dorazí ověřovací email. Ten potvrzuje, že systém objednávku správně přijal a že vaše údaje sedí. Následně se vám ozveme telefonicky pro doladění detailů.<br><button class='mlx-ai-btn' data-dest='objednavka.html' data-nav='nav a[href=\"objednavka.html\"]'><span class='mlx-icon'>📝</span> Vyplnit formulář</button>"
+  ],
+  "po objednávce, co se stane po objednávce, reakce, jak dlouho čekat, ozvete se, kdy zavoláte, co dál, postup po objednávce, co následuje, reakce na objednávku": [
+    "Jakmile odešlete formulář, přijde potvrzovací email. Poté vám zavoláme – většinou ten samý den, maximálně následující pracovní den. Domluvíme spolu všechny detaily natáčení či služby.<br><button class='mlx-ai-btn' data-dest='tel:+420123456789' data-nav='nav a[href=\"tel:+420123456789\"]'><span class='mlx-icon'>📞</span> Čekat na hovor</button>"
+  ],
+  "telefonát, zavoláte mi, kdy zavoláte, budete volat, kdy voláte, ozvete se, voláte, volání, zpětný hovor, čekám na telefon": [
+    "Telefonicky se ozýváme po každé objednávce – někdy hned během pár hodin, jindy až následující den (podle času odeslání). Pokud bychom se dlouho neozývali, napište prosím na email.<br><button class='mlx-ai-btn' data-dest='mailto:mlx.studio2222@gmail.com' data-nav='nav a[href=\"mailto:mlx.studio2222@gmail.com\"]'><span class='mlx-icon'>✉️</span> Napsat email</button>"
+  ],
+  "ai objednávka, můžeš objednat, udělej objednávku, rezervuj mi termín, objednej to, můžeš to za mě objednat, objednávku za mě, zarezervuj, zkus objednat, objednávka přes AI": [
+    "Já jsem MLX AI 😊 – rád vám vysvětlím postup, ale objednávku za vás vytvořit neumím. Vyplňte prosím formulář, nebo napište na email. Rezervace probíhá vždy ručně.<br><button class='mlx-ai-btn' data-dest='objednavka.html' data-nav='nav a[href=\"objednavka.html\"]'><span class='mlx-icon'>📝</span> Vyplnit formulář</button><br><button class='mlx-ai-btn' data-dest='mailto:mlx.studio2222@gmail.com' data-nav='nav a[href=\"mailto:mlx.studio2222@gmail.com\"]'><span class='mlx-icon'>✉️</span> Napsat email</button>"
+  ],
+  "jak rezervovat, rezervace, rezervovat termín, rezervace služby, rezervace natáčení, rezervovat, rezervace přes web, rezervace přes formulář, rezervace email, rezervace online": [
+    "Rezervaci provedete vyplněním formuláře. Pokud by to nešlo, napište mi na email. Potvrzení rezervace dostanete zpět emailem a následně i telefonicky.<br><button class='mlx-ai-btn' data-dest='objednavka.html' data-nav='nav a[href=\"objednavka.html\"]'><span class='mlx-icon'>📝</span> Rezervovat přes formulář</button><br><button class='mlx-ai-btn' data-dest='mailto:mlx.studio2222@gmail.com' data-nav='nav a[href=\"mailto:mlx.studio2222@gmail.com\"]'><span class='mlx-icon'>✉️</span> Rezervovat emailem</button>"
+  ],
+  "problém s objednávkou, nejde objednat, formulář nefunguje, neodeslalo se, problém formulář, nefunguje objednávka, chyba objednávka, objednávka se nezdařila, neodesláno, nejde vyplnit": [
+    "Pokud by formulář nefungoval, napište mi prosím rovnou na email nebo zavolejte. Občas může být krátký výpadek, ale email i telefon fungují vždy.<br><button class='mlx-ai-btn' data-dest='mailto:mlx.studio2222@gmail.com' data-nav='nav a[href=\"mailto:mlx.studio2222@gmail.com\"]'><span class='mlx-icon'>✉️</span> Napsat email</button><br><button class='mlx-ai-btn' data-dest='tel:+420123456789' data-nav='nav a[href=\"tel:+420123456789\"]'><span class='mlx-icon'>📞</span> Zavolat</button>"
+  ],
+  "storno, zrušení objednávky, chci zrušit, zrušit rezervaci, zrušit objednávku, storno objednávky, odhlásit, zrušit termín, ruším objednávku, zrušení": [
+    "Pokud potřebujete objednávku zrušit, stačí napsat email. Storno řešíme vždy individuálně a férově. 🙂<br><button class='mlx-ai-btn' data-dest='mailto:mlx.studio2222@gmail.com' data-nav='nav a[href=\"mailto:mlx.studio2222@gmail.com\"]'><span class='mlx-icon'>✉️</span> Zrušit emailem</button>"
+  ],
 
 
 // ---- 3. KONTAKT ----
@@ -61,9 +61,9 @@ const knowledge = {
 "portfolio, reference, ukázky, vaše práce, ukázky videí, reference projekty, ukázkové video, ukázka tvorby, ukázky práce, vaše projekty": [
   "Portfolio je dostupné zde: <button class='mlx-ai-btn' data-dest='portfolio.html' data-nav='nav a[href=\"portfolio.html\"]'><span class='mlx-icon'>🖼️</span> Ukázat portfolio</button> Najdete tam filmy, promo videa i firemní projekty. 🎥"
 ],
-"adresa, kde jste, sídlo, vaše adresa, kancelář, kde najdu, odkud jste, místo, kde vás najdu, sídlo firmy, kde působíte": [
-  "Jsem z Brna, ale působím po celé ČR. 📍 Hlavní informace jsou v <button onclick=\"scrollToSection('footer')\">kontaktech ve spodní části stránky</button>."
-],
+  "adresa, kde jste, sídlo, vaše adresa, kancelář, kde najdu, odkud jste, místo, kde vás najdu, sídlo firmy, kde působíte": [
+    "Primárně působím v Berouně a Praze. 📍 Více o lokacích najdete v sekci Mapa na ceníku.<br><button class='mlx-ai-btn' data-dest='pricing.html#mapa' data-nav='nav a[href=\"pricing.html\"]'><span class='mlx-icon'>🗺️</span> Zobrazit Mapu</button>"
+  ],
 "jak se spojit, jak komunikovat, spojení, komunikace, jak vás zastihnu, kdy volat, nejlepší kontakt, spojit se s vámi, dostupnost, kdy vás kontaktovat": [
   "Nejlépe přes email: <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a> – odpovídám do 24 hodin. 📧"
 ],
@@ -74,100 +74,130 @@ const knowledge = {
 
 // ---- 4. CENÍK / ORIENTAČNÍ CENA ----
 "ceník, ceny, kolik stojí, cena, jaká cena, vaše ceny, orientační cena, ukázkový ceník, ceník služeb, kolik peněz": [
-  "Orientační ceník služeb 🎥<br>• Natáčení od 2000 Kč<br>• Střih od 1500 Kč<br>• Kompletní video od 3500 Kč<br>• Promo balíček pro firmu od 6000 Kč<br>• Vertikální video (TikTok/Reels) od 1800 Kč<br>Cestovné je individuální dle vzdálenosti.<br><small>❗ Přesná cena se vždy řeší osobně.</small><br><button class='mlx-ai-btn' data-dest='praicing.html' data-nav='nav a[href=\"praicing.html\"]'><span class='mlx-icon'>💰</span> Zobrazit kompletní ceník</button>"
-],
-"kolik stojí natáčení, cena natáčení, kolik za natáčení, natáčení cena, půlden natáčení, cena půlden, půl den natáčení, cena půl den, půldenní cena, kolik peněz natáčení": [
-  "Půldenní natáčení (do 4 hod) je od 2000 Kč. 🎬 Cena se ale odvíjí od lokace a náročnosti projektu.<br><small>Pro přesnou kalkulaci napište na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a>.</small>"
-],
-"cena střih, střih cena, kolik stojí střih, kolik za střih, střih videa cena, cena střihu videa, střih vlastní záběry, cena střih vlastních, úprava záběrů, cena editace": [
-  "Střih z vašich záběrů (do 2 minut) je od 1500 Kč. ✂️ Zahrnuje barvy, hudbu i titulky.<br><small>❗ Cena se liší podle délky a složitosti videa.</small>"
-],
-"kompletní video, balíček video, cena komplet, kolik stojí komplet video, komplet cena, cena komplet, vše v jednom, kompletní balíček, video komplet, celý balíček": [
-  "Kompletní video (natáčení + střih do 3 minut) je od 3500 Kč. 🎞️ Obsahuje záběry, střih, hudbu i základní grafiku.<br><small>Přesná částka se vždy domlouvá individuálně.</small>"
-],
-"promo balíček, firemní promo, promo cena, kolik promo, promo pro firmu, cena promo, balíček pro firmu, promo balíček cena, firemní video, firemní cena": [
-  "Firemní promo balíček je od 6000 Kč. 🏢 Obsahuje 1 den natáčení, střih, logo a hudbu, dodávám i ve více formátech.<br><small>Pro detailní nabídku napište na email.</small>"
-],
-"vertikální video, tiktok video, instagram video, reels, krátké video cena, vertikální cena, cena krátké video, cena reels, cena insta video, krátká videa": [
-  "Vertikální video (do 1 min, trendy střih) je od 1800 Kč. 📱 Perfektní pro TikTok, Reels a Shorts.<br><small>Obsahuje rychlý střih a hudbu.</small>"
-],
-"individuální nabídka, cena na míru, kalkulace, individuální kalkulace, přesná cena, cena individuálně, individuální cena, nabídka cena, kalkulace cena, domluva cena": [
-  "Každý projekt je jiný. Pro individuální nabídku napište na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a> nebo zavolejte <a href='tel:+420123456789'>+420 123 456 789</a>. 📧📞"
-],
-"cestovné, cena cestovné, kolik stojí cesta, cena za cestu, cestovné cena, cestovné poplatek, doplatek cesta, cena dojezdu, kolik stojí dojezd, doprava cena": [
-  "Cestovné se účtuje podle vzdálenosti – cena je vždy individuální a předem domluvená. 🚗"
-],
-"nejste nejdražší, cena férová, férové ceny, férová cena, nejste levní, cena dostupná, ceny dostupné, rozpočet, rozumné ceny, výhodné ceny": [
-  "Ceny držím férové a dostupné – chci být nejlepší volba, ne nejdražší. ✅ Kvalita za rozumnou cenu je moje filozofie."
-],
-"přesná kalkulace, kalkulace, chci kalkulaci, přesná cena, kolik přesně, přesně kolik, kalkulace ceny, cenová nabídka, cenová kalkulace, přesně cena": [
-  "Já (MLX AI) umím říct jen orientační ceny. 💡 Přesnou kalkulaci dostanete emailem: <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a>."
+  "🎥 Orientační ceník služeb:<br>• Natáčení od 2000 Kč<br>• Střih od 1500 Kč<br>• Kompletní video od 3500 Kč<br>• Promo balíček od 6000 Kč<br>• Vertikální video (TikTok/Reels) od 1800 Kč<br><small>❗ Přesná cena se vždy řeší osobně.</small><br><button class='mlx-ai-btn' data-dest='praicing.html#cenik-intro' data-nav='nav a[href=\"praicing.html\"]' data-target='#cenik-intro'><span class='mlx-icon'>💰</span> Zobrazit kompletní ceník</button> <button class='mlx-ai-btn' data-dest='praicing.html#pro-calculator' data-nav='nav a[href=\"praicing.html\"]' data-target='#pro-calculator'><span class='mlx-icon'>🧮</span> Otevřít kalkulačku</button>"
 ],
 
-  // ---- 5. PŘESNÁ KALKULACE / NABÍDKA NA MÍRU ----
-"nabídka na míru, individuální nabídka, balíček na míru, kalkulace na míru, speciální nabídka, individuální cena, cena individuální, cena na míru, přizpůsobená nabídka, osobní kalkulace": [
-  "Rád připravím balíček přesně podle vašich potřeb. 💼 Přesná cena se vždy domlouvá individuálně – napište na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a>."
+"kolik stojí natáčení, cena natáčení, půlden natáčení": [
+  "🎬 Půldenní natáčení (do 4 hod) je od 2000 Kč.<br><small>Cena záleží na lokaci a náročnosti projektu.</small><br><button class='mlx-ai-btn' data-dest='praicing.html#pro-calculator' data-nav='nav a[href=\"praicing.html\"]' data-target='#pro-calculator'><span class='mlx-icon'>🧮</span> Spočítat cenu v kalkulačce</button>"
 ],
-"speciální požadavek, chci speciální video, jiné služby, speciální nabídka, chci vlastní balíček, nestandardní, extra služby, chci něco jiného, služba navíc, vlastní požadavky": [
-  "Každý projekt je originál 🎬 – napište mi email s vaším požadavkem a domluvíme se. <button class='mlx-ai-btn' data-dest='order.html' data-nav='nav a[href=\"order.html\"]'><span class='mlx-icon'>📝</span> Objednat konzultaci</button>"
+
+"cena střih, střih cena, cena střihu videa": [
+  "✂️ Střih z vašich záběrů (do 2 minut) je od 1500 Kč.<br>Zahrnuje barvy, hudbu i titulky.<br><small>Cena se liší podle délky a složitosti videa.</small><br><button class='mlx-ai-btn' data-dest='praicing.html#calculator' data-nav='nav a[href=\"praicing.html\"]' data-target='#calculator'><span class='mlx-icon'>🧮</span> Spočítat cenu v kalkulačce</button>"
 ],
-"sleva, slevy, akce, zvýhodněná cena, levnější, studentská sleva, firemní sleva, slevy pro firmy, speciální akce, zvýhodnění": [
-  "Občas nabízím slevy nebo zvýhodněné balíčky. 💰 Pro větší zakázky je možná sleva – řešíme individuálně."
+
+"kompletní video, balíček video, cena komplet": [
+  "🎞️ Kompletní video (natáčení + střih do 3 minut) je od 3500 Kč.<br>Obsahuje záběry, střih, hudbu i základní grafiku.<br><button class='mlx-ai-btn' data-dest='praicing.html#pro-calculator' data-nav='nav a[href=\"praicing.html\"]' data-target='#pro-calculator'><span class='mlx-icon'>🧮</span> Spočítat cenu v kalkulačce</button>"
 ],
-"balíček služeb, služební balíček, balíčky, kompletní balíček, nabídka balíček, různé balíčky, balíček pro firmy, služba balíček, cena balíček, služební nabídky": [
-  "Nabízím různé balíčky podle potřeb klienta. 📦 Například firemní promo od 6000 Kč. Pro detailní info klikněte <button onclick=\"scrollToSection('cenik')\">sem</button>."
+
+"promo balíček, firemní promo, promo cena": [
+  "🏢 Firemní promo balíček je od 6000 Kč.<br>Obsahuje 1 den natáčení, střih, logo a hudbu, dodávám i ve více formátech.<br><button class='mlx-ai-btn' data-dest='praicing.html#pro-calculator' data-nav='nav a[href=\"praicing.html\"]' data-target='#pro-calculator'><span class='mlx-icon'>🧮</span> Spočítat promo balíček</button>"
 ],
-"konzultace, domluva, konzultace cena, konzultace zdarma, schůzka, domluvit konzultaci, konzultace email, konzultace info, online konzultace, konzultace projekt": [
-  "Krátká konzultace (email nebo telefon) je zdarma 📞✉️ – pomůže nám upřesnit cenu."
+
+"vertikální video, tiktok video, reels, krátké video cena": [
+  "📱 Vertikální video (do 1 min, trendy střih) je od 1800 Kč.<br>Perfektní pro TikTok, Reels a Shorts.<br><button class='mlx-ai-btn' data-dest='praicing.html#pro-calculator' data-nav='nav a[href=\"praicing.html\"]' data-target='#pro-calculator'><span class='mlx-icon'>🧮</span> Spočítat cenu v kalkulačce</button>"
 ],
-"specifický projekt, jiný projekt, netypická služba, projekt na míru, speciální projekt, jiný druh videa, jiný styl, projekt mimo ceník, unikátní projekt, výjimečný projekt": [
-  "Pokud váš projekt není v ceníku, nevadí – rád připravím speciální nabídku. 😊"
+
+"individuální nabídka, cena na míru, kalkulace": [
+  "💼 Každý projekt je jiný – rád připravím nabídku na míru.<br><button class='mlx-ai-btn' data-dest='order.html' data-nav='nav a[href=\"order.html\"]' data-target='.order-btn'><span class='mlx-icon'>📝</span> Objednat nabídku na míru</button> <button class='mlx-ai-btn' data-dest='praicing.html#pro-calculator' data-nav='nav a[href=\"praicing.html\"]' data-target='#pro-calculator'><span class='mlx-icon'>🧮</span> Vyzkoušet kalkulačku</button>"
 ],
-"kombinace služeb, spojení služeb, mix služeb, kombinovaný balíček, více služeb, kombinace balíčku, spojené služby, kombinovat, kombinace nabídky, mix balíčků": [
-  "Můžeme spojit více služeb do jednoho balíčku. 📦 Například natáčení + střih vychází cenově výhodněji."
+
+"cestovné, cena cestovné, kolik stojí cesta": [
+  "🚗 Cestovné se účtuje podle vzdálenosti – cena je vždy domluvená předem.<br><button class='mlx-ai-btn' data-dest='praicing.html#cenik-intro' data-nav='nav a[href=\"praicing.html\"]' data-target='#cenik-intro'><span class='mlx-icon'>💰</span> Podívat se na ceník</button>"
 ],
-"velká zakázka, firemní zakázka, větší projekt, velký projekt, firemní spolupráce, firemní balíček, firemní video, firemní nabídka, firemní kalkulace, větší práce": [
-  "Pro velké zakázky nabízím individuální ceny. 🏢 Cena se domlouvá osobně podle rozsahu."
+
+"nejste nejdražší, cena férová, férové ceny": [
+  "✅ Ceny držím férové a dostupné – chci být nejlepší volba, ne nejdražší.<br><button class='mlx-ai-btn' data-dest='index.html#why-me' data-nav='nav a[href=\"index.html\"]' data-target='.why-me'><span class='mlx-icon'>⏳</span> Jak probíhá spolupráce</button>"
 ],
-"malá zakázka, malý projekt, drobný projekt, menší projekt, rychlá zakázka, rychlý projekt, drobná práce, malá práce, zakázka malá, mini projekt": [
-  "Dělám i menší projekty – třeba krátká videa od 1500 Kč. 🎥 Malé zakázky mají rychlejší dodání a dostupnou cenu."
-],
-"nejlevnější varianta, levně, nejlevnější cena, levný projekt, levnější nabídka, co nejlevnější, nízká cena, malý rozpočet, levnější varianta, levný balíček": [
-  "Nejlevnější varianta je střih z vašich záběrů od 1500 Kč nebo krátké vertikální video od 1800 Kč. 📱"
+
+"přesná kalkulace, kalkulace ceny, cenová nabídka": [
+  "💡 Já (MLX AI) umím ukázat jen orientační ceny.<br>Přesnou kalkulaci si můžete rovnou <b>spočítat v kalkulačce</b>.<br><button class='mlx-ai-btn' data-dest='praicing.html#pro-calculator' data-nav='nav a[href=\"praicing.html\"]' data-target='#pro-calculator'><span class='mlx-icon'>🧮</span> Otevřít kalkulačku</button>"
 ],
 
 
-  // ---- 6. DOSTUPNOST A TERMÍNY ----
+// ---- 5. PŘESNÁ KALKULACE / NABÍDKA NA MÍRU ----
+"nabídka na míru, balíček na míru, kalkulace na míru": [
+  "💼 Rád připravím balíček přesně podle vašich potřeb.<br><button class='mlx-ai-btn' data-dest='order.html' data-nav='nav a[href=\"order.html\"]' data-target='.order-btn'><span class='mlx-icon'>📝</span> Objednat nabídku</button> <button class='mlx-ai-btn' data-dest='praicing.html#pro-calculator' data-nav='nav a[href=\"praicing.html\"]' data-target='#pro-calculator'><span class='mlx-icon'>🧮</span> Spočítat orientační cenu</button>"
+],
+
+"speciální požadavek, chci speciální video, jiné služby": [
+  "🎬 Každý projekt je originál – napište mi email s vaším požadavkem a domluvíme se.<br><button class='mlx-ai-btn' data-dest='portfolio.html' data-nav='nav a[href=\"portfolio.html\"]' data-target='.portfolio-grid'><span class='mlx-icon'>🎥</span> Prohlédnout portfolio</button> <button class='mlx-ai-btn' data-dest='praicing.html#pro-calculator' data-nav='nav a[href=\"praicing.html\"]' data-target='#pro-calculator'><span class='mlx-icon'>🧮</span> Spočítat orientačně</button>"
+],
+
+"sleva, slevy, akce, zvýhodněná cena": [
+  "💰 Občas nabízím slevy nebo zvýhodněné balíčky – hlavně pro větší zakázky.<br><button class='mlx-ai-btn' data-dest='praicing.html#cenik-intro' data-nav='nav a[href=\"praicing.html\"]' data-target='#cenik-intro'><span class='mlx-icon'>💰</span> Podívat se na ceník</button>"
+],
+
+"balíček služeb, různé balíčky": [
+  "📦 Nabízím různé balíčky podle potřeb klienta – třeba firemní promo od 6000 Kč.<br><button class='mlx-ai-btn' data-dest='praicing.html#cenik-intro' data-nav='nav a[href=\"praicing.html\"]' data-target='#cenik-intro'><span class='mlx-icon'>💰</span> Ukázkový ceník</button> <button class='mlx-ai-btn' data-dest='praicing.html#pro-calculator' data-nav='nav a[href=\"praicing.html\"]' data-target='#pro-calculator'><span class='mlx-icon'>🧮</span> Vyzkoušet kalkulačku</button>"
+],
+
+"konzultace, domluva, konzultace zdarma": [
+  "📞 Krátká konzultace (email nebo telefon) je zdarma – pomůže nám upřesnit cenu.<br><button class='mlx-ai-btn' data-dest='#footer' data-target='#footer'><span class='mlx-icon'>📧</span> Kontaktujte mě</button>"
+],
+
+"specifický projekt, jiný projekt, netypická služba": [
+  "😊 Pokud váš projekt není v ceníku, nevadí – rád připravím speciální nabídku.<br><button class='mlx-ai-btn' data-dest='portfolio.html' data-nav='nav a[href=\"portfolio.html\"]' data-target='.portfolio-grid'><span class='mlx-icon'>🎥</span> Podívat se na portfolio</button>"
+],
+
+"kombinace služeb, spojení služeb, mix služeb": [
+  "📦 Můžeme spojit více služeb do jednoho balíčku – např. natáčení + střih vychází cenově výhodněji.<br><button class='mlx-ai-btn' data-dest='praicing.html#pro-calculator' data-nav='nav a[href=\"praicing.html\"]' data-target='#pro-calculator'><span class='mlx-icon'>🧮</span> Spočítat kombinaci v kalkulačce</button>"
+],
+
+"velká zakázka, firemní zakázka, větší projekt": [
+  "🏢 Pro velké zakázky nabízím individuální ceny – domlouváme osobně podle rozsahu.<br><button class='mlx-ai-btn' data-dest='order.html' data-nav='nav a[href=\"order.html\"]' data-target='.order-btn'><span class='mlx-icon'>📝</span> Domluvit spolupráci</button>"
+],
+
+"malá zakázka, malý projekt, drobný projekt": [
+  "🎥 Dělám i menší projekty – třeba krátká videa od 1500 Kč.<br><button class='mlx-ai-btn' data-dest='portfolio.html' data-nav='nav a[href=\"portfolio.html\"]' data-target='.portfolio-grid'><span class='mlx-icon'>🎥</span> Podívat se na ukázky</button>"
+],
+
+"nejlevnější varianta, levně, levnější nabídka": [
+  "📱 Nejlevnější varianta je střih z vašich záběrů od 1500 Kč nebo krátké vertikální video od 1800 Kč.<br><button class='mlx-ai-btn' data-dest='praicing.html#cenik-intro' data-nav='nav a[href=\"praicing.html\"]' data-target='#cenik-intro'><span class='mlx-icon'>💰</span> Podívat se na ceník</button> <button class='mlx-ai-btn' data-dest='praicing.html#pro-calculator' data-nav='nav a[href=\"praicing.html\"]' data-target='#pro-calculator'><span class='mlx-icon'>🧮</span> Vyzkoušet kalkulačku</button>"
+],
+
+
+
+// ---- 6. DOSTUPNOST A TERMÍNY ----
 "volný termín, kdy máte volno, dostupnost, kdy můžete, kdy natáčíte, kdy máte čas, volno, volný čas, termíny, kalendář": [
-  "📅 Termíny domlouvám vždy individuálně. Pro aktuální dostupnost se podívejte na kalendář na stránce ceníku. <button class='mlx-ai-btn' data-dest='praicing.html#calendar' data-nav='nav a[href=\"praicing.html\"]'><span class='mlx-icon'>📅</span> Zobrazit kalendář</button>"
+  "📅 Termíny domlouvám vždy individuálně. Pro aktuální dostupnost se podívejte na kalendář.<br><button class='mlx-ai-btn' data-dest='praicing.html#calendar' data-nav='nav a[href=\"praicing.html\"]' data-target='#calendar'><span class='mlx-icon'>📅</span> Zobrazit kalendář</button>"
 ],
+
 "jak brzy, nejbližší termín, co nejdříve, kdy nejdřív, nejbližší volno, nejbližší datum, rychlý termín, volno brzy, asap, rychle": [
-  "Obvykle mám volné termíny během několika dnů až týdnů. ⏳<br><small>Pro urgentní zakázky napište na email a podíváme se do <button onclick=\"scrollToSection('cenik')\">kalendáře dostupnosti</button>.</small>"
+  "⏳ Obvykle mám volné termíny během několika dnů až týdnů.<br><small>Pro urgentní zakázky napište na email a podívejte se do <button class='mlx-ai-btn' data-dest='praicing.html#calendar' data-nav='nav a[href=\"praicing.html\"]' data-target='#calendar'><span class='mlx-icon'>⚡</span> Kalendáře dostupnosti</button>.</small>"
 ],
+
 "víkend, sobota, neděle, natáčení o víkendu, volno o víkendu, termín víkend, víkendové natáčení, pracujete víkend, víkendová práce, víkend dostupnost": [
-  "🎥 Ano, natáčím i o víkendech – dostupnost je vidět v <button onclick=\"scrollToSection('cenik')\">kalendáři dole v ceníku</button>."
+  "🎥 Ano, natáčím i o víkendech – dostupnost je vidět v <button class='mlx-ai-btn' data-dest='praicing.html#calendar' data-nav='nav a[href=\"praicing.html\"]' data-target='#calendar'><span class='mlx-icon'>📅</span> Kalendáři dole v ceníku</button>."
 ],
+
 "večer, natáčení večer, večerní čas, večerní termín, po práci, večerní dostupnost, večerní natáčení, odpoledne, později, noční natáčení": [
-  "🌙 Večerní natáčení je možné po domluvě. Koukněte do <button onclick=\"scrollToSection('cenik')\">kalendáře dostupnosti</button> a napište mi email."
+  "🌙 Večerní natáčení je možné po domluvě.<br>Koukněte do <button class='mlx-ai-btn' data-dest='praicing.html#calendar' data-nav='nav a[href=\"praicing.html\"]' data-target='#calendar'><span class='mlx-icon'>🌙</span> Kalendáře dostupnosti</button> a napište mi email."
 ],
+
 "jak dlouho čekám, čekání, doba čekání, dlouho čekám, kdy odpovíte, čekám na reakci, dlouhá doba, proč čekám, čekám na odpověď, čekací lhůta": [
-  "Na email odpovídám většinou do 24 hodin. 📧 Pokud čekáte déle, jsem pravděpodobně na natáčení – ozvu se hned, jak to půjde."
+  "📧 Na email odpovídám většinou do 24 hodin.<br>Pokud čekáte déle, jsem pravděpodobně na natáčení – ozvu se hned, jak to půjde.<br><button class='mlx-ai-btn' data-dest='#footer' data-target='#footer'><span class='mlx-icon'>📧</span> Kontaktujte mě</button>"
 ],
+
 "rezervace termínu, rezervace data, rezervace, zarezervovat, rezervujte, rezervovat termín, zamluvit datum, zamluvit termín, rezervace volno, domluva termínu": [
-  "✅ Rezervaci provedeme přes email nebo formulář. Stačí mi napsat datum a službu.<br><small>Můžete se také podívat do <button onclick=\"scrollToSection('cenik')\">kalendáře dostupnosti</button> dole na stránce.</small>"
+  "✅ Rezervaci provedeme přes email nebo objednávkový formulář.<br><button class='mlx-ai-btn' data-dest='order.html' data-nav='nav a[href=\"order.html\"]' data-target='.order-btn'><span class='mlx-icon'>📝</span> Otevřít objednávku</button><br><small>A podívejte se také do <button class='mlx-ai-btn' data-dest='praicing.html#calendar' data-nav='nav a[href=\"praicing.html\"]' data-target='#calendar'><span class='mlx-icon'>📅</span> Kalendáře dostupnosti</button>.</small>"
 ],
+
 "kolik hodin, délka, doba, jak dlouho, trvání, kolik času, doba natáčení, jak dlouhé, čas natáčení, kolik hodin práce": [
-  "Standardně půldenní natáčení trvá do 4 hodin ⏱, celodenní pak okolo 8 hodin. Přesně se domlouváme podle projektu."
+  "⏱️ Standardně půldenní natáčení trvá do 4 hodin, celodenní okolo 8 hodin.<br>Přesně se domlouváme podle projektu.<br><button class='mlx-ai-btn' data-dest='praicing.html#cenik-intro' data-nav='nav a[href=\"praicing.html\"]' data-target='#cenik-intro'><span class='mlx-icon'>💰</span> Podívat se na ceník</button>"
 ],
+
 "rychlý termín, expres, expresní, co nejrychleji, urgentní, spěchám, rychle, expresní termín, spěšně, urgent": [
-  "⚡ Pokud spěcháte, napište mi – expresní termíny se snažím řešit co nejrychleji. Koukněte i na <button onclick=\"scrollToSection('cenik')\">kalendář dostupnosti</button>."
+  "⚡ Pokud spěcháte, napište mi – expresní termíny se snažím řešit co nejrychleji.<br>Koukněte i na <button class='mlx-ai-btn' data-dest='praicing.html#calendar' data-nav='nav a[href=\"praicing.html\"]' data-target='#calendar'><span class='mlx-icon'>📅</span> Kalendář dostupnosti</button>."
 ],
+
 "dostupnost, kdy jste dostupný, kdy jste k dispozici, kdy můžete, časové možnosti, kdy se dá, kdy se dá natáčet, vaše dostupnost, kdy dostupný, kdy se dá domluvit": [
-  "Moje dostupnost se liší podle zakázek. 📅 Nejjednodušší je podívat se do <button onclick=\"scrollToSection('cenik')\">kalendáře v sekci Ceník</button> a pak napsat email."
+  "📅 Moje dostupnost se liší podle zakázek.<br>Nejjednodušší je podívat se do <button class='mlx-ai-btn' data-dest='praicing.html#calendar' data-nav='nav a[href=\"praicing.html\"]' data-target='#calendar'><span class='mlx-icon'>📅</span> Kalendáře dostupnosti</button> a pak mi napsat."
 ],
+
 "plánování, plán, jak naplánovat, plán projektu, plánování práce, plán termínu, plán natáčení, rozvrh, časový plán, plán služeb": [
-  "📌 Plán projektu připravíme po objednávce. Vždy si projdeme vaše potřeby a domluvíme harmonogram emailem."
+  "📌 Plán projektu připravíme po objednávce.<br>Domluvíme harmonogram podle vašich potřeb.<br><button class='mlx-ai-btn' data-dest='order.html' data-nav='nav a[href=\"order.html\"]' data-target='.order-btn'><span class='mlx-icon'>📝</span> Otevřít objednávku</button>"
 ],
+
 
 
   // ---- 7. CO NABÍZÍTE / SLUŽBY ----
@@ -273,9 +303,9 @@ const knowledge = {
 "pomocník, role, co jste dělal, vaše role, co jste měl na starosti, úkoly, jaká práce, práce ve filmu, pomoc práce, role projekt": [
   "👤 V projektech jsem dělal kameru, střih i herectví.<br><small>Moje role se liší podle projektu.</small>"
 ],
-"města, kde natáčíte, Brno, Praha, místa, lokace, kde jste točil, lokace film, lokace natáčení, kde jste točil, kde filmy, místa natáčení": [
-  "📍 Nejčastěji točím v Brně a Praze, ale působím po celé ČR."
-],
+  "města, kde natáčíte, Brno, Praha, místa, lokace, kde jste točil, lokace film, lokace natáčení, kde jste točil, kde filmy, místa natáčení": [
+    "📍 Primárně natáčím v Berouně a Praze – ideální lokace pro všechny typy projektů. Více o lokacích najdete v sekci Mapa na ceníku.<br><button class='mlx-ai-btn' data-dest='pricing.html#mapa' data-nav='nav a[href=\"pricing.html\"]'><span class='mlx-icon'>🗺️</span> Zobrazit Mapu</button>"
+  ],
 "ukázky práce, showreel, video ukázky, shrnutí práce, krátké ukázky, nejlepší práce, výběr práce, sestřih práce, sestřih ukázky, showreel video": [
   "✨ Ukázkový sestřih (showreel) najdete v <button onclick=\"scrollToSection('portfolio')\">portfoliu</button>."
 ],
@@ -289,8 +319,9 @@ const knowledge = {
   "🎥 Dbám na precizní obraz i zvuk – kvalita je moje priorita."
 ],
 "cena, férová cena, levněji, cenově dostupné, levnější, rozpočet, rozumná cena, cena kvalita, dostupné ceny, přijatelná cena": [
-  "💰 Nabízím férové ceny přizpůsobené rozpočtu.<br><small>Koukněte do <button onclick=\"scrollToSection('cenik')\">ceníku</button>.</small>"
+  "💰 Nabízím férové ceny přizpůsobené rozpočtu.<br><button class='mlx-ai-btn' data-dest='praicing.html#cenik-intro' data-nav='nav a[href=\"praicing.html\"]' data-target='#cenik-intro'><span class='mlx-icon'>💰</span> Podívat se na ceník</button> <button class='mlx-ai-btn' data-dest='praicing.html#pro-calculator' data-nav='nav a[href=\"praicing.html\"]' data-target='#pro-calculator'><span class='mlx-icon'>🧮</span> Vyzkoušet kalkulačku</button>"
 ],
+
 "mladý, začínající, nový, mladý kameraman, začátečník, mladá energie, mladý střih, mladý kameraman, mladý tvůrce, mladý umělec": [
   "⚡ Jsem mladý a plný energie – i přes věk pracuji profesionálně."
 ],
@@ -347,7 +378,7 @@ const knowledge = {
 ],
 
 // ---- 12. FALLBACK ----
-"nevím, nechápu, nerozumím, zmatený, nejasné, neznám, cože, jak, co, pomoc": [
+"nevím, nechápu, nerozumím, zmatený, nejasné, neznám, cože, jak, pomoc": [
   "🤔 Tomu nerozumím, zkuste to napsat jinak.<br>👉 Nebo napište na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a>."
 ],
 "otázka, dotaz, mám dotaz, potřebuji poradit, potřebuji info, otázka prosím, otázka k vám, potřebuji něco, chci vědět, dotaz info": [
@@ -440,7 +471,95 @@ const knowledge = {
   "📦 Pokud jde o moje vybavení, vždy je možnost, že se něco zapomnělo na place. Ozvěte se prosím na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a> nebo zavolejte na <a href='tel:+420123456789'>+420 123 456 789</a>.",
   "✉️ Děkuji moc za snahu vrácení, Nejlepší je napsat mi na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a> nebo zavolat na <a href='tel:+420123456789'>+420 123 456 789</a> – probereme detaily a ověříme, jestli věc patří mně.",
   "🙏 Děkuji moc za ochotu pomoci! Nejlépe mi zavolejte nebo napište. Kontakt: <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a> | <a href='tel:+420123456789'>+420 123 456 789</a>."
-]
+],
+
+// ---- 17. LOKACE A CESTOVÁNÍ ----
+  "lokace, místo natáčení, kde natáčíte, vaše lokace, kde působíte, kde jste dostupný, kde točíte, lokace natáčení, místo projektu, kde se dá natáčet, lokace info, kde vás najdu, vaše oblast, působnost, kde jste aktivní": [
+    "📍 Hlavně působím v Berouně a Praze – tam je natáčení nejjednodušší a bez příplatku za cestu. Jinde v ČR je možné, ale s cestovným navíc. Pro vzdálené projekty (např. Brno) se domluvíme individuálně.<br><button class='mlx-ai-btn' data-dest='kontakt.html' data-nav='nav a[href=\"kontakt.html\"]'><span class='mlx-icon'>📍</span> Zobrazit kontakty</button>",
+    "🌍 Pokud máte specifickou lokaci, napište mi na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a> a probereme možnosti. V Berouně a Praze mám lokace ozkoušené!"
+  ],
+  "beroun, beroun natáčení, v berouně, beroun oblast, beroun působnost, beroun projekty, natáčení beroun, video beroun, beroun cena, beroun lokace": [
+    "🏞️ Beroun je moje domovská základna! Natáčení tady je rychlé, bez cestovného a s krásnými lokacemi (řeka, Karlštejn). Ceny standardní dle ceníku.<br><button class='mlx-ai-btn' data-dest='pricing.html' data-nav='nav a[href=\"pricing.html\"]'><span class='mlx-icon'>💰</span> Zobrazit ceník</button>",
+    "📸 V Berouně točím filmy, promo i eventy. Napište na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a> pro rychlou domluvu."
+  ],
+  "praha, praha natáčení, v praze, praha oblast, praha působnost, praha projekty, natáčení praha, video praha, praha cena, praha lokace": [
+    "🌆 Praha je ideální pro natáčení – mosty, uličky, moderní kanceláře. Žádné příplatky za dojezd, vše dle ceníku. Podívejte se na ukázky!<br><button class='mlx-ai-btn' data-dest='portfolio.html' data-nav='nav a[href=\"portfolio.html\"]'><span class='mlx-icon'>🖼️</span> Ukázat portfolio</button>",
+    "🎥 V Praze točím často – od firemních videí po klipy. Kontaktujte mě na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a> pro plán."
+  ],
+  "cestovné, dojezd, cena dojezdu, kolik za cestu, cestovné poplatek, doprava, cesta cena, dojezd mimo, mimo oblast, cestovné mimo prahu, cestovné mimo beroun": [
+    "🚗 V Berouně a Praze je cestovné zdarma. Jinde účtuji od 5 Kč/km (např. Brno cca 2000 Kč navíc). Přesnou cenu pošlu emailem po domluvě lokace.<br><small>Napište na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a>.</small>",
+    "🛣️ Pro vzdálené lokace (např. Ostrava) může být cena vyšší a někdy nemusí být možné kvůli času. Domluvíme se individuálně."
+  ],
+  "mimo čr, mimo česko, zahraničí, natáčení zahraničí, evropa natáčení, mimo hranice, internacional, zahraniční projekty, natáčení v zahraničí, mimo českou republiku": [
+    "🌍 Projekty mimo ČR jsou možné, ale dražší kvůli dopravě a logistice (např. +5000 Kč). Záleží na projektu – napište na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a> pro nabídku.",
+    "✈️ Zahraniční natáčení řeším jen u velkých projektů. Kontaktujte mě pro detaily."
+  ],
+  "lokace venku, venkovní natáčení, outdoor, outdoor lokace, natáčení venku, venkovní projekty, příroda natáčení, venkovní video, outdoor cena, venkovní lokace": [
+    "🌳 Venkovní natáčení v Berouně (např. řeka Berounka) nebo Praze (parky, náměstí) je skvělé! Cena stejná jako indoor, jen zohledním počasí.<br><button class='mlx-ai-btn' data-dest='portfolio.html' data-nav='nav a[href=\"portfolio.html\"]'><span class='mlx-icon'>🖼️</span> Ukázat venkovní ukázky</button>",
+    "🏕️ Plánuji flexibilně kvůli světlu a počasí. Napište na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a> pro tipy na lokace."
+  ],
+  "lokace uvnitř, indoor natáčení, studio natáčení, indoor lokace, natáčení uvnitř, interiér, interiérové natáčení, studio cena, indoor projekty, uvnitř video": [
+    "🏠 Indoor natáčení (kanceláře, studia) v Praze/Berouně je jednoduché. Pokud nemáte prostor, najdu studio za příplatek.<br><button class='mlx-ai-btn' data-dest='pricing.html' data-nav='nav a[href=\"pricing.html\"]'><span class='mlx-icon'>💰</span> Zobrazit ceník</button>",
+    "💡 Mám světla a techniku pro perfektní indoor záběry. Domluvíme se na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a>."
+  ],
+  "daleké projekty, daleko, daleká lokace, mimo prahu beroun, daleko natáčení, daleká cesta, daleko cena, dojezd, daleké natáčení, mimo oblast cena": [
+    "🛣️ Pro lokace mimo Prahu/Beroun (např. Brno, Olomouc) přidávám cestovné od 2000 Kč. Moc daleko (např. Slovensko) nemusí být možné kvůli času.<br><small>Napište na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a>.</small>",
+    "📍 Daleké projekty řeším individuálně – cena závisí na vzdálenosti a rozsahu."
+  ],
+  "lokace navrhnout, navrhněte lokaci, nápady lokace, kde natáčet, lokace tipy, tipy na lokace, kde točit, lokace pro video, lokace nápady, navrhnout místo": [
+    "💡 Rád navrhnu lokace: v Berouně třeba hrad Karlštejn, v Praze Karlův most nebo moderní kanceláře. Napište typ videa na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a>.",
+    "🗺️ Lokace vybírám podle projektu – napište mi váš nápad a pošlu tipy!"
+  ],
+  "lokace povolení, povolení natáčení, licence lokace, povolení místo, natáčení povolení, lokace schválení, povolení venku, povolení indoor, lokace pravidla, povolení info": [
+    "📜 Pro veřejné lokace (např. Praha centrum) zařídím povolení zdarma, pokud není složité. Soukromé prostory řeší klient.<br><small>Kontakt: <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a>.</small>",
+    "🔒 Povolení zajišťuji v Berouně/Praze hladce. Napište mi detaily projektu."
+  ],
+
+  // ---- 18. SPECIÁLNÍ NABÍDKY A ZÁBAVA ----
+  "speciální nabídka, akce, speciální akce, slevy speciální, nabídka speciální, speciální balíček, akční nabídka, speciální ceny, nabídka na míru, speciální projekty": [
+    "💼 Speciální akce nemám, ale pro větší projekty v Praze/Berouně můžu nabídnout lepší cenu – domluvíme individuálně na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a>.",
+    "📽️ Pro nové klienty můžu mírně upravit cenu na první projekt – napište mi detaily a probereme možnosti."
+  ],
+  "hra, secret hra, hra přes ai, skrytá hra, hra mlx, hra video, zábava, hra na webu, secret game, hra html": [
+    "🕹️ Objev exkluzivní skrytou hru o video produkci – dostupnou jen přes mě! Zábava pro fanoušky filmu i klienty.<br><button class='mlx-ai-btn' data-dest='hra.html' data-nav='nav a[href=\"hra.html\"]'><span class='mlx-icon'>🎮</span> Spustit skrytou hru</button>",
+    "🎬 Hra je speciální bonus – odemkneš ji tady nebo po objednávce! <br><button class='mlx-ai-btn' data-dest='hra.html' data-nav='nav a[href=\"hra.html\"]'><span class='mlx-icon'>🎮</span> Hrát teď</button>",
+    "🎲 Zkuste naši skrytou hru, která vás provede světem videa! Exkluzivní přístup jen přes AI.<br><button class='mlx-ai-btn' data-dest='hra.html' data-nav='nav a[href=\"hra.html\"]'><span class='mlx-icon'>🎮</span> Vyzkoušet hru</button>"
+  ],
+  "zábava, bonus, speciální zábava, hry a videa, zábavné projekty, bonus nabídka, zábavný balíček, speciální zábava, hry mlx, zábava pro klienty": [
+    "😄 Jako bonus mám skrytou hru o video produkci – perfektní zábava pro klienty! Zkuste ji hned.<br><button class='mlx-ai-btn' data-dest='hra.html' data-nav='nav a[href=\"hra.html\"]'><span class='mlx-icon'>🎮</span> Spustit hru</button>",
+    "🎥 Pro klienty přidávám zábavné detaily, např. krátké behind-the-scenes video k projektu zdarma na vyžádání."
+  ],
+  "větší projekty, velké projekty, větší zakázka, velká zakázka, hromadné projekty, velký projekt cena, větší projekt sleva, velké natáčení, větší video, velký projekt": [
+    "📽️ Pro větší projekty (např. série videí) můžu nabídnout výhodnější cenu – ideální pro firmy v Praze/Berouně. Napište na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a>.",
+    "💼 Velké zakázky řeším individuálně – pošlete mi rozsah a domluvíme lepší cenu."
+  ],
+  "noví klienti, nový klient, nový zákazník, první projekt, nový klient cena, první zakázka, nový klient sleva, první video, nový klient nabídka, první spolupráce": [
+    "👋 Novým klientům v Praze/Berouně můžu dát mírně nižší cenu na první projekt. Kontaktujte mě na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a> pro detaily.",
+    "📸 První spolupráce může být levnější – napište mi o svém projektu a domluvíme se."
+  ],
+  "firemní projekty, firmy projekty, firemní video, business video, firemní natáčení, firmy cena, firemní balíček, firmy nabídka, business projekty, firemní zakázka": [
+    "🏢 Firmám v Praze/Berouně nabízím přizpůsobené ceny pro větší projekty – např. promo videa. Napište na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a>.<br><button class='mlx-ai-btn' data-dest='portfolio.html' data-nav='nav a[href=\"portfolio.html\"]'><span class='mlx-icon'>🖼️</span> Ukázat firemní ukázky</button>",
+    "📈 Firemní videa dělám s důrazem na kvalitu – kontaktujte mě pro nabídku."
+  ],
+  "eventy, natáčení eventů, svatby natáčení, oslavy video, event video, eventy cena, svatba video, oslavy natáčení, eventy projekty, event nabídka": [
+    "🎉 Natáčení eventů (svatby, oslavy) v Praze/Berouně – ceny dle rozsahu. Možná výhodnější cena pro větší zakázku.<br><button class='mlx-ai-btn' data-dest='portfolio.html' data-nav='nav a[href=\"portfolio.html\"]'><span class='mlx-icon'>🖼️</span> Ukázat event ukázky</button>",
+    "🎊 Eventy točím s důrazem na emoce – napište na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a> pro podrobnosti."
+  ],
+  "spolupráce, partnerství, agentura spolupráce, spolupráce projekty, partner nabídka, spolupráce cena, partner video, spolupráce nabídka, agentura projekty, partner info": [
+    "🤝 Pro agentury nebo partnery v Praze/Berouně můžu nabídnout lepší cenu u větších projektů. Napište na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a>.",
+    "🌟 Spolupráce na větších zakázkách – domluvíme individuální podmínky."
+  ],
+  "behind the scenes, zákulisí, zákulisní video, behind the scenes video, zákulisí natáčení, bts, bts video, zákulisí zdarma, behind the scenes nabídka, zákulisí info": [
+    "🎥 Jako bonus můžu dodat krátké zákulisní video z natáčení zdarma – stačí říct předem! Kontakt: <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a>.",
+    "📽️ Zákulisí je skvělý doplněk k projektu – ideální pro sociální sítě."
+  ],
+  "hra bonus, hra jako bonus, zábava bonus, hra pro klienty, bonus hra, hra nabídka, zábava hra, hra přístup, bonus video hra, hra info": [
+    "🎲 Skrytá hra je zábavný bonus pro klienty – o video produkci, exkluzivně přes AI! Zkuste ji hned.<br><button class='mlx-ai-btn' data-dest='hra.html' data-nav='nav a[href=\"hra.html\"]'><span class='mlx-icon'>🎮</span> Spustit hru</button>",
+    "🕹️ Po objednávce dostanete přístup k naší skryté hře – zábava navíc k vašemu videu!"
+  ],
+
+
+
 };
 
 // --- Synonym map (optional to separate too) ---
@@ -522,7 +641,7 @@ const synonymMap = {
 
   fallback: [
     "nevím","nechápu","nerozeznám","cože","jak to","pomoc","help","zmatený",
-    "nejasné","co","jak","dotaz","mám otázku","otázka"
+    "nejasné","dotaz","mám otázku","otázka"
   ],
 
     dodani: [
@@ -568,5 +687,38 @@ const synonymMap = {
     // Obecně
     "ztráty a nálezy","ztracené věci","nalezené věci",
     "ztratil předmět","našel předmět","něco se ztratilo","něco jsem našel"
+  ],
+
+lokace: [
+    "lokace","místo","kde natáčíte","oblast","působnost","beroun","praha","cestovné",
+    "dojezd","mimo čr","venku","uvnitř","daleko","navrhnout lokaci","povolení natáčení"
+  ],
+  specialni: [
+    "speciální nabídka","akce","sleva","hra","skrytá hra","zábava","větší projekty",
+    "noví klienti","firemní projekty","eventy","spolupráce","behind the scenes","hra bonus"
+  ],
+
+    cenik: [
+    "cenik","ceny","kolik to stoji","kolik zaplatim","kolik stojí",
+    "kolik účtujete","jaká je cena","cena služeb","ceník služeb",
+    "orientační cena","orientační ceny","pricelist","pricing"
+  ],
+
+  kalkulace: [
+    "kalkulace","spočítej cenu","chci kalkulaci","potřebuji kalkulaci",
+    "spočítejte mi cenu","udělej kalkulaci","kalkulačka","kolik by stálo",
+    "kolik by to stálo","orientační kalkulace","spocitat cenu","výpočet ceny"
+  ],
+
+  balicky: [
+    "balíčky","balíček","firemní balíček","balíčky služeb","služby balíčky",
+    "firemní služby","balíčky cen","balíček služeb","nabídka balíčků",
+    "speciální balíček","promo balíček"
+  ],
+
+  dostupnost: [
+    "dostupnost","volné termíny","obsazenost","volno","kalendář","termíny",
+    "kdy máš čas","jak jsi volný","máš volno","rezervace termínu","rezervovat čas",
+    "kdy to půjde","volný termín","free termín","kdy natáčíš"
   ]
 };
