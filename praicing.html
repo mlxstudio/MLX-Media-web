@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="cs">
-    <link rel="stylesheet" href="ChatBot.css">
 <head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <link rel="icon" type="image/png" href="favicon.png"> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ceník – MLX Media</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="ChatBot.css">
     <style>
         body {
             margin: 0;
@@ -16,24 +18,46 @@
             line-height: 1.6;
             overflow-x: hidden;
         }
-        header {
-            background: linear-gradient(120deg, #00BFA6, orange);
-            height: 200px;
+        .video-banner {
+            width: 100%;
+            height: 50vh;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+        .video-banner video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .video-banner::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(to bottom, transparent 0%, rgba(249,249,249,0.3) 50%, #f9f9f9 100%);
+            pointer-events: none;
+            z-index: 3;
+        }
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            text-align: center;
             color: white;
-            animation: fadeIn 1.5s ease-in-out;
-        }
-        header h1 {
-            font-size: 2.8em;
-            margin: 0;
-            animation: slideDown 1s ease forwards;
+            text-align: center;
+            z-index: 2;
         }
         nav {
             display: flex;
+            flex-wrap: wrap;
             gap: 15px;
             position: fixed;
             top: 0;
@@ -46,6 +70,7 @@
             backdrop-filter: blur(5px);
             border-bottom: 2px solid rgba(255,255,255,0.2);
             transition: box-shadow 0.3s ease;
+            box-sizing: border-box;
         }
         nav.scrolled {
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
@@ -167,7 +192,9 @@
             margin-top: 10px;
         }
         .order-btn, .youtube-btn {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             padding: 14px 32px;
             font-size: 1.13em;
             font-weight: 600;
@@ -189,21 +216,8 @@
             box-shadow: 0 6px 18px rgba(0,191,166,0.18);
         }
         .youtube-btn {
-            display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin: 18px auto 0 auto;
-    padding: 12px 28px;
-    background: linear-gradient(120deg, #ff0000, #ff9900);
-    color: white;
-    font-size: 1.08em;
-    font-weight: 600;
-    border: none;
-    border-radius: 30px;
-    text-decoration: none;
-    box-shadow: 0 2px 8px rgba(255,0,0,0.13), 0 1.5px 8px rgba(0,0,0,0.08);
-    transition: background 0.3s, transform 0.2s;
-    text-align: center;
+            background: linear-gradient(120deg, #ff0000, #ff9900);
+            color: white;
         }
         .youtube-btn:hover {
             background: linear-gradient(120deg, #ff9900, #ff0000);
@@ -211,10 +225,7 @@
             transform: translateY(-2px) scale(1.04);
             box-shadow: 0 6px 18px rgba(255,0,0,0.18);
         }
-        .youtube-btn i {
-            margin-right: 7px;
-        }
-        .order-btn i {
+        .youtube-btn i, .order-btn i {
             margin-right: 7px;
         }
         @keyframes fadeIn {
@@ -228,259 +239,462 @@
         @keyframes fadeUp {
             from {transform: translateY(20px); opacity: 0;}
             to {transform: translateY(0); opacity: 1;}
-
+        }
+        @keyframes icon-spin {
+            100% { transform: rotate(360deg); }
+        }
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .scroll-animate.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        @media (max-width: 768px) {
+            nav a {
+                font-size: 0.9em;
+                padding: 6px 10px;
+            }
+            .slider-wrapper {
+                max-width: 100%;
+            }
+            .slider {
+                aspect-ratio: 16 / 9;
+            }
+        }
+        @media (max-width: 480px) {
+            nav a {
+                font-size: 0.85em;
+                padding: 5px 8px;
+            }
+        }
+        .calendar-container {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 15px;
+            background: #ffffff;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            position: relative;
+            overflow: visible;
+        }
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .calendar-header h3 {
+            margin: 0;
+            font-size: 1.3em;
+            color: #00334e;
+        }
+        .calendar-header button {
+            background: linear-gradient(120deg, #00BFA6, orange);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .calendar-header button:hover {
+            transform: translateY(-2px);
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+        .calendar-day {
+            position: relative;
+            padding: 12px;
+            text-align: center;
+            border-radius: 8px;
+            background: #f3f9f9;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .calendar-day:hover {
+            background: #00bfa61a;
+        }
+        .calendar-day.booked {
+            background: #ffeded;
+            color: #d60000;
+            cursor: not-allowed;
+            text-decoration: line-through;
+        }
+        .calendar-day.today {
+            background: #00BFA6;
+            color: white;
+            font-weight: bold;
+        }
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 6px;
+            right: 6px;
+            cursor: default;
+        }
+        .status-dot::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%;
+            right: 50%;
+            transform: translateX(50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            white-space: nowrap;
+            font-size: 0.8em;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+            z-index: 9999;
+        }
+        .status-dot:hover::after {
+            opacity: 1;
+        }
+        .dot-yellow { background: gold; }
+        .dot-blue { background: #007bff; }
+        .dot-green { background: #00c853; }
+        .calendar-legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 12px;
+            font-size: 0.95em;
+            color: #333;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .legend-yellow { background: gold; }
+        .legend-blue { background: #007bff; }
+        .legend-green { background: #00c853; }
+        .timeline { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+            gap: 20px; 
+            margin-top: 25px; 
+        }
+        .timeline-step { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08); 
+            text-align: center; 
+        }
+        .timeline-step span { font-size: 1.6em; display: block; margin-bottom: 8px; }
+        .timeline-step h3 { margin: 10px 0 8px 0; color: #00334e; }
+        .timeline-step p { margin: 6px 0; font-size: 0.95em; }
+        .faq-section { max-width: 800px; margin: 50px auto; }
+        .faq-item { margin-bottom: 12px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.07); }
+        .faq-question {
+            width: 100%; padding: 14px; font-size: 1.1em; text-align: left;
+            background: #00BFA6; color: white; border: none; cursor: pointer; outline: none;
+        }
+        .faq-answer { max-height: 0; overflow: hidden; background: #f9f9f9; transition: max-height 0.3s ease; padding: 0 14px; }
+        .faq-item.active .faq-answer { max-height: 200px; padding: 14px; }
+        .timeline-section { text-align: center; margin: 60px auto; }
+        .why-me-section { max-width: 800px; margin: 50px auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .why-me-section ul { list-style: none; padding: 0; }
+        .why-me-section li::before { content: "✔️ "; margin-right: 6px; color: #00BFA6; }
+        #pro-calculator-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+        .toggle-btn {
+            padding: 12px 20px;
+            border-radius: 30px;
+            border: none;
+            background: linear-gradient(120deg, #00BFA6, orange);
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto 20px;
+            font-size: 1.1em;
+            transition: transform 0.3s ease;
+        }
+        .toggle-btn:hover {
+            transform: scale(1.05);
+        }
+        #pro-calculator {
+            border: none;
+            padding: 20px;
+            border-radius: 15px;
+            background: #fff;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        #pro-calculator h2 {
+            text-align: center;
+            color: #00334e;
+            margin-bottom: 10px;
+        }
+        #pro-calculator .warning {
+            text-align: center;
+            font-weight: bold;
+            color: #ff0000;
+            font-size: 1em;
+            margin-bottom: 20px;
+        }
+        #pro-calculator p {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .calc-modes {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .mode-btn {
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 1px solid #ddd;
+            background: #f9f9f9;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease;
+            color: #00334e;
+            font-weight: 600;
+        }
+        .mode-btn.active {
+            background: linear-gradient(120deg, #00BFA6, orange);
+            color: #fff;
+            border: none;
+            transform: scale(1.05);
+        }
+        .mode-btn:hover {
+            transform: scale(1.05);
+        }
+        .mode-btn i {
+            margin-right: 5px;
+        }
+        .calc-form {
+            display: none;
+            animation: fadeInCalc 0.5s ease;
+        }
+        .calc-form.active {
+            display: block;
+        }
+        .calc-group {
+            margin-bottom: 15px;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+        .calc-group:hover {
+            transform: translateY(-2px);
+        }
+        .calc-group label {
+            display: block;
+            font-weight: 600;
+            color: #00334e;
+            margin-bottom: 5px;
+        }
+        .calc-group label i {
+            margin-right: 8px;
+            color: orange;
+        }
+        .calc-group input[type=number],
+        .calc-group select,
+        .calc-group textarea {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+        .calc-group input[type=checkbox] {
+            margin-right: 8px;
+        }
+        .calc-group .note {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 5px;
+        }
+        .calc-result {
+            margin-top: 20px;
+            animation: fadeInCalc 0.5s ease;
+        }
+        #receipt {
+            padding: 20px;
+            border-radius: 15px;
+            background: linear-gradient(120deg, #00BFA6, orange);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        #receipt h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.5em;
+        }
+        #receipt ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 15px 0;
+            font-size: 0.95em;
+            text-align: left;
+        }
+        #receipt ul li {
+            margin-bottom: 5px;
+            padding: 5px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+        }
+        #receipt .note {
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+        #receipt .order-btn {
+            padding: 12px 25px;
+            border-radius: 30px;
+            background: #fff;
+            color: #00BFA6;
+            text-decoration: none;
+            font-weight: 700;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        #receipt .order-btn:hover {
+            background: #00334e;
+            color: #fff;
+        }
+        @keyframes fadeInCalc {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-
-    
-            /* Calendar Styles */
-    .calendar {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 5px;
-        text-align: center;
-    }
-    .day-name {
-        font-weight: 600;
-        color: #555;
-        font-size: 0.9em;
-    }
-    .day {
-        padding: 10px;
-        border-radius: 10px;
-        background: #fafafa;
-        font-size: 0.95em;
-    }
-    .busy {
-        background: #ffe5e5;
-        color: #a00;
-        font-weight: 500;
-    }
-    .free {
-        background: #e7f9ef;
-        color: #065f3f;
-        font-weight: 500;
-    }
-    .note {
-        font-size: 0.95em;
-        color: #666;
-        margin-bottom: 15px;
-    }
-
-        /* Container with animated gradient border */
-    .calendar-embed {
-        position: relative;
-        max-width: 900px;
-        margin: 30px auto;
-        padding: 5px;
-        border-radius: 15px;
-        background: linear-gradient(120deg, #00BFA6, orange, #00BFA6);
-        background-size: 300% 300%;
-        animation: gradientMove 5s ease infinite;
-        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-        transform: scale(0.98);
-        opacity: 0;
-        animation: fadeInCalendar 1.2s ease forwards, gradientMove 8s ease infinite;
-        overflow: hidden;
-    }
-
-    /* Iframe styling */
-    .calendar-embed iframe {
-        display: block;
-        width: 100%;
-        height: 450px;
-        border-radius: 12px;
-        background-color: white;
-        transition: transform 0.4s ease, box-shadow 0.4s ease;
-    }
-
-        /* Hover zoom effect */
-    .calendar-embed:hover iframe {
-        box-shadow: 0 12px 30px rgba(0,0,0,0.2);
-    }
-
-    .calendar-embed:hover {
-        transform: scale(1.002);
-        transition: transform 0.3s ease;
-    }
-        
-
-
-    /* Keyframes for animated gradient border */
-    @keyframes gradientMove {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-
-    /* Fade-in animation */
-    @keyframes fadeInCalendar {
-        from { opacity: 0; transform: scale(0.95); }
-        to { opacity: 1; transform: scale(0.98); }
-    }
-
-
-    
-    .order-btn {
-        display: inline-block;
-        margin: 25px auto 0 auto;
-        padding: 14px 32px;
-        background: linear-gradient(120deg, #00BFA6, orange);
-        color: white;
-        font-size: 1.15em;
-        font-weight: 600;
-        border: none;
-        border-radius: 30px;
-        text-decoration: none;
-        box-shadow: 0 2px 8px rgba(0,191,166,0.13), 0 1.5px 8px rgba(0,0,0,0.08);
-        transition: background 0.3s, transform 0.2s;
-        text-align: center;
-    }
-    .order-btn:hover {
-        background: linear-gradient(120deg, orange, #00BFA6);
-        color: #fff;
-        transform: translateY(-2px) scale(1.04);
-        box-shadow: 0 6px 18px rgba(0,191,166,0.18);
-    }
-    .youtube-btn {
-        display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin: 18px auto 0 auto;
-    padding: 12px 28px;
-    background: linear-gradient(120deg, #ff0000, #ff9900);
+        @keyframes mapFadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.3; }
+    50% { transform: scale(1.05); opacity: 0.5; }
+    100% { transform: scale(1); opacity: 0.3; }
+}
+#map {
+    height: 400px;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+    animation: mapFadeIn 1s ease-out;
+}
+.leaflet-popup-content-wrapper {
+    background: linear-gradient(120deg, #00BFA6, orange);
     color: white;
-    font-size: 1.08em;
-    font-weight: 600;
-    border: none;
-    border-radius: 30px;
-    text-decoration: none;
-    box-shadow: 0 2px 8px rgba(255,0,0,0.13), 0 1.5px 8px rgba(0,0,0,0.08);
-    transition: background 0.3s, transform 0.2s;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.leaflet-popup-content {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1em;
+    padding: 10px;
+}
+.leaflet-popup-tip {
+    background: #00BFA6;
+}
+.leaflet-circle:hover {
+    fillOpacity: 0.5;
+    animation: pulse 1.5s infinite;
+}
+@media (max-width: 768px) {
+    #map {
+        height: 300px;
+    }
+}
+
+.divider-container {
     text-align: center;
-    }
-    .youtube-btn:hover {
-        background: linear-gradient(120deg, #ff9900, #ff0000);
-        color: #fff;
-        transform: translateY(-2px) scale(1.04);
-        box-shadow: 0 6px 18px rgba(255,0,0,0.18);
-    }
-    .youtube-btn i {
-        margin-right: 7px;
-    }
-    .order-btn i {
-        margin-right: 7px;
-    }
-    @keyframes icon-spin {
-    100% { transform: rotate(360deg); }
+    margin: 50px 0;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
 }
-
-    .footer-link i {
-    margin-right: 7px;
+.divider-container.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+.divider-line {
+    height: 4px;
+    background: linear-gradient(120deg, #00BFA6, orange);
+    border-radius: 2px;
+    width: 100%;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    z-index: 0;
+}
+.divider-text {
+    display: inline-block;
+    background: #fff;
+    padding: 12px 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    color: #00334e;
+    font-weight: 600;
+    font-size: 1.2em;
+    position: relative;
+    z-index: 1;
+}
+.divider-text i {
     color: orange;
-    transition: color 0.3s, transform 0.3s;
+    margin-right: 8px;
 }
-
-.footer-link:hover {
-    color: orange;
+.divider-text .arrow-down {
+    margin-left: 8px;
+    color: #00BFA6;
 }
-
-.footer-link:hover i {
-    color: #00BFA6; /* swap to text's original color */
-}
-
-.scroll-animate {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-}
-
-.scroll-animate.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Fix horizontal overflow */
-html, body {
-  max-width: 100%;
-  overflow-x: hidden;
-}
-
-/* Optimize navigation for small screens without changing design */
-@media (max-width: 768px) {
-  nav a {
-    font-size: 0.9em; /* shrink font slightly */
-    padding: 6px 10px; /* reduce padding so links fit */
-  }
-}
-@media (max-width: 480px) {
-  nav a {
-    font-size: 0.85em;
-    padding: 5px 8px;
-  }
-}
-
-/* Scale slider properly on phones */
-@media (max-width: 768px) {
-  .slider-wrapper {
-    max-width: 100%;
-  }
-  .slider {
-    aspect-ratio: 16 / 9; /* better for mobile */
-  }
-}
-
-/* Make nav fully responsive */
-nav {
-  display: flex;
-  flex-wrap: wrap;       /* allow links to wrap instead of overflowing */
-  justify-content: center; /* center links on small screens */
-  padding: 0 10px;       /* reduce horizontal padding */
-  box-sizing: border-box; /* include padding in width */
-}
-
-/* Shrink links on smaller screens */
-@media (max-width: 768px) {
-  nav a {
-    font-size: 0.9em;
-    padding: 6px 8px; /* slightly smaller to fit */
-  }
-}
-
-@media (max-width: 480px) {
-  nav a {
-    font-size: 0.85em;
-    padding: 5px 6px;
-  }
-}
-
-        
-header {
-    padding-top: 60px; /* or however tall your nav is */
-}
-
-
     </style>
 </head>
 <body>
     <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("visible");
-      } else {
-        entry.target.classList.remove("visible"); // reset when out of view
-      }
-    });
-  }, { threshold: 0.2 }); // 20% visible triggers
-
-  document.querySelectorAll(".scroll-animate").forEach(el => {
-    observer.observe(el);
-  });
-});
-</script>
-    <!-- Navigation -->
+        document.addEventListener("DOMContentLoaded", () => {
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("visible");
+                    } else {
+                        entry.target.classList.remove("visible");
+                    }
+                });
+            }, { threshold: 0.2 });
+            document.querySelectorAll(".scroll-animate").forEach(el => observer.observe(el));
+            const video = document.getElementById('product-video');
+            let played = false;
+            const videoObserver = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !played) {
+                        video.play();
+                        played = true;
+                    }
+                });
+            }, { threshold: 0.6 });
+            videoObserver.observe(document.getElementById('animation-section'));
+        });
+    </script>
     <nav id="mainNav">
         <a href="index.html">Domovská stránka</a>
         <a href="portfolio.html">Portfolio</a>
@@ -488,17 +702,18 @@ document.addEventListener("DOMContentLoaded", () => {
         <a href="praicing.html">Ceník</a>
         <a href="order.html">Objednávka</a>
     </nav>
-
-    <!-- Header -->
-    <header>
-        <h1>🎬 Ceník služeb</h1>
-    </header>
-
+    <section class="video-banner" id="animation-section">
+        <video id="product-video" muted playsinline preload="auto">
+            <source src="Ceník web video.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-overlay">
+        </div>
+    </section>
     <main>
         <section class="intro-text scroll-animate">
             <p>Startovní – přátelský rozpočet pro všechny, kdo hledají kvalitní video i férový přístup.</p>
         </section>
-
         <table>
             <thead>
                 <tr>
@@ -508,869 +723,735 @@ document.addEventListener("DOMContentLoaded", () => {
                 </tr>
             </thead>
             <tbody class="scroll-animate">
-    <tr>
-        <td>🎥 Natáčení (půlden / do 4 hod)</td>
-        <td>Základní záběry, 1–2 lokace, vlastní technika</td>
-        <td class="price">od 2 000 Kč</td>
-    </tr>
-    <tr>
-        <td>✂️ Střih videa (z vlastních záběrů, do 2 min)</td>
-        <td>Hudba, základní barvy, titulky</td>
-        <td class="price">od 1 500 Kč</td>
-    </tr>
-    <tr>
-        <td>🎞️ Kompletní video</td>
-        <td>Natáčení + střih (do 3 min)</td>
-        <td class="price">od 3 500 Kč</td>
-    </tr>
-    <tr>
-        <td>📦 Balíček: promo pro firmu</td>
-        <td>1 natáčecí den, střih, logo, hudba, export do více formátů</td>
-        <td class="price">od 6 000 Kč</td>
-    </tr>
-    <tr>
-        <td>📱 Vertikální video na sítě</td>
-        <td>Do 1 minuty, rychlý střih, trendy styl (TikTok / Reels)</td>
-        <td class="price">od 1 800 Kč</td>
-    </tr>
-    <tr>
-        <td>🎓 Individuální nabídka</td>
-        <td>Rád vytvořím balíček na míru</td>
-        <td class="price">Cena dohodou</td>
-    </tr>
-    <tr>
-        <td>🚗 Cestovné</td>
-        <td>Dle vzdálenosti (počítáno od místa bydliště)</td>
-        <td class="price"> Cena Individuální </td>
-    </tr>
-</tbody>
-
+                <tr>
+                    <td>🎥 Natáčení (půlden / do 4 hod)</td>
+                    <td>Základní záběry, 1–2 lokace, vlastní technika</td>
+                    <td class="price">od 2 000 Kč</td>
+                </tr>
+                <tr>
+                    <td>✂️ Střih videa (z vlastních záběrů, do 2 min)</td>
+                    <td>Hudba, základní barvy, titulky</td>
+                    <td class="price">od 1 500 Kč</td>
+                </tr>
+                <tr>
+                    <td>🎞️ Kompletní video</td>
+                    <td>Natáčení + střih (do 3 min)</td>
+                    <td class="price">od 3 500 Kč</td>
+                </tr>
+                <tr>
+                    <td>📦 Balíček: promo pro firmu</td>
+                    <td>1 natáčecí den, střih, logo, hudba, export do více formátů</td>
+                    <td class="price">od 6 000 Kč</td>
+                </tr>
+                <tr>
+                    <td>📱 Vertikální video na sítě</td>
+                    <td>Do 1 minuty, rychlý střih, trendy styl (TikTok / Reels)</td>
+                    <td class="price">od 1 800 Kč</td>
+                </tr>
+                <tr>
+                    <td>🎓 Individuální nabídka</td>
+                    <td>Rád vytvořím balíček na míru</td>
+                    <td class="price">Cena dohodou</td>
+                </tr>
+                <tr>
+                    <td>🚗 Cestovné</td>
+                    <td>Dle vzdálenosti (počítáno od místa bydliště)</td>
+                    <td class="price">Cena Individuální</td>
+                </tr>
+            </tbody>
         </table>
-
         <div class="note">
             📝 Všechny ceny jsou orientační a závisí na náročnosti projektu a časových možnostech.<br>
             💼 Cením si férové spolupráce – když klient pomůže mně, pomůžu já jemu.
         </div>
         <div class="calendar-section scroll-animate">
-    <h2>📅 Dostupnost</h2>
-    <p class="note">Omlouvám se, můj program je momentálně dost nabitý. Podívejte se na volné termíny níže:</p>
-    
-<div class="calendar-container">
-    <div id="calendar"></div>
+            <h2>📅 Dostupnost</h2>
+            <p class="note">Omlouvám se, můj program je momentálně dost nabitý. Podívejte se na volné termíny níže:</p>
+            <div class="calendar-container">
+                <div id="calendar"></div>
+            </div>
+            <div class="calendar-legend">
+                <div class="legend-item"><span class="legend-dot legend-yellow"></span> ❌ Pevně obsazeno</div>
+                <div class="legend-item"><span class="legend-dot legend-blue"></span> ⚠️ Jen pro důležité projekty</div>
+                <div class="legend-item"><span class="legend-dot legend-green"></span> ℹ️ Jen pro důležitější projekt – složitější</div>
+            </div>
+        </div>
+        <section id="service-area" class="scroll-animate">
+    <h2><i class="fas fa-map-marker-alt"></i> Oblast působnosti</h2>
+    <p class="note">Preferuji projekty v těchto oblastech: Beroun, Praha 5 a Praha 6. Mapa ukazuje ideální dosah (kruhy o poloměru 5 km). Pro projekty mimo tyto oblasti nebo na mýstech kde je obtížné se dostat doporučujeme se snámi domluvit – cena cestovného je velice individuální po kolik věcí potřebujete jak dalek atd.</p>
+    <div id="map"></div>
+</section>
+<div class="divider-container scroll-animate">
+    <div class="divider-text"><i class="fas fa-calculator"></i> Vypočítejte si cenu projektu <i class="fas fa-arrow-down arrow-down"></i></div>
+    <div class="divider-line"></div>
 </div>
 
-<style>
-.calendar-container {
-    margin-top: 25px;
-    padding: 20px;
-    border-radius: 15px;
-    background: white;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-    position: relative; /* keep children positioned relative */
-    overflow: visible;  /* allow tooltips to escape! */
-}
-
-.status-dot::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: 125%;
-    right: 50%;
-    transform: translateX(50%);
-    background: rgba(0,0,0,0.85);
-    color: white;
-    padding: 4px 8px;
-    border-radius: 6px;
-    white-space: nowrap;
-    font-size: 0.8em;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.25s ease;
-    z-index: 9999; /* 🔥 ensures it pops above everything */
-}
-
-
-.calendar-day {
-    position: relative;
-    padding: 12px;
-    text-align: center;
-    border-radius: 8px;
-    background: #f3f9f9;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    position: absolute;
-    bottom: 6px;
-    right: 6px;
-}
-
-.dot-yellow { background: gold; }
-.dot-blue   { background: #007bff; }
-.dot-green  { background: #00c853; }
-
-.calendar-container {
-    margin-top: 25px;
-    padding: 20px;
-    border-radius: 15px;
-    background: white;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-}
-.calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
-.calendar-header h3 {
-    margin: 0;
-    font-size: 1.3em;
-    color: #00334e;
-}
-.calendar-header button {
-    background: linear-gradient(120deg, #00BFA6, orange);
-    border: none;
-    color: white;
-    padding: 6px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-.calendar-header button:hover {
-    transform: translateY(-2px);
-}
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
-}
-.calendar-day {
-    padding: 12px;
-    text-align: center;
-    border-radius: 8px;
-    background: #f3f9f9;
-    cursor: pointer;
-    transition: 0.2s;
-}
-.calendar-day:hover {
-    background: #00bfa61a;
-}
-.calendar-day.booked {
-    background: #ffeded;
-    color: #d60000;
-    cursor: not-allowed;
-    text-decoration: line-through;
-}
-.calendar-day.today {
-    background: #00BFA6;
-    color: white;
-    font-weight: bold;
-}
-
-/* Tooltip for dots */
-.status-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    position: absolute;
-    bottom: 6px;
-    right: 6px;
-    cursor: default;
-}
-.status-dot::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: 125%; /* above dot */
-    right: 50%;
-    transform: translateX(50%);
-    background: rgba(0,0,0,0.8);
-    color: white;
-    padding: 4px 8px;
-    border-radius: 6px;
-    white-space: nowrap;
-    font-size: 0.8em;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.25s ease;
-}
-.status-dot:hover::after {
-    opacity: 1;
-}
-
-/* Legend styling */
-.calendar-legend {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 12px;
-    font-size: 0.95em;
-    color: #333;
-}
-.legend-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-.legend-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-}
-.legend-yellow { background: gold; }
-.legend-blue   { background: #007bff; }
-.legend-green  { background: #00c853; }
-
-</style>
-
-<script>
-async function loadDates() {
-    const res = await fetch("dates.json"); // external file with dates
-    return await res.json();
-}
-
-async function generateCalendar(month, year) {
-    const data = await loadDates();
-    const calendar = document.getElementById("calendar");
-    calendar.innerHTML = "";
-
-    const header = document.createElement("div");
-    header.className = "calendar-header";
-    
-    const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-    const title = document.createElement("h3");
-    title.textContent = `${monthNames[month]} ${year}`;
-
-    const prevBtn = document.createElement("button");
-    prevBtn.textContent = "←";
-    prevBtn.onclick = () => generateCalendar(month === 0 ? 11 : month-1, month === 0 ? year-1 : year);
-
-    const nextBtn = document.createElement("button");
-    nextBtn.textContent = "→";
-    nextBtn.onclick = () => generateCalendar(month === 11 ? 0 : month+1, month === 11 ? year+1 : year);
-
-    header.appendChild(prevBtn);
-    header.appendChild(title);
-    header.appendChild(nextBtn);
-    calendar.appendChild(header);
-
-    const grid = document.createElement("div");
-    grid.className = "calendar-grid";
-
-    const daysInMonth = new Date(year, month+1, 0).getDate();
-    const today = new Date();
-
-    // helper for dots
-function addDot(cell, color, message) {
-    let dot = document.createElement("div");
-    dot.className = `status-dot dot-${color}`;
-    dot.setAttribute("data-tooltip", message); // tooltip text
-    cell.appendChild(dot);
-};
-
-
-    for (let i=1; i<=daysInMonth; i++) {
-        const date = new Date(year, month, i);
-        const isoDate = date.toISOString().split("T")[0];
-
-        const cell = document.createElement("div");
-        cell.className = "calendar-day";
-        cell.textContent = i;
-
-        // mark today
-        if (date.toDateString() === today.toDateString()) {
-            cell.classList.add("today");
-        }
-
-        // booked & dots
-        if (data.yellow.includes(isoDate)) {
-            cell.classList.add("booked");
-            addDot(cell, "yellow", "❌ Pevně obsazeno – žádná možnost změny.");
-        }
-        if (data.blue.includes(isoDate)) {
-            cell.classList.add("booked");
-            addDot(cell, "blue", "⚠️ Jen pro opravdu důležité projekty.");
-        }
-        if (data.green.includes(isoDate)) {
-            cell.classList.add("booked");
-            addDot(cell, "green", "ℹ️ lze domluvit, ale složitější a delší.");
-        }
-
-        grid.appendChild(cell);
-    }
-    calendar.appendChild(grid);
-}
-
-// init
-const now = new Date();
-generateCalendar(now.getMonth(), now.getFullYear());
-</script>
-
-<div class="calendar-legend">
-  <div class="legend-item"><span class="legend-dot legend-yellow"></span> ❌ Pevně obsazeno</div>
-  <div class="legend-item"><span class="legend-dot legend-blue"></span> ⚠️ Jen pro důležité projekty</div>
-  <div class="legend-item"><span class="legend-dot legend-green"></span> ℹ️ Jen pro duležtější projekt – složitější</div>
-</div>
-
-<section id="pro-calculator-container" class="calculator-container">
-  <button id="toggle-calculator" class="toggle-btn" onclick="toggleCalculator()">Zobrazit kalkulátor ceny</button>
-  <div id="pro-calculator-content" style="display: none;">
-    <!-- ========== Rozšířený Multi-Mode Kalkulátor (Simple / Pro / Advanced) ========== -->
-<section id="pro-calculator" class="calculator-section scroll-animate" style="border: 2px solid #ddd; padding: 20px; border-radius: 15px; background: #f9f9f9; max-width: 800px; margin: 0 auto;">
-  <h2>💰 Orientační kalkulátor ceny (rozšířený)</h2>
-  <p style="font-weight: bold; color: #ff0000; font-size: 1.1em;">POZOR: Toto je pouze ORIENTAČNÍ odhad! Finální cena bude stanovena po osobní konzultaci na základě detailů projektu.</p>
-  <p>Vyber úroveň detailu: rychlý odhad → polo-profesionální → plný profi rozpočet.</p>
-
-  <!-- Mode tabs -->
-  <div class="calc-modes" style="display:flex;gap:8px;justify-content:center;margin:18px 0;">
-    <button class="mode-btn active" data-mode="simple">⚡ Simple</button>
-    <button class="mode-btn" data-mode="pro">🎥 Pro</button>
-    <button class="mode-btn" data-mode="advanced">🚀 Advanced</button>
-  </div>
-
-  <!-- SIMPLE -->
-  <form id="calc-simple" class="calc-form active" aria-hidden="false">
-    <div class="calc-group">
-      <label>Počet hodin natáčení:</label>
-      <input type="number" id="simple-hours" min="1" max="24" value="2">
-      <p class="note">Základní sazba: <strong>500 Kč/h</strong>. (Sleva 10% nad 5 hodin)</p>
-    </div>
-
-    <div class="calc-group">
-      <label>Odhadovaná délka finálního videa (minuty):</label>
-      <input type="number" id="simple-length-min" min="1" value="2">
-      <p class="note">Přidává se 150 Kč za každou minutu (orientační za střih).</p>
-    </div>
-
-    <div class="calc-group">
-      <label>Základní střih:</label>
-      <select id="simple-edit">
-        <option value="0">Bez střihu (raw) +0 Kč</option>
-        <option value="300">Základní střih (+300 Kč)</option>
-        <option value="600">Střih + jednoduché ladění zvuku (+600 Kč)</option>
-      </select>
-    </div>
-
-    <div class="calc-group">
-      <label>Počet revizí (v ceně 2):</label>
-      <input type="number" id="simple-revisions" min="0" max="10" value="2">
-    </div>
-  </form>
-
-  <!-- PRO -->
-  <form id="calc-pro" class="calc-form" aria-hidden="true">
-    <div class="calc-group">
-      <label>Počet hodin natáčení:</label>
-      <input type="number" id="pro-hours" min="1" max="24" value="3">
-      <p class="note">500 Kč/h (sleva 10% nad 5 h).</p>
-    </div>
-
-    <div class="calc-group">
-      <label>Odhadovaná délka finálního videa (minuty):</label>
-      <input type="number" id="pro-length-min" min="1" value="3">
-      <p class="note">Přidává se 200 Kč za každou minutu (orientační za střih a délku).</p>
-    </div>
-
-    <div class="calc-group">
-      <label>Počet kamer (max 2):</label>
-      <input type="number" id="pro-cameras" min="1" max="2" value="1">
-      <p class="note">Další kamera +1000 Kč (za druhou).</p>
-    </div>
-
-    <div class="calc-group">
-      <label>Střih (vyber typ):</label>
-      <select id="pro-cut">
-        <option value="300">Základní (+300 Kč)</option>
-        <option value="700">Detailní (+700 Kč)</option>
-        <option value="1400">Kreativní / cinematic (+1400 Kč)</option>
-      </select>
-    </div>
-
-    <div class="calc-group">
-      <label>Formáty exportu:</label>
-      <label><input type="checkbox" class="pro-extra" value="0"> Horizontální (16:9)</label><br>
-      <label><input type="checkbox" class="pro-extra" value="200"> Vertikální (9:16) +200 Kč</label><br>
-      <label><input type="checkbox" class="pro-extra" value="150"> Čtvercový (1:1) +150 Kč</label>
-    </div>
-
-    <div class="calc-group">
-      <label>Zvuk - kvalita výsledku:</label>
-      <select id="pro-audio">
-        <option value="0">Standard stereo (16-bit)</option>
-        <option value="300">24-bit mix (+300 Kč)</option>
-        <option value="700">32-bit float / mastering (+700 Kč)</option>
-      </select>
-    </div>
-
-    <div class="calc-group">
-      <p>Doplňky:</p>
-      <label><input type="checkbox" class="pro-extra" value="500"> Drone +500 Kč</label><br>
-      <label><input type="checkbox" class="pro-extra" value="400"> Licencovaná hudba +400 Kč</label><br>
-      <label><input type="checkbox" class="pro-extra" value="300"> Titulky +300 Kč</label>
-    </div>
-
-    <div class="calc-group">
-      <label>Revize (2 v ceně, další +300 Kč/ks):</label>
-      <input type="number" id="pro-revisions" min="0" max="10" value="2">
-    </div>
-  </form>
-
-  <!-- ADVANCED -->
-  <form id="calc-advanced" class="calc-form" aria-hidden="true">
-    <div class="calc-group">
-      <label>Počet hodin natáčení:</label>
-      <input type="number" id="adv-hours" min="1" max="48" value="4">
-      <p class="note">Základní sazba 500 Kč/h; nad 5 h sleva 10% (lze upravit).</p>
-    </div>
-
-    <div class="calc-group">
-      <label>Odhadovaná délka finálního videa (minuty):</label>
-      <input type="number" id="adv-length-min" min="1" value="5">
-      <p class="note">Přidává se 300 Kč za každou minutu (orientační za střih a délku).</p>
-    </div>
-
-    <div class="calc-group">
-      <label>Počet kamer (max 2):</label>
-      <input type="number" id="adv-cameras" min="1" max="2" value="1">
-      <p class="note">Další kamera +1000 Kč (za druhou).</p>
-    </div>
-
-    <div class="calc-group">
-      <label>Výběr střihového stylu (9 možností):</label>
-      <select id="adv-cut">
-        <option value="400">1) Social / rychlý cut (+400 Kč)</option>
-        <option value="800">2) Promo / corporate (+800 Kč)</option>
-        <option value="1200">3) Narrative / documental (+1200 Kč)</option>
-        <option value="1600">4) Music video styl (+1600 Kč)</option>
-        <option value="2000">5) Cinematic grad + timing (+2000 Kč)</option>
-        <option value="2600">6) High-end commercial (+2600 Kč)</option>
-        <option value="3200">7) Long-form edit / docu (+3200 Kč)</option>
-        <option value="4200">8) Film-grade editorial (+4200 Kč)</option>
-        <option value="6000">9) VFX-heavy editorial (+6000 Kč)</option>
-      </select>
-    </div>
-
-    <div class="calc-group">
-      <label>Color grading:</label>
-      <select id="adv-grade">
-        <option value="0">Žádné</option>
-        <option value="800">LUT + korekce (+800 Kč)</option>
-        <option value="1800">Full grading (kolorista) (+1800 Kč)</option>
-        <option value="3200">Cinematic grading + film transform (+3200 Kč)</option>
-      </select>
-    </div>
-
-    <div class="calc-group">
-      <label>Zvuk & post-audio (volby):</label>
-      <label><input type="checkbox" class="adv-extra" value="600"> Profesionální mix (+600 Kč)</label><br>
-      <label><input type="checkbox" class="adv-extra" value="900"> Foley a SFX (+900 Kč)</label><br>
-      <label><input type="checkbox" class="adv-extra" value="1200"> 5.1 / Atmos mix (+1200 Kč)</label><br>
-      <label><input type="checkbox" class="adv-extra" value="0"> 32-bit float recording (nahrávání) – volba záznamu</label>
-    </div>
-
-    <div class="calc-group">
-      <label>VFX & motion graphics:</label>
-      <label><input type="checkbox" class="adv-extra" value="800"> Motion graphics (+800 Kč)</label><br>
-      <label><input type="checkbox" class="adv-extra" value="1600"> Compositing / green screen (+1600 Kč)</label><br>
-      <label><input type="checkbox" class="adv-extra" value="3000"> CGI / 3D asset (+3000 Kč)</label>
-    </div>
-
-    <div class="calc-group">
-      <label>Formáty exportu (více):</label>
-      <label><input type="checkbox" class="adv-extra" value="0"> 16:9</label><br>
-      <label><input type="checkbox" class="adv-extra" value="300"> 9:16 (+300 Kč)</label><br>
-      <label><input type="checkbox" class="adv-extra" value="200"> 1:1 (+200 Kč)</label><br>
-      <label><input type="checkbox" class="adv-extra" value="400"> Více verzí / mastering pro broadcast (+400 Kč)</label>
-    </div>
-
-    <div class="calc-group">
-      <label>Výbava / equipment:</label>
-      <select id="adv-equip">
-        <option value="0">Základní kit (v ceně)</option>
-        <option value="1000">Pro kit + osvětlení (+1000 Kč)</option>
-        <option value="2500">Full cinema rig (+2500 Kč)</option>
-      </select>
-    </div>
-
-    <div class="calc-group">
-      <label>Lokace / cestování:</label>
-      <select id="adv-location">
-        <option value="0">Studio / místní (v ceně)</option>
-        <option value="500">On-site do 50 km (+500 Kč)</option>
-        <option value="1500">Dálková lokace (+1500 Kč)</option>
-      </select>
-    </div>
-
-    <div class="calc-group">
-      <label>Team / produkce (max 2 osoby, dražší):</label>
-      <select id="adv-team">
-        <option value="0">Solo operator</option>
-        <option value="2000">2-členná posádka (+2000 Kč)</option>
-      </select>
-    </div>
-
-    <div class="calc-group">
-      <label>Revize (2 v ceně, další +300 Kč/ks):</label>
-      <input type="number" id="adv-revisions" min="0" max="20" value="2">
-    </div>
-
-    <div class="calc-group">
-      <label>Dodání (rychlost):</label>
-      <select id="adv-rush">
-        <option value="0">Standard (1–5 pracovních dnů)</option>
-        <option value="1000">Expres (48–72 hod) +1000 Kč</option>
-        <option value="2500">Overnight / 24h +2500 Kč</option>
-      </select>
-    </div>
-  </form>
-
-  <!-- RESULT / breakdown -->
-  <div class="calc-result" style="margin-top:18px;">
-    <div id="receipt" style="max-width:760px;margin:0 auto;padding:16px;border-radius:10px;background:#fff;box-shadow:0 6px 18px rgba(0,0,0,0.06);">
-      <h3>💵 Celková orientační cena: <span id="calc-total">0</span> Kč</h3>
-      <ul id="calc-lines" style="list-style:none;padding:0;margin:8px 0 12px 0;font-size:0.95em;"></ul>
-      <p style="font-size:0.9em;color:#666;margin-bottom:8px; font-weight: bold;">(Ceny jsou ORIENTAČNÍ — finální nabídka po konzultaci.)</p>
-      <a id="order-link" class="order-btn" href="order.html"><i class="fas fa-paper-plane"></i> Objednat / Požádat o nabídku</a>
-    </div>
-  </div>
-</section>
-
-<style>
-/* small styles scoped to calculator so nezničí zbytek */
-#pro-calculator .mode-btn { padding:8px 14px;border-radius:14px;border:1px solid #eee;background:#fafafa;cursor:pointer; }
-#pro-calculator .mode-btn.active { background:linear-gradient(120deg,#00BFA6,orange); color:#fff; border:none; }
-#pro-calculator .calc-group { margin-bottom:14px; }
-#pro-calculator input[type=number], #pro-calculator select { padding:8px;border-radius:6px;border:1px solid #ddd;width:100%;box-sizing:border-box;}
-#pro-calculator .note { font-size:0.9em;color:#666;margin-top:6px; }
-#pro-calculator .order-btn { display:inline-block;margin-top:8px; padding:10px 18px;border-radius:28px;background:linear-gradient(120deg,#00BFA6,orange);color:#fff;text-decoration:none;font-weight:700;}
-.calc-form { display: none; }
-.calc-form.active { display: block; }
-
-</style>
-
-<script>
-/* ------------ config (upravit kdykoli) -------------- */
-const BASE_RATE = 500;            // Kč / hod
-const REVISION_EXTRA = 300;       // Kč / další revize
-const DISCOUNT_HOURS = 5;         // sleva se aktivuje nad tímto počtem hodin
-const DISCOUNT_RATE = 0.10;       // 10%
-const SIMPLE_EDIT_PER_MIN = 150;  // Kč za minutu délky v simple
-const PRO_EDIT_PER_MIN = 200;     // Kč za minutu délky v pro
-const ADV_EDIT_PER_MIN = 300;     // Kč za minutu délky v advanced
-const EXTRA_CAMERA_COST = 1000;   // Kč za druhou kameru
-
-/* ------------ util functions -------------- */
-function applyHourDiscount(hours, base) {
-  let cost = hours * base;
-  let discountApplied = false;
-  if (hours > DISCOUNT_HOURS) {
-    cost = Math.round(cost * (1 - DISCOUNT_RATE));
-    discountApplied = true;
-  }
-  return { cost, discountApplied };
-}
-
-function setActiveMode(mode) {
-  document.querySelectorAll('#pro-calculator .mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode===mode));
-  ['simple','pro','advanced'].forEach(m=>{
-    const f = document.getElementById('calc-'+m);
-    if (m===mode) { f.classList.add('active'); f.setAttribute('aria-hidden','false'); }
-    else { f.classList.remove('active'); f.setAttribute('aria-hidden','true'); }
-  });
-  calculate();
-}
-
-/* ------------ calculation -------------- */
-function calculate() {
-  let total = 0;
-  const lines = [];
-
-  const mode = document.querySelector('#pro-calculator .mode-btn.active').dataset.mode;
-
-  if (mode === 'simple') {
-    const hours = parseFloat(document.getElementById('simple-hours').value) || 0;
-    const { cost: hoursCost, discountApplied } = applyHourDiscount(hours, BASE_RATE);
-    total += hoursCost;
-    let hoursLine = `${hours} h natáčení → ${hoursCost} Kč`;
-    if (discountApplied) hoursLine += ` (sleva 10% aplikována)`;
-    lines.push(hoursLine);
-
-    const lengthMin = parseFloat(document.getElementById('simple-length-min').value) || 0;
-    const lengthCost = lengthMin * SIMPLE_EDIT_PER_MIN;
-    total += lengthCost;
-    if (lengthCost) lines.push(`Délka videa ${lengthMin} min: +${lengthCost} Kč`);
-
-    const edit = parseInt(document.getElementById('simple-edit').value || 0);
-    if (edit) { total += edit; lines.push(`Střih: +${edit} Kč`); }
-    const revs = parseInt(document.getElementById('simple-revisions').value || 0);
-    if (revs > 2) {
-      const extra = (revs-2) * REVISION_EXTRA; total += extra;
-      lines.push(`Revize navíc (${revs-2}×) +${extra} Kč`);
-    } else lines.push(`Revize v ceně: ${Math.min(revs,2)} ks`);
-  }
-
-  if (mode === 'pro') {
-    const hours = parseFloat(document.getElementById('pro-hours').value) || 0;
-    const { cost: hoursCost, discountApplied } = applyHourDiscount(hours, BASE_RATE);
-    total += hoursCost;
-    let hoursLine = `${hours} h natáčení → ${hoursCost} Kč`;
-    if (discountApplied) hoursLine += ` (sleva 10% aplikována)`;
-    lines.push(hoursLine);
-
-    const lengthMin = parseFloat(document.getElementById('pro-length-min').value) || 0;
-    const lengthCost = lengthMin * PRO_EDIT_PER_MIN;
-    total += lengthCost;
-    if (lengthCost) lines.push(`Délka videa ${lengthMin} min: +${lengthCost} Kč`);
-
-    const cameras = parseInt(document.getElementById('pro-cameras').value) || 1;
-    const extraCam = Math.max(0, cameras - 1) * EXTRA_CAMERA_COST;
-    total += extraCam;
-    if (extraCam) lines.push(`Další kamery (${cameras - 1}×) +${extraCam} Kč`);
-    else lines.push(`Kamery: 1 (v ceně)`);
-
-    const cut = parseInt(document.getElementById('pro-cut').value) || 0;
-    total += cut; if (cut) lines.push(`Typ střihu: +${cut} Kč`);
-
-    const audio = parseInt(document.getElementById('pro-audio').value) || 0;
-    total += audio; if (audio) lines.push(`Zvuk: +${audio} Kč`);
-
-    document.querySelectorAll('#calc-pro .pro-extra:checked').forEach(cb=>{
-      const v = parseInt(cb.value)||0; total += v; if (v) lines.push(cb.parentNode.textContent.trim().replace(/\s+/g,' ') + ` +${v} Kč`);
-    });
-
-    const revs = parseInt(document.getElementById('pro-revisions').value || 0);
-    if (revs > 2) { const extra = (revs-2)*REVISION_EXTRA; total += extra; lines.push(`Revize navíc (${revs-2}×) +${extra} Kč`); }
-    else lines.push(`Revize v ceně: ${Math.min(revs,2)} ks`);
-  }
-
-  if (mode === 'advanced') {
-    const hours = parseFloat(document.getElementById('adv-hours').value) || 0;
-    const { cost: hoursCost, discountApplied } = applyHourDiscount(hours, BASE_RATE);
-    total += hoursCost;
-    let hoursLine = `${hours} h natáčení → ${hoursCost} Kč`;
-    if (discountApplied) hoursLine += ` (sleva 10% aplikována)`;
-    lines.push(hoursLine);
-
-    const lengthMin = parseFloat(document.getElementById('adv-length-min').value) || 0;
-    const lengthCost = lengthMin * ADV_EDIT_PER_MIN;
-    total += lengthCost;
-    if (lengthCost) lines.push(`Délka videa ${lengthMin} min: +${lengthCost} Kč`);
-
-    const cameras = parseInt(document.getElementById('adv-cameras').value) || 1;
-    const extraCam = Math.max(0, cameras - 1) * EXTRA_CAMERA_COST;
-    total += extraCam;
-    if (extraCam) lines.push(`Další kamery (${cameras - 1}×) +${extraCam} Kč`);
-    else lines.push(`Kamery: 1 (v ceně)`);
-
-    const cut = parseInt(document.getElementById('adv-cut').value) || 0;
-    total += cut; lines.push(`Střih (pokročilý): +${cut} Kč`);
-
-    const grade = parseInt(document.getElementById('adv-grade').value) || 0;
-    total += grade; if (grade) lines.push(`Color grading: +${grade} Kč`);
-
-    const equip = parseInt(document.getElementById('adv-equip').value) || 0;
-    total += equip; if (equip) lines.push(`Výbava: +${equip} Kč`);
-
-    const location = parseInt(document.getElementById('adv-location').value) || 0;
-    total += location; if (location) lines.push(`Lokace: +${location} Kč`);
-
-    const team = parseInt(document.getElementById('adv-team').value) || 0;
-    total += team; if (team) lines.push(`Produkce / team: +${team} Kč`);
-
-    const rush = parseInt(document.getElementById('adv-rush').value) || 0;
-    total += rush; if (rush) lines.push(`Rychlé dodání: +${rush} Kč`);
-
-    document.querySelectorAll('#calc-advanced .adv-extra:checked').forEach(cb=>{
-      const v = parseInt(cb.value)||0; total += v; if (v) lines.push(cb.parentNode.textContent.trim().replace(/\s+/g,' ') + ` +${v} Kč`);
-      else lines.push(cb.parentNode.textContent.trim());
-    });
-
-    const revs = parseInt(document.getElementById('adv-revisions').value || 0);
-    if (revs > 2) { const extra = (revs-2)*REVISION_EXTRA; total += extra; lines.push(`Revize navíc (${revs-2}×) +${extra} Kč`); }
-    else lines.push(`Revize v ceně: ${Math.min(revs,2)} ks`);
-  }
-
-  // round and render
-  total = Math.round(total);
-  document.getElementById('calc-total').textContent = total.toLocaleString('cs-CZ');
-  const list = document.getElementById('calc-lines');
-  list.innerHTML = '';
-  if (lines.length === 0) lines.push('Nic vybráno');
-  lines.forEach(l => {
-    const li = document.createElement('li'); li.textContent = '• ' + l; list.appendChild(li);
-  });
-}
-
-/* attach events */
-document.querySelectorAll('#pro-calculator .mode-btn').forEach(b=>{
-  b.addEventListener('click', ()=> setActiveMode(b.dataset.mode));
-});
-document.querySelectorAll('#pro-calculator input, #pro-calculator select').forEach(el=>{
-  el.addEventListener('input', calculate);
-});
-
-/* init */
-calculate();
-</script>
-  </div>
-</section>
-
-<style>
-#pro-calculator-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-}
-.toggle-btn {
-  padding: 12px 20px;
-  border-radius: 8px;
-  border: none;
-  background: linear-gradient(120deg, #00BFA6, orange);
-  color: #fff;
-  font-weight: 700;
-  cursor: pointer;
-  display: block;
-  margin: 0 auto 20px;
-  font-size: 1.1em;
-}
-.toggle-btn:hover {
-  opacity: 0.9;
-}
-</style>
-
-<script>
-function toggleCalculator() {
-  const content = document.getElementById('pro-calculator-content');
-  const button = document.getElementById('toggle-calculator');
-  if (content.style.display === 'none') {
-    content.style.display = 'block';
-    button.textContent = 'Skrýt kalkulátor ceny';
-  } else {
-    content.style.display = 'none';
-    button.textContent = 'Zobrazit kalkulátor ceny';
-  }
-}
-</script>
-
-<!-- Why Work With Me -->
-<section class="why-me-section scroll-animate">
-  <h2>💡 Proč pracovat se mnou?</h2>
-  <p>Nejsem jen “kameraman” – jsem partner pro váš projekt. Každý krok konzultuji s klientem, aby výsledek přesně odpovídal vaší představě.</p>
-  <ul>
-    <li>Osobní přístup</li>
-    <li>Flexibilita a rychlá komunikace</li>
-    <li>Kvalitní technika a kreativní zpracování</li>
-    <li>Férové ceny a spolehlivost</li>
-  </ul>
-</section>
-
-<!-- Detailed Timeline -->
-<section class="timeline-section scroll-animate">
-  <h2>🎬 Jak probíhá spolupráce</h2>
-  <div class="timeline">
-    <div class="timeline-step">
-      <span>1️⃣</span>
-      <h3>Konzultace & plánování</h3>
-      <p>Krátký online/telefonický hovor, kde si řekneme vaše cíle, styl a lokaci.</p>
-      <p><strong>⏱️ cca 30–60 minut</strong></p>
-    </div>
-    <div class="timeline-step">
-      <span>2️⃣</span>
-      <h3>Natáčení</h3>
-      <p>Na místě zajišťuji kameru, zvuk a světla. Podle potřeby i fotografie nebo dron.</p>
-      <p><strong>⏱️ 2–6 hodin (dle projektu)</strong></p>
-    </div>
-    <div class="timeline-step">
-      <span>3️⃣</span>
-      <h3>Střih & postprodukce</h3>
-      <p>Výběr záběrů, střih, barvy, hudba, titulky. Možnost revizí dle vaší zpětné vazby.</p>
-      <p><strong>⏱️ 2–5 dnů</strong></p>
-    </div>
-    <div class="timeline-step">
-      <span>4️⃣</span>
-      <h3>Dodání videa</h3>
-      <p>Export do formátů vhodných pro sociální sítě, web i prezentace.</p>
-      <p><strong>⏱️ okamžitě po schválení</strong></p>
-    </div>
-  </div>
-</section>
-
-<!-- FAQ Section -->
-<section class="faq-section scroll-animate">
-  <h2>❓ Nejčastější dotazy</h2>
-  <div class="faq-item">
-    <button class="faq-question">Jak dlouho trvá dodání videa?</button>
-    <div class="faq-answer"><p>Běžně 4–8 dní od natáčení, ale vážně záleží na rozsahu projektu.</p></div>
-  </div>
-  <div class="faq-item">
-    <button class="faq-question">Kolik mám nárok na revize?</button>
-    <div class="faq-answer"><p>V ceně jsou 1 kolo úprav, poté dle dohody.</p></div>
-  </div>
-  <div class="faq-item">
-    <button class="faq-question">Můžu dodat vlastní záběry?</button>
-    <div class="faq-answer"><p>Ano, rád je zakomponuji do finálního střihu. Ale jen po domluvě</p></div>
-  </div>
-  <div class="faq-item">
-    <button class="faq-question">Co když potřebuji expresní dodání?</button>
-    <div class="faq-answer"><p>Expresní služba je možná – záleží na kapacitě a velikosti, domluvíme se individuálně.</p></div>
-  </div>
-</section>
-
-<style>
-.timeline { 
-  display: grid; 
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
-  gap: 20px; 
-  margin-top: 25px; 
-}
-.timeline-step { 
-  background: white; 
-  padding: 20px; 
-  border-radius: 12px; 
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08); 
-  text-align: center; 
-}
-.timeline-step span { font-size: 1.6em; display: block; margin-bottom: 8px; }
-.timeline-step h3 { margin: 10px 0 8px 0; color: #00334e; }
-.timeline-step p { margin: 6px 0; font-size: 0.95em; }
-
-
-/* FAQ */
-.faq-section { max-width: 800px; margin: 50px auto; }
-.faq-item { margin-bottom: 12px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.07); }
-.faq-question {
-  width: 100%; padding: 14px; font-size: 1.1em; text-align: left;
-  background: #00BFA6; color: white; border: none; cursor: pointer; outline: none;
-}
-.faq-answer { max-height: 0; overflow: hidden; background: #f9f9f9; transition: max-height 0.3s ease; padding: 0 14px; }
-.faq-item.active .faq-answer { max-height: 200px; padding: 14px; }
-
-/* Timeline */
-.timeline-section { text-align: center; margin: 60px auto; }
-.timeline { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; }
-.timeline-step { flex: 1 1 200px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
-.timeline-step span { font-size: 1.6em; display: block; margin-bottom: 8px; }
-
-/* Why Work With Me */
-.why-me-section { max-width: 800px; margin: 50px auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-.why-me-section ul { list-style: none; padding: 0; }
-.why-me-section li::before { content: "✔️ "; margin-right: 6px; color: #00BFA6; }
-</style>
-
-<script>
-// FAQ toggle
-document.querySelectorAll(".faq-question").forEach(btn => {
-  btn.addEventListener("click", () => {
-    btn.parentElement.classList.toggle("active");
-  });
-});
-</script>
-
-
+        <script>
+            async function loadDates() {
+                const res = await fetch("dates.json");
+                return await res.json();
+            }
+            async function generateCalendar(month, year) {
+                const data = await loadDates();
+                const calendar = document.getElementById("calendar");
+                calendar.innerHTML = "";
+                const header = document.createElement("div");
+                header.className = "calendar-header";
+                const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+                const title = document.createElement("h3");
+                title.textContent = `${monthNames[month]} ${year}`;
+                const prevBtn = document.createElement("button");
+                prevBtn.textContent = "←";
+                prevBtn.onclick = () => generateCalendar(month === 0 ? 11 : month-1, month === 0 ? year-1 : year);
+                const nextBtn = document.createElement("button");
+                nextBtn.textContent = "→";
+                nextBtn.onclick = () => generateCalendar(month === 11 ? 0 : month+1, month === 11 ? year+1 : year);
+                header.appendChild(prevBtn);
+                header.appendChild(title);
+                header.appendChild(nextBtn);
+                calendar.appendChild(header);
+                const grid = document.createElement("div");
+                grid.className = "calendar-grid";
+                const daysInMonth = new Date(year, month+1, 0).getDate();
+                const today = new Date();
+                function addDot(cell, color, message) {
+                    let dot = document.createElement("div");
+                    dot.className = `status-dot dot-${color}`;
+                    dot.setAttribute("data-tooltip", message);
+                    cell.appendChild(dot);
+                }
+                for (let i=1; i<=daysInMonth; i++) {
+                    const date = new Date(year, month, i);
+                    const isoDate = date.toISOString().split("T")[0];
+                    const cell = document.createElement("div");
+                    cell.className = "calendar-day";
+                    cell.textContent = i;
+                    if (date.toDateString() === today.toDateString()) {
+                        cell.classList.add("today");
+                    }
+                    if (data.yellow.includes(isoDate)) {
+                        cell.classList.add("booked");
+                        addDot(cell, "yellow", "❌ Pevně obsazeno – žádná možnost změny.");
+                    }
+                    if (data.blue.includes(isoDate)) {
+                        cell.classList.add("booked");
+                        addDot(cell, "blue", "⚠️ Jen pro opravdu důležité projekty.");
+                    }
+                    if (data.green.includes(isoDate)) {
+                        cell.classList.add("booked");
+                        addDot(cell, "green", "ℹ️ lze domluvit, ale složitější a delší.");
+                    }
+                    grid.appendChild(cell);
+                }
+                calendar.appendChild(grid);
+            }
+            const now = new Date();
+            generateCalendar(now.getMonth(), now.getFullYear());
+        </script>
+        <section id="pro-calculator-container" class="calculator-container scroll-animate">
+            <button id="toggle-calculator" class="toggle-btn" onclick="toggleCalculator()">Zobrazit kalkulátor ceny</button>
+            <div id="pro-calculator-content" style="display: none;">
+                <section id="pro-calculator" class="calculator-section">
+                    <h2>💰 Orientační kalkulátor ceny</h2>
+                    <p class="warning">POZOR: Toto je pouze ORIENTAČNÍ odhad! Finální cena bude stanovena po osobní konzultaci.</p>
+                    <p>Vyber úroveň detailu pro váš projekt.</p>
+                    <div class="calc-modes">
+                        <button class="mode-btn active" data-mode="simple"><i class="fas fa-bolt"></i> Simple</button>
+                        <button class="mode-btn" data-mode="pro"><i class="fas fa-video"></i> Pro</button>
+                        <button class="mode-btn" data-mode="advanced"><i class="fas fa-rocket"></i> Advanced</button>
+                    </div>
+                    <form id="calc-simple" class="calc-form active" aria-hidden="false">
+                        <div class="calc-group">
+                            <label><i class="fas fa-clock"></i> Počet hodin natáčení</label>
+                            <input type="number" id="simple-hours" min="0.5" step="0.5" value="2">
+                            <p class="note">Základ: 2000 Kč za 4h, +500 Kč za každou další hodinu.</p>
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-film"></i> Délka finálního videa (minuty)</label>
+                            <input type="number" id="simple-length-min" min="0.5" step="0.5" value="2">
+                            <p class="note">Základní střih: 750 Kč za minutu.</p>
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-tools"></i> Komplexita střihu</label>
+                            <select id="simple-complexity">
+                                <option value="basic">Základní</option>
+                                <option value="standard">Standardní</option>
+                                <option value="super">Super</option>
+                            </select>
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-camera"></i> Počet kamer</label>
+                            <input type="number" id="simple-cameras" min="1" max="2" value="1">
+                            <p class="note">Druhá kamera přidává náklady na natáčení a střih.</p>
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-edit"></i> Extra revize (1 v ceně)</label>
+                            <input type="number" id="simple-revisions" min="0" value="0">
+                            <p class="note">Další revize: 5-15% ze střihové ceny podle komplexity.</p>
+                        </div>
+                    </form>
+                    <form id="calc-pro" class="calc-form" aria-hidden="true">
+                        <div class="calc-group">
+                            <label><i class="fas fa-clock"></i> Počet hodin natáčení</label>
+                            <input type="number" id="pro-hours" min="0.5" step="0.5" value="3">
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-film"></i> Délka finálního videa (minuty)</label>
+                            <input type="number" id="pro-length-min" min="0.5" step="0.5" value="3">
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-tools"></i> Komplexita střihu</label>
+                            <select id="pro-complexity">
+                                <option value="basic">Základní</option>
+                                <option value="standard">Standardní</option>
+                                <option value="super">Super</option>
+                            </select>
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-camera"></i> Počet kamer</label>
+                            <input type="number" id="pro-cameras" min="1" max="2" value="1">
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-edit"></i> Extra revize</label>
+                            <input type="number" id="pro-revisions" min="0" value="0">
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-microphone"></i> Lavalier mikrofony</label>
+                            <label><input type="checkbox" id="pro-lav-on"> Použít</label>
+                            <input type="number" id="pro-lav-count" min="1" max="4" value="1" disabled>
+                            <p class="note">100 Kč/h za mikrofon.</p>
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-microphone-alt"></i> Boom mikrofon</label>
+                            <label><input type="checkbox" id="pro-boom-on"> Použít</label>
+                            <p class="note">200 Kč/h.</p>
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-headset"></i> Zvukař/mixér</label>
+                            <label><input type="checkbox" id="pro-mixer-on"> Použít</label>
+                            <p class="note">300 Kč/h.</p>
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-drone"></i> Dron</label>
+                            <label><input type="checkbox" id="pro-drone-on"> Použít</label>
+                            <input type="number" id="pro-drone-hours" min="0.5" step="0.5" value="1" disabled>
+                            <p class="note">600 Kč/h.</p>
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-lightbulb"></i> Osvětlení</label>
+                            <select id="pro-lighting-tier">
+                                <option value="none">Žádné</option>
+                                <option value="basic">Základní</option>
+                                <option value="pro">Pro</option>
+                                <option value="premium">Premium</option>
+                            </select>
+                            <input type="number" id="pro-lighting-scenes" min="1" max="20" value="1" disabled>
+                            <p class="note">500-2000 Kč + 300 Kč za extra scénu.</p>
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-palette"></i> Grafika</label>
+                            <select id="pro-graphics">
+                                <option value="none">Žádná</option>
+                                <option value="simple">Jednoduchá</option>
+                                <option value="complex">Komplexní</option>
+                            </select>
+                            <p class="note">500-1200 Kč.</p>
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-adjust"></i> Color grading</label>
+                            <select id="pro-color-grading">
+                                <option value="none">Žádný</option>
+                                <option value="basic">Základní</option>
+                                <option value="advanced">Pokročilý</option>
+                            </select>
+                            <p class="note">100-300 Kč/min.</p>
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-share-alt"></i> Formáty exportu</label>
+                            <label><input type="checkbox" class="pro-export" value="200"> 16:9</label><br>
+                            <label><input type="checkbox" class="pro-export" value="200"> 9:16</label><br>
+                            <label><input type="checkbox" class="pro-export" value="200"> 1:1</label><br>
+                            <label><input type="checkbox" class="pro-export" value="200"> Stories</label><br>
+                            <label><input type="checkbox" class="pro-export" value="200"> Reels</label>
+                            <p class="note">200 Kč za formát.</p>
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-file-export"></i> Extra exporty</label>
+                            <input type="number" id="pro-extra-exports" min="0" value="0">
+                            <p class="note">200 Kč/export.</p>
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-shipping-fast"></i> Expresní dodání (48h)</label>
+                            <label><input type="checkbox" id="pro-express"> Ano</label>
+                            <p class="note">+30% k celkové ceně.</p>
+                        </div>
+                    </form>
+                    <form id="calc-advanced" class="calc-form" aria-hidden="true">
+                        <div class="calc-group">
+                            <label><i class="fas fa-clock"></i> Počet hodin natáčení</label>
+                            <input type="number" id="adv-hours" min="0.5" step="0.5" value="4">
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-film"></i> Délka finálního videa (minuty)</label>
+                            <input type="number" id="adv-length-min" min="0.5" step="0.5" value="5">
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-tools"></i> Komplexita střihu</label>
+                            <select id="adv-complexity">
+                                <option value="basic">Základní</option>
+                                <option value="standard">Standardní</option>
+                                <option value="super">Super</option>
+                            </select>
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-camera"></i> Počet kamer</label>
+                            <input type="number" id="adv-cameras" min="1" max="2" value="1">
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-edit"></i> Extra revize</label>
+                            <input type="number" id="adv-revisions" min="0" value="0">
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-microphone"></i> Lavalier mikrofony</label>
+                            <label><input type="checkbox" id="adv-lav-on"> Použít</label>
+                            <input type="number" id="adv-lav-count" min="1" max="4" value="1" disabled>
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-microphone-alt"></i> Boom mikrofon</label>
+                            <label><input type="checkbox" id="adv-boom-on"> Použít</label>
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-headset"></i> Zvukař/mixér</label>
+                            <label><input type="checkbox" id="adv-mixer-on"> Použít</label>
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-drone"></i> Dron</label>
+                            <label><input type="checkbox" id="adv-drone-on"> Použít</label>
+                            <input type="number" id="adv-drone-hours" min="0.5" step="0.5" value="1" disabled>
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-lightbulb"></i> Osvětlení</label>
+                            <select id="adv-lighting-tier">
+                                <option value="none">Žádné</option>
+                                <option value="basic">Základní</option>
+                                <option value="pro">Pro</option>
+                                <option value="premium">Premium</option>
+                            </select>
+                            <input type="number" id="adv-lighting-scenes" min="1" max="20" value="1" disabled>
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-palette"></i> Grafika</label>
+                            <select id="adv-graphics">
+                                <option value="none">Žádná</option>
+                                <option value="simple">Jednoduchá</option>
+                                <option value="complex">Komplexní</option>
+                            </select>
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-adjust"></i> Color grading</label>
+                            <select id="adv-color-grading">
+                                <option value="none">Žádný</option>
+                                <option value="basic">Základní</option>
+                                <option value="advanced">Pokročilý</option>
+                            </select>
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-share-alt"></i> Formáty exportu</label>
+                            <label><input type="checkbox" class="adv-export" value="200"> 16:9</label><br>
+                            <label><input type="checkbox" class="adv-export" value="200"> 9:16</label><br>
+                            <label><input type="checkbox" class="adv-export" value="200"> 1:1</label><br>
+                            <label><input type="checkbox" class="adv-export" value="200"> Stories</label><br>
+                            <label><input type="checkbox" class="adv-export" value="200"> Reels</label>
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-file-export"></i> Extra exporty</label>
+                            <input type="number" id="adv-extra-exports" min="0" value="0">
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-car"></i> Cestovní náklady (Kč)</label>
+                            <input type="number" id="adv-travel" min="0" value="0">
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-music"></i> Licence na hudbu (Kč)</label>
+                            <input type="number" id="adv-music" min="0" value="0">
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-file-alt"></i> Popis projektu</label>
+                            <textarea id="adv-notes" rows="4" placeholder="Zadejte detaily projektu..."></textarea>
+                        </div>
+                        <div class="calc-group">
+                            <label><i class="fas fa-shipping-fast"></i> Expresní dodání (48h)</label>
+                            <label><input type="checkbox" id="adv-express"> Ano</label>
+                        </div>
+                    </form>
+                    <div class="calc-result">
+                        <div id="receipt">
+                            <h3>💵 Celková cena: <span id="calc-total">0</span> Kč</h3>
+                            <ul id="calc-lines"></ul>
+                            <p class="note">Ceny jsou orientační – kontaktujte nás pro přesnou nabídku.</p>
+                            <a id="order-link" class="order-btn" href="order.html"><i class="fas fa-paper-plane"></i> Objednat</a>
+                        </div>
+                    </div>
+                </section>
+                <script>
+                    function toggleCalculator() {
+                        const content = document.getElementById('pro-calculator-content');
+                        const button = document.getElementById('toggle-calculator');
+                        if (content && button) {
+                            content.style.display = content.style.display === 'none' ? 'block' : 'none';
+                            button.textContent = content.style.display === 'none' ? 'Zobrazit kalkulátor ceny' : 'Skrýt kalkulátor ceny';
+                            ensureSectionVisibility();
+                        } else {
+                            console.error('Toggle elements missing: content or button');
+                        }
+                    }
+                    function ensureSectionVisibility() {
+                        const sections = document.querySelectorAll('main > section.scroll-animate');
+                        sections.forEach(section => {
+                            if (!section.classList.contains('visible')) {
+                                section.classList.add('visible');
+                            }
+                        });
+                    }
+                    function setActiveMode(mode) {
+                        try {
+                            const modes = ['simple', 'pro', 'advanced'];
+                            if (!modes.includes(mode)) {
+                                console.error(`Invalid mode: ${mode}`);
+                                return;
+                            }
+                            const modeButtons = document.querySelectorAll('.mode-btn');
+                            const forms = document.querySelectorAll('.calc-form');
+                            if (!modeButtons.length || !forms.length) {
+                                console.error('Mode buttons or forms not found');
+                                return;
+                            }
+                            modeButtons.forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+                            forms.forEach(f => {
+                                const isActive = f.id === `calc-${mode}`;
+                                f.classList.toggle('active', isActive);
+                                f.setAttribute('aria-hidden', !isActive);
+                            });
+                            calculate();
+                            ensureSectionVisibility();
+                        } catch (error) {
+                            console.error('Error in setActiveMode:', error);
+                            document.querySelector('.mode-btn[data-mode="simple"]').classList.add('active');
+                            document.getElementById('calc-simple').classList.add('active');
+                            document.getElementById('calc-simple').setAttribute('aria-hidden', 'false');
+                            ['pro', 'advanced'].forEach(m => {
+                                const form = document.getElementById(`calc-${m}`);
+                                if (form) {
+                                    form.classList.remove('active');
+                                    form.setAttribute('aria-hidden', 'true');
+                                }
+                            });
+                            calculate();
+                        }
+                    }
+                    function setupInputToggles() {
+                        ['pro', 'advanced'].forEach(mode => {
+                            const inputs = {
+                                lavOn: document.getElementById(`${mode}-lav-on`),
+                                lavCount: document.getElementById(`${mode}-lav-count`),
+                                droneOn: document.getElementById(`${mode}-drone-on`),
+                                droneHours: document.getElementById(`${mode}-drone-hours`),
+                                lightingTier: document.getElementById(`${mode}-lighting-tier`),
+                                lightingScenes: document.getElementById(`${mode}-lighting-scenes`),
+                                boomOn: document.getElementById(`${mode}-boom-on`),
+                                mixerOn: document.getElementById(`${mode}-mixer-on`),
+                                express: document.getElementById(`${mode}-express`)
+                            };
+                            if (inputs.lavOn && inputs.lavCount) {
+                                inputs.lavOn.addEventListener('change', () => {
+                                    inputs.lavCount.disabled = !inputs.lavOn.checked;
+                                    calculate();
+                                });
+                            }
+                            if (inputs.droneOn && inputs.droneHours) {
+                                inputs.droneOn.addEventListener('change', () => {
+                                    inputs.droneHours.disabled = !inputs.droneOn.checked;
+                                    calculate();
+                                });
+                            }
+                            if (inputs.lightingTier && inputs.lightingScenes) {
+                                inputs.lightingTier.addEventListener('change', () => {
+                                    inputs.lightingScenes.disabled = inputs.lightingTier.value === 'none';
+                                    calculate();
+                                });
+                            }
+                            if (inputs.boomOn) inputs.boomOn.addEventListener('change', calculate);
+                            if (inputs.mixerOn) inputs.mixerOn.addEventListener('change', calculate);
+                            if (inputs.express) inputs.express.addEventListener('change', calculate);
+                        });
+                    }
+                    function calculateShooting(hours, cameras) {
+                        const base = 2000 + Math.max(0, (hours - 4)) * 500;
+                        const mult = cameras === 2 ? 1.7 : 1.0;
+                        return Math.ceil(base * mult);
+                    }
+                    function calculateEditing(minutes, complexity, cameras, shootingHours, mics) {
+                        const complexMult = { basic: 1.0, standard: 1.25, super: 1.5 }[complexity] || 1.0;
+                        const cameraMult = cameras === 2 ? 1.3 : 1.0;
+                        const footageMult = 1.0 + 0.15 * Math.max(0, shootingHours - 4);
+                        const base = 750 * minutes * complexMult * cameraMult * footageMult;
+                        const audioExtra = 25 * mics * minutes;
+                        return Math.ceil(base + audioExtra);
+                    }
+                    function calculateRevisions(editingCost, complexity, extraRevisions) {
+                        const rate = { basic: 0.05, standard: 0.1, super: 0.15 }[complexity] || 0.05;
+                        return Math.ceil(editingCost * rate * extraRevisions);
+                    }
+                    function calculateAudioEquipment(shootingHours, lavOn, lavCount, boomOn, mixerOn) {
+                        const lavCost = lavOn ? 100 * lavCount * shootingHours : 0;
+                        const boomCost = boomOn ? 200 * shootingHours : 0;
+                        const mixerCost = mixerOn ? 300 * shootingHours : 0;
+                        return Math.ceil(lavCost + boomCost + mixerCost);
+                    }
+                    function calculateDrone(droneOn, droneHours) {
+                        return droneOn ? Math.ceil(600 * droneHours) : 0;
+                    }
+                    function calculateLighting(tier, scenes) {
+                        if (tier === 'none') return 0;
+                        const tierCost = { basic: 500, pro: 1200, premium: 2000 }[tier] || 0;
+                        const extraScenes = Math.max(0, scenes - 1) * 300;
+                        return Math.ceil(tierCost + extraScenes);
+                    }
+                    function calculateGraphics(graphics) {
+                        return { none: 0, simple: 500, complex: 1200 }[graphics] || 0;
+                    }
+                    function calculateColorGrading(grading, minutes) {
+                        if (grading === 'none') return 0;
+                        const perMin = { basic: 100, advanced: 300 }[grading] || 0;
+                        return Math.ceil(perMin * minutes);
+                    }
+                    function calculateExports(extraExports, socialFormats) {
+                        return Math.ceil(200 * (extraExports + socialFormats));
+                    }
+                    function calculate() {
+                        try {
+                            let total = 0;
+                            const lines = [];
+                            const activeModeBtn = document.querySelector('.mode-btn.active');
+                            if (!activeModeBtn) {
+                                console.error('No active mode button found');
+                                return;
+                            }
+                            const mode = activeModeBtn.dataset.mode;
+                            const form = document.getElementById(`calc-${mode}`);
+                            if (!form) {
+                                console.error(`Form calc-${mode} not found`);
+                                return;
+                            }
+                            const inputs = {
+                                hours: document.getElementById(`${mode}-hours`),
+                                minutes: document.getElementById(`${mode}-length-min`),
+                                complexity: document.getElementById(`${mode}-complexity`),
+                                cameras: document.getElementById(`${mode}-cameras`),
+                                revisions: document.getElementById(`${mode}-revisions`)
+                            };
+                            for (const [key, element] of Object.entries(inputs)) {
+                                if (!element) {
+                                    console.error(`Missing input: ${mode}-${key}`);
+                                    return;
+                                }
+                            }
+                            const hours = parseFloat(inputs.hours.value) || 0;
+                            const minutes = parseFloat(inputs.minutes.value) || 0;
+                            const complexity = inputs.complexity.value || 'basic';
+                            const cameras = parseInt(inputs.cameras.value) || 1;
+                            const extraRevisions = parseInt(inputs.revisions.value) || 0;
+                            const shootingCost = calculateShooting(hours, cameras);
+                            total += shootingCost;
+                            lines.push(`Natáčení (${hours} h, ${cameras} kamer): ${shootingCost} Kč`);
+                            const mics = mode === 'simple' ? 0 : (
+                                (document.getElementById(`${mode}-lav-on`)?.checked ? parseInt(document.getElementById(`${mode}-lav-count`)?.value || 0) : 0) +
+                                (document.getElementById(`${mode}-boom-on`)?.checked ? 1 : 0)
+                            );
+                            const editingCost = calculateEditing(minutes, complexity, cameras, hours, mics);
+                            total += editingCost;
+                            lines.push(`Střih (${minutes} min, ${complexity}): ${editingCost} Kč`);
+                            const revisionsCost = calculateRevisions(editingCost, complexity, extraRevisions);
+                            if (revisionsCost > 0) {
+                                lines.push(`Extra revize (${extraRevisions}): ${revisionsCost} Kč`);
+                            } else {
+                                lines.push(`Revize: 1 v ceně`);
+                            }
+                            total += revisionsCost;
+                            if (mode !== 'simple') {
+                                const lavOn = document.getElementById(`${mode}-lav-on`)?.checked || false;
+                                const lavCount = parseInt(document.getElementById(`${mode}-lav-count`)?.value || 0);
+                                const boomOn = document.getElementById(`${mode}-boom-on`)?.checked || false;
+                                const mixerOn = document.getElementById(`${mode}-mixer-on`)?.checked || false;
+                                const audioEquipCost = calculateAudioEquipment(hours, lavOn, lavCount, boomOn, mixerOn);
+                                if (audioEquipCost > 0) {
+                                    lines.push(`Audio vybavení: ${audioEquipCost} Kč`);
+                                }
+                                total += audioEquipCost;
+                                const droneOn = document.getElementById(`${mode}-drone-on`)?.checked || false;
+                                const droneHours = parseFloat(document.getElementById(`${mode}-drone-hours`)?.value || 0);
+                                const droneCost = calculateDrone(droneOn, droneHours);
+                                if (droneCost > 0) {
+                                    lines.push(`Dron (${droneHours} h): ${droneCost} Kč`);
+                                }
+                                total += droneCost;
+                                const lightingTier = document.getElementById(`${mode}-lighting-tier`)?.value || 'none';
+                                const lightingScenes = parseInt(document.getElementById(`${mode}-lighting-scenes`)?.value || 1);
+                                const lightingCost = calculateLighting(lightingTier, lightingScenes);
+                                if (lightingCost > 0) {
+                                    lines.push(`Osvětlení (${lightingTier}): ${lightingCost} Kč`);
+                                }
+                                total += lightingCost;
+                                const graphics = document.getElementById(`${mode}-graphics`)?.value || 'none';
+                                const graphicsCost = calculateGraphics(graphics);
+                                if (graphicsCost > 0) {
+                                    lines.push(`Grafika (${graphics}): ${graphicsCost} Kč`);
+                                }
+                                total += graphicsCost;
+                                const colorGrading = document.getElementById(`${mode}-color-grading`)?.value || 'none';
+                                const gradingCost = calculateColorGrading(colorGrading, minutes);
+                                if (gradingCost > 0) {
+                                    lines.push(`Color grading (${colorGrading}): ${gradingCost} Kč`);
+                                }
+                                total += gradingCost;
+                                const socialFormats = document.querySelectorAll(`#calc-${mode} .${mode}-export:checked`)?.length || 0;
+                                const extraExports = parseInt(document.getElementById(`${mode}-extra-exports`)?.value || 0);
+                                const exportsCost = calculateExports(extraExports, socialFormats);
+                                if (exportsCost > 0) {
+                                    lines.push(`Exporty (${socialFormats + extraExports}): ${exportsCost} Kč`);
+                                }
+                                total += exportsCost;
+                                const express = document.getElementById(`${mode}-express`)?.checked || false;
+                                if (express) {
+                                    const expressFee = Math.ceil(total * 0.3);
+                                    total += expressFee;
+                                    lines.push(`Expresní dodání: ${expressFee} Kč`);
+                                }
+                            }
+                            if (mode === 'advanced') {
+                                const travel = parseInt(document.getElementById('adv-travel')?.value || 0);
+                                if (travel > 0) {
+                                    lines.push(`Cestovní náklady: ${travel} Kč`);
+                                    total += travel;
+                                }
+                                const music = parseInt(document.getElementById('adv-music')?.value || 0);
+                                if (music > 0) {
+                                    lines.push(`Hudba: ${music} Kč`);
+                                    total += music;
+                                }
+                                const notes = document.getElementById('adv-notes')?.value.trim();
+                                if (notes) {
+                                    lines.push(`Poznámky: ${notes}`);
+                                }
+                            }
+                            const totalElement = document.getElementById('calc-total');
+                            const listElement = document.getElementById('calc-lines');
+                            if (totalElement && listElement) {
+                                totalElement.textContent = total.toLocaleString('cs-CZ');
+                                listElement.innerHTML = '';
+                                if (lines.length === 0) lines.push('Nic nevybráno');
+                                lines.forEach(l => {
+                                    const li = document.createElement('li');
+                                    li.textContent = l;
+                                    listElement.appendChild(li);
+                                });
+                            } else {
+                                console.error('Result elements missing: calc-total or calc-lines');
+                            }
+                        } catch (error) {
+                            console.error('Error in calculate:', error);
+                        }
+                    }
+                    document.addEventListener('DOMContentLoaded', () => {
+                        try {
+                            const modeButtons = document.querySelectorAll('.mode-btn');
+                            if (modeButtons.length === 0) {
+                                console.error('No mode buttons found');
+                                return;
+                            }
+                            modeButtons.forEach(b => b.addEventListener('click', () => setActiveMode(b.dataset.mode)));
+                            const inputs = document.querySelectorAll('#pro-calculator input, #pro-calculator select, #pro-calculator textarea');
+                            if (inputs.length === 0) {
+                                console.error('No input elements found in #pro-calculator');
+                                return;
+                            }
+                            inputs.forEach(el => el.addEventListener('input', calculate));
+                            setupInputToggles();
+                            calculate();
+                            ensureSectionVisibility();
+                        } catch (error) {
+                            console.error('Error in DOMContentLoaded:', error);
+                        }
+                    });
+                </script>
+            </div>
+        </section>
+        <section class="why-me-section scroll-animate">
+            <h2>💡 Proč pracovat se mnou?</h2>
+            <p>Nejsem jen “kameraman” – jsem partner pro váš projekt. Každý krok konzultuji s klientem, aby výsledek přesně odpovídal vaší představě.</p>
+            <ul>
+                <li>Osobní přístup</li>
+                <li>Flexibilita a rychlá komunikace</li>
+                <li>Kvalitní technika a kreativní zpracování</li>
+                <li>Férové ceny a spolehlivost</li>
+            </ul>
+        </section>
+        <section class="timeline-section scroll-animate">
+            <h2>🎬 Jak probíhá spolupráce</h2>
+            <div class="timeline">
+                <div class="timeline-step">
+                    <span>1️⃣</span>
+                    <h3>Konzultace & plánování</h3>
+                    <p>Krátký online/telefonický hovor, kde si řekneme vaše cíle, styl a lokaci.</p>
+                    <p><strong>⏱️ cca 30–60 minut</strong></p>
+                </div>
+                <div class="timeline-step">
+                    <span>2️⃣</span>
+                    <h3>Natáčení</h3>
+                    <p>Na místě zajišťuji kameru, zvuk a světla. Podle potřeby i fotografie nebo dron.</p>
+                    <p><strong>⏱️ 2–6 hodin (dle projektu)</strong></p>
+                </div>
+                <div class="timeline-step">
+                    <span>3️⃣</span>
+                    <h3>Střih & postprodukce</h3>
+                    <p>Výběr záběrů, střih, barvy, hudba, titulky. Možnost revizí dle vaší zpětné vazby.</p>
+                    <p><strong>⏱️ 2–5 dnů</strong></p>
+                </div>
+                <div class="timeline-step">
+                    <span>4️⃣</span>
+                    <h3>Dodání videa</h3>
+                    <p>Export do formátů vhodných pro sociální sítě, web i prezentace.</p>
+                    <p><strong>⏱️ okamžitě po schválení</strong></p>
+                </div>
+            </div>
+        </section>
+        <section class="faq-section scroll-animate">
+            <h2>❓ Nejčastější dotazy</h2>
+            <div class="faq-item">
+                <button class="faq-question">Jak dlouho trvá dodání videa?</button>
+                <div class="faq-answer"><p>Běžně 4–8 dní od natáčení, ale vážně záleží na rozsahu projektu.</p></div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">Kolik mám nárok na revize?</button>
+                <div class="faq-answer"><p>V ceně jsou 1 kolo úprav, poté dle dohody.</p></div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">Můžu dodat vlastní záběry?</button>
+                <div class="faq-answer"><p>Ano, rád je zakomponuji do finálního střihu. Ale jen po domluvě</p></div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">Co když potřebuji expresní dodání?</button>
+                <div class="faq-answer"><p>Expresní služba je možná – záleží na kapacitě a velikosti, domluvíme se individuálně.</p></div>
+            </div>
+        </section>
+        <script>
+            document.querySelectorAll(".faq-question").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    btn.parentElement.classList.toggle("active");
+                });
+            });
+        </script>
     </main>
-
     <footer>
         <div class="footer-content scroll-animate">
             <p>Máte otázky nebo zájem o spolupráci?</p>
@@ -1387,48 +1468,72 @@ document.querySelectorAll(".faq-question").forEach(btn => {
             </div>
         </div>
     </footer>
-
     <script>
         const nav = document.getElementById('mainNav');
         window.addEventListener('scroll', () => {
             nav.classList.toggle('scrolled', window.scrollY > 10);
         });
     </script>
-<!-- Chat toggle button -->
-<button id="chat-toggle">
-  <i class="fas fa-comments"></i>
-</button>
+    <button id="chat-toggle">
+        <i class="fas fa-comments"></i>
+    </button>
+    <div id="botpress-container">
+        <div id="mobile-header">
+            <span>MLX Chat Bot</span>
+            <button id="mobile-close"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="chat-info">
+            AI je určeno na shrnutí a pomoc,
+            <button id="info-toggle">Více info</button>
+        </div>
+        <div class="chat-details" id="chat-details">
+            <p>1. AI nemůže objednávat, ale může pomoci s procesem.</p>
+            <p>2. AI je určeno vám pomoci se vyznat a shrnout informace na stránce, ale může se mýlit – proto doporučujeme si všechny informace dále ověřovat.</p>
+            <p>3. AI nemůže dávat přesné ceny, pouze orientační. Pro přesné ceny nám zavolejte a domluvíme se.</p>
+        </div>
+        <div id="chat-container">
+            <div id="chat-log"></div>
+            <input id="chat-input" placeholder="Zeptejte se na cokoliv..." />
+        </div>
+    </div>
 
-<!-- Chat container -->
-<div id="botpress-container">
-  <!-- mobile header -->
-  <div id="mobile-header">
-    <span>MLX Chat Bot</span>
-    <button id="mobile-close"><i class="fas fa-times"></i></button>
-  </div>
+    <script>document.addEventListener("DOMContentLoaded", () => {
+    // Inicializace mapy
+    var map = L.map('map').setView([50.0, 14.2], 11); // Zaměřeno na Prahu a okolí
 
-  <div class="chat-info">
-    AI je určeno na shrnutí a pomoc,
-    <button id="info-toggle">Více info</button>
-  </div>
-  <div class="chat-details" id="chat-details">
-    <p>1. AI nemůže objednávat, ale může pomoci s procesem.</p>
-    <p>2. AI je určeno vám pomoci se vyznat a shrnout informace na stránce, ale může se mýlit – proto doporučujeme si všechny informace dále ověřovat.</p>
-    <p>3. AI nemůže dávat přesné ceny, pouze orientační. Pro přesné ceny nám zavolejte a domluvíme se.</p>
-  </div>
+    // Přidání CartoDB Positron vrstvy pro čistší vzhled
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors & <a href="https://carto.com/attributions">CARTO</a>',
+        maxZoom: 19
+    }).addTo(map);
 
-  <!-- Local chatbot UI -->
-  <div id="chat-container">
-    <div id="chat-log"></div>
-    <input id="chat-input" placeholder="Zeptejte se na cokoliv..." />
-  </div>
-</div>
+    // Kruhy pro lokace
+    L.circle([49.9638, 14.0720], { // Beroun
+        color: '#00BFA6',
+        fillColor: 'orange',
+        fillOpacity: 0.3,
+        radius: 5000,
+        className: 'leaflet-circle'
+    }).addTo(map).bindPopup('Beroun – ideální dosah');
 
-<!-- Scripts (order matters) -->
-<script src="mlx_highlight.js"></script>
-<script src="ChatBotKnowledge.js"></script>
-<script src="ChatBot.js" defer></script>
+    L.circle([50.0685, 14.3900], { // Praha 5
+        color: '#00BFA6',
+        fillColor: 'orange',
+        fillOpacity: 0.3,
+        radius: 5000,
+        className: 'leaflet-circle'
+    }).addTo(map).bindPopup('Praha 5 – ideální dosah');
 
-
+    L.circle([50.0940, 14.3920], { // Praha 6
+        color: '#00BFA6',
+        fillColor: 'orange',
+        fillOpacity: 0.3,
+        radius: 5000,
+        className: 'leaflet-circle'
+    }).addTo(map).bindPopup('Praha 6 – ideální dosah');
+});</script>
+    <script src="mlx_highlight.js"></script>
+    <script src="ChatBotKnowledge.js"></script>
+    <script src="ChatBot.js" defer></script>
 </body>
 </html>
