@@ -8,15 +8,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="ChatBot.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
         html {
             scroll-behavior: smooth;
         }
         body {
+            margin: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f9f9f9;
             color: #00334e;
@@ -63,11 +59,11 @@
         .video-overlay h1 {
             font-size: 2.8em;
             margin: 0;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-            animation: slideDown 1s ease forwards, titleSpread 1.2s ease-out forwards;
+            animation: slideDown 1s ease forwards;
         }
         nav.main-nav {
             display: flex;
+            flex-wrap: wrap;
             gap: 15px;
             position: fixed;
             top: 0;
@@ -75,7 +71,7 @@
             width: 100%;
             z-index: 1000;
             justify-content: center;
-            padding: 12px 20px;
+            padding: 12px 10px;
             background: linear-gradient(120deg, rgba(0,191,166,0.95), rgba(255,165,0,0.95));
             backdrop-filter: blur(5px);
             border-bottom: 2px solid rgba(255,255,255,0.2);
@@ -93,7 +89,6 @@
             font-weight: 500;
             font-size: 1em;
             transition: background 0.3s ease, transform 0.2s ease;
-            will-change: transform, background;
         }
         nav.main-nav a:hover {
             background: white;
@@ -107,7 +102,7 @@
             gap: 20px;
             padding: 20px;
             background: transparent;
-            margin: 20px 0;
+            margin-top: 20px;
         }
         nav.category-nav .category-card {
             display: flex;
@@ -123,30 +118,23 @@
             box-shadow: 0 8px 16px rgba(0,0,0,0.1);
             font-weight: 500;
             font-size: 1.1em;
-            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease, background 0.3s ease, border 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
             position: relative;
             overflow: hidden;
-            perspective: 1000px;
-            will-change: transform, box-shadow;
         }
         nav.category-nav .category-card .icon {
             font-size: 2.2em;
             margin-bottom: 10px;
             color: #00BFA6;
-            transition: transform 0.3s ease, color 0.3s ease;
+            transition: transform 0.3s ease;
         }
         nav.category-nav .category-card:hover {
-            transform: translateY(-6px) scale(1.03) rotateX(5deg) rotateY(5deg);
+            transform: translateY(-6px) scale(1.03);
             box-shadow: 0 16px 28px rgba(0,0,0,0.2);
             background: linear-gradient(145deg, #E6FFFA, #FFFFFF);
-            border: 2px solid transparent;
-            background-clip: padding-box;
-            animation: borderGlow 1s infinite alternate;
         }
         nav.category-nav .category-card:hover .icon {
             transform: scale(1.15) rotate(5deg);
-            color: orange;
-            animation: icon-glow 1s infinite alternate;
         }
         nav.category-nav .category-card::before {
             content: "";
@@ -173,14 +161,6 @@
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-        @keyframes borderGlow {
-            0% { border-color: rgba(0,191,166,0.5); }
-            100% { border-color: rgba(0,191,166,1); }
-        }
-        @keyframes icon-glow {
-            0% { text-shadow: 0 0 5px rgba(0,191,166,0.5); }
-            100% { text-shadow: 0 0 10px rgba(0,191,166,1); }
-        }
         main {
             max-width: 1100px;
             margin: 40px auto;
@@ -201,9 +181,6 @@
             background: linear-gradient(120deg, rgb(0, 0, 0), rgb(0, 0, 0));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            opacity: 0;
-            animation: fadeIn 0.8s ease forwards, textPulse 1.5s infinite alternate;
-            animation-delay: 0.2s;
         }
         .tech-grid {
             display: grid;
@@ -212,31 +189,43 @@
         }
         .tech-card {
             background: white;
-            border-radius: 12px;
-            padding: 20px;
+            border-radius: 16px;
+            padding: 24px;
             text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease, background 0.3s ease, border 0.3s ease;
-            will-change: transform, box-shadow, background;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+            transition: transform 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .tech-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(145deg, rgba(0,191,166,0.08), rgba(255,165,0,0.08));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            border-radius: 16px;
+            z-index: 0;
         }
         .tech-card:hover {
-            transform: translateY(-5px) scale(1.02) rotate(1deg);
-            box-shadow: 0 6px 20px rgba(0,191,166,0.2);
-            background: linear-gradient(145deg, #f9fffe, #fff7e6);
-            border: 2px solid transparent;
-            background-clip: padding-box;
-            animation: borderGlow 1s infinite alternate;
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 18px 35px rgba(0,0,0,0.15);
+            background: linear-gradient(145deg, #ffffff, #f7fdfa);
+        }
+        .tech-card:hover::before {
+            opacity: 1;
+        }
+        .tech-card i,
+        .tech-card h3,
+        .tech-card p,
+        .tech-card a {
+            position: relative;
+            z-index: 1;
         }
         .tech-card i {
             font-size: 2.5em;
             margin-bottom: 15px;
             color: #00BFA6;
-            transition: color 0.3s ease, transform 0.3s ease;
-        }
-        .tech-card:hover i {
-            color: orange;
-            transform: scale(1.1);
-            animation: icon-glow 1s infinite alternate;
         }
         .tech-card h3 {
             font-size: 1.3em;
@@ -253,24 +242,10 @@
             color: orange;
             font-weight: 600;
             text-decoration: none;
-            position: relative;
-            transition: color 0.3s ease;
-        }
-        .tech-card a::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: -2px;
-            left: 0;
-            background-color: #00BFA6;
-            transition: width 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transition: color 0.3s;
         }
         .tech-card a:hover {
             color: #00BFA6;
-        }
-        .tech-card a:hover::after {
-            width: 100%;
         }
         .separator-big {
             width: 80%;
@@ -279,11 +254,6 @@
             background: black;
             border-radius: 50px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-            transition: background 0.3s ease, transform 0.3s ease;
-        }
-        .separator-big:hover {
-            background: linear-gradient(120deg, #00BFA6, orange);
-            transform: scale(1.02);
         }
         .separator-small {
             width: 60px;
@@ -291,11 +261,6 @@
             margin: -30px auto 0 auto;
             background: rgba(0, 191, 166, 0.4);
             border-radius: 50px;
-            transition: background 0.3s ease, transform 0.3s ease;
-        }
-        .separator-small:hover {
-            background: orange;
-            transform: scale(1.1);
         }
         .spacer {
             height: 40px;
@@ -337,11 +302,8 @@
         .footer-link:hover {
             color: orange;
         }
-        .footer-link:hover i,
-        .order-btn:hover i,
-        .youtube-btn:hover i {
+        .footer-link:hover i {
             color: #00BFA6;
-            animation: icon-spin 0.6s ease;
         }
         .footer-buttons {
             display: flex;
@@ -360,11 +322,10 @@
             font-weight: 600;
             border: none;
             border-radius: 30px;
-            text-decoration: none;
             box-shadow: 0 2px 8px rgba(0,191,166,0.13), 0 1.5px 8px rgba(0,0,0,0.08);
-            transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+            transition: background 0.3s, transform 0.2s;
             text-align: center;
-            will-change: transform, box-shadow;
+            text-decoration: none;
         }
         .order-btn {
             background: linear-gradient(120deg, #00BFA6, orange);
@@ -373,9 +334,8 @@
         .order-btn:hover {
             background: linear-gradient(120deg, orange, #00BFA6);
             color: #fff;
-            transform: translateY(-2px) scale(1.05);
-            box-shadow: 0 8px 20px rgba(0,191,166,0.3);
-            animation: pulse 1.2s infinite alternate;
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 6px 18px rgba(0,191,166,0.18);
         }
         .youtube-btn {
             background: linear-gradient(120deg, #ff0000, #ff9900);
@@ -384,128 +344,96 @@
         .youtube-btn:hover {
             background: linear-gradient(120deg, #ff9900, #ff0000);
             color: #fff;
-            transform: translateY(-2px) scale(1.05);
-            box-shadow: 0 8px 20px rgba(255,0,0,0.3);
-            animation: pulse 1.2s infinite alternate;
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 6px 18px rgba(255,0,0,0.18);
         }
         .youtube-btn i,
         .order-btn i {
             margin-right: 7px;
         }
-        .footer-link,
-        .footer-link:hover,
-        .order-btn,
-        .order-btn:hover,
-        .youtube-btn,
-        .youtube-btn:hover {
-            text-decoration: none !important;
-        }
-        #chat-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: linear-gradient(120deg, #00BFA6, orange);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5em;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        #chat-toggle:hover {
-            transform: scale(1.1);
-            box-shadow: 0 4px 12px rgba(0,191,166,0.3);
-            animation: ring 1.5s infinite;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        @keyframes slideDown {
-            from { transform: translateY(-30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        @keyframes fadeUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        .footer-link:hover i,
+        .order-btn:hover i,
+        .youtube-btn:hover i {
+            animation: icon-spin 0.6s ease;
         }
         @keyframes icon-spin {
             100% { transform: rotate(360deg); }
         }
-        @keyframes pulse {
-            0% { transform: translateY(-2px) scale(1.05); box-shadow: 0 8px 20px rgba(0,191,166,0.3); }
-            100% { transform: translateY(-2px) scale(1.07); box-shadow: 0 10px 24px rgba(0,191,166,0.4); }
+        .youtube-btn,
+        .youtube-btn:hover,
+        .youtube-btn span,
+        .footer-link,
+        .footer-link:hover,
+        .order-btn,
+        .order-btn:hover {
+            text-decoration: none !important;
         }
-        @keyframes textPulse {
-            0% { text-shadow: 0 0 5px rgba(0,0,0,0.2); }
-            100% { text-shadow: 0 0 10px rgba(0,191,166,0.5); }
-        }
-        @keyframes titleSpread {
-            0% { letter-spacing: 0; }
-            100% { letter-spacing: 2px; }
-        }
-        @keyframes ring {
-            0% { transform: rotate(0deg); }
-            10% { transform: rotate(15deg); }
-            20% { transform: rotate(-10deg); }
-            30% { transform: rotate(10deg); }
-            40% { transform: rotate(-5deg); }
-            50% { transform: rotate(0deg); }
-            100% { transform: rotate(0deg); }
+        [id="kamera scroll-animate"],
+        [id="zvuk scroll-animate"],
+        [id="osvetleni scroll-animate"],
+        [id="ostatni scroll-animate"] {
+            scroll-margin-top: 70px;
         }
         .scroll-animate {
             opacity: 0;
             transform: translateY(30px);
-            transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            will-change: opacity, transform;
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
         }
         .scroll-animate.visible {
             opacity: 1;
             transform: translateY(0);
         }
-        [id^="kamera"],
-        [id^="zvuk"],
-        [id^="osvetleni"],
-        [id^="ostatni"] {
-            scroll-margin-top: 70px;
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
         }
         @media (max-width: 768px) {
             nav.main-nav a {
                 font-size: 0.9em;
-                padding: 6px 10px;
-            }
-            .video-banner {
-                height: 40vh;
+                padding: 6px 8px;
             }
             .video-overlay h1 {
                 font-size: 2em;
             }
-            nav.category-nav .category-card {
-                width: 120px;
-                height: 120px;
-                font-size: 1em;
+            .slider-wrapper {
+                max-width: 100%;
             }
-            nav.category-nav .category-card .icon {
-                font-size: 2em;
+            .slider {
+                aspect-ratio: 16 / 9;
             }
         }
         @media (max-width: 480px) {
             nav.main-nav a {
                 font-size: 0.85em;
-                padding: 5px 8px;
-            }
-            .video-banner {
-                height: 35vh;
+                padding: 5px 6px;
             }
             .video-overlay h1 {
-                font-size: 1.8em;
+                font-size: 1.6em;
             }
         }
+
+        /* Lift-up animation for all cards */
+.tech-card,
+.category-card {
+    transition: transform 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
+}
+
+/* Lift up + color/shadow on hover */
+.tech-card:hover,
+.category-card:hover {
+    transform: translateY(-10px) scale(1.03);
+    box-shadow: 0 20px 30px rgba(0, 0, 0, 0.15);
+    background: linear-gradient(145deg, #ffffff, #f7fff9);
+}
+
+/* Optional: brighten icons on hover */
+.tech-card:hover i,
+.category-card:hover .icon {
+    color: #00BFA6;
+    transform: scale(1.1);
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
     </style>
 </head>
 <body>
@@ -520,10 +448,16 @@
                     }
                 });
             }, { threshold: 0.2 });
-            document.querySelectorAll(".scroll-animate").forEach(el => observer.observe(el));
-            const nav = document.querySelector('.main-nav');
+            document.querySelectorAll(".scroll-animate").forEach(el => {
+                observer.observe(el);
+            });
+            const nav = document.getElementById('mainNav');
             window.addEventListener('scroll', () => {
-                nav.classList.toggle('scrolled', window.scrollY > 10);
+                if (window.scrollY > 10) {
+                    nav.classList.add('scrolled');
+                } else {
+                    nav.classList.remove('scrolled');
+                }
             });
             const video = document.getElementById('product-video');
             let played = false;
@@ -538,7 +472,10 @@
             videoObserver.observe(document.getElementById('animation-section'));
         });
     </script>
-    <nav class="main-nav">
+    <script src="mlx_highlight.js"></script>
+    <script src="ChatBotKnowledge.js"></script>
+    <script src="ChatBot.js" defer></script>
+    <nav id="mainNav" class="main-nav">
         <a href="index.html">Domovská stránka</a>
         <a href="portfolio.html">Portfolio</a>
         <a href="technika.html">Technika</a>
@@ -554,26 +491,24 @@
             <h1></h1>
         </div>
     </section>
-    <section class="scroll-animate">
-        <nav class="category-nav">
-            <a href="#kamera" class="category-card">
-                <i class="fas fa-video icon"></i>
-                <span>Kamera</span>
-            </a>
-            <a href="#zvuk" class="category-card">
-                <i class="fas fa-microphone icon"></i>
-                <span>Zvuk</span>
-            </a>
-            <a href="#osvetleni" class="category-card">
-                <i class="fas fa-lightbulb icon"></i>
-                <span>Osvětlení</span>
-            </a>
-            <a href="#ostatni" class="category-card">
-                <i class="fas fa-cogs icon"></i>
-                <span>Ostatní</span>
-            </a>
-        </nav>
-    </section>
+    <nav class="category-nav scroll-animate">
+        <a href="#kamera" class="category-card">
+            <i class="fas fa-video icon"></i>
+            <span>Kamera</span>
+        </a>
+        <a href="#zvuk" class="category-card">
+            <i class="fas fa-microphone icon"></i>
+            <span>Zvuk</span>
+        </a>
+        <a href="#osvetleni" class="category-card">
+            <i class="fas fa-lightbulb icon"></i>
+            <span>Osvětlení</span>
+        </a>
+        <a href="#ostatni" class="category-card">
+            <i class="fas fa-cogs icon"></i>
+            <span>Ostatní</span>
+        </a>
+    </nav>
     <main>
         <h3 class="scroll-animate">Profesionální vybavení pro kvalitní tvorbu</h3>
         <div class="separator-big scroll-animate"></div>
@@ -626,7 +561,7 @@
             <div class="separator-small scroll-animate"></div>
             <div class="spacer"></div>
             <div class="tech-grid scroll-animate">
-                <div class="tech-card scroll-animate">
+                <div class="tech-card">
                     <i class="fas fa-lightbulb"></i>
                     <h3>Neewer 80C + RGB tube</h3>
                     <p>Flexibilní a výkonná světla pro kreativní nasvícení scény.</p>
@@ -704,8 +639,5 @@
             <input id="chat-input" placeholder="Zeptejte se na cokoliv..." />
         </div>
     </div>
-    <script src="mlx_highlight.js"></script>
-    <script src="ChatBotKnowledge.js"></script>
-    <script src="ChatBot.js" defer></script>
 </body>
 </html>
