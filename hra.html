@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Production Rush</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f9f9f9 0%, #e8f4f2 100%);
+            color: #00334e;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .game-container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            background: linear-gradient(135deg, #00BFA6 0%, #ff8c00 100%);
+        }
+
+        .game-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(249, 249, 249, 0.95);
+            backdrop-filter: blur(2px);
+        }
+
+        .game-header {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(120deg, #00BFA6, #ff8c00);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(0,191,166,0.3);
+            z-index: 100;
+        }
+
+        .score-board {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            z-index: 100;
+        }
+
+        .score-board::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            padding: 2px;
+            background: linear-gradient(120deg, #00BFA6, #ff8c00);
+            border-radius: 15px;
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: xor;
+            z-index: -1;
+        }
+
+        .game-area {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .camera {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 60px;
+            background: linear-gradient(145deg, #333, #555);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+            z-index: 10;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .camera::before {
+            content: '📹';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+        }
+
+        .camera:hover {
+            transform: translateX(-50%) scale(1.1);
+        }
+
+        .video-clip {
+            position: absolute;
+            width: 50px;
+            height: 40px;
+            background: linear-gradient(120deg, #00BFA6, #ff8c00);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: float 3s ease-in-out infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,191,166,0.4);
+        }
+
+        .video-clip::before {
+            content: '🎬';
+            font-size: 16px;
+        }
+
+        .video-clip:hover {
+            transform: scale(1.2);
+            box-shadow: 0 6px 20px rgba(0,191,166,0.6);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .obstacle {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(145deg, #ff4444, #cc0000);
+            border-radius: 50%;
+            animation: spin 2s linear infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(255,68,68,0.4);
+        }
+
+        .obstacle::before {
+            content: '⚠️';
+            font-size: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .start-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0,191,166,0.95) 0%, rgba(255,140,0,0.95) 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            color: white;
+            text-align: center;
+        }
+
+        .start-button {
+            padding: 15px 40px;
+            font-size: 1.2em;
+            font-weight: 600;
+            background: white;
+            color: #00BFA6;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            margin-top: 30px;
+        }
+
+        .start-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .game-over {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,51,78,0.9);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            color: white;
+            text-align: center;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #00BFA6;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particle-float 2s ease-out forwards;
+        }
+
+        @keyframes particle-float {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(0) translateY(-50px);
+                opacity: 0;
+            }
+        }
+
+        .power-up {
+            position: absolute;
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(45deg, gold, orange);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 1.5s ease-in-out infinite;
+            box-shadow: 0 4px 15px rgba(255,215,0,0.5);
+        }
+
+        .power-up::before {
+            content: '⚡';
+            font-size: 18px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .danger-zone {
+            position: absolute;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            background: rgba(255, 0, 0, 0.5);
+            z-index: 50;
+            display: none;
+            animation: blink 0.5s ease-in-out infinite;
+        }
+
+        .danger-zone.active {
+            display: block;
+            background: rgba(255, 0, 0, 0.8);
+            animation: none;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+        }
+
+        .warning-message {
+            position: absolute;
+            top: 50%;
+            width: 50%;
+            text-align: center;
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+            display: none;
+            z-index: 60;
+            transform: translateY(-50%);
+            padding: 20px;
+            text-shadow: 0 0 5px black;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .instructions {
+            font-size: 1.1em;
+            max-width: 500px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .shop {
+            margin-top: 20px;
+            background: white;
+            color: #00334e;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .shop button {
+            padding: 10px 20px;
+            margin: 5px;
+            background: #00BFA6;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .shop button:hover {
+            background: #ff8c00;
+        }
+
+        .shop button:disabled {
+            background: gray;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-overlay">
+            <div class="start-screen" id="startScreen">
+                <h1>📹 Video Production Rush</h1>
+                <div class="instructions">
+                    <p>Move your camera to collect video clips and avoid obstacles!</p>
+                    <p>Use ARROW KEYS or WASD to move</p>
+                    <p>Collect golden power-ups for bonus points</p>
+                    <p>Watch out for the red danger zone!</p>
+                </div>
+                <button class="start-button" onclick="startGame()">Start Production</button>
+            </div>
+
+            <div class="game-over" id="gameOver">
+                <h1>🎬 Production Complete!</h1>
+                <p id="finalScore">Final Score: 0</p>
+                <button class="start-button" onclick="restartGame()">New Project</button>
+                <div class="shop" id="shop">
+                    <h2>Shop</h2>
+                    <p>Coins: <span id="coinsDisplay">0</span></p>
+                </div>
+            </div>
+
+            <div class="game-header">
+                <h2>🎥 MLX Production Studio</h2>
+            </div>
+
+            <div class="score-board">
+                <div>Score: <span id="score">0</span></div>
+                <div>Clips: <span id="clips">0</span></div>
+                <div>Time: <span id="time">0</span></div>
+                <div>Level: <span id="level">1</span></div>
+            </div>
+
+            <div class="controls">
+                <div>📍 Use Arrow Keys or WASD</div>
+                <div>🎬 Collect video clips</div>
+                <div>⚠️ Avoid red obstacles</div>
+                <div>🚨 Avoid red danger zone</div>
+            </div>
+
+            <div class="game-area" id="gameArea">
+                <div class="camera" id="camera"></div>
+                <div class="danger-zone" id="dangerZone"></div>
+                <div class="warning-message" id="warningMessage"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        class VideoProductionGame {
+            constructor() {
+                this.camera = document.getElementById('camera');
+                this.gameArea = document.getElementById('gameArea');
+                this.scoreElement = document.getElementById('score');
+                this.clipsElement = document.getElementById('clips');
+                this.timeElement = document.getElementById('time');
+                this.levelElement = document.getElementById('level');
+                this.coinsDisplay = document.getElementById('coinsDisplay');
+                this.dangerZone = document.getElementById('dangerZone');
+                this.warningMessage = document.getElementById('warningMessage');
+                
+                this.score = 0;
+                this.clipsCollected = 0;
+                this.gameTime = 0;
+                this.isGameRunning = false;
+                this.level = 1;
+                this.coins = 0;
+                
+                this.playerSpeed = parseFloat(localStorage.getItem('playerSpeed')) || 3;
+                this.pointsPerClip = parseInt(localStorage.getItem('pointsPerClip')) || 100;
+                this.spawnInterval = parseInt(localStorage.getItem('spawnInterval')) || 1200;
+                this.gameSpeed = parseFloat(localStorage.getItem('gameSpeed')) || 2;
+                this.coinPerClip = parseInt(localStorage.getItem('coinPerClip')) || 1;
+                this.dangerInterval = parseInt(localStorage.getItem('dangerInterval')) || 10000;
+                this.dangerDuration = parseInt(localStorage.getItem('dangerDuration')) || 5000;
+                this.powerUpPoints = parseInt(localStorage.getItem('powerUpPoints')) || 250;
+                this.clipProb = parseFloat(localStorage.getItem('clipProb')) || 0.3;
+                this.obstacleProb = parseFloat(localStorage.getItem('obstacleProb')) || 0.6;
+                this.powerUpProb = parseFloat(localStorage.getItem('powerUpProb')) || 0.1;
+                this.cameraWidth = parseFloat(localStorage.getItem('cameraWidth')) || 8;
+                
+                this.cameraPos = { x: 50, y: 80 };
+                this.keys = {};
+                this.gameObjects = [];
+                this.gameTimer = null;
+                this.spawnTimer = null;
+                this.dangerTimer = null;
+                this.isDangerZoneActive = false;
+                this.dangerZoneSide = null;
+
+                this.warningTexts = [
+                    "I forgot to turn the camera on!",
+                    "We'll fix it in post!",
+                    "Quiet on set!",
+                    "Cut! Cut! Cut!",
+                    "Rolling... wait, action!",
+                    "Ještě jedna revize!",
+                    "Zapomněl jsem zapnout kameru!",
+                    "Opravíme to v postprodukci!",
+                    "A takové věci taky...",
+                    "Prosím ticho na place!"
+                ];
+
+                this.upgrades = [
+                    {
+                        id: 'speed',
+                        name: 'Reduce Player Speed',
+                        cost: 5,
+                        effect: () => {
+                            this.playerSpeed = Math.max(1, this.playerSpeed - 0.5);
+                            localStorage.setItem('playerSpeed', this.playerSpeed);
+                        }
+                    },
+                    {
+                        id: 'points',
+                        name: 'Increase Points per Clip',
+                        cost: 10,
+                        effect: () => {
+                            this.pointsPerClip += 50;
+                            localStorage.setItem('pointsPerClip', this.pointsPerClip);
+                        }
+                    },
+                    {
+                        id: 'spawn',
+                        name: 'Slower Object Spawn',
+                        cost: 15,
+                        effect: () => {
+                            this.spawnInterval = Math.min(3000, this.spawnInterval + 200);
+                            localStorage.setItem('spawnInterval', this.spawnInterval);
+                        }
+                    },
+                    {
+                        id: 'gamespeed',
+                        name: 'Slow Down Objects',
+                        cost: 12,
+                        effect: () => {
+                            this.gameSpeed = Math.max(1, this.gameSpeed - 0.2);
+                            localStorage.setItem('gameSpeed', this.gameSpeed);
+                        }
+                    },
+                    {
+                        id: 'coinbonus',
+                        name: 'More Coins per Clip',
+                        cost: 8,
+                        effect: () => {
+                            this.coinPerClip += 1;
+                            localStorage.setItem('coinPerClip', this.coinPerClip);
+                        }
+                    },
+                    {
+                        id: 'dangerinterval',
+                        name: 'Less Frequent Dangers',
+                        cost: 25,
+                        effect: () => {
+                            this.dangerInterval += 2000;
+                            localStorage.setItem('dangerInterval', this.dangerInterval);
+                        }
+                    },
+                    {
+                        id: 'dangerduration',
+                        name: 'Shorter Danger Zones',
+                        cost: 20,
+                        effect: () => {
+                            this.dangerDuration = Math.max(2000, this.dangerDuration - 500);
+                            localStorage.setItem('dangerDuration', this.dangerDuration);
+                        }
+                    },
+                    {
+                        id: 'powerupbonus',
+                        name: 'Better Power-up Rewards',
+                        cost: 18,
+                        effect: () => {
+                            this.powerUpPoints += 100;
+                            localStorage.setItem('powerUpPoints', this.powerUpPoints);
+                        }
+                    },
+                    {
+                        id: 'powerupspawn',
+                        name: 'More Power-ups',
+                        cost: 20,
+                        effect: () => {
+                            this.powerUpProb += 0.05;
+                            this.obstacleProb -= 0.05;
+                            localStorage.setItem('powerUpProb', this.powerUpProb);
+                            localStorage.setItem('obstacleProb', this.obstacleProb);
+                        }
+                    },
+                    {
+                        id: 'clipspawn',
+                        name: 'More Clips',
+                        cost: 15,
+                        effect: () => {
+                            this.clipProb += 0.05;
+                            this.obstacleProb -= 0.05;
+                            localStorage.setItem('clipProb', this.clipProb);
+                            localStorage.setItem('obstacleProb', this.obstacleProb);
+                        }
+                    }
+                ];
+
+                this.setupEventListeners();
+            }
+
+            setupEventListeners() {
+                document.addEventListener('keydown', (e) => {
+                    this.keys[e.code] = true;
+                });
+
+                document.addEventListener('keyup', (e) => {
+                    this.keys[e.code] = false;
+                });
+            }
+
+            startGame() {
+                document.getElementById('startScreen').style.display = 'none';
+                document.getElementById('gameOver').style.display = 'none';
+                
+                if (this.warningOverlay) {
+                    this.warningOverlay.style.display = 'none';
+                }
+                
+                this.score = 0;
+                this.clipsCollected = 0;
+                this.coins = 0;
+                this.gameTime = 0;
+                this.level = 1;
+                this.lastWarningTime = 0;
+                this.isGameRunning = true;
+                this.isDangerZoneActive = false;
+                this.dangerZoneSide = null;
+                this.gameObjects = [];
+                
+                this.cameraPos = { x: 50, y: 80 };
+                this.updateCameraPosition();
+                
+                this.gameTimer = setInterval(() => {
+                    this.update();
+                }, 16);
+                
+                this.spawnTimer = setInterval(() => {
+                    this.spawnObject();
+                }, this.spawnInterval);
+                
+                this.dangerTimer = setInterval(() => {
+                    if (Math.random() < 0.5) {
+                        this.activateDangerZone();
+                    }
+                }, this.dangerInterval);
+                
+                setInterval(() => {
+                    if (this.isGameRunning) {
+                        this.gameTime++;
+                        this.timeElement.textContent = this.gameTime;
+                    }
+                }, 1000);
+            }
+
+            update() {
+                if (!this.isGameRunning) return;
+
+                this.handleInput();
+                this.moveObjects();
+                this.checkCollisions();
+                this.checkDangerZoneCollision();
+                this.cleanupObjects();
+                this.updateUI();
+                this.checkLevelUp();
+            }
+
+            handleInput() {
+                const speed = this.playerSpeed;
+                
+                if (this.keys['ArrowLeft'] || this.keys['KeyA']) {
+                    this.cameraPos.x = Math.max(0, this.cameraPos.x - speed);
+                }
+                if (this.keys['ArrowRight'] || this.keys['KeyD']) {
+                    this.cameraPos.x = Math.min(100, this.cameraPos.x + speed);
+                }
+                if (this.keys['ArrowUp'] || this.keys['KeyW']) {
+                    this.cameraPos.y = Math.max(0, this.cameraPos.y - speed);
+                }
+                if (this.keys['ArrowDown'] || this.keys['KeyS']) {
+                    this.cameraPos.y = Math.min(100, this.cameraPos.y + speed);
+                }
+                
+                this.updateCameraPosition();
+            }
+
+            updateCameraPosition() {
+                this.camera.style.left = this.cameraPos.x + '%';
+                this.camera.style.bottom = (100 - this.cameraPos.y) + '%';
+                this.camera.style.transform = 'translate(-50%, 50%)';
+            }
+
+            spawnObject() {
+                const r = Math.random();
+                let element;
+                let type;
+
+                if (r < this.obstacleProb) {
+                    element = document.createElement('div');
+                    element.className = 'obstacle';
+                    type = 'obstacle';
+                } else if (r < this.obstacleProb + this.clipProb) {
+                    element = document.createElement('div');
+                    element.className = 'video-clip';
+                    type = 'clip';
+                } else {
+                    element = document.createElement('div');
+                    element.className = 'power-up';
+                    type = 'powerup';
+                }
+
+                element.dataset.type = type;
+
+                let startX;
+                if (this.isDangerZoneActive) {
+                    startX = this.dangerZoneSide === 'left' ? 
+                        Math.random() * 45 + 55 : Math.random() * 45 + 5;
+                } else {
+                    startX = Math.random() * 90 + 5;
+                }
+                const startY = -10;
+                
+                element.style.left = startX + '%';
+                element.style.top = startY + '%';
+                
+                this.gameArea.appendChild(element);
+                this.gameObjects.push({
+                    element: element,
+                    x: startX,
+                    y: startY,
+                    type: type
+                });
+            }
+
+            moveObjects() {
+                this.gameObjects.forEach(obj => {
+                    obj.y += this.gameSpeed + (this.level * 0.2);
+                    obj.element.style.top = obj.y + '%';
+                });
+            }
+
+            checkCollisions() {
+                const cameraRect = this.getCameraRect();
+                
+                this.gameObjects.forEach((obj, index) => {
+                    const objRect = this.getObjectRect(obj);
+                    
+                    if (this.isColliding(cameraRect, objRect)) {
+                        if (obj.type === 'clip') {
+                            this.collectClip(obj, index);
+                        } else if (obj.type === 'obstacle') {
+                            this.hitObstacle();
+                        } else if (obj.type === 'powerup') {
+                            this.collectPowerUp(obj, index);
+                        }
+                    }
+                });
+            }
+
+            getCameraRect() {
+                return {
+                    x: this.cameraPos.x - this.cameraWidth / 2,
+                    y: this.cameraPos.y,
+                    width: this.cameraWidth,
+                    height: 6
+                };
+            }
+
+            getObjectRect(obj) {
+                return {
+                    x: obj.x - 2.5,
+                    y: obj.y - 2,
+                    width: 5,
+                    height: 4
+                };
+            }
+
+            isColliding(rect1, rect2) {
+                return rect1.x < rect2.x + rect2.width &&
+                       rect1.x + rect1.width > rect2.x &&
+                       rect1.y < rect2.y + rect2.height &&
+                       rect1.y + rect1.height > rect2.y;
+            }
+
+            activateDangerZone() {
+                if (this.isDangerZoneActive) return;
+
+                this.isDangerZoneActive = true;
+                this.dangerZoneSide = Math.random() < 0.5 ? 'left' : 'right';
+                this.dangerZone.style.left = this.dangerZoneSide === 'left' ? '0%' : '50%';
+                this.dangerZone.style.display = 'block';
+
+                const message = this.warningTexts[Math.floor(Math.random() * this.warningTexts.length)];
+                this.warningMessage.textContent = message;
+                this.warningMessage.style.left = this.dangerZoneSide === 'left' ? '0%' : '50%';
+                this.warningMessage.style.display = 'block';
+                
+                // Blink for 1 second
+                setTimeout(() => {
+                    this.dangerZone.classList.add('active');
+                    // Active for dangerDuration
+                    setTimeout(() => {
+                        this.dangerZone.style.display = 'none';
+                        this.dangerZone.classList.remove('active');
+                        this.warningMessage.style.display = 'none';
+                        this.isDangerZoneActive = false;
+                        this.dangerZoneSide = null;
+                    }, this.dangerDuration);
+                }, 1000);
+            }
+
+            checkDangerZoneCollision() {
+                if (!this.isDangerZoneActive || !this.dangerZone.classList.contains('active')) return;
+
+                const cameraRect = this.getCameraRect();
+                const dangerRect = {
+                    x: this.dangerZoneSide === 'left' ? 0 : 50,
+                    y: 0,
+                    width: 50,
+                    height: 100
+                };
+
+                if (this.isColliding(cameraRect, dangerRect)) {
+                    this.endGame();
+                }
+            }
+
+            collectClip(obj, index) {
+                this.score += this.pointsPerClip;
+                this.clipsCollected++;
+                this.coins += this.coinPerClip;
+                this.createParticles(obj.x, obj.y, '#00BFA6');
+                this.removeObject(obj, index);
+            }
+
+            collectPowerUp(obj, index) {
+                this.score += this.powerUpPoints;
+                this.createParticles(obj.x, obj.y, 'gold');
+                this.removeObject(obj, index);
+            }
+
+            hitObstacle() {
+                this.endGame();
+            }
+
+            createParticles(x, y, color) {
+                for (let i = 0; i < 8; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = x + '%';
+                    particle.style.top = y + '%';
+                    particle.style.background = color;
+                    particle.style.animationDelay = Math.random() * 0.5 + 's';
+                    
+                    this.gameArea.appendChild(particle);
+                    
+                    setTimeout(() => {
+                        if (particle.parentNode) {
+                            particle.parentNode.removeChild(particle);
+                        }
+                    }, 2000);
+                }
+            }
+
+            removeObject(obj, index) {
+                obj.element.remove();
+                this.gameObjects.splice(index, 1);
+            }
+
+            cleanupObjects() {
+                this.gameObjects = this.gameObjects.filter((obj, index) => {
+                    if (obj.y > 110) {
+                        obj.element.remove();
+                        return false;
+                    }
+                    return true;
+                });
+            }
+
+            updateUI() {
+                this.scoreElement.textContent = this.score;
+                this.clipsElement.textContent = this.clipsCollected;
+                this.levelElement.textContent = this.level;
+            }
+
+            checkLevelUp() {
+                const targetClips = this.level * 10;
+                if (this.clipsCollected >= targetClips) {
+                    this.level++;
+                }
+            }
+
+            endGame() {
+                this.isGameRunning = false;
+                clearInterval(this.gameTimer);
+                clearInterval(this.spawnTimer);
+                clearInterval(this.dangerTimer);
+                
+                document.getElementById('finalScore').textContent = `Final Score: ${this.score}`;
+                this.coinsDisplay.textContent = this.coins;
+                document.getElementById('gameOver').style.display = 'flex';
+                
+                this.gameObjects.forEach(obj => obj.element.remove());
+                this.gameObjects = [];
+                this.dangerZone.style.display = 'none';
+                this.dangerZone.classList.remove('active');
+                this.warningMessage.style.display = 'none';
+                this.isDangerZoneActive = false;
+                this.dangerZoneSide = null;
+
+                // Setup shop dynamically
+                const shop = document.getElementById('shop');
+                shop.innerHTML = '<h2>Shop</h2><p>Coins: <span id="coinsDisplay">' + this.coins + '</span></p>';
+                let numOffers = 0;
+                if (this.gameTime >= 150) {
+                    numOffers = 3;
+                } else if (this.gameTime >= 100) {
+                    numOffers = 2;
+                } else if (this.gameTime >= 50) {
+                    numOffers = 1;
+                }
+
+                if (numOffers > 0) {
+                    const availableUpgrades = [...this.upgrades];
+                    shuffle(availableUpgrades);
+                    for (let i = 0; i < numOffers; i++) {
+                        const up = availableUpgrades[i];
+                        const btn = document.createElement('button');
+                        btn.textContent = `${up.name} (${up.cost} coins)`;
+                        btn.onclick = () => this.buyUpgrade(up.id);
+                        if (this.coins < up.cost) {
+                            btn.disabled = true;
+                        }
+                        shop.appendChild(btn);
+                    }
+                }
+            }
+
+            buyUpgrade(id) {
+                const up = this.upgrades.find(u => u.id === id);
+                if (up && this.coins >= up.cost) {
+                    this.coins -= up.cost;
+                    up.effect();
+                    this.coinsDisplay.textContent = this.coins;
+                    // Update buttons disabled state
+                    const buttons = document.querySelectorAll('.shop button');
+                    buttons.forEach(btn => {
+                        if (parseInt(btn.textContent.match(/\(\d+/)[0].slice(1)) > this.coins) {
+                            btn.disabled = true;
+                        }
+                    });
+                }
+            }
+
+            restartGame() {
+                this.startGame();
+            }
+        }
+
+        const game = new VideoProductionGame();
+
+        function startGame() {
+            game.startGame();
+        }
+
+        function restartGame() {
+            game.restartGame();
+        }
+    </script>
+</body>
+</html>
