@@ -40,26 +40,40 @@
     flex-direction: column;
   }
 
-  /* Mobilní fullscreen */
-  @media (max-width: 600px) {
-    #botpress-container {
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      width: 100%;
-      height: 100%;
-      border-radius: 0;
-    }
-    #chat-toggle {
-      width: 50px;
-      height: 50px;
-      font-size: 22px;
-    }
-    #mobile-header {
-      display: flex;
-    }
+  /* Mobile pop-up style (bottom-right window, not fullscreen) */
+@media (max-width: 600px) {
+  #botpress-container {
+    bottom: 80px;
+    right: 10px;
+    width: 90%;
+    max-width: 340px;
+    height: 60%;
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+    background: white;
   }
+
+  #chat-toggle {
+    width: 55px;
+    height: 55px;
+    font-size: 22px;
+    bottom: 15px;
+    right: 15px;
+  }
+
+  #mobile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(120deg, #00BFA6, orange);
+    color: white;
+    padding: 10px 12px;
+    font-size: 1em;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+  }
+}
+
 
   /* Info bar */
   .chat-info {
