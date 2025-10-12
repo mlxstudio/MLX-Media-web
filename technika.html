@@ -1,705 +1,711 @@
 <!DOCTYPE html>
 <html lang="cs">
-<link rel="stylesheet" href="ChatBot.css">
 <head>
-<link rel="icon" type="image/png" href="favicon.png"> 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Technika – MLX Media</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<style>
-    html {
-        scroll-behavior: smooth; /* plynulé posouvání */
-    }
-    body {
-        margin: 0;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #f9f9f9;
-        color: #00334e;
-        overflow-x: hidden;
-    }
-    /* Hlavní navigace */
-    nav.main-nav {
-        display: flex;
-        gap: 15px;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        z-index: 1000;
-        justify-content: center;
-        padding: 12px 20px;
-        background: linear-gradient(120deg, rgba(0,191,166,0.95), rgba(255,165,0,0.95));
-        backdrop-filter: blur(5px);
-        border-bottom: 2px solid rgba(255,255,255,0.2);
-    }
-    nav.main-nav a {
-        padding: 8px 14px;
-        color: white;
-        border-radius: 20px;
-        text-decoration: none;
-        font-weight: 500;
-        font-size: 1em;
-        transition: background 0.3s ease, transform 0.2s ease;
-    }
-    nav.main-nav a:hover {
-        background: white;
-        color: #00BFA6;
-        transform: translateY(-2px);
-    }
-/* Apple-like orientace */
-nav.category-nav {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 20px;
-    padding: 20px;
-    background: transparent;
-}
-
-nav.category-nav .category-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    color: #000000;
-    width: 140px;
-    height: 140px;
-    background: white;
-    border-radius: 24px;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-    font-weight: 500;
-    font-size: 1.1em;
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-/* Ikony – jednobarevný teal */
-nav.category-nav .category-card .icon {
-    font-size: 2.2em;
-    margin-bottom: 10px;
-    color: #00BFA6;
-    transition: transform 0.3s ease;
-}
-
-/* Hover efekty */
-nav.category-nav .category-card:hover {
-    transform: translateY(-6px) scale(1.03);
-    box-shadow: 0 16px 28px rgba(0,0,0,0.2);
-    background: linear-gradient(145deg, #E6FFFA, #FFFFFF);
-}
-
-nav.category-nav .category-card:hover .icon {
-    transform: scale(1.15) rotate(5deg);
-}
-
-/* Jemná animace pozadí při hoveru */
-nav.category-nav .category-card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(270deg, #E6FFFA, #FFFFFF, #E6FFFA);
-    background-size: 400% 400%;
-    animation: gradientMove 8s ease infinite;
-    border-radius: 24px;
-    z-index: 0;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-nav.category-nav .category-card:hover::before {
-    opacity: 1;
-}
-
-nav.category-nav .category-card span,
-nav.category-nav .category-card .icon {
-    z-index: 1;
-    position: relative;
-}
-
-@keyframes gradientMove {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
-    
-    header {
-        background: linear-gradient(120deg, #00BFA6, orange);
-        height: 200px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        color: white;
-    }
-    header h1 {
-        font-size: 2.8em;
-        margin: 0;
-    }
-    main {
-        max-width: 1100px;
-        margin: 40px auto;
-        padding: 0 20px;
-    }
-    h2 {
-        text-align: center;
-        font-size: 2em;
-        margin-bottom: 40px;
-        background: linear-gradient(120deg, orange, orange);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    h3 {
-        text-align: center;
-        font-size: 2em;
-        margin-bottom: 40px;
-        background: linear-gradient(120deg, rgb(0, 0, 0), rgb(0, 0, 0));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .tech-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 20px;
-    }
-    .tech-card {
-        background: white;
-        border-radius: 12px;
-        padding: 20px;
-        text-align: center;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .tech-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-    }
-    .tech-card i {
-        font-size: 2.5em;
-        margin-bottom: 15px;
-        color: #00BFA6;
-    }
-    .tech-card h3 {
-        font-size: 1.3em;
-        margin-bottom: 10px;
-        color: #00334e;
-    }
-    .tech-card p {
-        font-size: 0.95em;
-        color: #555;
-    }
-    .tech-card a {
-        display: inline-block;
-        margin-top: 10px;
-        color: orange;
-        font-weight: 600;
-        text-decoration: none;
-        transition: color 0.3s;
-    }
-    .tech-card a:hover {
-        color: #00BFA6;
-    }
-    /* Footer */
-    footer {
-        text-align: center;
-        padding: 40px 20px 30px 20px;
-        font-size: 1.08em;
-        color: #00334e;
-        background: #f1f1f1;
-        margin-top: 60px;
-        border-top: 2px solid #e0e0e0;
-        box-shadow: 0 -2px 12px rgba(0,191,166,0.07);
-
-    }
-
-        /* 1. Big prominent separator */
-    .separator-big {
-        width: 80%; /* how long it is */
-        height: 6px; /* thickness */
-        margin: 40px auto; /* center with spacing */
-        background: black;
-        border-radius: 50px; /* curved edges */
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); /* makes it pop */
-    }
-
-    /* 2. Small subtle category underline */
-    .separator-small {
-        width: 60px; /* shorter line */
-        height: 4px; /* thinner */
-        margin: -30px auto 0 auto; /* space under category name */
-        background: rgba(0, 191, 166, 0.4); /* teal, translucent */
-        border-radius: 50px; /* curved edges */
-    }
-
-
-    /* Spacer for adding vertical space */
-    .spacer {
-        height: 40px; /* adjust space height */
-    }
-
-    /* If you want different sizes */
-    .spacer-small {
-        height: 20px;
-    }
-    .spacer-large {
-        height: 80px;
-    }
-
-        
+    <link rel="icon" type="image/png" href="favicon.png"> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technika – MLX Media</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="ChatBot.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9f9;
+            color: #00334e;
+            overflow-x: hidden;
+        }
+        .video-banner {
+            width: 100%;
+            height: 50vh;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+        .video-banner video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .video-banner::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(to bottom, transparent 0%, rgba(249,249,249,0.3) 50%, #f9f9f9 100%);
+            pointer-events: none;
+            z-index: 3;
+        }
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            z-index: 2;
+        }
+        .video-overlay h1 {
+            font-size: 2.8em;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            animation: slideDown 1s ease forwards, titleSpread 1.2s ease-out forwards;
+        }
+        nav.main-nav {
+            display: flex;
+            gap: 15px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            justify-content: center;
+            padding: 12px 20px;
+            background: linear-gradient(120deg, rgba(0,191,166,0.95), rgba(255,165,0,0.95));
+            backdrop-filter: blur(5px);
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            transition: box-shadow 0.3s ease;
+            box-sizing: border-box;
+        }
+        nav.main-nav.scrolled {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        nav.main-nav a {
+            padding: 8px 14px;
+            color: white;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1em;
+            transition: background 0.3s ease, transform 0.2s ease;
+            will-change: transform, background;
+        }
+        nav.main-nav a:hover {
+            background: white;
+            color: #00BFA6;
+            transform: translateY(-2px);
+        }
+        nav.category-nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+            background: transparent;
+            margin: 20px 0;
+        }
+        nav.category-nav .category-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #000000;
+            width: 140px;
+            height: 140px;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            font-weight: 500;
+            font-size: 1.1em;
+            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease, background 0.3s ease, border 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            perspective: 1000px;
+            will-change: transform, box-shadow;
+        }
+        nav.category-nav .category-card .icon {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            color: #00BFA6;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+        nav.category-nav .category-card:hover {
+            transform: translateY(-6px) scale(1.03) rotateX(5deg) rotateY(5deg);
+            box-shadow: 0 16px 28px rgba(0,0,0,0.2);
+            background: linear-gradient(145deg, #E6FFFA, #FFFFFF);
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            animation: borderGlow 1s infinite alternate;
+        }
+        nav.category-nav .category-card:hover .icon {
+            transform: scale(1.15) rotate(5deg);
+            color: orange;
+            animation: icon-glow 1s infinite alternate;
+        }
+        nav.category-nav .category-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(270deg, #E6FFFA, #FFFFFF, #E6FFFA);
+            background-size: 400% 400%;
+            animation: gradientMove 8s ease infinite;
+            border-radius: 24px;
+            z-index: 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        nav.category-nav .category-card:hover::before {
+            opacity: 1;
+        }
+        nav.category-nav .category-card span,
+        nav.category-nav .category-card .icon {
+            z-index: 1;
+            position: relative;
+        }
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes borderGlow {
+            0% { border-color: rgba(0,191,166,0.5); }
+            100% { border-color: rgba(0,191,166,1); }
+        }
+        @keyframes icon-glow {
+            0% { text-shadow: 0 0 5px rgba(0,191,166,0.5); }
+            100% { text-shadow: 0 0 10px rgba(0,191,166,1); }
+        }
+        main {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        h2 {
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 40px;
+            background: linear-gradient(120deg, orange, orange);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        h3 {
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 40px;
+            background: linear-gradient(120deg, rgb(0, 0, 0), rgb(0, 0, 0));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0;
+            animation: fadeIn 0.8s ease forwards, textPulse 1.5s infinite alternate;
+            animation-delay: 0.2s;
+        }
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .tech-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease, background 0.3s ease, border 0.3s ease;
+            will-change: transform, box-shadow, background;
+        }
+        .tech-card:hover {
+            transform: translateY(-5px) scale(1.02) rotate(1deg);
+            box-shadow: 0 6px 20px rgba(0,191,166,0.2);
+            background: linear-gradient(145deg, #f9fffe, #fff7e6);
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            animation: borderGlow 1s infinite alternate;
+        }
+        .tech-card i {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            color: #00BFA6;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        .tech-card:hover i {
+            color: orange;
+            transform: scale(1.1);
+            animation: icon-glow 1s infinite alternate;
+        }
+        .tech-card h3 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            color: #00334e;
+        }
+        .tech-card p {
+            font-size: 0.95em;
+            color: #555;
+        }
+        .tech-card a {
+            display: inline-block;
+            margin-top: 10px;
+            color: orange;
+            font-weight: 600;
+            text-decoration: none;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        .tech-card a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: #00BFA6;
+            transition: width 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .tech-card a:hover {
+            color: #00BFA6;
+        }
+        .tech-card a:hover::after {
+            width: 100%;
+        }
+        .separator-big {
+            width: 80%;
+            height: 6px;
+            margin: 40px auto;
+            background: black;
+            border-radius: 50px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+        .separator-big:hover {
+            background: linear-gradient(120deg, #00BFA6, orange);
+            transform: scale(1.02);
+        }
+        .separator-small {
+            width: 60px;
+            height: 4px;
+            margin: -30px auto 0 auto;
+            background: rgba(0, 191, 166, 0.4);
+            border-radius: 50px;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+        .separator-small:hover {
+            background: orange;
+            transform: scale(1.1);
+        }
+        .spacer {
+            height: 40px;
+        }
+        .spacer-small {
+            height: 20px;
+        }
+        .spacer-large {
+            height: 80px;
+        }
         footer {
             text-align: center;
-            padding: 30px 20px;
-            font-size: 1em;
-            color: #666;
+            padding: 40px 20px 30px 20px;
+            font-size: 1.08em;
+            color: #00334e;
             background: #f1f1f1;
-            margin-top: 50px;
+            margin-top: 60px;
             border-top: 2px solid #e0e0e0;
+            box-shadow: 0 -2px 12px rgba(0,191,166,0.07);
         }
-        footer p {
-            margin: 8px 0;
+        .footer-content {
+            max-width: 600px;
+            margin: 0 auto;
         }
-
+        .footer-link {
+            display: inline-block;
+            margin: 12px 0 22px 0;
+            color: #00BFA6;
+            font-weight: 600;
+            font-size: 1.08em;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .footer-link i {
+            margin-right: 7px;
+            color: orange;
+            transition: color 0.3s, transform 0.3s;
+        }
+        .footer-link:hover {
+            color: orange;
+        }
+        .footer-link:hover i,
+        .order-btn:hover i,
+        .youtube-btn:hover i {
+            color: #00BFA6;
+            animation: icon-spin 0.6s ease;
+        }
+        .footer-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .order-btn,
+        .youtube-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 28px;
+            font-size: 1.08em;
+            font-weight: 600;
+            border: none;
+            border-radius: 30px;
+            text-decoration: none;
+            box-shadow: 0 2px 8px rgba(0,191,166,0.13), 0 1.5px 8px rgba(0,0,0,0.08);
+            transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+            text-align: center;
+            will-change: transform, box-shadow;
+        }
+        .order-btn {
+            background: linear-gradient(120deg, #00BFA6, orange);
+            color: white;
+        }
+        .order-btn:hover {
+            background: linear-gradient(120deg, orange, #00BFA6);
+            color: #fff;
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(0,191,166,0.3);
+            animation: pulse 1.2s infinite alternate;
+        }
+        .youtube-btn {
+            background: linear-gradient(120deg, #ff0000, #ff9900);
+            color: white;
+        }
+        .youtube-btn:hover {
+            background: linear-gradient(120deg, #ff9900, #ff0000);
+            color: #fff;
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(255,0,0,0.3);
+            animation: pulse 1.2s infinite alternate;
+        }
+        .youtube-btn i,
+        .order-btn i {
+            margin-right: 7px;
+        }
+        .footer-link,
+        .footer-link:hover,
+        .order-btn,
+        .order-btn:hover,
+        .youtube-btn,
+        .youtube-btn:hover {
+            text-decoration: none !important;
+        }
+        #chat-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(120deg, #00BFA6, orange);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        #chat-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0,191,166,0.3);
+            animation: ring 1.5s infinite;
+        }
         @keyframes fadeIn {
-            from {opacity: 0;}
-            to {opacity: 1;}
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         @keyframes slideDown {
-            from {transform: translateY(-30px); opacity: 0;}
-            to {transform: translateY(0); opacity: 1;}
+            from { transform: translateY(-30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
         @keyframes fadeUp {
-            from {transform: translateY(20px); opacity: 0;}
-            to {transform: translateY(0); opacity: 1;}
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
-        footer {
-    text-align: center;
-    padding: 40px 20px 30px 20px;
-    font-size: 1.08em;
-    color: #00334e;
-    background: #f1f1f1;
-    margin-top: 60px;
-    border-top: 2px solid #e0e0e0;
-    box-shadow: 0 -2px 12px rgba(0,191,166,0.07);
-}
-
-.footer-content {
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-/* Email link styles */
-.footer-link {
-    display: inline-block;
-    margin: 12px 0 22px 0;
-    color: #00BFA6;
-    font-weight: 600;
-    font-size: 1.08em;
-    text-decoration: none;
-    transition: color 0.3s;
-}
-
-.footer-link i {
-    margin-right: 7px;
-    color: orange;
-    transition: color 0.3s, transform 0.3s;
-}
-
-/* Swap icon/text colors on hover */
-.footer-link:hover {
-    color: orange;
-}
-
-.footer-link:hover i {
-    color: #00BFA6;
-}
-
-/* Button container */
-.footer-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 18px;
-    justify-content: center;
-    margin-top: 10px;
-}
-
-/* Shared button styles (equal size fix) */
-.order-btn,
-.youtube-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 12px 28px;
-    font-size: 1.08em;
-    font-weight: 600;
-    border: none;
-    border-radius: 30px;
-    text-decoration: none;
-    box-shadow: 0 2px 8px rgba(0,191,166,0.13), 0 1.5px 8px rgba(0,0,0,0.08);
-    transition: background 0.3s, transform 0.2s;
-    text-align: center;
-}
-
-/* Order button style */
-.order-btn {
-    background: linear-gradient(120deg, #00BFA6, orange);
-    color: white;
-}
-
-.order-btn:hover {
-    background: linear-gradient(120deg, orange, #00BFA6);
-    color: #fff;
-    transform: translateY(-2px) scale(1.04);
-    box-shadow: 0 6px 18px rgba(0,191,166,0.18);
-}
-
-/* YouTube button style */
-.youtube-btn {
-    background: linear-gradient(120deg, #ff0000, #ff9900);
-    color: white;
-}
-
-.youtube-btn:hover {
-    background: linear-gradient(120deg, #ff9900, #ff0000);
-    color: #fff;
-    transform: translateY(-2px) scale(1.04);
-    box-shadow: 0 6px 18px rgba(255,0,0,0.18);
-
-}
-.youtube-btn i {
-    margin-right: 7px;
-}
-
-/* Keep same margin for both icons */
-.order-btn i {
-    margin-right: 7px;
-}
-
-/* Icon spin animation */
-.footer-link:hover i,
-.order-btn:hover i,
-.youtube-btn:hover i {
-    animation: icon-spin 0.6s ease;
-}
-
-@keyframes icon-spin {
-    100% { transform: rotate(360deg); }
-}
-
-.youtube-btn,
-.youtube-btn:hover,
-.youtube-btn span {
-    text-decoration: none !important;
-}
-
-.footer-link,
-.footer-link:hover,
-.order-btn,
-.order-btn:hover {
-    text-decoration: none !important;
-}
-
-[id="kamera scroll-animate"],
-[id="zvuk scroll-animate"],
-[id="osvetleni scroll-animate"],
-[id="ostatni scroll-animate"] {
-    scroll-margin-top: 70px; /* adjust until it lines up perfectly */
-}
-
-
-.scroll-animate {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-}
-
-.scroll-animate.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Fix horizontal overflow */
-html, body {
-  max-width: 100%;
-  overflow-x: hidden;
-}
-
-/* Optimize navigation for small screens without changing design */
-@media (max-width: 768px) {
-  nav a {
-    font-size: 0.9em; /* shrink font slightly */
-    padding: 6px 10px; /* reduce padding so links fit */
-  }
-}
-@media (max-width: 480px) {
-  nav a {
-    font-size: 0.85em;
-    padding: 5px 8px;
-  }
-}
-
-/* Scale slider properly on phones */
-@media (max-width: 768px) {
-  .slider-wrapper {
-    max-width: 100%;
-  }
-  .slider {
-    aspect-ratio: 16 / 9; /* better for mobile */
-  }
-}
-
-/* Make nav fully responsive */
-nav {
-  display: flex;
-  flex-wrap: wrap;       /* allow links to wrap instead of overflowing */
-  justify-content: center; /* center links on small screens */
-  padding: 0 10px;       /* reduce horizontal padding */
-  box-sizing: border-box; /* include padding in width */
-}
-
-/* Shrink links on smaller screens */
-@media (max-width: 768px) {
-  nav a {
-    font-size: 0.9em;
-    padding: 6px 8px; /* slightly smaller to fit */
-  }
-}
-
-@media (max-width: 480px) {
-  nav a {
-    font-size: 0.85em;
-    padding: 5px 6px;
-  }
-}
-
-    
-header {
-    padding-top: 60px; /* or however tall your nav is */
-}
-
-
-
-</style>
+        @keyframes icon-spin {
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes pulse {
+            0% { transform: translateY(-2px) scale(1.05); box-shadow: 0 8px 20px rgba(0,191,166,0.3); }
+            100% { transform: translateY(-2px) scale(1.07); box-shadow: 0 10px 24px rgba(0,191,166,0.4); }
+        }
+        @keyframes textPulse {
+            0% { text-shadow: 0 0 5px rgba(0,0,0,0.2); }
+            100% { text-shadow: 0 0 10px rgba(0,191,166,0.5); }
+        }
+        @keyframes titleSpread {
+            0% { letter-spacing: 0; }
+            100% { letter-spacing: 2px; }
+        }
+        @keyframes ring {
+            0% { transform: rotate(0deg); }
+            10% { transform: rotate(15deg); }
+            20% { transform: rotate(-10deg); }
+            30% { transform: rotate(10deg); }
+            40% { transform: rotate(-5deg); }
+            50% { transform: rotate(0deg); }
+            100% { transform: rotate(0deg); }
+        }
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            will-change: opacity, transform;
+        }
+        .scroll-animate.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        [id^="kamera"],
+        [id^="zvuk"],
+        [id^="osvetleni"],
+        [id^="ostatni"] {
+            scroll-margin-top: 70px;
+        }
+        @media (max-width: 768px) {
+            nav.main-nav a {
+                font-size: 0.9em;
+                padding: 6px 10px;
+            }
+            .video-banner {
+                height: 40vh;
+            }
+            .video-overlay h1 {
+                font-size: 2em;
+            }
+            nav.category-nav .category-card {
+                width: 120px;
+                height: 120px;
+                font-size: 1em;
+            }
+            nav.category-nav .category-card .icon {
+                font-size: 2em;
+            }
+        }
+        @media (max-width: 480px) {
+            nav.main-nav a {
+                font-size: 0.85em;
+                padding: 5px 8px;
+            }
+            .video-banner {
+                height: 35vh;
+            }
+            .video-overlay h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
 </head>
 <body>
     <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("visible");
-      } else {
-        entry.target.classList.remove("visible"); // reset when out of view
-      }
-    });
-  }, { threshold: 0.2 }); // 20% visible triggers
-
-  document.querySelectorAll(".scroll-animate").forEach(el => {
-    observer.observe(el);
-  });
-});
-</script>
-
-<!-- Hlavní navigace -->
-<nav class="main-nav">
-    <a href="index.html">Domovská stránka</a>
-    <a href="portfolio.html">Portfolio</a>
-    <a href="technika.html">Technika</a>
-    <a href="praicing.html">Ceník</a>
-    <a href="order.html">Objednávka</a>
-</nav>
-
-
-
-<header>
-    <nav class="category-nav scroll-animate"></nav>
-    <h1>Technika</h1>
-</header>
-
-<main>
-    <h3 class="scroll-animate">Profesionální vybavení pro kvalitní tvorbu</h3>
-
-<!-- Navigace kategorií v Apple-like kartách -->
-<nav class="category-nav scroll-animate">
-    <a href="#kamera scroll-animate" class="category-card">
-        <i class="fas fa-video icon"></i>
-        <span>Kamera</span>
-    </a>
-    <a href="#zvuk scroll-animate" class="category-card">
-        <i class="fas fa-microphone icon"></i>
-        <span>Zvuk</span>
-    </a>
-    <a href="#osvetleni scroll-animate" class="category-card">
-        <i class="fas fa-lightbulb icon"></i>
-        <span>Osvětlení</span>
-    </a>
-    <a href="#ostatni scroll-animate" class="category-card">
-        <i class="fas fa-cogs icon"></i>
-        <span>Ostatní</span>
-        
-    </a>
-</nav>
-
-<div class="separator-big scroll-animate scroll-animate"></div>
-
-    <!-- Kamera -->
-   
-    <section id="kamera" class="scroll-animate">
-        <h3 class="scroll-animate">Kamera</h3>
-            <div class="separator-small scroll-animate"></div>
-            <div class="spacer"></div>
-        <div class="tech-grid">
-            <div class="tech-card scroll-animate">
-                <i class="fas fa-video"></i>
-                <h3>Blackmagic Pocket Cinema Camera 6K</h3>
-                <p>Špičková filmová kamera pro detailní a filmový obraz.</p>
-                <a href="#">Více</a>
-            </div>
-            <div class="tech-card scroll-animate">
-                <i class="fas fa-camera-retro"></i> <!-- Stylized camera with lens -->
-                <h3>Objektivy</h3>
-                <p>Super objektivy z velkým rozmezím.</p>
-                <a href="#">Více</a>
-            </div>
-            <div class="tech-card scroll-animate">
-                <i class="fas fa-camera"></i>
-                <h3>SmallRig Cage + příslušenství</h3>
-                <p>Ochrana a montážní systém pro profesionální práci.</p>
-                <a href="#">Více</a>
-            </div>
+        document.addEventListener("DOMContentLoaded", () => {
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("visible");
+                    } else {
+                        entry.target.classList.remove("visible");
+                    }
+                });
+            }, { threshold: 0.2 });
+            document.querySelectorAll(".scroll-animate").forEach(el => observer.observe(el));
+            const nav = document.querySelector('.main-nav');
+            window.addEventListener('scroll', () => {
+                nav.classList.toggle('scrolled', window.scrollY > 10);
+            });
+            const video = document.getElementById('product-video');
+            let played = false;
+            const videoObserver = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !played) {
+                        video.play();
+                        played = true;
+                    }
+                });
+            }, { threshold: 0.6 });
+            videoObserver.observe(document.getElementById('animation-section'));
+        });
+    </script>
+    <nav class="main-nav">
+        <a href="index.html">Domovská stránka</a>
+        <a href="portfolio.html">Portfolio</a>
+        <a href="technika.html">Technika</a>
+        <a href="praicing.html">Ceník</a>
+        <a href="order.html">Objednávka</a>
+    </nav>
+    <section class="video-banner" id="animation-section">
+        <video id="product-video" muted playsinline preload="auto">
+            <source src="Technika web video.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-overlay">
+            <h1></h1>
         </div>
     </section>
-
-    <!-- Zvuk -->
-    <section id="zvuk" class="scroll-animate">
-        <h3 class="scroll-animate">Zvuk</h3>
+    <section class="scroll-animate">
+        <nav class="category-nav">
+            <a href="#kamera" class="category-card">
+                <i class="fas fa-video icon"></i>
+                <span>Kamera</span>
+            </a>
+            <a href="#zvuk" class="category-card">
+                <i class="fas fa-microphone icon"></i>
+                <span>Zvuk</span>
+            </a>
+            <a href="#osvetleni" class="category-card">
+                <i class="fas fa-lightbulb icon"></i>
+                <span>Osvětlení</span>
+            </a>
+            <a href="#ostatni" class="category-card">
+                <i class="fas fa-cogs icon"></i>
+                <span>Ostatní</span>
+            </a>
+        </nav>
+    </section>
+    <main>
+        <h3 class="scroll-animate">Profesionální vybavení pro kvalitní tvorbu</h3>
+        <div class="separator-big scroll-animate"></div>
+        <section id="kamera" class="scroll-animate">
+            <h3 class="scroll-animate">Kamera</h3>
             <div class="separator-small scroll-animate"></div>
             <div class="spacer"></div>
-        <div class="tech-grid">
-            <div class="tech-card scroll-animate">
-                <i class="fas fa-microphone"></i>
-                <h3>Zoom F1</h3>
-                <p>Kompaktní rekordér pro čistý a spolehlivý záznam.</p>
-                <a href="#">Více</a>
+            <div class="tech-grid">
+                <div class="tech-card scroll-animate">
+                    <i class="fas fa-video"></i>
+                    <h3>Blackmagic Pocket Cinema Camera 6K</h3>
+                    <p>Špičková filmová kamera pro detailní a filmový obraz.</p>
+                    <a href="#">Více</a>
+                </div>
+                <div class="tech-card scroll-animate">
+                    <i class="fas fa-camera-retro"></i>
+                    <h3>Objektivy</h3>
+                    <p>Super objektivy z velkým rozmezím.</p>
+                    <a href="#">Více</a>
+                </div>
+                <div class="tech-card scroll-animate">
+                    <i class="fas fa-camera"></i>
+                    <h3>SmallRig Cage + příslušenství</h3>
+                    <p>Ochrana a montážní systém pro profesionální práci.</p>
+                    <a href="#">Více</a>
+                </div>
             </div>
-            <div class="tech-card scroll-animate">
-                <i class="fas fa-volume-up"></i>
-                <h3>Shotgun mikrofon</h3>
-                <p>Přesné směrové nahrávání zvuku pro filmovou produkci.</p>
-                <a href="#">Více</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Osvětlení -->
-<section id="osvetleni" class="scroll-animate">
-        <h3 class="scroll-animate">Osvětlení</h3>
+        </section>
+        <section id="zvuk" class="scroll-animate">
+            <h3 class="scroll-animate">Zvuk</h3>
             <div class="separator-small scroll-animate"></div>
             <div class="spacer"></div>
-        <div class="tech-grid scroll-animate">
-            <div class="tech-card">
-                <i class="fas fa-lightbulb"></i>
-                <h3>Neewer 80C + RGB tube</h3>
-                <p>Flexibilní a výkonná světla pro kreativní nasvícení scény.</p>
-                <a href="#">Více</a>
+            <div class="tech-grid">
+                <div class="tech-card scroll-animate">
+                    <i class="fas fa-microphone"></i>
+                    <h3>Zoom F1</h3>
+                    <p>Kompaktní rekordér pro čistý a spolehlivý záznam.</p>
+                    <a href="#">Více</a>
+                </div>
+                <div class="tech-card scroll-animate">
+                    <i class="fas fa-volume-up"></i>
+                    <h3>Shotgun mikrofon</h3>
+                    <p>Přesné směrové nahrávání zvuku pro filmovou produkci.</p>
+                    <a href="#">Více</a>
+                </div>
             </div>
-            <div class="tech-card scroll-animate">
-                <i class="fas fa-sun"></i>
-                <h3>Softbox 90 cm</h3>
-                <p>Měkké světlo pro profesionální portréty a produktové záběry.</p>
-                <a href="#">Více</a>
-            </div>
-            <div class="tech-card scroll-animate">
-                <i class="fas fa-play"></i> <!-- inverted and styled via CSS to look like tripod legs -->
-                <h3>Stojany na světla</h3>
-                <p>Měkké světlo pro profesionální portréty a produktové záběry.</p>
-                <a href="#">Více</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Ostatní -->
-    <section id="ostatni" class="scroll-animate">
-        <h3 class="scroll-animate">Ostatní</h3>
+        </section>
+        <section id="osvetleni" class="scroll-animate">
+            <h3 class="scroll-animate">Osvětlení</h3>
             <div class="separator-small scroll-animate"></div>
             <div class="spacer"></div>
-        <div class="tech-grid">
-            <div class="tech-card scroll-animate">
-                <i class="fas fa-plug"></i> <!-- klasická zásuvka -->
-                <h3>Napájení</h3>
-                <p>Veliké i malé baterie k napájení všeho co je potřeba.</p>
-                <a href="#">Více</a>
+            <div class="tech-grid scroll-animate">
+                <div class="tech-card scroll-animate">
+                    <i class="fas fa-lightbulb"></i>
+                    <h3>Neewer 80C + RGB tube</h3>
+                    <p>Flexibilní a výkonná světla pro kreativní nasvícení scény.</p>
+                    <a href="#">Více</a>
+                </div>
+                <div class="tech-card scroll-animate">
+                    <i class="fas fa-sun"></i>
+                    <h3>Softbox 90 cm</h3>
+                    <p>Měkké světlo pro profesionální portréty a produktové záběry.</p>
+                    <a href="#">Více</a>
+                </div>
+                <div class="tech-card scroll-animate">
+                    <i class="fas fa-play"></i>
+                    <h3>Stojany na světla</h3>
+                    <p>Měkké světlo pro profesionální portréty a produktové záběry.</p>
+                    <a href="#">Více</a>
+                </div>
             </div>
-            <div class="tech-card scroll-animate">
-                <i class="fas fa-toolbox"></i>
-                <h3>Další příslušenství</h3>
-                <p>Magic arm, držáky, odrazky, kouřostroj a další filmové vybavení.</p>
-                <a href="#">Více</a>
+        </section>
+        <section id="ostatni" class="scroll-animate">
+            <h3 class="scroll-animate">Ostatní</h3>
+            <div class="separator-small scroll-animate"></div>
+            <div class="spacer"></div>
+            <div class="tech-grid">
+                <div class="tech-card scroll-animate">
+                    <i class="fas fa-plug"></i>
+                    <h3>Napájení</h3>
+                    <p>Veliké i malé baterie k napájení všeho co je potřeba.</p>
+                    <a href="#">Více</a>
+                </div>
+                <div class="tech-card scroll-animate">
+                    <i class="fas fa-toolbox"></i>
+                    <h3>Další příslušenství</h3>
+                    <p>Magic arm, držáky, odrazky, kouřostroj a další filmové vybavení.</p>
+                    <a href="#">Více</a>
+                </div>
             </div>
-        </div>
-    </section>
-
-</main>
-
+        </section>
+    </main>
     <footer>
-    <div class="footer-content scroll-animate">
-        <p>Máte otázky nebo zájem o spolupráci?</p>
-        <a href="mailto:mlx.studio2222@gmail.com" class="footer-link">
-            <i class="fas fa-envelope"></i> mlx.studio2222@gmail.com
-        </a>
-        <div class="footer-buttons">
-            <a href="order.html" class="order-btn">
-                <i class="fas fa-calendar-plus"></i> Objednat službu
+        <div class="footer-content scroll-animate">
+            <p>Máte otázky nebo zájem o spolupráci?</p>
+            <a href="mailto:mlx.studio2222@gmail.com" class="footer-link">
+                <i class="fas fa-envelope"></i> mlx.studio2222@gmail.com
             </a>
-            <a href="https://www.youtube.com/@MLX-Media" class="youtube-btn" target="_blank">
-                <i class="fab fa-youtube"></i> YouTube kanál
-            </a>
+            <div class="footer-buttons">
+                <a href="order.html" class="order-btn">
+                    <i class="fas fa-calendar-plus"></i> Objednat službu
+                </a>
+                <a href="https://www.youtube.com/@MLX-Media" class="youtube-btn" target="_blank">
+                    <i class="fab fa-youtube"></i> YouTube kanál
+                </a>
+            </div>
+        </div>
+    </footer>
+    <button id="chat-toggle">
+        <i class="fas fa-comments"></i>
+    </button>
+    <div id="botpress-container">
+        <div id="mobile-header">
+            <span>MLX Chat Bot</span>
+            <button id="mobile-close"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="chat-info">
+            AI je určeno na shrnutí a pomoc,
+            <button id="info-toggle">Více info</button>
+        </div>
+        <div class="chat-details" id="chat-details">
+            <p>1. AI nemůže objednávat, ale může pomoci s procesem.</p>
+            <p>2. AI je určeno vám pomoci se vyznat a shrnout informace na stránce, ale může se mýlit – proto doporučujeme si všechny informace dále ověřovat.</p>
+            <p>3. AI nemůže dávat přesné ceny, pouze orientační. Pro přesné ceny nám zavolejte a domluvíme se.</p>
+        </div>
+        <div id="chat-container">
+            <div id="chat-log"></div>
+            <input id="chat-input" placeholder="Zeptejte se na cokoliv..." />
         </div>
     </div>
-</footer>
-
-    
-<!-- Chat toggle button -->
-<button id="chat-toggle">
-  <i class="fas fa-comments"></i>
-</button>
-
-<!-- Chat container -->
-<div id="botpress-container">
-  <!-- mobile header -->
-  <div id="mobile-header">
-    <span>MLX Chat Bot</span>
-    <button id="mobile-close"><i class="fas fa-times"></i></button>
-  </div>
-
-  <div class="chat-info">
-    AI je určeno na shrnutí a pomoc,
-    <button id="info-toggle">Více info</button>
-  </div>
-  <div class="chat-details" id="chat-details">
-    <p>1. AI nemůže objednávat, ale může pomoci s procesem.</p>
-    <p>2. AI je určeno vám pomoci se vyznat a shrnout informace na stránce, ale může se mýlit – proto doporučujeme si všechny informace dále ověřovat.</p>
-    <p>3. AI nemůže dávat přesné ceny, pouze orientační. Pro přesné ceny nám zavolejte a domluvíme se.</p>
-  </div>
-
-  <!-- Local chatbot UI -->
-  <div id="chat-container">
-    <div id="chat-log"></div>
-    <input id="chat-input" placeholder="Zeptejte se na cokoliv..." />
-  </div>
-</div>
-
-<!-- Scripts (order matters) -->
-<script src="mlx_highlight.js"></script>
-<script src="ChatBotKnowledge.js"></script>
-<script src="ChatBot.js" defer></script>
-
-
-
+    <script src="mlx_highlight.js"></script>
+    <script src="ChatBotKnowledge.js"></script>
+    <script src="ChatBot.js" defer></script>
 </body>
 </html>
