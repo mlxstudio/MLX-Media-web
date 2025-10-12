@@ -208,7 +208,7 @@
   function showRing(ring, el, {shape='rounded', pad=undefined}={}){
     if(!ring || !el) return;
     // choose sane default padding: small for nav, larger for big sections
-    if(pad === undefined) pad = (ring.id === 'mlx-nav-ring' ? -3 : 12);
+    if(pad === undefined) pad = (ring.id === 'mlx-nav-ring' ? 0 : 12);
 
     // cancel any pending hide timer so it won't collapse mid-fade
     if(ring._fadeTimer){ clearTimeout(ring._fadeTimer); ring._fadeTimer = null; }
