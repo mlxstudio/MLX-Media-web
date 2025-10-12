@@ -1,437 +1,419 @@
 <!DOCTYPE html>
-<html lang="en">
-    <link rel="stylesheet" href="ChatBot.css">
+<html lang="cs">
 <head>
-<link rel="icon" type="image/png" href="favicon.png"> 
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Place Your Order – MLX Media</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>
-    body {
-        margin: 0;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #f9f9f9;
-        color: #00334e;
-        line-height: 1.6;
-    }
-    nav {
-        display: flex;
-        gap: 15px;
-        position: fixed;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        z-index: 1000;
-        justify-content: center;
-        padding: 12px 20px;
-        background: linear-gradient(120deg, rgba(0,191,166,0.9), rgba(255,165,0,0.9));
-        backdrop-filter: blur(5px);
-        border-bottom: 2px solid rgba(255,255,255,0.2);
-        transition: box-shadow 0.3s ease;
-    }
-    nav.scrolled {
-        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    }
-    nav a {
-        padding: 8px 14px;
-        color: white;
-        border-radius: 20px;
-        text-decoration: none;
-        font-weight: 500;
-        font-size: 1em;
-        transition: background 0.3s ease, transform 0.2s ease;
-    }
-    nav a:hover {
-        background: white;
-        color: #00BFA6;
-        transform: translateY(-2px);
-    }
-    header {
-        background: linear-gradient(120deg, #00BFA6, orange);
-        height: 180px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: white;
-        text-align: center;
-        animation: fadeIn 1.5s ease-in-out;
-    }
-    header h1 {
-        font-size: 2.4em;
-        margin: 0;
-        animation: slideDown 1s ease forwards;
-    }
-    main {
-        max-width: 900px;
-        margin: 40px auto;
-        padding: 0 20px;
-        animation: fadeUp 1s ease-in-out;
-    }
-    .form-card {
-        background: white;
-        border-radius: 15px;
-        padding: 25px;
-        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-    }
-    label {
-        display: block;
-        margin-top: 15px;
-        font-weight: 600;
-    }
-    input, textarea, button {
-        width: 100%;
-        padding: 10px;
-        margin-top: 6px;
-        border-radius: 8px;
-        border: 1px solid #ddd;
-        font-size: 1em;
-        box-sizing: border-box;
-    }
-    input:focus, textarea:focus {
-        outline: none;
-        border-color: #00BFA6;
-        box-shadow: 0 0 6px rgba(0,191,166,0.3);
-    }
-    button {
-        margin-top: 20px;
-        background: linear-gradient(120deg, #00BFA6, orange);
-        color: white;
-        border: none;
-        font-size: 1.1em;
-        font-weight: bold;
-        cursor: pointer;
-        transition: transform 0.2s ease, box-shadow 0.3s ease;
-    }
-    button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 14px rgba(0,0,0,0.15);
-    }
-    #map {
-        height: 350px;
-        margin-top: 10px;
-        border-radius: 12px;
-        overflow: hidden;
-    }
-    .error {
-        color: red;
-        margin-top: 10px;
-        font-weight: bold;
-    }
-    @keyframes fadeIn {
-        from {opacity: 0;}
-        to {opacity: 1;}
-    }
-    @keyframes slideDown {
-        from {transform: translateY(-30px); opacity: 0;}
-        to {transform: translateY(0); opacity: 1;}
-    }
-    @keyframes fadeUp {
-        from {transform: translateY(20px); opacity: 0;}
-        to {transform: translateY(0); opacity: 1;}
-    }
-    .calendar-container {
-        margin-top: 20px;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-    }
-    .map-container {
-        margin: 18px 0;
-        border-radius: 16px;
-        overflow: hidden;
-        box-shadow: 0 4px 18px rgba(0,191,166,0.13), 0 1.5px 8px rgba(0,0,0,0.08);
-        background: #fff;
-        max-width: 100%;
-    }
-    .map-container iframe {
-        display: block;
-        width: 100%;
-        min-height: 350px;
-        border: none;
-    }
-    /* checkbox inline + small styling */
+    <link rel="icon" type="image/png" href="favicon.png"> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place Your Order – MLX Media</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="ChatBot.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9f9;
+            color: #00334e;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        .video-banner {
+            width: 100%;
+            height: 50vh;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+        .video-banner video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .video-banner::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(to bottom, transparent 0%, rgba(249,249,249,0.3) 50%, #f9f9f9 100%);
+            pointer-events: none;
+            z-index: 3;
+        }
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            z-index: 2;
+        }
+        .video-overlay h1 {
+            font-size: 2.4em;
+            margin: 0;
+            animation: slideDown 1s ease forwards;
+        }
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            justify-content: center;
+            padding: 12px 10px;
+            background: linear-gradient(120deg, rgba(0,191,166,0.9), rgba(255,165,0,0.9));
+            backdrop-filter: blur(5px);
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            transition: box-shadow 0.3s ease;
+            box-sizing: border-box;
+        }
+        nav.scrolled {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        nav a {
+            padding: 8px 14px;
+            color: white;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1em;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+        nav a:hover {
+            background: white;
+            color: #00BFA6;
+            transform: translateY(-2px);
+        }
+        main {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+            animation: fadeUp 1s ease-in-out;
+        }
+        .form-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+        input, textarea, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #00BFA6;
+            box-shadow: 0 0 6px rgba(0,191,166,0.3);
+        }
+        button {
+            margin-top: 20px;
+            background: linear-gradient(120deg, #00BFA6, orange);
+            color: white;
+            border: none;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.3s ease;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+        }
+        .calendar-container {
+            margin-top: 20px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+        .map-container {
+            margin: 18px 0;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 18px rgba(0,191,166,0.13), 0 1.5px 8px rgba(0,0,0,0.08);
+            background: #fff;
+            max-width: 100%;
+        }
+        .map-container iframe {
+            display: block;
+            width: 100%;
+            min-height: 350px;
+            border: none;
+        }
         .checkbox-inline {
-          display: inline-flex;     /* sits inline with text */
-          align-items: center;
-          gap: 10px;                /* space between box and text */
-          margin-top: 8px;          /* smaller than default label margin */
-          font-weight: 600;
-          cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+            font-weight: 600;
+            cursor: pointer;
         }
-        
-        /* native checkbox sizing + modern color */
         .checkbox-inline input[type="checkbox"] {
-          width: 20px;
-          height: 20px;
-          flex-shrink: 0;
-          accent-color: #00BFA6;    /* colors the checkbox in modern browsers */
-          border-radius: 4px;
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            accent-color: #00BFA6;
+            border-radius: 4px;
         }
-
-            input[type="tel"] {
-          box-sizing: border-box;
-          width: 100%;
-          padding: 10px;
-          margin-top: 6px;
-          border-radius: 8px;
-          border: 1px solid #ddd;
+        input[type="tel"] {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
         }
-
-/* Fix horizontal overflow */
-html, body {
-  max-width: 100%;
-  overflow-x: hidden;
-}
-
-/* Optimize navigation for small screens without changing design */
-@media (max-width: 768px) {
-  nav a {
-    font-size: 0.9em; /* shrink font slightly */
-    padding: 6px 10px; /* reduce padding so links fit */
-  }
-}
-@media (max-width: 480px) {
-  nav a {
-    font-size: 0.85em;
-    padding: 5px 8px;
-  }
-}
-
-/* Scale slider properly on phones */
-@media (max-width: 768px) {
-  .slider-wrapper {
-    max-width: 100%;
-  }
-  .slider {
-    aspect-ratio: 16 / 9; /* better for mobile */
-  }
-
-/* Make nav fully responsive */
-nav {
-  display: flex;
-  flex-wrap: wrap;       /* allow links to wrap instead of overflowing */
-  justify-content: center; /* center links on small screens */
-  padding: 0 10px;       /* reduce horizontal padding */
-  box-sizing: border-box; /* include padding in width */
-}
-
-/* Shrink links on smaller screens */
-@media (max-width: 768px) {
-  nav a {
-    font-size: 0.9em;
-    padding: 6px 8px; /* slightly smaller to fit */
-  }
-}
-
-@media (max-width: 480px) {
-  nav a {
-    font-size: 0.85em;
-    padding: 5px 6px;
-  }
-}
-
-
-}
-header {
-    padding-top: 60px; /* or however tall your nav is */
-}
-
-
-
-
-</style>
+        .error {
+            color: red;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideDown {
+            from { transform: translateY(-30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes fadeUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        @media (max-width: 768px) {
+            nav a {
+                font-size: 0.9em;
+                padding: 6px 8px;
+            }
+            .video-overlay h1 {
+                font-size: 1.8em;
+            }
+            .slider-wrapper {
+                max-width: 100%;
+            }
+            .slider {
+                aspect-ratio: 16 / 9;
+            }
+        }
+        @media (max-width: 480px) {
+            nav a {
+                font-size: 0.85em;
+                padding: 5px 6px;
+            }
+            .video-overlay h1 {
+                font-size: 1.6em;
+            }
+        }
+    </style>
 </head>
 <body>
-
-<nav>
-    <a href="index.html">Domovská stránka</a>
-    <a href="portfolio.html">Portfolio</a>
-    <a href="technika.html">Technika</a>
-    <a href="praicing.html">Ceník</a>
-    <a href="order.html">Objednávka</a>
-</nav>
-
-<header>
-    <h1>📍 Objednávka</h1>
-</header>
-
-<main>
-  <div class="form-card">
-    <form id="orderForm">
-      <label for="name">Jméno:</label>
-      <input type="text" id="name" name="name" required />
-
-      <label for="email">Email:</label>
-      <input type="email" id="email" name="email" placeholder="your@email.com" required />
-
-      <label for="phone">Telefon:</label>
-      <input type="tel" id="phone" name="phone" placeholder="+420 123 456 789" required />
-
-      <label for="orderDetails">Jakou službu chcete?</label>
-      <textarea id="orderDetails" name="orderDetails" rows="4" required></textarea>
-
-      <label class="checkbox-inline" for="nataseni">
-        <input type="checkbox" id="nataseni" name="nataseni">
-        Chcete také natáčení?
-      </label>
-
-      <!-- Section for NON-Natáčení -->
-      <div id="normalSection">
-        <label for="orderDate">Do kdy potřebujete tento projekt hotový?</label>
-        <input type="date" id="orderDate" name="orderDate" />
-        <div class="calendar-container">
-          <iframe src="https://calendar.google.com/calendar/embed?height=450&wkst=1&ctz=Europe%2FPrague&showPrint=0&showTabs=0&showCalendars=0&mode=MONTH&src=bWx4LnN0dWRpbzIyMjJAZ21haWwuY29t&src=Y3MuY3plY2kjaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23039be5&color=%230b8043" style="border:solid 1px #777" width="100%" height="450" frameborder="0" scrolling="no"></iframe>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const nav = document.getElementById('mainNav');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 10) {
+                    nav.classList.add('scrolled');
+                } else {
+                    nav.classList.remove('scrolled');
+                }
+            });
+            const video = document.getElementById('product-video');
+            let played = false;
+            const videoObserver = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !played) {
+                        video.play();
+                        played = true;
+                    }
+                });
+            }, { threshold: 0.6 });
+            videoObserver.observe(document.getElementById('animation-section'));
+        });
+    </script>
+    <script src="mlx_highlight.js"></script>
+    <script src="ChatBotKnowledge.js"></script>
+    <script src="ChatBot.js" defer></script>
+    <nav id="mainNav">
+        <a href="index.html">Domovská stránka</a>
+        <a href="portfolio.html">Portfolio</a>
+        <a href="technika.html">Technika</a>
+        <a href="praicing.html">Ceník</a>
+        <a href="order.html">Objednávka</a>
+    </nav>
+    <section class="video-banner" id="animation-section">
+        <video id="product-video" muted playsinline preload="auto">
+            <source src="Timeline 1.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-overlay">
+            <h1></h1>
         </div>
-      </div>
-
-      <!-- Section for Natáčení -->
-      <div id="nataseniSection" style="display: none;">
-        <label for="location">Lokalita natáčení:</label>
-        <input id="location" name="location" type="text" placeholder="napište adresu..." />
-
-        <div class="map-container" style="margin-bottom: 15px;">
-          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d242222.43857222228!2d14.324413493345219!3d50.05586478445109!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x470b939c0970798b%3A0x400af0f66164090!2sPraha!5e1!3m2!1scs!2scz!4v1754743220287!5m2!1scs!2scz" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" width="100%" height="300"></iframe>
+    </section>
+    <main>
+        <div class="form-card">
+            <form id="orderForm">
+                <label for="name">Jméno:</label>
+                <input type="text" id="name" name="name" required />
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="your@email.com" required />
+                <label for="phone">Telefon:</label>
+                <input type="tel" id="phone" name="phone" placeholder="+420 123 456 789" required />
+                <label for="orderDetails">Jakou službu chcete?</label>
+                <textarea id="orderDetails" name="orderDetails" rows="4" required></textarea>
+                <label class="checkbox-inline" for="nataseni">
+                    <input type="checkbox" id="nataseni" name="nataseni">
+                    Chcete také natáčení?
+                </label>
+                <div id="normalSection">
+                    <label for="orderDate">Do kdy potřebujete tento projekt hotový?</label>
+                    <input type="date" id="orderDate" name="orderDate" />
+                    <div class="calendar-container">
+                        <iframe src="https://calendar.google.com/calendar/embed?height=450&wkst=1&ctz=Europe%2FPrague&showPrint=0&showTabs=0&showCalendars=0&mode=MONTH&src=bWx4LnN0dWRpbzIyMjJAZ21haWwuY29t&src=Y3MuY3plY2kjaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23039be5&color=%230b8043" style="border:solid 1px #777" width="100%" height="450" frameborder="0" scrolling="no"></iframe>
+                    </div>
+                </div>
+                <div id="nataseniSection" style="display: none;">
+                    <label for="location">Lokalita natáčení:</label>
+                    <input id="location" name="location" type="text" placeholder="napište adresu..." />
+                    <div class="map-container" style="margin-bottom: 15px;">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d242222.43857222228!2d14.324413493345219!3d50.05586478445109!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x470b939c0970798b%3A0x400af0f66164090!2sPraha!5e1!3m2!1scs!2scz!4v1754743220287!5m2!1scs!2scz" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" width="100%" height="300"></iframe>
+                    </div>
+                    <label for="extraDate">Kdy bude natáčecí den?</label>
+                    <input type="date" id="extraDate" name="extraDate" />
+                    <div class="calendar-container">
+                        <iframe src="https://calendar.google.com/calendar/embed?height=450&wkst=1&ctz=Europe%2FPrague&showPrint=0&showTabs=0&showCalendars=0&mode=MONTH&src=bWx4LnN0dWRpbzIyMjJAZ21haWwuY29t&src=Y3MuY3plY2kjaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23039be5&color=%230b8043" style="border:solid 1px #777" width="100%" height="450" frameborder="0" scrolling="no"></iframe>
+                    </div>
+                </div>
+                <div class="error" id="errorMsg"></div>
+                <button type="submit"><i class="fas fa-paper-plane"></i> Send Order</button>
+            </form>
         </div>
-
-        <label for="extraDate">Kdy bude natáčecí den?</label>
-        <input type="date" id="extraDate" name="extraDate" />
-        <div class="calendar-container">
-          <iframe src="https://calendar.google.com/calendar/embed?height=450&wkst=1&ctz=Europe%2FPrague&showPrint=0&showTabs=0&showCalendars=0&mode=MONTH&src=bWx4LnN0dWRpbzIyMjJAZ21haWwuY29t&src=Y3MuY3plY2kjaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23039be5&color=%230b8043" style="border:solid 1px #777" width="100%" height="450" frameborder="0" scrolling="no"></iframe>
+    </main>
+    <button id="chat-toggle">
+        <i class="fas fa-comments"></i>
+    </button>
+    <div id="botpress-container">
+        <div id="mobile-header">
+            <span>MLX Chat Bot</span>
+            <button id="mobile-close"><i class="fas fa-times"></i></button>
         </div>
-      </div>
-
-      <div class="error" id="errorMsg"></div>
-      <button type="submit"><i class="fas fa-paper-plane"></i> Send Order</button>
-    </form>
-  </div>
-</main>
-
-<script>
-const bookedDates = [
-  "2025-08-11","2025-08-12","2025-08-13","2025-08-14","2025-08-15",
-  "2025-08-18","2025-08-19","2025-08-20","2025-08-21","2025-08-22",
-  "2025-08-25","2025-08-26","2025-08-27","2025-08-28","2025-08-29"
-];
-
-const checkbox = document.getElementById("nataseni");
-const normalSection = document.getElementById("normalSection");
-const nataseniSection = document.getElementById("nataseniSection");
-const orderDate = document.getElementById("orderDate");
-const extraDate = document.getElementById("extraDate");
-const locationInput = document.getElementById("location");
-const errorMsg = document.getElementById("errorMsg");
-const phoneInput = document.getElementById("phone");
-
-checkbox.addEventListener("change", function() {
-  if (this.checked) {
-    normalSection.style.display = "none";
-    nataseniSection.style.display = "block";
-    locationInput.required = true;
-    extraDate.required = true;
-    orderDate.required = false;
-    orderDate.value = "";
-    errorMsg.textContent = "";
-  } else {
-    normalSection.style.display = "block";
-    nataseniSection.style.display = "none";
-    locationInput.required = false;
-    extraDate.required = false;
-    extraDate.value = "";
-    errorMsg.textContent = "";
-  }
-});
-
-extraDate.addEventListener("input", function () {
-  if (bookedDates.includes(this.value)) {
-    errorMsg.textContent = "Tento den je již obsazený pro natáčení. Vyberte jiný.";
-    this.value = "";
-  } else {
-    errorMsg.textContent = "";
-  }
-});
-
-// Better phone formatting from first script
-phoneInput.addEventListener("input", function (e) {
-  let digits = e.target.value.replace(/[^\d+]/g, "");
-  if (!digits.startsWith("+420")) {
-    digits = digits.replace(/^\+?/, "");
-    digits = "+420" + digits;
-  }
-  const core = digits.replace(/\D/g, "").slice(3);
-  const groups = [
-    core.slice(0, 3),
-    core.slice(3, 6),
-    core.slice(6, 9)
-  ].filter(Boolean);
-  e.target.value = "+420 " + groups.join(" ");
-});
-
-// Google Apps Script submission
-document.getElementById("orderForm").addEventListener("submit", function(e) {
-  e.preventDefault();
-  const data = {
-    name: document.getElementById("name").value,
-    email: document.getElementById("email").value,
-    phone: document.getElementById("phone").value,
-    orderDetails: document.getElementById("orderDetails").value,
-    nataseni: document.getElementById("nataseni").checked,
-    orderDate: document.getElementById("orderDate").value,
-    location: document.getElementById("location").value,
-    extraDate: document.getElementById("extraDate").value
-  };
-fetch("https://script.google.com/macros/s/AKfycbxEOTIaxTc9OoKvkStGFs5AlIn_tHtAkKJm05L6w-DF0zXnupa2aig_cFtgdUwMl_-evw/exec", {
-  method: "POST",
-  mode: "no-cors",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(data)
-})
-.then(() => {
-  window.location.href = "thank-you.html";
-})
-.catch(err => {
-  alert("Chyba při odesílání: " + err);
-});
-});
-</script>
-
-<!-- Chat toggle button -->
-<button id="chat-toggle">
-  <i class="fas fa-comments"></i>
-</button>
-
-<!-- Chat container -->
-<div id="botpress-container">
-  <!-- mobile header -->
-  <div id="mobile-header">
-    <span>MLX Chat Bot</span>
-    <button id="mobile-close"><i class="fas fa-times"></i></button>
-  </div>
-
-  <div class="chat-info">
-    AI je určeno na shrnutí a pomoc,
-    <button id="info-toggle">Více info</button>
-  </div>
-  <div class="chat-details" id="chat-details">
-    <p>1. AI nemůže objednávat, ale může pomoci s procesem.</p>
-    <p>2. AI je určeno vám pomoci se vyznat a shrnout informace na stránce, ale může se mýlit – proto doporučujeme si všechny informace dále ověřovat.</p>
-    <p>3. AI nemůže dávat přesné ceny, pouze orientační. Pro přesné ceny nám zavolejte a domluvíme se.</p>
-  </div>
-
-  <!-- Local chatbot UI -->
-  <div id="chat-container">
-    <div id="chat-log"></div>
-    <input id="chat-input" placeholder="Zeptejte se na cokoliv..." />
-  </div>
-</div>
-
-<!-- Scripts (order matters) -->
-<script src="mlx_highlight.js"></script>
-<script src="ChatBotKnowledge.js"></script>
-<script src="ChatBot.js" defer></script>
-
-
+        <div class="chat-info">
+            AI je určeno na shrnutí a pomoc,
+            <button id="info-toggle">Více info</button>
+        </div>
+        <div class="chat-details" id="chat-details">
+            <p>1. AI nemůže objednávat, ale může pomoci s procesem.</p>
+            <p>2. AI je určeno vám pomoci se vyznat a shrnout informace na stránce, ale může se mýlit – proto doporučujeme si všechny informace dále ověřovat.</p>
+            <p>3. AI nemůže dávat přesné ceny, pouze orientační. Pro přesné ceny nám zavolejte a domluvíme se.</p>
+        </div>
+        <div id="chat-container">
+            <div id="chat-log"></div>
+            <input id="chat-input" placeholder="Zeptejte se na cokoliv..." />
+        </div>
+    </div>
+    <script>
+        const bookedDates = [
+            "2025-08-11", "2025-08-12", "2025-08-13", "2025-08-14", "2025-08-15",
+            "2025-08-18", "2025-08-19", "2025-08-20", "2025-08-21", "2025-08-22",
+            "2025-08-25", "2025-08-26", "2025-08-27", "2025-08-28", "2025-08-29"
+        ];
+        const checkbox = document.getElementById("nataseni");
+        const normalSection = document.getElementById("normalSection");
+        const nataseniSection = document.getElementById("nataseniSection");
+        const orderDate = document.getElementById("orderDate");
+        const extraDate = document.getElementById("extraDate");
+        const locationInput = document.getElementById("location");
+        const errorMsg = document.getElementById("errorMsg");
+        const phoneInput = document.getElementById("phone");
+        checkbox.addEventListener("change", function() {
+            if (this.checked) {
+                normalSection.style.display = "none";
+                nataseniSection.style.display = "block";
+                locationInput.required = true;
+                extraDate.required = true;
+                orderDate.required = false;
+                orderDate.value = "";
+                errorMsg.textContent = "";
+            } else {
+                normalSection.style.display = "block";
+                nataseniSection.style.display = "none";
+                locationInput.required = false;
+                extraDate.required = false;
+                extraDate.value = "";
+                errorMsg.textContent = "";
+            }
+        });
+        extraDate.addEventListener("input", function () {
+            if (bookedDates.includes(this.value)) {
+                errorMsg.textContent = "Tento den je již obsazený pro natáčení. Vyberte jiný.";
+                this.value = "";
+            } else {
+                errorMsg.textContent = "";
+            }
+        });
+        phoneInput.addEventListener("input", function (e) {
+            let digits = e.target.value.replace(/[^\d+]/g, "");
+            if (!digits.startsWith("+420")) {
+                digits = digits.replace(/^\+?/, "");
+                digits = "+420" + digits;
+            }
+            const core = digits.replace(/\D/g, "").slice(3);
+            const groups = [
+                core.slice(0, 3),
+                core.slice(3, 6),
+                core.slice(6, 9)
+            ].filter(Boolean);
+            e.target.value = "+420 " + groups.join(" ");
+        });
+        document.getElementById("orderForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            const data = {
+                name: document.getElementById("name").value,
+                email: document.getElementById("email").value,
+                phone: document.getElementById("phone").value,
+                orderDetails: document.getElementById("orderDetails").value,
+                nataseni: document.getElementById("nataseni").checked,
+                orderDate: document.getElementById("orderDate").value,
+                location: document.getElementById("location").value,
+                extraDate: document.getElementById("extraDate").value
+            };
+            fetch("https://script.google.com/macros/s/AKfycbxEOTIaxTc9OoKvkStGFs5AlIn_tHtAkKJm05L6w-DF0zXnupa2aig_cFtgdUwMl_-evw/exec", {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            })
+            .then(() => {
+                window.location.href = "thank-you.html";
+            })
+            .catch(err => {
+                alert("Chyba při odesílání: " + err);
+            });
+        });
+    </script>
 </body>
-
 </html>
