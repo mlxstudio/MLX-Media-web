@@ -32,21 +32,37 @@ function pickResponse(value) {
 // --- Core logic: collect ALL matches, but one response per key ---
 function getAnswer(input) {
   const norm = normalizeInput(input);
+  const words = norm.split(/\s+/); // Split into words for fuzzy matching
   let foundMatches = [];
 
   for (const [key, value] of Object.entries(knowledge)) {
     if (key === "fallback") continue;
 
     const synonyms = key.split(",").map(s => normalizeInput(s.trim()));
-    let matched = false; 
+    let matched = false;
+
     for (const syn of synonyms) {
+      // Exact substring match (keep original behavior)
       if (norm.includes(syn)) {
-        if (!matched) {
-          foundMatches.push(pickResponse(value));
-          matched = true;
-        }
+        matched = true;
         break;
       }
+
+      // Fuzzy match on individual words
+      for (const word of words) {
+        const dist = levenshtein(word, syn);
+        // Threshold: ≤2 edits, but not if distance > 30% of the longer string's length (avoids false positives)
+        const maxLen = Math.max(word.length, syn.length);
+        if (dist <= 2 && dist <= Math.floor(maxLen * 0.3)) {
+          matched = true;
+          break;
+        }
+      }
+      if (matched) break;
+    }
+
+    if (matched) {
+      foundMatches.push(pickResponse(value));
     }
   }
 
