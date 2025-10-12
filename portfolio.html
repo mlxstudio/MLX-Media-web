@@ -1,41 +1,61 @@
 <!DOCTYPE html>
 <html lang="cs">
-    <link rel="stylesheet" href="ChatBot.css">
 <head>
     <link rel="icon" type="image/png" href="favicon.png"> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio – MLX Media</title>
-
-    <!-- Font Awesome pro ikony -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    <link rel="stylesheet" href="ChatBot.css">
     <style>
-        body {
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f9f9f9;
             color: #00334e;
             line-height: 1.6;
             overflow-x: hidden;
         }
-        header {
-            background: linear-gradient(120deg, #00BFA6, orange);
-            height: 200px;
+        .video-banner {
+            width: 100%;
+            height: 50vh;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+        .video-banner video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .video-banner::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(to bottom, transparent 0%, rgba(249,249,249,0.3) 50%, #f9f9f9 100%);
+            pointer-events: none;
+            z-index: 3;
+        }
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            text-align: center;
-            position: relative;
             color: white;
-            animation: fadeIn 1.5s ease-in-out, fadeDown 1.2s cubic-bezier(.4,0,.2,1);
-        }
-        header h1 {
-            font-size: 2.8em;
-            margin: 0;
-            z-index: 1;
-            animation: slideDown 1s ease forwards;
+            text-align: center;
+            z-index: 2;
         }
         nav {
             display: flex;
@@ -97,10 +117,22 @@
             overflow: hidden;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            box-sizing: border-box;
+            max-width: 100%;
+            padding: 10px;
         }
         .portfolio-item:hover {
             transform: translateY(-5px);
             box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+        }
+        .portfolio-item .unlock-icon {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #00BFA6;
+            font-size: 1.2em;
+            z-index: 10;
         }
         iframe {
             width: 100%;
@@ -118,8 +150,6 @@
             font-size: 1.2em;
             margin: 10px 0;
         }
-
-        /* Tlačítko Více informací */
         .toggle-details {
             background: none;
             border: none;
@@ -135,16 +165,12 @@
         .toggle-details:hover {
             color: orange;
         }
-
-        /* Detaily skryté */
         .details {
             display: none;
             margin-top: 15px;
             border-top: 1px solid #eee;
             padding-top: 15px;
         }
-
-        /* Tagy */
         .tag {
             display: inline-block;
             background: #f1f1f1;
@@ -159,110 +185,63 @@
             margin-right: 5px;
             color: #00BFA6;
         }
-
         .role-icons {
             margin: 8px 0;
             font-size: 1.2em;
             color: #00BFA6;
         }
-
         .role-icons i {
             margin-right: 8px;
             cursor: pointer;
             transition: color 0.3s ease, transform 0.3s ease;
         }
-
         .role-icons i:hover {
             color: orange;
             animation: icon-spin 0.6s ease;
         }
-
-
         .rating-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin: 10px 0;
         }
-
-        /* Keep these styles for stars and icons */
-        .rating {
-            color: gold;
-            font-size: 1.2em;
-        }
-
-        .role-icons {
-            font-size: 1.2em;
-            color: #00BFA6;
-        }
-
-        .role-icons i {
-            margin-left: 8px;
-            cursor: pointer;
-            transition: color 0.3s ease, transform 0.3s ease;
-        }
-
-        .role-icons i:hover {
-            color: orange;
-            animation: icon-spin 0.6s ease;
-        }
-
-
-        /* Animation keyframes */
         @keyframes icon-bounce {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-4px); }
         }
-
         @keyframes icon-spin {
             from { transform: rotate(0); }
             to { transform: rotate(360deg); }
         }
-
         @keyframes icon-pop {
             0% { transform: scale(0); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
-
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
         }
-
-        @keyframes fadeIn {
-            from {opacity: 0;}
-            to {opacity: 1;}
-        }
         @keyframes slideDown {
-            from {transform: translateY(-30px); opacity: 0;}
-            to {transform: translateY(0); opacity: 1;}
+            from { transform: translateY(-30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
         @keyframes fadeUp {
-            from {transform: translateY(20px); opacity: 0;}
-            to {transform: translateY(0); opacity: 1;}
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
-
-        /* Default icon style */
         .tag i {
             transition: transform 0.3s ease, color 0.3s ease;
         }
-
-        /* Hover animation on tags */
         .tag:hover i {
             animation: icon-bounce 0.4s ease;
             color: orange;
         }
-
-        /* When details open, icons pop in */
         .details .tag i {
             animation: icon-pop 0.3s ease forwards;
         }
-
-                /* Make all icons spin on hover */
         .tag:hover i {
             animation: icon-spin 0.6s ease;
         }
-        
         footer {
             text-align: center;
             padding: 40px 20px 30px 20px;
@@ -273,13 +252,10 @@
             border-top: 2px solid #e0e0e0;
             box-shadow: 0 -2px 12px rgba(0,191,166,0.07);
         }
-
         .footer-content {
             max-width: 600px;
             margin: 0 auto;
         }
-
-        /* Email link styles */
         .footer-link {
             display: inline-block;
             margin: 12px 0 22px 0;
@@ -289,23 +265,17 @@
             text-decoration: none;
             transition: color 0.3s;
         }
-
         .footer-link i {
             margin-right: 7px;
             color: orange;
             transition: color 0.3s, transform 0.3s;
         }
-
-        /* Swap icon/text colors on hover */
         .footer-link:hover {
             color: orange;
         }
-
         .footer-link:hover i {
             color: #00BFA6;
         }
-
-        /* Button container */
         .footer-buttons {
             display: flex;
             flex-wrap: wrap;
@@ -313,8 +283,6 @@
             justify-content: center;
             margin-top: 10px;
         }
-
-        /* Shared button styles (equal size fix) */
         .order-btn,
         .youtube-btn {
             display: inline-flex;
@@ -330,300 +298,441 @@
             transition: background 0.3s, transform 0.2s;
             text-align: center;
         }
-
-        /* Order button style */
         .order-btn {
             background: linear-gradient(120deg, #00BFA6, orange);
             color: white;
         }
-
         .order-btn:hover {
             background: linear-gradient(120deg, orange, #00BFA6);
             color: #fff;
             transform: translateY(-2px) scale(1.04);
             box-shadow: 0 6px 18px rgba(0,191,166,0.18);
         }
-
-        /* YouTube button style */
         .youtube-btn {
             background: linear-gradient(120deg, #ff0000, #ff9900);
             color: white;
             box-shadow: 0 2px 8px rgba(255,0,0,0.13), 0 1.5px 8px rgba(0,0,0,0.08);
         }
-
         .youtube-btn:hover {
             background: linear-gradient(120deg, #ff9900, #ff0000);
             color: #fff;
             transform: translateY(-2px) scale(1.04);
             box-shadow: 0 6px 18px rgba(255,0,0,0.18);
         }
-
         .youtube-btn i {
             margin-right: 7px;
         }
-
-        /* Keep same margin for both icons */
         .order-btn i {
             margin-right: 7px;
         }
-
-        /* Icon spin animation */
         .footer-link:hover i,
         .order-btn:hover i,
         .youtube-btn:hover i {
             animation: icon-spin 0.6s ease;
         }
-
-        @keyframes icon-spin {
-            100% { transform: rotate(360deg); }
-        }
-
-
         .scroll-animate {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-}
-
-.scroll-animate.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.tooltip {
-    position: relative;
-    display: inline-block;
-    cursor: pointer;
-}
-
-.tooltip::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: 125%;
-    left: 50%;
-    transform: translate(-50%, 6px);
-    background: white;
-    border: 2px solid #00BFA6; /* teal outline */
-    color: #333;
-    padding: 6px 10px;
-    border-radius: 6px;
-    white-space: nowrap;
-    font-size: 0.85em;
-    font-weight: 500;
-    opacity: 0;
-    pointer-events: none;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-    transition: opacity 0.25s ease, transform 0.25s ease;
-    z-index: 10;
-}
-
-/* Subtle arrow matching teal outline */
-.tooltip::before {
-    content: "";
-    position: absolute;
-    bottom: 115%;
-    left: 50%;
-    transform: translateX(-50%);
-    border-width: 6px;
-    border-style: solid;
-    border-color: transparent transparent white transparent;
-    opacity: 0;
-    transition: opacity 0.25s ease;
-}
-
-/* Hover state — fade in & slide up */
-.tooltip:hover::after,
-.tooltip:hover::before {
-    opacity: 1;
-    transform: translate(-50%, 0);
-}
-
-/* When JS is enabled we hide the CSS pseudo-tooltips so only the JS tooltip shows */
-html.js-tooltip-enabled .tooltip::after,
-html.js-tooltip-enabled .tooltip::before {
-  display: none !important;
-}
-
-/* The JS-generated tooltip element */
-.js-tooltip {
-  position: absolute;
-  background: white;
-  border: 2px solid #00BFA6; /* teal outline */
-  color: #333;
-  padding: 6px 10px;
-  border-radius: 6px;
-  white-space: nowrap;
-  font-size: 0.85em;
-  font-weight: 500;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(6px);
-  transition: opacity 0.18s ease, transform 0.18s ease;
-  z-index: 9999;
-}
-
-/* Arrow pointing up (when tooltip is above icon) */
-.js-tooltip::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  top: 100%;
-  border-width: 6px;
-  border-style: solid;
-  border-color: white transparent transparent transparent;
-  display: block;
-}
-
-/* When tooltip is placed below the icon we add .below to flip arrow */
-.js-tooltip.below::after {
-  top: auto;
-  bottom: 100%;
-  border-color: transparent transparent white transparent;
-}
-
-/* show state helper (we toggle opacity/transform in JS) */
-.js-tooltip.show {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.role-subtext {
-    font-size: 0.85em;
-    color: #888; /* vybledlý text */
-    margin-top: 4px;
-    margin-bottom: 8px;
-}
-
-.badge {
-    font-size: 0.7em;
-    font-weight: 500;
-    background: #eee;
-    color: #555;
-    padding: 3px 6px;
-    border-radius: 8px;
-    margin-left: 6px;
-}
-
-
-.badge {
-    font-size: 0.7em;
-    font-weight: 500;
-    background: #eee;
-    color: #555;
-    padding: 3px 6px;
-    border-radius: 8px;
-    margin-left: 6px;
-}
-
-.badge-genre {
-    background: #dfe9ff; /* světle modrá */
-    color: #2a4a7f;
-}
-
-.role-subtext {
-    font-size: 0.85em;
-    color: #888; /* vybledlý text */
-    margin-top: 4px;
-    margin-bottom: 8px;
-}
-
-.portfolio-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.portfolio-header h3 {
-    margin: 0;
-    font-size: 1.4em;
-}
-
-/* Fix horizontal overflow */
-html, body {
-  max-width: 100%;
-  overflow-x: hidden;
-}
-
-/* Optimize navigation for small screens without changing design */
-@media (max-width: 768px) {
-  nav a {
-    font-size: 0.9em; /* shrink font slightly */
-    padding: 6px 10px; /* reduce padding so links fit */
-  }
-}
-@media (max-width: 480px) {
-  nav a {
-    font-size: 0.85em;
-    padding: 5px 8px;
-  }
-}
-
-/* Scale slider properly on phones */
-@media (max-width: 768px) {
-  .slider-wrapper {
-    max-width: 100%;
-  }
-  .slider {
-    aspect-ratio: 16 / 9; /* better for mobile */
-  }
-}
-
-/* Make nav fully responsive */
-nav {
-  display: flex;
-  flex-wrap: wrap;       /* allow links to wrap instead of overflowing */
-  justify-content: center; /* center links on small screens */
-  padding: 0 10px;       /* reduce horizontal padding */
-  box-sizing: border-box; /* include padding in width */
-}
-
-/* Shrink links on smaller screens */
-@media (max-width: 768px) {
-  nav a {
-    font-size: 0.9em;
-    padding: 6px 8px; /* slightly smaller to fit */
-  }
-}
-
-@media (max-width: 480px) {
-  nav a {
-    font-size: 0.85em;
-    padding: 5px 6px;
-  }
-}
-
-
-header {
-    padding-top: 60px; /* or however tall your nav is */
-}
-
-
-
-
-
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .scroll-animate.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+        .tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translate(-50%, 6px);
+            background: white;
+            border: 2px solid #00BFA6;
+            color: #333;
+            padding: 6px 10px;
+            border-radius: 6px;
+            white-space: nowrap;
+            font-size: 0.85em;
+            font-weight: 500;
+            opacity: 0;
+            pointer-events: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            z-index: 10;
+        }
+        .tooltip::before {
+            content: "";
+            position: absolute;
+            bottom: 115%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 6px;
+            border-style: solid;
+            border-color: transparent transparent white transparent;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .tooltip:hover::after,
+        .tooltip:hover::before {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+        html.js-tooltip-enabled .tooltip::after,
+        html.js-tooltip-enabled .tooltip::before {
+            display: none !important;
+        }
+        .js-tooltip {
+            position: absolute;
+            background: white;
+            border: 2px solid #00BFA6;
+            color: #333;
+            padding: 6px 10px;
+            border-radius: 6px;
+            white-space: nowrap;
+            font-size: 0.85em;
+            font-weight: 500;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(6px);
+            transition: opacity 0.18s ease, transform 0.18s ease;
+            z-index: 9999;
+        }
+        .js-tooltip::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 100%;
+            border-width: 6px;
+            border-style: solid;
+            border-color: white transparent transparent transparent;
+            display: block;
+        }
+        .js-tooltip.below::after {
+            top: auto;
+            bottom: 100%;
+            border-color: transparent transparent white transparent;
+        }
+        .js-tooltip.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .role-subtext {
+            font-size: 0.85em;
+            color: #888;
+            margin-top: 4px;
+            margin-bottom: 8px;
+        }
+        .badge {
+            font-size: 0.7em;
+            font-weight: 500;
+            background: #eee;
+            color: #555;
+            padding: 3px 6px;
+            border-radius: 8px;
+            margin-left: 6px;
+        }
+        .badge-genre {
+            background: #dfe9ff;
+            color: #2a4a7f;
+        }
+        .portfolio-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        @media (max-width: 768px) {
+            nav a {
+                font-size: 0.9em;
+                padding: 6px 10px;
+            }
+            .portfolio-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 20px;
+            }
+            .portfolio-item {
+                padding: 10px;
+            }
+            iframe {
+                height: 200px;
+            }
+            .portfolio-content {
+                padding: 15px;
+            }
+            .portfolio-header h3 {
+                font-size: 1.2em;
+            }
+            .intro-text {
+                font-size: 1.2em;
+            }
+        }
+        @media (max-width: 480px) {
+            nav a {
+                font-size: 0.85em;
+                padding: 5px 8px;
+            }
+            .portfolio-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 15px;
+            }
+            iframe {
+                height: 180px;
+            }
+            .portfolio-content {
+                padding: 10px;
+            }
+            .portfolio-header h3 {
+                font-size: 1.1em;
+            }
+            .intro-text {
+                font-size: 1.1em;
+            }
+        }
+        @media (max-width: 768px) {
+            .slider-wrapper {
+                max-width: 100%;
+            }
+            .slider {
+                aspect-ratio: 16 / 9;
+            }
+        }
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
+        #unlock-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            margin: 40px auto;
+            min-height: 300px;
+        }
+        #unlock-item h3 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            color: #00334e;
+        }
+        #unlock-item p {
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            color: #666;
+        }
+        .password-container {
+            position: relative;
+            width: 80%;
+            max-width: 300px;
+            margin: 0 auto 15px;
+        }
+        #password-input {
+            padding: 10px 40px 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+        #password-input:focus {
+            border-color: #00BFA6;
+            outline: none;
+        }
+        #toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #00BFA6;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: color 0.3s ease;
+        }
+        #toggle-password:hover {
+            color: orange;
+        }
+        #unlock-button {
+            background: linear-gradient(120deg, #00BFA6, orange);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+        #unlock-button:hover {
+            background: linear-gradient(120deg, orange, #00BFA6);
+            transform: translateY(-2px);
+        }
+        #locked-section {
+            display: none;
+            animation: fadeIn 1s ease-in-out;
+            margin-top: 80px;
+        }
     </style>
 </head>
 <body>
     <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("visible");
-      } else {
-        entry.target.classList.remove("visible"); // reset when out of view
-      }
+    document.addEventListener("DOMContentLoaded", () => {
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("visible");
+                } else {
+                    entry.target.classList.remove("visible");
+                }
+            });
+        }, { threshold: 0.2 });
+        document.querySelectorAll(".scroll-animate").forEach(el => {
+            observer.observe(el);
+        });
+        document.querySelectorAll('.toggle-details').forEach(button => {
+            button.addEventListener('click', () => {
+                const details = button.nextElementSibling;
+                const icon = button.querySelector('i');
+                if (details.style.display === 'block') {
+                    details.style.display = 'none';
+                    icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+                } else {
+                    details.style.display = 'block';
+                    icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+                }
+            });
+        });
+        const nav = document.getElementById('mainNav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 10) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+        const unlockButton = document.getElementById('unlock-button');
+        const passwordInput = document.getElementById('password-input');
+        const togglePassword = document.getElementById('toggle-password');
+        const lockedSection = document.getElementById('locked-section');
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+            togglePassword.classList.toggle('fa-eye');
+            togglePassword.classList.toggle('fa-eye-slash');
+        });
+        unlockButton.addEventListener('click', () => {
+            const password = passwordInput.value.trim();
+            if (password.toLowerCase() === 'ani kapka') {
+                lockedSection.style.display = 'grid';
+                document.getElementById('unlock-item').style.display = 'none';
+                const observer = new IntersectionObserver(entries => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                        }
+                    });
+                }, { threshold: 0.2 });
+                lockedSection.querySelectorAll('.scroll-animate').forEach(el => observer.observe(el));
+            } else {
+                alert('Nesprávné heslo. Zkuste to znovu.');
+                passwordInput.value = '';
+            }
+        });
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                unlockButton.click();
+            }
+        });
+        const EDGE_MARGIN = 12;
+        document.documentElement.classList.add('js-tooltip-enabled');
+        const triggers = document.querySelectorAll('.tooltip');
+        function removePopup(popup) {
+            if (!popup) return;
+            popup.classList.remove('show');
+            setTimeout(() => {
+                if (popup.parentNode) popup.parentNode.removeChild(popup);
+            }, 180);
+        }
+        triggers.forEach(trigger => {
+            let popup = null;
+            function createAndShow() {
+                if (popup) return;
+                popup = document.createElement('div');
+                popup.className = 'js-tooltip';
+                popup.textContent = trigger.getAttribute('data-tooltip') || '';
+                document.body.appendChild(popup);
+                const trigRect = trigger.getBoundingClientRect();
+                const pRect = popup.getBoundingClientRect();
+                let left = trigRect.left + (trigRect.width / 2) - (pRect.width / 2);
+                let top = trigRect.top - pRect.height - 8;
+                let placeBelow = false;
+                const minLeft = EDGE_MARGIN;
+                const maxLeft = window.innerWidth - pRect.width - EDGE_MARGIN;
+                if (left < minLeft) left = minLeft;
+                if (left > maxLeft) left = maxLeft;
+                if (top < EDGE_MARGIN) {
+                    placeBelow = true;
+                    top = trigRect.bottom + 8;
+                }
+                popup.style.left = (left + window.scrollX) + 'px';
+                popup.style.top = (top + window.scrollY) + 'px';
+                if (placeBelow) popup.classList.add('below');
+                else popup.classList.remove('below');
+                popup.offsetHeight;
+                popup.classList.add('show');
+                window.addEventListener('scroll', onScroll, true);
+                window.addEventListener('resize', onScroll);
+            }
+            function onScroll() {
+                removePopup(popup);
+                popup = null;
+                window.removeEventListener('scroll', onScroll, true);
+                window.removeEventListener('resize', onScroll);
+            }
+            function hide() {
+                if (!popup) return;
+                removePopup(popup);
+                popup = null;
+                window.removeEventListener('scroll', onScroll, true);
+                window.removeEventListener('resize', onScroll);
+            }
+            trigger.addEventListener('mouseenter', createAndShow);
+            trigger.addEventListener('mouseleave', hide);
+            trigger.addEventListener('focus', createAndShow);
+            trigger.addEventListener('blur', hide);
+            trigger.addEventListener('touchstart', (e) => {
+                createAndShow();
+                e.stopPropagation();
+                const docHide = () => { hide(); document.removeEventListener('touchstart', docHide); };
+                document.addEventListener('touchstart', docHide);
+            }, { passive: false });
+        });
+        const video = document.getElementById('product-video');
+        let played = false;
+        const videoObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !played) {
+                    video.play();
+                    played = true;
+                }
+            });
+        }, { threshold: 0.6 });
+        videoObserver.observe(document.getElementById('animation-section'));
     });
-  }, { threshold: 0.2 }); // 20% visible triggers
-
-  document.querySelectorAll(".scroll-animate").forEach(el => {
-    observer.observe(el);
-  });
-});
-</script>
-    <!-- Navigation -->
+    </script>
+    <script src="mlx_highlight.js"></script>
+    <script src="ChatBotKnowledge.js"></script>
+    <script src="ChatBot.js" defer></script>
     <nav id="mainNav">
         <a href="index.html">Domovská stránka</a>
         <a href="portfolio.html">Portfolio</a>
@@ -631,415 +740,367 @@ document.addEventListener("DOMContentLoaded", () => {
         <a href="praicing.html">Ceník</a>
         <a href="order.html">Objednávka</a>
     </nav>
-
-    <!-- Header -->
-    <header>
-        <h1>Moje portfolio</h1>
-    </header>
+    <section class="video-banner" id="animation-section">
+        <video id="product-video" muted playsinline preload="auto">
+            <source src="Timeline 1.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-overlay">
+        </div>
+    </section>
     <main>
         <section class="intro-text scroll-animate">
-            <p>
-                Zde je mé portfolio filmů, klipů a videí, kde se můžete podívat, co už jsem dokázal. 
-            </p>
+            <p>Zde je mé portfolio filmů, klipů a videí, kde se můžete podívat, co už jsem dokázal.</p>
         </section>
-
         <div class="portfolio-grid">
-<!-- Video 1 -->
-<div class="portfolio-item scroll-animate">
-    <iframe src="https://www.youtube.com/embed/15GEOKTmj4k" allowfullscreen></iframe>
-    <div class="portfolio-content">
-        <div class="portfolio-header">
-            <h3>
-                Dva z nás
-                <span class="badge">Krátký film</span>
-                <span class="badge badge-genre">Thriller</span>
-            </h3>
-            <div class="role-icons">
-                <span class="tooltip" data-tooltip="Já jsem pomáhal s tímto filmem">
-                    <i class="fas fa-user"></i>
-                </span>
-                <span class="tooltip" data-tooltip="Já jsem film stříhal">
-                    <i class="fas fa-cut"></i>
-                </span>
-                <span class="tooltip" data-tooltip="Já jsem v tomto filmu hrál">
-                    <i class="fas fa-mask"></i>
-                </span>
+            <div class="portfolio-item scroll-animate">
+                <iframe src="https://www.youtube.com/embed/15GEOKTmj4k" allowfullscreen></iframe>
+                <div class="portfolio-content">
+                    <div class="portfolio-header">
+                        <h3>Dva z nás <span class="badge">Krátký film</span><span class="badge badge-genre">Thriller</span></h3>
+                        <div class="role-icons">
+                            <span class="tooltip" data-tooltip="Já jsem pomáhal s tímto filmem"><i class="fas fa-user"></i></span>
+                            <span class="tooltip" data-tooltip="Já jsem film stříhal"><i class="fas fa-cut"></i></span>
+                            <span class="tooltip" data-tooltip="Já jsem v tomto filmu hrál"><i class="fas fa-mask"></i></span>
+                        </div>
+                    </div>
+                    <p>Napínavý film o přátelství, které dostane nečekanou zkoušku.</p>
+                    <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
+                    <div class="details">
+                        <p><strong>Místo:</strong> Praha, Česká republika</p>
+                        <p><strong>Popis:</strong> Skupina starých kamarádů vyráží na společný výlet. To, co začne jako bezstarostná cesta, se brzy promění v napjatou atmosféru plnou otázek o důvěře a loajalitě.</p>
+                        <p class="role-subtext">Moje úkoly na projektu:</p>
+                        <div class="tags">
+                            <span class="tag"><i class="fas fa-user"></i> Pomoc</span>
+                            <span class="tag"><i class="fas fa-cut"></i> Střih</span>
+                            <span class="tag"><i class="fas fa-mask"></i> Herec</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="portfolio-item scroll-animate">
+                <iframe src="https://www.youtube.com/embed/H-L_SnH6_Sc" allowfullscreen></iframe>
+                <div class="portfolio-content">
+                    <div class="portfolio-header">
+                        <h3>Rázná střela <span class="badge">Krátký film</span><span class="badge badge-genre">Akční</span></h3>
+                        <div class="role-icons">
+                            <span class="tooltip" data-tooltip="Já jsem natáčel tento film"><i class="fas fa-video"></i></span>
+                            <span class="tooltip" data-tooltip="Já jsem pomáhal s filmem"><i class="fas fa-user"></i></span>
+                        </div>
+                    </div>
+                    <p>Rychlá akce, špionážní napětí a nebezpečná hra o čas.</p>
+                    <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
+                    <div class="details">
+                        <p><strong>Místo:</strong> Brno, Česká republika</p>
+                        <p><strong>Popis:</strong> Akční film inspirovaný Jamesem Bondem a sérií Die Hard. Rychlá auta, špionážní atmosféra a nebezpečná mise, kde jde o víc než jen o peníze.</p>
+                        <p class="role-subtext">Moje úkoly na projektu:</p>
+                        <div class="tags">
+                            <span class="tag"><i class="fas fa-video"></i> Kamera</span>
+                            <span class="tag"><i class="fas fa-user"></i> Pomoc</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="portfolio-item scroll-animate">
+                <iframe src="https://www.youtube.com/embed/YoNbkuia6VA" allowfullscreen></iframe>
+                <div class="portfolio-content">
+                    <div class="portfolio-header">
+                        <h3>Historka <span class="badge">Krátký film</span><span class="badge badge-genre">Drama</span></h3>
+                        <div class="role-icons">
+                            <span class="tooltip" data-tooltip="Já jsem hrál v tomto filmu"><i class="fas fa-mask"></i></span>
+                        </div>
+                    </div>
+                    <p>Chill atmosférický film o přátelství a vzpomínkách.</p>
+                    <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
+                    <div class="details">
+                        <p><strong>Místo:</strong> Brno, Česká republika</p>
+                        <p><strong>Popis:</strong> Parta kamarádů se setká u piva a vzpomíná na první zážitky s dospíváním. Nostalgie, humor a jemně hořkosladký podtón tvoří komorní filmový portrét jednoho přátelství.</p>
+                        <p class="role-subtext">Moje úkoly na projektu:</p>
+                        <div class="tags">
+                            <span class="tag"><i class="fas fa-mask"></i> Herec</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="portfolio-item scroll-animate">
+                <iframe src="https://www.youtube.com/embed/a6D3BlhOM-o" allowfullscreen></iframe>
+                <div class="portfolio-content">
+                    <div class="portfolio-header">
+                        <h3>Ani kapka <span class="badge">Krátký film</span><span class="badge badge-genre">Drama</span></h3>
+                        <div class="role-icons">
+                            <span class="tooltip" data-tooltip="Já jsem pomáhal s tímto filmem"><i class="fas fa-user"></i></span>
+                            <span class="tooltip" data-tooltip="Já jsem hrál v tomto filmu"><i class="fas fa-mask"></i></span>
+                        </div>
+                    </div>
+                    <p>Příběh o sourozencích, jejich vztahu a hledání důvěry.</p>
+                    <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
+                    <div class="details">
+                        <p><strong>Místo:</strong> Brno, Česká republika</p>
+                        <p><strong>Popis:</strong> Krátký film o dvou sourozencích, jejich cestě přírodou a malých konfliktech, které prověří jejich vzájemnou důvěru a sounáležitost.</p>
+                        <p class="role-subtext">Moje úkoly na projektu:</p>
+                        <div class="tags">
+                            <span class="tag"><i class="fas fa-user"></i> Pomoc</span>
+                            <span class="tag"><i class="fas fa-mask"></i> Herec</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="portfolio-item scroll-animate">
+                <iframe src="https://www.youtube.com/embed/fm08JltjGLI" allowfullscreen></iframe>
+                <div class="portfolio-content">
+                    <div class="portfolio-header">
+                        <h3>IFHY <span class="badge">Krátký film</span><span class="badge badge-genre">Drama</span></h3>
+                        <div class="role-icons">
+                            <span class="tooltip" data-tooltip="Já jsem natáčel tento film"><i class="fas fa-video"></i></span>
+                            <span class="tooltip" data-tooltip="Já jsem hrál v tomto filmu"><i class="fas fa-mask"></i></span>
+                            <span class="tooltip" data-tooltip="Já jsem film stříhal"><i class="fas fa-cut"></i></span>
+                        </div>
+                    </div>
+                    <p>Silný příběh o lásce, přátelství a varování před špatnými rozhodnutími.</p>
+                    <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
+                    <div class="details">
+                        <p><strong>Místo:</strong> Brno, Česká republika</p>
+                        <p><strong>Popis:</strong> Drama založené na skutečných zkušenostech, které ukazuje, jak může první zamilovanost ovlivnit důvěru mezi přáteli a prověřit jejich vztah.</p>
+                        <p class="role-subtext">Moje úkoly na projektu:</p>
+                        <div class="tags">
+                            <span class="tag"><i class="fas fa-video"></i> Kamera</span>
+                            <span class="tag"><i class="fas fa-mask"></i> Herec</span>
+                            <span class="tag"><i class="fas fa-cut"></i> Střih</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="portfolio-item scroll-animate">
+                <iframe src="https://www.youtube.com/embed/zaCiNBq4c0I" allowfullscreen></iframe>
+                <div class="portfolio-content">
+                    <div class="portfolio-header">
+                        <h3>Eiréné <span class="badge">Krátký film</span><span class="badge badge-genre">Experimentální</span></h3>
+                        <div class="role-icons">
+                            <span class="tooltip" data-tooltip="Já jsem pomáhal s tímto filmem"><i class="fas fa-user"></i></span>
+                        </div>
+                    </div>
+                    <p>Projekt s hlubším poselstvím, kde jsem měl menší, ale důležitou roli.</p>
+                    <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
+                    <div class="details">
+                        <p><strong>Místo:</strong> Brno, Česká republika</p>
+                        <p><strong>Popis:</strong> Byl jsem součástí štábu a pomáhal s technickým zajištěním během natáčení.</p>
+                        <p class="role-subtext">Moje úkoly na projektu:</p>
+                        <div class="tags">
+                            <span class="tag"><i class="fas fa-user"></i> Pomoc</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-
-        <p>Napínavý film o přátelství, které dostane nečekanou zkoušku.</p>
-        <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
-        <div class="details">
-            <p><strong>Místo:</strong> Praha, Česká republika</p>
-            <p><strong>Popis:</strong> Skupina starých kamarádů vyráží na společný výlet. To, co začne jako bezstarostná cesta, se brzy promění v napjatou atmosféru plnou otázek o důvěře a loajalitě.</p>
-            
-            <p class="role-subtext">Moje úkoly na projektu:</p>
-            <div class="tags">
-                <span class="tag"><i class="fas fa-user"></i> Pomoc</span>
-                <span class="tag"><i class="fas fa-cut"></i> Střih</span>
-                <span class="tag"><i class="fas fa-mask"></i> Herec</span>
+        <section id="unlock-item" class="scroll-animate">
+            <h3>Osobní projekty</h3>
+            <p>Zadejte heslo pro přístup k mým exkluzivním osobním videím.</p>
+            <div class="password-container">
+                <input id="password-input" type="password" placeholder="Zadejte heslo">
+                <i class="fas fa-eye" id="toggle-password"></i>
             </div>
-        </div>
-    </div>
-</div>
-
-<!-- Video 2 -->
-<div class="portfolio-item scroll-animate">
-    <iframe src="https://www.youtube.com/embed/H-L_SnH6_Sc" allowfullscreen></iframe>
-    <div class="portfolio-content">
-        <div class="portfolio-header">
-            <h3>
-                Rázná střela
-                <span class="badge">Krátký film</span>
-                <span class="badge badge-genre">Akční</span>
-            </h3>
-            <div class="role-icons">
-                <span class="tooltip" data-tooltip="Já jsem natáčel tento film">
-                    <i class="fas fa-video"></i>
-                </span>
-                <span class="tooltip" data-tooltip="Já jsem pomáhal s filmem">
-                    <i class="fas fa-user"></i>
-                </span>
+            <button id="unlock-button">Odemknout <i class="fas fa-unlock"></i></button>
+        </section>
+        <div id="locked-section" class="portfolio-grid">
+            <div class="portfolio-item scroll-animate">
+                <i class="fas fa-unlock unlock-icon"></i>
+                <iframe src="https://www.youtube.com/embed/lFR2XCze6yY" allowfullscreen></iframe>
+                <div class="portfolio-content">
+                    <div class="portfolio-header">
+                        <h3>Babička<span class="badge">Osobní</span><span class="badge badge-genre">Komedie</span></h3>
+                        <div class="role-icons">
+                            <span class="tooltip" data-tooltip="Já jsem natáčel tento film"><i class="fas fa-video"></i></span>
+                        </div>
+                    </div>
+                    <p>Tento projekt byl vytvořen jen za myšlenkou pobavit.</p>
+                    <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
+                    <div class="details">
+                        <p><strong>Místo:</strong> Praha 5, Česká republika</p>
+                        <p><strong>Popis:</strong> Komedický film vytvořen pro pobavení, u tohohle projektu jsme se nesoustředili tolik na vizuáli a příbjěch jako na zábavu. Bohužel tento film po zvukové stránce se moc nepovedl bylo to převážně časovým omzením na film.</p>
+                        <p class="role-subtext">Moje úkoly na projektu:</p>
+                        <div class="tags">
+                            <span class="tag"><i class="fas fa-video"></i> Kamera</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <p>Rychlá akce, špionážní napětí a nebezpečná hra o čas.</p>
-        <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
-        <div class="details">
-            <p><strong>Místo:</strong> Brno, Česká republika</p>
-            <p><strong>Popis:</strong> Akční film inspirovaný Jamesem Bondem a sérií Die Hard. Rychlá auta, špionážní atmosféra a nebezpečná mise, kde jde o víc než jen o peníze.</p>
-            
-            <p class="role-subtext">Moje úkoly na projektu:</p>
-            <div class="tags">
-                <span class="tag"><i class="fas fa-video"></i> Kamera</span>
-                <span class="tag"><i class="fas fa-user"></i> Pomoc</span>
+            <div class="portfolio-item scroll-animate">
+                <i class="fas fa-unlock unlock-icon"></i>
+                <iframe src="https://www.youtube.com/embed/vB8VXhcNH1c" allowfullscreen></iframe>
+                <div class="portfolio-content">
+                    <div class="portfolio-header">
+                        <h3>Elektrikáři<span class="badge">Osobní</span><span class="badge badge-genre">Komedie</span></h3>
+                        <div class="role-icons">
+                            <span class="tooltip" data-tooltip="Já jsem natáčel tento film"><i class="fas fa-video"></i></span>
+                        </div>
+                    </div>
+                    <p>Tento projekt byl vytvořen za myšlenkou pobavit.</p>
+                    <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
+                    <div class="details">
+                        <p><strong>Místo:</strong> Brno, Česká republika</p>
+                        <p><strong>Popis:</strong> Komedický film vytvořen pro pobavení, tento film si dělá legraci z vípadku proudu v praze rokou 2025. Bohužel tento film po zvukové stránce se moc nepovedl bylo to převážně časovým omzením na film čímš byli 3 hodiny.</p>
+                        <p class="role-subtext">Moje úkoly na projektu:</p>
+                        <div class="tags">
+                            <span class="tag"><i class="fas fa-video"></i> Kamera</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
-
-<!-- Video 3 -->
-<div class="portfolio-item scroll-animate">
-    <iframe src="https://www.youtube.com/embed/YoNbkuia6VA" allowfullscreen></iframe>
-    <div class="portfolio-content">
-        <div class="portfolio-header">
-            <h3>
-                Hystorka
-                <span class="badge">Krátký film</span>
-                <span class="badge badge-genre">Drama</span>
-            </h3>
-            <div class="role-icons">
-                <span class="tooltip" data-tooltip="Já jsem hrál v tomto filmu">
-                    <i class="fas fa-mask"></i>
-                </span>
+            <div class="portfolio-item scroll-animate">
+                <i class="fas fa-unlock unlock-icon"></i>
+                <iframe src="https://www.youtube.com/embed/61tRW6zcI0U?start=5" allowfullscreen></iframe>
+                <div class="portfolio-content">
+                    <div class="portfolio-header">
+                        <h3>Mýdlo<span class="badge">Osobní</span><span class="badge badge-genre">Detektivka</span></h3>
+                        <div class="role-icons">
+                            <span class="tooltip" data-tooltip="Já jsem natáčel tento film"><i class="fas fa-video"></i></span>
+                            <span class="tooltip" data-tooltip="Já jsem film stříhal"><i class="fas fa-cut"></i></span>
+                            <span class="tooltip" data-tooltip="Já jsem hrál v tomto filmu"><i class="fas fa-mask"></i></span>
+                        </div>
+                    </div>
+                    <p>Detektivka inspirovaná známým českým filmem Adéla ještě nevečeřela</p>
+                    <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
+                    <div class="details">
+                        <p><strong>Místo:</strong> Praha 5, Česká republika</p>
+                        <p><strong>Popis:</strong> Krátký Detektivní film inspirován filmem Adéla ještě nevečeřela. Film byl náročný na natočení převážně protože jsem ve tvorbě tohoto filmu měl mnoho rolí a to jsou kameraman, střihač, herec, osvětlovač a částečně režisér</p>
+                        <p class="role-subtext">Moje úkoly na projektu:</p>
+                        <div class="tags">
+                            <span class="tag"><i class="fas fa-video"></i> Kamera</span>
+                            <span class="tag"><i class="fas fa-cut"></i> Střih</span>
+                            <span class="tag"><i class="fas fa-mask"></i> Herec</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <p>Chill atmosférický film o přátelství a vzpomínkách.</p>
-        <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
-        <div class="details">
-            <p><strong>Místo:</strong> Brno, Česká republika</p>
-            <p><strong>Popis:</strong> Parta kamarádů se setká u piva a vzpomíná na první zážitky s dospíváním. Nostalgie, humor a jemně hořkosladký podtón tvoří komorní filmový portrét jednoho přátelství.</p>
-            
-            <p class="role-subtext">Moje úkoly na projektu:</p>
-            <div class="tags">
-                <span class="tag"><i class="fas fa-mask"></i> Herec</span>
+            <div class="portfolio-item scroll-animate">
+                <i class="fas fa-unlock unlock-icon"></i>
+                <iframe src="https://www.youtube.com/embed/9CqTnyiiO6o?start=6" allowfullscreen></iframe>
+                <div class="portfolio-content">
+                    <div class="portfolio-header">
+                        <h3>Experiment smoke<span class="badge">Osobní</span><span class="badge badge-genre">Horor</span></h3>
+                        <div class="role-icons">
+                            <span class="tooltip" data-tooltip="Já jsem natáčel tento film"><i class="fas fa-video"></i></span>
+                            <span class="tooltip" data-tooltip="Já jsem hrál v tomto videu"><i class="fas fa-mask"></i></span>
+                            <span class="tooltip" data-tooltip="Já jsem film stříhal"><i class="fas fa-cut"></i></span>
+                            <span class="tooltip" data-tooltip="Já jsem pomáhal s tímto filmem"><i class="fas fa-user"></i></span>
+                            <span class="tooltip" data-tooltip="Já jsem režíroval tento film"><i class="fas fa-bullhorn"></i></span>
+                        </div>
+                    </div>
+                    <p>Toto byl můj první hororový film</p>
+                    <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
+                    <div class="details">
+                        <p><strong>Místo:</strong> Nižbor, Česká republika</p>
+                        <p><strong>Popis:</strong> Toto byl můj první hororový film a zároveň jeden z prvních plnohodnotných filmů, co jsem natočil a režíroval. Na filmu je spousta věcí, co by se dalo zlepšit, ale byli jsme limitováni časově.</p>
+                        <p class="role-subtext">Moje úkoly na projektu:</p>
+                        <div class="tags">
+                            <span class="tag"><i class="fas fa-video"></i> Kamera</span>
+                            <span class="tag"><i class="fas fa-mask"></i> Herec</span>
+                            <span class="tag"><i class="fas fa-cut"></i> Střih</span>
+                            <span class="tag"><i class="fas fa-user"></i> Pomoc</span>
+                            <span class="tag"><i class="fas fa-bullhorn"></i> Režie</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
-
-<!-- Video 4 -->
-<div class="portfolio-item scroll-animate">
-    <iframe src="https://www.youtube.com/embed/a6D3BlhOM-o" allowfullscreen></iframe>
-    <div class="portfolio-content">
-        <div class="portfolio-header">
-            <h3>
-                Ani kapka
-                <span class="badge">Krátký film</span>
-                <span class="badge badge-genre">Drama</span>
-            </h3>
-            <div class="role-icons">
-                <span class="tooltip" data-tooltip="Já jsem pomáhal s tímto filmem">
-                    <i class="fas fa-user"></i>
-                </span>
-                <span class="tooltip" data-tooltip="Já jsem hrál v tomto filmu">
-                    <i class="fas fa-mask"></i>
-                </span>
+            <div class="portfolio-item scroll-animate">
+                <i class="fas fa-unlock unlock-icon"></i>
+                <iframe src="https://www.youtube.com/embed/RTPBTUNeNoU?start=8" allowfullscreen></iframe>
+                <div class="portfolio-content">
+                    <div class="portfolio-header">
+                        <h3>Zavražděný Albert<span class="badge">Osobní</span><span class="badge badge-genre">Detektivní</span></h3>
+                        <div class="role-icons">
+                            <span class="tooltip" data-tooltip="Já jsem natáčel tento film"><i class="fas fa-video"></i></span>
+                            <span class="tooltip" data-tooltip="Já jsem film stříhal"><i class="fas fa-cut"></i></span>
+                            <span class="tooltip" data-tooltip="Já jsem hrál v tomto filmu"><i class="fas fa-mask"></i></span>
+                            <span class="tooltip" data-tooltip="Já jsem pomáhal s tímto filmem"><i class="fas fa-user"></i></span>
+                            <span class="tooltip" data-tooltip="Já jsem režíroval tento film"><i class="fas fa-bullhorn"></i></span>
+                        </div>
+                    </div>
+                    <p>Detektivní krátký film</p>
+                    <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
+                    <div class="details">
+                        <p><strong>Místo:</strong> Libomyšl, Česká republika</p>
+                        <p><strong>Popis:</strong> Krátký detektivní film a zároveň druhý film, který jsem natočil.</p>
+                        <p class="role-subtext">Moje úkoly na projektu:</p>
+                        <div class="tags">
+                            <span class="tag"><i class="fas fa-video"></i> Kamera</span>
+                            <span class="tag"><i class="fas fa-cut"></i> Střih</span>
+                            <span class="tag"><i class="fas fa-mask"></i> Herec</span>
+                            <span class="tag"><i class="fas fa-user"></i> Pomoc</span>
+                            <span class="tag"><i class="fas fa-bullhorn"></i> Režie</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <p>Příběh o sourozencích, jejich vztahu a hledání důvěry.</p>
-        <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
-        <div class="details">
-            <p><strong>Místo:</strong> Brno, Česká republika</p>
-            <p><strong>Popis:</strong> Krátký film o dvou sourozencích, jejich cestě přírodou a malých konfliktech, které prověří jejich vzájemnou důvěru a sounáležitost.</p>
-            
-            <p class="role-subtext">Moje úkoly na projektu:</p>
-            <div class="tags">
-                <span class="tag"><i class="fas fa-user"></i> Pomoc</span>
-                <span class="tag"><i class="fas fa-mask"></i> Herec</span>
+            <div class="portfolio-item scroll-animate">
+                <i class="fas fa-unlock unlock-icon"></i>
+                <iframe src="https://www.youtube.com/embed/fCRsZqu4ir4" allowfullscreen></iframe>
+                <div class="portfolio-content">
+                    <div class="portfolio-header">
+                        <h3>Bohové<span class="badge">Osobní</span><span class="badge badge-genre">Experimentální</span></h3>
+                        <div class="role-icons">
+                            <span class="tooltip" data-tooltip="Já jsem natáčel tento film"><i class="fas fa-video"></i></span>
+                            <span class="tooltip" data-tooltip="Já jsem hrál v tomto videu"><i class="fas fa-mask"></i></span>
+                            <span class="tooltip" data-tooltip="Já jsem film stříhal"><i class="fas fa-cut"></i></span>
+                            <span class="tooltip" data-tooltip="Já jsem pomáhal s tímto filmem"><i class="fas fa-user"></i></span>
+                            <span class="tooltip" data-tooltip="Já jsem režíroval tento film"><i class="fas fa-bullhorn"></i></span>
+                        </div>
+                    </div>
+                    <p>Tento film je velice experimentální a doporučuji raději nesledovat.</p>
+                    <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
+                    <div class="details">
+                        <p><strong>Místo:</strong> Praha 6, Česká republika</p>
+                        <p><strong>Popis:</strong> Toto byl experimentální film do školy, který beru za jeden z nejhorších filmů z mé kolekce.</p>
+                        <p class="role-subtext">Moje úkoly na projektu:</p>
+                        <div class="tags">
+                            <span class="tag"><i class="fas fa-video"></i> Kamera</span>
+                            <span class="tag"><i class="fas fa-mask"></i> Herec</span>
+                            <span class="tag"><i class="fas fa-cut"></i> Střih</span>
+                            <span class="tag"><i class="fas fa-user"></i> Pomoc</span>
+                            <span class="tag"><i class="fas fa-bullhorn"></i> Režie</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
-
-<!-- Video 6 -->
-<div class="portfolio-item scroll-animate">
-    <iframe src="https://www.youtube.com/embed/fm08JltjGLI" allowfullscreen></iframe>
-    <div class="portfolio-content">
-        <div class="portfolio-header">
-            <h3>
-                IFHY
-                <span class="badge">Krátký film</span>
-                <span class="badge badge-genre">Drama</span>
-            </h3>
-            <div class="role-icons">
-                <span class="tooltip" data-tooltip="Já jsem natáčel tento film">
-                    <i class="fas fa-video"></i>
-                </span>
-                <span class="tooltip" data-tooltip="Já jsem hrál v tomto filmu">
-                    <i class="fas fa-mask"></i>
-                </span>
-                <span class="tooltip" data-tooltip="Já jsem film stříhal">
-                    <i class="fas fa-cut"></i>
-                </span>
-            </div>
-        </div>
-
-        <p>Silný příběh o lásce, přátelství a varování před špatnými rozhodnutími.</p>
-        <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
-        <div class="details">
-            <p><strong>Místo:</strong> Brno, Česká republika</p>
-            <p><strong>Popis:</strong> Drama založené na skutečných zkušenostech, které ukazuje, jak může první zamilovanost ovlivnit důvěru mezi přáteli a prověřit jejich vztah.</p>
-            
-            <p class="role-subtext">Moje úkoly na projektu:</p>
-            <div class="tags">
-                <span class="tag"><i class="fas fa-video"></i> Kamera</span>
-                <span class="tag"><i class="fas fa-mask"></i> Herec</span>
-                <span class="tag"><i class="fas fa-cut"></i> Střih</span>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<!-- Video 5 -->
-<div class="portfolio-item scroll-animate">
-    <iframe src="https://www.youtube.com/embed/zaCiNBq4c0I" allowfullscreen></iframe>
-    <div class="portfolio-content">
-        <div class="portfolio-header">
-            <h3>
-                Eiréné
-                <span class="badge">Krátký film</span>
-                <span class="badge badge-genre">Experimentální</span>
-            </h3>
-            <div class="role-icons">
-                <span class="tooltip" data-tooltip="Já jsem pomáhal s tímto filmem"><i class="fas fa-user"></i></span>
-            </div>
-        </div>
-        <p>Projekt s hlubším poselstvím, kde jsem měl menší, ale důležitou roli.</p>
-        <button class="toggle-details">Více informací <i class="fas fa-chevron-down"></i></button>
-        <div class="details">
-            <p><strong>Moje role:</strong> Pomoc</p>
-            <p><strong>Místo:</strong> Brno, Česká republika</p>
-            <p><strong>Popis:</strong> Byl jsem součástí štábu a pomáhal s technickým zajištěním během natáčení.</p>
-            <p class="role-subtext">Zde je vše, co jsem ve filmu dělal:</p>
-            <div class="tags">
-                <span class="tag"><i class="fas fa-user"></i> Pomoc</span>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-
-
         </div>
     </main>
     <footer>
-    <div class="footer-content scroll-animate">
-        <p>Máte otázky nebo zájem o spolupráci?</p>
-        <a href="mailto:mlx.studio2222@gmail.com" class="footer-link">
-            <i class="fas fa-envelope"></i> mlx.studio2222@gmail.com
-        </a>
-        <div class="footer-buttons">
-            <a href="order.html" class="order-btn">
-                <i class="fas fa-calendar-plus"></i> Objednat službu
+        <div class="footer-content scroll-animate">
+            <p>Máte otázky nebo zájem o spolupráci?</p>
+            <a href="mailto:mlx.studio2222@gmail.com" class="footer-link">
+                <i class="fas fa-envelope"></i> mlx.studio2222@gmail.com
             </a>
-            <a href="https://www.youtube.com/@MLX-Media" class="youtube-btn" target="_blank">
-                <i class="fab fa-youtube"></i> YouTube kanál
-            </a>
+            <div class="footer-buttons">
+                <a href="order.html" class="order-btn">
+                    <i class="fas fa-calendar-plus"></i> Objednat službu
+                </a>
+                <a href="https://www.youtube.com/@MLX-Media" class="youtube-btn" target="_blank">
+                    <i class="fab fa-youtube"></i> YouTube kanál
+                </a>
+            </div>
+        </div>
+    </footer>
+    <button id="chat-toggle">
+        <i class="fas fa-comments"></i>
+    </button>
+    <div id="botpress-container">
+        <div id="mobile-header">
+            <span>MLX Chat Bot</span>
+            <button id="mobile-close"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="chat-info">
+            AI je určeno na shrnutí a pomoc,
+            <button id="info-toggle">Více info</button>
+        </div>
+        <div class="chat-details" id="chat-details">
+            <p>1. AI nemůže objednávat, ale může pomoci s procesem.</p>
+            <p>2. AI je určeno vám pomoci se vyznat a shrnout informace na stránce, ale může se mýlit – proto doporučujeme si všechny informace dále ověřovat.</p>
+            <p>3. AI nemůže dávat přesné ceny, pouze orientační. Pro přesné ceny nám zavolejte a domluvíme se.</p>
+        </div>
+        <div id="chat-container">
+            <div id="chat-log"></div>
+            <input id="chat-input" placeholder="Zeptejte se na cokoliv..." />
         </div>
     </div>
-</footer>
-
-
-    <script>
-    document.querySelectorAll('.toggle-details').forEach(button => {
-        button.addEventListener('click', () => {
-            const details = button.nextElementSibling;
-            const icon = button.querySelector('i');
-            details.style.display = details.style.display === 'block' ? 'none' : 'block';
-            icon.classList.toggle('fa-chevron-down');
-            icon.classList.toggle('fa-chevron-up');
-        });
-    });
-
-    const nav = document.getElementById('mainNav');
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 10) {
-            nav.classList.add('scrolled');
-        } else {
-            nav.classList.remove('scrolled');
-        }
-    });
-    </script>
-    <script>
-document.addEventListener('DOMContentLoaded', () => {
-  // tweak this to set minimum distance from viewport edges (px)
-  const EDGE_MARGIN = 12;
-
-  // enable JS mode (hides CSS pseudo-tooltips)
-  document.documentElement.classList.add('js-tooltip-enabled');
-
-  // select tooltip triggers
-  const triggers = document.querySelectorAll('.tooltip');
-
-  // helper to remove popup safely
-  function removePopup(popup) {
-    if (!popup) return;
-    popup.classList.remove('show');
-    // give transition time to fade out
-    setTimeout(() => {
-      if (popup.parentNode) popup.parentNode.removeChild(popup);
-    }, 180);
-  }
-
-  triggers.forEach(trigger => {
-    let popup = null;
-
-    function createAndShow() {
-      // don't create twice
-      if (popup) return;
-
-      // create popup element
-      popup = document.createElement('div');
-      popup.className = 'js-tooltip';
-      popup.textContent = trigger.getAttribute('data-tooltip') || '';
-      document.body.appendChild(popup);
-
-      // measure and position
-      const trigRect = trigger.getBoundingClientRect();
-      const pRect = popup.getBoundingClientRect();
-
-      // desired centered left position relative to viewport
-      let left = trigRect.left + (trigRect.width / 2) - (pRect.width / 2);
-      let top  = trigRect.top - pRect.height - 8; // 8px gap above icon
-      let placeBelow = false;
-
-      // if tooltip would cross left edge, move it right
-      const minLeft = EDGE_MARGIN;
-      const maxLeft = window.innerWidth - pRect.width - EDGE_MARGIN;
-      if (left < minLeft) left = minLeft;
-      if (left > maxLeft) left = maxLeft;
-
-      // if tooltip would be off top of viewport, place below the icon
-      if (top < EDGE_MARGIN) {
-        placeBelow = true;
-        top = trigRect.bottom + 8; // 8px gap below icon
-      }
-
-      // apply position (consider page scroll offset)
-      popup.style.left = (left + window.scrollX) + 'px';
-      popup.style.top  = (top  + window.scrollY) + 'px';
-
-      // add class if below (for arrow flip)
-      if (placeBelow) popup.classList.add('below');
-      else popup.classList.remove('below');
-
-      // show with CSS transition
-      // force reflow then add show
-      // eslint-disable-next-line no-unused-expressions
-      popup.offsetHeight;
-      popup.classList.add('show');
-
-      // hide on scroll (so it won't stay in wrong place)
-      window.addEventListener('scroll', onScroll, true);
-      window.addEventListener('resize', onScroll);
-    }
-
-    function onScroll() {
-      removePopup(popup);
-      popup = null;
-      window.removeEventListener('scroll', onScroll, true);
-      window.removeEventListener('resize', onScroll);
-    }
-
-    function hide() {
-      if (!popup) return;
-      removePopup(popup);
-      popup = null;
-      window.removeEventListener('scroll', onScroll, true);
-      window.removeEventListener('resize', onScroll);
-    }
-
-    // show/hide handlers
-    trigger.addEventListener('mouseenter', createAndShow);
-    trigger.addEventListener('mouseleave', hide);
-    trigger.addEventListener('focus', createAndShow); // keyboard
-    trigger.addEventListener('blur', hide);
-
-    // optional: support touch devices (tap to show)
-    trigger.addEventListener('touchstart', (e) => {
-      createAndShow();
-      // prevent the touch from immediately triggering mouse events in some browsers
-      e.stopPropagation();
-      // hide on the next document touch
-      const docHide = () => { hide(); document.removeEventListener('touchstart', docHide); };
-      document.addEventListener('touchstart', docHide);
-    }, { passive: false });
-  });
-});
-</script>
-
-    <!-- Chat toggle button -->
-<button id="chat-toggle">
-  <i class="fas fa-comments"></i>
-</button>
-
-<!-- Chat container -->
-<div id="botpress-container">
-  <!-- mobile header -->
-  <div id="mobile-header">
-    <span>MLX Chat Bot</span>
-    <button id="mobile-close"><i class="fas fa-times"></i></button>
-  </div>
-
-  <div class="chat-info">
-    AI je určeno na shrnutí a pomoc,
-    <button id="info-toggle">Více info</button>
-  </div>
-  <div class="chat-details" id="chat-details">
-    <p>1. AI nemůže objednávat, ale může pomoci s procesem.</p>
-    <p>2. AI je určeno vám pomoci se vyznat a shrnout informace na stránce, ale může se mýlit – proto doporučujeme si všechny informace dále ověřovat.</p>
-    <p>3. AI nemůže dávat přesné ceny, pouze orientační. Pro přesné ceny nám zavolejte a domluvíme se.</p>
-  </div>
-
-  <!-- Local chatbot UI -->
-  <div id="chat-container">
-    <div id="chat-log"></div>
-    <input id="chat-input" placeholder="Zeptejte se na cokoliv..." />
-  </div>
-</div>
-
-<!-- Scripts (order matters) -->
-<script src="mlx_highlight.js"></script>
-<script src="ChatBotKnowledge.js"></script>
-<script src="ChatBot.js" defer></script>
-
-
-
 </body>
 </html>
