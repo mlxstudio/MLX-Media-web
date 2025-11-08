@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MLX Media</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --teal: #00BFA6;
+            --orange: #FF9800;
+            --dark: #00334e;
+            --light: #f9f9f9;
+            --glass: rgba(255,255,255,0.9);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px 20px;
+            overflow: hidden;
+        }
+
+        /* HLAVNÍ NADPIS */
+        h1 {
+            font-size: 3em;
+            font-weight: 700;
+            background: linear-gradient(120deg, var(--teal), var(--orange));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        .subtitle {
+            font-size: 1.4em;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            text-align: center;
+        }
+
+        /* KONTEJNER */
+        .container {
+            width: 100%;
+            max-width: 380px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* VELKÁ TLAČÍTKA */
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 24px;
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0,191,166,0.3);
+            border-radius: 50px;
+            color: var(--dark);
+            font-size: 1.35em;
+            font-weight: 600;
+            text-decoration: none;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .btn i {
+            font-size: 1.7em;
+            color: var(--teal);
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 14px 35px rgba(0,191,166,0.3);
+            background: #fff;
+            border-color: var(--orange);
+        }
+        .btn:hover i {
+            color: var(--orange);
+            transform: scale(1.2) rotate(8deg);
+        }
+
+        /* ROZKLÁPĚCÍ PANEL */
+        .social-panel {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0,191,166,0.3);
+            border-radius: 50px;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+        .social-header {
+            padding: 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.2em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: var(--dark);
+        }
+        .social-header i {
+            transition: transform 0.3s ease;
+        }
+        .social-panel.open .social-header i {
+            transform: rotate(180deg);
+        }
+        .social-links {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+        .social-panel.open .social-links {
+            max-height: 300px;
+        }
+        .social-links a {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 18px 30px;
+            color: var(--dark);
+            text-decoration: none;
+            font-size: 1.1em;
+            transition: background 0.2s;
+        }
+        .social-links a:hover {
+            background: rgba(0,191,166,0.1);
+        }
+        .social-links a i {
+            width: 26px;
+            text-align: center;
+            color: var(--teal);
+        }
+
+        /* ČÁSTICE (ponechány pro kr ásu) */
+        .bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .particle {
+            position: absolute;
+            width: 4px; height: 4px;
+            background: var(--teal);
+            border-radius: 50%;
+            opacity: 0;
+            animation: float 6s infinite ease-in-out;
+        }
+        .particle:nth-child(even) { background: var(--orange); }
+        @keyframes float {
+            0%, 100% { opacity: 0; transform: translateY(0); }
+            50% { opacity: 0.4; transform: translateY(-25px); }
+        }
+        /* ANIMACE PŘI NAČTENÍ */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(80px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+.slide-in {
+    opacity: 0;
+    animation: slideIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+
+    </style>
+</head>
+<body>
+    <!-- POZADÍ ČÁSTICE -->
+    <div class="bg" id="bg"></div>
+
+    <!-- HLAVNÍ OBSAH -->
+    <h1>MLX Media</h1>
+    <p class="subtitle">Kam chceš jít?</p>
+
+    <div class="container">
+        <!-- 3 HLAVNÍ TLAČÍTKA S ANIMACÍ -->
+        <a href="ztrata-nalez.html" class="btn slide-in">
+            <i class="fas fa-search"></i>
+            Ztráta / Nález
+        </a>
+        <a href="https://mlxstudio.github.io/MLX-Media-web/index.html" class="btn slide-in" style="animation-delay: 0.15s;">
+            <i class="fas fa-user"></i>
+            Moje stránka
+        </a>
+        <a href="https://youtube.com/@MLX-Media" target="_blank" class="btn slide-in" style="animation-delay: 0.3s;">
+            <i class="fab fa-youtube"></i>
+            Můj YouTube
+        </a>
+
+        <!-- ROZKLÁPĚCÍ PANEL (také s animací) -->
+        <div class="social-panel slide-in" id="socialPanel" style="animation-delay: 0.45s;">
+            <div class="social-header" onclick="togglePanel()">
+                <i class="fas fa-share-alt"></i>
+                Další kontakty
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="social-links">
+                <a href="https://instagram.com/mlx.media" target="_blank">
+                    <i class="fab fa-instagram"></i> Instagram
+                </a>
+                <a href="https://facebook.com/mlxmedia" target="_blank">
+                    <i class="fab fa-facebook"></i> Facebook
+                </a>
+                <a href="mailto:mlx.studio2222@gmail.com">
+                    <i class="fas fa-envelope"></i> mlx.studio2222@gmail.com
+                </a>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Rozklápěcí panel
+        function togglePanel() {
+            document.getElementById('socialPanel').classList.toggle('open');
+        }
+
+        // Částice (krása na pozadí)
+        const bg = document.getElementById('bg');
+        for (let i = 0; i < 25; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.top = Math.random() * 100 + '%';
+            p.style.animationDelay = Math.random() * 6 + 's';
+            bg.appendChild(p);
+        }
+    </script>
+    
+</body>
+</html>
