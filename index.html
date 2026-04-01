@@ -996,9 +996,9 @@
 <script>
   // ── THEME ──
   const root = document.documentElement;
-  root.setAttribute('data-theme', localStorage.getItem('mlx-theme') || 'dark');
+  root.setAttribute('data-theme', localStorage.getItem('mlx-theme') || 'light');
   document.getElementById('themeToggle').addEventListener('click', () => {
-    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
     root.setAttribute('data-theme', next);
     localStorage.setItem('mlx-theme', next);
   });
