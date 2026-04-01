@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="cs" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O mně – MLX Media</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
+      --font-display:'Bebas Neue', sans-serif;
+      --font-body:   'DM Sans', sans-serif;
+      --nav-h:       64px;
+      --trans:       0.45s var(--ease-out);
+    }
+
+    [data-theme="dark"] {
+      --bg:          #0d0d0d;
+      --bg-surface:  #111111;
+      --bg-card:     #161616;
+      --border:      rgba(255,255,255,0.07);
+      --accent:      #FF8A00;
+      --accent-soft: rgba(255,138,0,0.10);
+      --accent-glow: rgba(255,138,0,0.22);
+      --text:        #e8e4de;
+      --text-muted:  #5e5a56;
+      --text-dim:    #8a8580;
+      --noise-op:    0.028;
+      --hero-grad:   linear-gradient(160deg,#0d0d0d 0%,#141008 100%);
+      --stripe:      linear-gradient(90deg,transparent,#FF8A00,#ffb347,transparent);
+      --footer-desc: #888480;
+    }
+
+    [data-theme="light"] {
+      --bg:          #f6f5f2;
+      --bg-surface:  #ffffff;
+      --bg-card:     #fafaf8;
+      --border:      rgba(0,0,0,0.08);
+      --accent:      #00BFA6;
+      --accent-soft: rgba(0,191,166,0.08);
+      --accent-glow: rgba(0,191,166,0.20);
+      --text:        #0f1e1c;
+      --text-muted:  #a0a8a6;
+      --text-dim:    #6b7574;
+      --noise-op:    0.018;
+      --hero-grad:   linear-gradient(160deg,#f6f5f2 0%,#e8f7f5 100%);
+      --stripe:      linear-gradient(90deg,transparent,#00BFA6,#7dd7cc,transparent);
+      --footer-desc: #6b7574;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg); color: var(--text);
+      overflow-x: hidden;
+      transition: background var(--trans), color var(--trans);
+      position: relative;
+    }
+
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: var(--noise-op); pointer-events: none; z-index: 9999;
+      transition: opacity var(--trans);
+    }
+
+    /* ── NAV ── */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h);
+      z-index: 1000; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 clamp(20px,4vw,48px);
+      transition: background var(--trans), border-color var(--trans);
+    }
+    .nav.scrolled {
+      background: color-mix(in srgb, var(--bg) 85%, transparent);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: var(--font-display); font-size: 1.55rem; letter-spacing: 0.12em; color: var(--text); text-decoration: none; transition: color var(--trans); }
+    .nav-logo span { color: var(--accent); transition: color var(--trans); }
+    .nav-links { display: flex; align-items: center; gap: clamp(12px,2vw,32px); list-style: none; }
+    .nav-links a { font-size: 0.78rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; color: var(--text-dim); transition: color 0.2s; white-space: nowrap; }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+
+    .theme-toggle {
+      width: 48px; height: 26px; background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 99px; cursor: pointer; position: relative; flex-shrink: 0;
+      transition: background var(--trans), border-color var(--trans);
+    }
+    .theme-toggle::after {
+      content: ''; position: absolute; top: 3px; left: 3px;
+      width: 18px; height: 18px; border-radius: 50%; background: var(--accent);
+      transition: transform 0.35s var(--ease-out), background var(--trans);
+    }
+    [data-theme="light"] .theme-toggle::after { transform: translateX(22px); }
+    .toggle-icons { position: absolute; inset: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 5px; font-size: 10px; pointer-events: none; }
+
+    .nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+    .nav-hamburger span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 2px; transition: transform 0.3s, opacity 0.3s, background var(--trans); }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .nav-mobile {
+      display: flex; flex-direction: column;
+      position: fixed; top: var(--nav-h); left: 0; right: 0;
+      background: color-mix(in srgb, var(--bg) 96%, transparent);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 24px 28px; z-index: 999;
+      visibility: hidden; opacity: 0; transform: translateY(-8px);
+      transition: opacity 0.3s var(--ease-out), transform 0.3s var(--ease-out),
+                  visibility 0.3s, background var(--trans), border-color var(--trans);
+      pointer-events: none;
+    }
+    .nav-mobile.open { visibility: visible; opacity: 1; transform: translateY(0); pointer-events: auto; }
+    .nav-mobile a {
+      font-size: 0.9rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+      text-decoration: none; color: var(--text-dim); padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      opacity: 0; transform: translateX(-14px);
+      transition: opacity 0.28s var(--ease-out), transform 0.28s var(--ease-out),
+                  color 0.2s, border-color var(--trans);
+    }
+    .nav-mobile a:last-of-type { border-bottom: none; }
+    .nav-mobile a:hover { color: var(--accent); }
+    .nav-mobile.open a:nth-child(1) { opacity:1; transform:translateX(0); transition-delay:0.06s; }
+    .nav-mobile.open a:nth-child(2) { opacity:1; transform:translateX(0); transition-delay:0.11s; }
+    .nav-mobile.open a:nth-child(3) { opacity:1; transform:translateX(0); transition-delay:0.16s; }
+    .nav-mobile.open a:nth-child(4) { opacity:1; transform:translateX(0); transition-delay:0.21s; }
+    .nav-mobile.open a:nth-child(5) { opacity:1; transform:translateX(0); transition-delay:0.26s; }
+    .nav-mobile.open a:nth-child(6) { opacity:1; transform:translateX(0); transition-delay:0.31s; }
+
+    @media (max-width: 768px) { .nav-links { display: none; } .nav-hamburger { display: flex; } }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100svh; background: var(--hero-grad);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: calc(var(--nav-h) + 40px) clamp(20px,5vw,80px) 80px;
+      text-align: center; position: relative; overflow: hidden;
+      transition: background var(--trans);
+    }
+    .hero-bg-letter {
+      position: absolute; font-family: var(--font-display);
+      font-size: clamp(200px,38vw,520px); color: var(--accent); opacity: 0.04;
+      line-height: 1; pointer-events: none; user-select: none; letter-spacing: -0.04em;
+      transition: color var(--trans); top: 50%; left: 50%; transform: translate(-50%,-50%);
+    }
+    /* Extra cinematic horizontal scan line for the hero */
+    .hero-scanline {
+      position: absolute; left: 0; right: 0; top: 50%; height: 1px;
+      background: var(--stripe); opacity: 0; pointer-events: none;
+      animation: scanReveal 1.4s var(--ease-out) 1.0s forwards;
+      transition: background var(--trans);
+    }
+    @keyframes scanReveal { from{opacity:0;transform:scaleX(0.3)} to{opacity:0.35;transform:scaleX(1)} }
+
+    .hero-eyebrow { font-size: clamp(0.65rem,1.5vw,0.75rem); letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; opacity: 0; transform: translateY(16px); animation: fadeUp 0.8s var(--ease-out) 0.2s forwards; transition: color var(--trans); }
+    .hero-title { font-family: var(--font-display); font-size: clamp(3.5rem,10vw,9rem); letter-spacing: 0.06em; line-height: 0.95; color: var(--text); margin-bottom: 8px; opacity: 0; transform: translateY(24px); animation: fadeUp 0.9s var(--ease-out) 0.35s forwards; transition: color var(--trans); }
+    .hero-title em { font-style: normal; color: var(--accent); transition: color var(--trans); }
+    .hero-subtitle { font-size: clamp(0.88rem,2vw,1.05rem); font-weight: 300; color: var(--text-dim); max-width: 540px; line-height: 1.75; margin: 24px auto 0; opacity: 0; transform: translateY(16px); animation: fadeUp 0.9s var(--ease-out) 0.55s forwards; transition: color var(--trans); }
+    .hero-scroll { position: absolute; bottom: 36px; top: 85%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; animation: fadeUp 0.8s var(--ease-out) 1.1s forwards; }    .hero-scroll span { font-size: 0.65rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-muted); }
+    .scroll-line { width: 1px; height: 40px; background: linear-gradient(to bottom, var(--accent), transparent); animation: scrollPulse 2s ease-in-out 1.5s infinite; }
+    @keyframes scrollPulse { 0%,100%{opacity:.4;transform:scaleY(1)} 50%{opacity:1;transform:scaleY(1.2)} }
+    @keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+
+    .hero-pills { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 48px; opacity: 0; transform: translateY(16px); animation: fadeUp 0.9s var(--ease-out) 0.75s forwards; }
+    .pill { display: inline-flex; align-items: center; gap: 8px; padding: 9px 20px; border: 1px solid var(--border); border-radius: 99px; font-size: 0.78rem; font-weight: 500; letter-spacing: 0.08em; color: var(--text-dim); text-decoration: none; background: var(--accent-soft); transition: border-color 0.2s, color 0.2s, background 0.2s, transform 0.2s; }
+    .pill:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+    .pill-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); transition: background var(--trans); }
+
+    /* ── COMMON ── */
+    section { scroll-margin-top: var(--nav-h); }
+    .reveal { opacity:0; transform:translateY(28px); transition: opacity 0.75s var(--ease-out), transform 0.75s var(--ease-out); }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+    .reveal-left { opacity:0; transform:translateX(-32px); transition: opacity 0.75s var(--ease-out), transform 0.75s var(--ease-out); }
+    .reveal-left.visible { opacity:1; transform:translateX(0); }
+    .reveal-right { opacity:0; transform:translateX(32px); transition: opacity 0.75s var(--ease-out), transform 0.75s var(--ease-out); }
+    .reveal-right.visible { opacity:1; transform:translateX(0); }
+    .d1{transition-delay:.05s} .d2{transition-delay:.15s} .d3{transition-delay:.25s} .d4{transition-delay:.35s}
+
+    /* ── STATS ── */
+    .stats-band { border-top: 1px solid var(--border); background: var(--bg-surface); transition: background var(--trans), border-color var(--trans); }
+    .stats-inner { max-width: 1200px; margin: 0 auto; padding: 0 clamp(20px,4vw,48px); display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; }
+    @media(max-width:640px){ .stats-inner{ grid-template-columns:repeat(2,1fr); } }
+    .stat-block { padding: clamp(28px,4vw,48px) 24px; text-align: center; border-right: 1px solid var(--border); transition: border-color var(--trans); }
+    .stat-block:last-child { border-right: none; }
+    .stat-num { font-family: var(--font-display); font-size: clamp(2.2rem,5vw,3.4rem); letter-spacing: 0.04em; color: var(--text); line-height: 1; margin-bottom: 6px; transition: color var(--trans); }
+    .stat-num span { color: var(--accent); transition: color var(--trans); }
+    .stat-label { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); transition: color var(--trans); }
+
+    /* ── INTRO SPLIT ── */
+    .intro-section { border-top: 1px solid var(--border); transition: border-color var(--trans); }
+    .intro-inner {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: clamp(40px,6vw,100px); align-items: center;
+      max-width: 1200px; margin: 0 auto;
+      padding: clamp(64px,9vw,120px) clamp(20px,4vw,48px);
+    }
+    @media(max-width:760px){ .intro-inner { grid-template-columns: 1fr; } }
+
+    .intro-tag { display: inline-flex; align-items: center; gap: 7px; font-size: 0.68rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; transition: color var(--trans); }
+    .intro-tag::before { content:''; display:block; width:24px; height:1px; background: var(--accent); transition: background var(--trans); }
+    .intro-title { font-family: var(--font-display); font-size: clamp(2.6rem,6vw,4.5rem); letter-spacing: 0.05em; line-height: 0.98; color: var(--text); margin-bottom: 28px; transition: color var(--trans); }
+    .intro-title em { font-style: normal; color: var(--accent); transition: color var(--trans); }
+    .intro-body { font-size: clamp(0.92rem,1.5vw,1.04rem); font-weight: 300; line-height: 1.85; color: var(--text-dim); margin-bottom: 20px; transition: color var(--trans); }
+    .intro-body strong { font-weight: 600; color: var(--text); transition: color var(--trans); }
+
+    /* signature card */
+    .sig-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      padding: clamp(28px,4vw,48px); position: relative; overflow: hidden;
+      transition: background var(--trans), border-color var(--trans);
+    }
+    .sig-card::before {
+      content:''; position:absolute; top:-1px; left:10%; right:10%; height:2px;
+      background: var(--stripe); transition: background var(--trans);
+    }
+    .sig-quote {
+      font-family: var(--font-display); font-size: clamp(1.4rem,3.5vw,2.2rem);
+      letter-spacing: 0.05em; line-height: 1.25; color: var(--text);
+      margin-bottom: 24px; transition: color var(--trans);
+    }
+    .sig-quote em { font-style: normal; color: var(--accent); transition: color var(--trans); }
+    .sig-meta { display: flex; align-items: center; gap: 14px; }
+    .sig-dot { width: 36px; height: 36px; background: var(--accent-soft); border: 1px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background var(--trans), border-color var(--trans); }
+    .sig-dot svg { width: 16px; height: 16px; color: var(--accent); }
+    .sig-name { font-size: 0.82rem; font-weight: 600; letter-spacing: 0.08em; color: var(--text); transition: color var(--trans); }
+    .sig-role { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); margin-top: 2px; transition: color var(--trans); }
+
+    /* ── TIMELINE ── */
+    .timeline-section { background: var(--bg-surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); transition: background var(--trans), border-color var(--trans); }
+    .timeline-header { max-width: 1200px; margin: 0 auto; padding: clamp(56px,7vw,96px) clamp(20px,4vw,48px) 0; }
+    .timeline-eyebrow { font-size: 0.68rem; letter-spacing: 0.32em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; transition: color var(--trans); }
+    .timeline-headline { font-family: var(--font-display); font-size: clamp(2.4rem,6vw,4.8rem); letter-spacing: 0.05em; line-height: 0.96; color: var(--text); transition: color var(--trans); }
+    .timeline-headline em { font-style: normal; color: var(--accent); transition: color var(--trans); }
+
+    .timeline-body { max-width: 1200px; margin: 0 auto; padding: clamp(40px,5vw,64px) clamp(20px,4vw,48px) clamp(56px,7vw,96px); display: grid; grid-template-columns: repeat(2,1fr); gap: clamp(24px,3vw,40px); }
+    @media(max-width:680px){ .timeline-body { grid-template-columns: 1fr; } }
+
+    .era-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      padding: clamp(24px,3.5vw,40px); position: relative; overflow: hidden;
+      transition: background var(--trans), border-color var(--trans), transform 0.3s var(--ease-out), box-shadow 0.3s;
+    }
+    .era-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,0.22); }
+    .era-num {
+      font-family: var(--font-display); font-size: clamp(5rem,12vw,8rem); line-height: 0.9;
+      color: var(--accent); opacity: 0.07; position: absolute; bottom: -16px; right: 8px;
+      pointer-events: none; letter-spacing: -0.04em; transition: color var(--trans), opacity 0.3s;
+    }
+    .era-card:hover .era-num { opacity: 0.13; }
+    .era-period {
+      font-size: 0.68rem; letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+      transition: color var(--trans);
+    }
+    .era-period::after { content:''; flex: 1; height: 1px; background: var(--border); transition: background var(--trans); max-width: 48px; }
+    .era-title { font-family: var(--font-display); font-size: clamp(1.6rem,4vw,2.4rem); letter-spacing: 0.05em; color: var(--text); margin-bottom: 12px; transition: color var(--trans); }
+    .era-desc { font-size: 0.9rem; font-weight: 300; line-height: 1.8; color: var(--text-dim); transition: color var(--trans); }
+
+    /* ── STRENGTHS ── */
+    .strengths-section { border-top: 1px solid var(--border); transition: border-color var(--trans); }
+    .strengths-inner { max-width: 1200px; margin: 0 auto; padding: clamp(64px,9vw,120px) clamp(20px,4vw,48px); }
+    .strengths-top { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px,5vw,80px); align-items: end; margin-bottom: clamp(48px,6vw,80px); }
+    @media(max-width:680px){ .strengths-top { grid-template-columns: 1fr; } }
+    .strengths-eyebrow { font-size: 0.68rem; letter-spacing: 0.32em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; transition: color var(--trans); }
+    .strengths-headline { font-family: var(--font-display); font-size: clamp(2.4rem,6vw,4.8rem); letter-spacing: 0.05em; line-height: 0.96; color: var(--text); transition: color var(--trans); }
+    .strengths-headline em { font-style: normal; color: var(--accent); transition: color var(--trans); }
+    .strengths-lead { font-size: clamp(0.92rem,1.5vw,1.04rem); font-weight: 300; line-height: 1.82; color: var(--text-dim); transition: color var(--trans); align-self: end; }
+
+    .strengths-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: clamp(16px,2vw,28px); }
+    @media(max-width:540px){ .strengths-grid { grid-template-columns: 1fr; } }
+
+    .strength-item {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      padding: clamp(24px,3vw,36px); display: grid; grid-template-columns: auto 1fr; gap: 20px;
+      align-items: start; transition: background var(--trans), border-color var(--trans), transform 0.3s var(--ease-out);
+    }
+    .strength-item:hover { transform: translateY(-3px); border-color: var(--accent); }
+    .strength-icon { width: 44px; height: 44px; background: var(--accent-soft); border: 1px solid var(--border); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background var(--trans), border-color var(--trans); }
+    .strength-icon svg { width: 20px; height: 20px; color: var(--accent); }
+    .strength-num { font-family: var(--font-display); font-size: 0.7rem; letter-spacing: 0.2em; color: var(--accent); margin-bottom: 6px; transition: color var(--trans); }
+    .strength-name { font-family: var(--font-display); font-size: clamp(1.1rem,2.5vw,1.5rem); letter-spacing: 0.04em; color: var(--text); margin-bottom: 8px; transition: color var(--trans); }
+    .strength-desc { font-size: 0.86rem; font-weight: 300; line-height: 1.75; color: var(--text-dim); transition: color var(--trans); }
+
+    /* ── PHILOSOPHY ── */
+    .philosophy { background: var(--bg-surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); transition: background var(--trans), border-color var(--trans); }
+    .philosophy-inner { max-width: 900px; margin: 0 auto; padding: clamp(56px,8vw,100px) clamp(20px,4vw,48px); text-align: center; }
+    .philosophy-eyebrow { font-size:0.68rem; letter-spacing:0.32em; text-transform:uppercase; color: var(--accent); margin-bottom:24px; transition: color var(--trans); }
+    .philosophy-quote { font-family: var(--font-display); font-size: clamp(1.8rem,4.5vw,3.2rem); letter-spacing:0.04em; line-height:1.25; color: var(--text); margin-bottom:32px; transition: color var(--trans); }
+    .philosophy-quote em { font-style:normal; color: var(--accent); transition: color var(--trans); }
+    .philosophy-body { font-size: clamp(0.88rem,1.5vw,1rem); font-weight:300; line-height:1.85; color: var(--text-dim); max-width:620px; margin:0 auto; transition: color var(--trans); }
+
+    /* ── CTA ── */
+    .cta-section { max-width:1200px; margin:0 auto; padding: clamp(56px,8vw,100px) clamp(20px,4vw,48px); }
+    .cta-inner { border:1px solid var(--border); border-radius:8px; padding: clamp(32px,5vw,64px); display:flex; align-items:center; justify-content:space-between; gap:32px; flex-wrap:wrap; background: var(--bg-card); position:relative; overflow:hidden; transition: background var(--trans), border-color var(--trans); }
+    .cta-inner::before { content:''; position:absolute; top:-1px; left:10%; right:10%; height:2px; background: var(--stripe); transition: background var(--trans); }
+    .cta-eyebrow { font-size:0.68rem; letter-spacing:0.28em; text-transform:uppercase; color: var(--accent); margin-bottom:8px; transition: color var(--trans); }
+    .cta-title { font-family: var(--font-display); font-size: clamp(1.8rem,4vw,3rem); letter-spacing:0.05em; line-height:1; color: var(--text); transition: color var(--trans); }
+    .cta-title em { font-style:normal; color: var(--accent); transition: color var(--trans); }
+    .btn-primary { display:inline-flex; align-items:center; gap:10px; background: var(--accent); color: #0d0d0d; padding:14px 28px; border-radius:4px; font-size:0.82rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; text-decoration:none; white-space:nowrap; flex-shrink:0; transition: opacity 0.2s, transform 0.2s; }
+    .btn-primary:hover { opacity:0.88; transform:translateY(-2px); }
+    .btn-primary svg { width:16px; height:16px; }
+
+    /* ── FOOTER ── */
+    footer { background: var(--bg-surface); border-top: 1px solid var(--border); transition: background var(--trans), border-color var(--trans); }
+
+    .f-stripe { height: 2px; background: var(--stripe); opacity:0; transition: background var(--trans), opacity 0.8s var(--ease-out); }
+    .f-stripe.visible { opacity:1; }
+
+    .f-grid { max-width:1200px; margin:0 auto; padding: clamp(48px,7vw,88px) clamp(20px,4vw,48px) clamp(32px,5vw,56px); display:grid; grid-template-columns: 1.6fr 1fr 1fr 1.3fr; gap: clamp(32px,4vw,64px); }
+    @media(max-width:900px){ .f-grid{ grid-template-columns:1fr 1fr; } }
+    @media(max-width:520px){ .f-grid{ grid-template-columns:1fr; } }
+
+    .footer-reveal { opacity:0; transform:translateY(20px); transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out); }
+    .footer-reveal.visible { opacity:1; transform:translateY(0); }
+    .footer-reveal:nth-child(2){ transition-delay:0.1s; }
+    .footer-reveal:nth-child(3){ transition-delay:0.18s; }
+    .footer-reveal:nth-child(4){ transition-delay:0.26s; }
+
+    .f-brand-name { font-family: var(--font-display); font-size:1.4rem; letter-spacing:0.12em; color: var(--text); margin-bottom:6px; transition: color var(--trans); }
+    .f-brand-name span { color: var(--accent); transition: color var(--trans); }
+    .f-brand-tagline { font-size:0.7rem; letter-spacing:0.22em; text-transform:uppercase; color: var(--text-muted); margin-bottom:18px; transition: color var(--trans); }
+    .f-brand-desc { font-size:0.86rem; font-weight:300; line-height:1.8; color: var(--footer-desc); max-width:280px; margin-bottom:24px; transition: color var(--trans); }
+
+    .f-social-row { display:flex; gap:10px; flex-wrap:wrap; }
+    .f-social-btn { display:inline-flex; align-items:center; gap:8px; padding:8px 16px; background: var(--bg-card); border:1px solid var(--border); border-radius:4px; font-size:0.74rem; font-weight:500; letter-spacing:0.08em; text-decoration:none; color: var(--text-dim); transition: border-color 0.2s, color 0.2s, background var(--trans); }
+    .f-social-btn svg { width:14px; height:14px; flex-shrink:0; }
+    .f-social-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    .f-col-title { font-size:0.68rem; letter-spacing:0.28em; text-transform:uppercase; color: var(--text-muted); margin-bottom:18px; transition: color var(--trans); }
+    .f-links { list-style:none; display:flex; flex-direction:column; gap:10px; }
+    .f-links a { font-size:0.86rem; color: var(--text-dim); text-decoration:none; transition:color 0.2s; }
+    .f-links a:hover { color: var(--accent); }
+
+    .f-contact-item { display:flex; align-items:flex-start; gap:12px; margin-bottom:14px; }
+    .f-contact-item:last-child { margin-bottom:0; }
+    .f-contact-icon { width:30px; height:30px; background: var(--accent-soft); border:1px solid var(--border); border-radius:4px; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition: background var(--trans), border-color var(--trans); }
+    .f-contact-icon svg { color: var(--accent); }
+    .f-contact-label { font-size:0.68rem; letter-spacing:0.14em; text-transform:uppercase; color: var(--text-muted); margin-bottom:1px; transition: color var(--trans); }
+    .f-contact-value { font-size:0.84rem; color: var(--text-dim); transition: color var(--trans); }
+    .f-contact-value a { color: var(--text-dim); text-decoration:none; transition:color 0.2s; }
+    .f-contact-value a:hover { color: var(--accent); }
+
+    .f-stats-band { border-top:1px solid var(--border); display:grid; grid-template-columns:repeat(4,1fr); transition: border-color var(--trans); }
+    @media(max-width:640px){ .f-stats-band{ grid-template-columns:repeat(2,1fr); } }
+    .f-stat-item { padding:clamp(20px,3vw,32px) 24px; text-align:center; border-right:1px solid var(--border); opacity:0; transform:translateY(14px); transition: border-color var(--trans), opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out); }
+    .f-stat-item.visible { opacity:1; transform:translateY(0); }
+    .f-stat-item:nth-child(2){ transition-delay:0.08s; }
+    .f-stat-item:nth-child(3){ transition-delay:0.16s; }
+    .f-stat-item:nth-child(4){ border-right:none; transition-delay:0.24s; }
+    .f-stat-number { font-family: var(--font-display); font-size:clamp(1.8rem,4vw,2.6rem); letter-spacing:0.04em; color: var(--text); line-height:1; margin-bottom:4px; transition: color var(--trans); }
+    .f-stat-number span { color: var(--accent); transition: color var(--trans); }
+    .f-stat-label { font-size:0.65rem; letter-spacing:0.18em; text-transform:uppercase; color: var(--text-muted); transition: color var(--trans); }
+
+    .f-cta-wrap { border-top:1px solid var(--border); padding: clamp(28px,4vw,48px) clamp(20px,4vw,48px); transition: border-color var(--trans); }
+    .f-cta-inner { max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap; opacity:0; transform:translateY(16px); transition: opacity 0.65s var(--ease-out), transform 0.65s var(--ease-out); }
+    .f-cta-inner.visible { opacity:1; transform:translateY(0); }
+    .f-cta-eyebrow { font-size:0.68rem; letter-spacing:0.28em; text-transform:uppercase; color: var(--accent); margin-bottom:4px; transition: color var(--trans); }
+    .f-cta-title { font-family: var(--font-display); font-size: clamp(1.4rem,3vw,2rem); letter-spacing:0.05em; color: var(--text); transition: color var(--trans); }
+    .f-cta-btn { display:inline-flex; align-items:center; gap:10px; background: var(--accent); color:#0d0d0d; padding:13px 26px; border-radius:4px; font-size:0.8rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; text-decoration:none; white-space:nowrap; flex-shrink:0; transition: opacity 0.2s, transform 0.2s; }
+    .f-cta-btn:hover { opacity:0.88; transform:translateY(-2px); }
+    .f-cta-btn svg { width:16px; height:16px; }
+
+    .f-bottom { max-width:1200px; margin:0 auto; padding:20px clamp(20px,4vw,48px); display:flex; align-items:center; justify-content:space-between; gap:16px; border-top:1px solid var(--border); transition: border-color var(--trans); }
+    @media(max-width:600px){ .f-bottom{ padding:18px 24px; flex-direction:column; text-align:center; } }
+    .f-copy { font-size:0.75rem; color: var(--text-muted); letter-spacing:0.04em; transition: color var(--trans); }
+    .f-copy span { color: var(--accent); transition: color var(--trans); }
+    .f-legal { display:flex; gap:20px; }
+    .f-legal a { font-size:0.72rem; color: var(--text-muted); text-decoration:none; letter-spacing:0.08em; transition:color 0.2s; }
+    .f-legal a:hover { color: var(--text); }
+
+    /* ── BACK TO TOP ── */
+    .back-top { position:fixed; bottom:32px; right:32px; width:44px; height:44px; background: var(--bg-surface); border:1px solid var(--border); border-radius:4px; display:flex; align-items:center; justify-content:center; color: var(--accent); cursor:pointer; opacity:0; transform:translateY(12px); transition: opacity 0.3s, transform 0.3s, border-color 0.2s, background var(--trans); z-index:99; }
+    .back-top.show { opacity:1; transform:translateY(0); }
+    .back-top:hover { border-color: var(--accent); }
+    .back-top svg { width:18px; height:18px; }
+    @media(max-width:480px){ .back-top{ bottom:20px; right:20px; } }
+  </style>
+</head>
+<body>
+
+<button class="back-top" id="backToTop" aria-label="Zpět nahoru" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<nav class="nav" id="mainNav">
+  <a href="index.html" class="nav-logo">ML<span>X</span> MEDIA</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Domů</a></li>
+    <li><a href="O-mně.html" class="active">O mně</a></li>
+    <li><a href="Portfolio.html">Portfolio</a></li>
+    <li><a href="Aspekty.html">Aspekty</a></li>
+    <li><a href="Ceník.html">Ceník</a></li>
+    <li><a href="Objednávka.html">Objednávka</a></li>
+  </ul>
+  <div style="display:flex;align-items:center;gap:14px;">
+    <button class="theme-toggle" id="themeToggle" aria-label="Přepnout téma">
+      <div class="toggle-icons"><span>🌙</span><span>☀️</span></div>
+    </button>
+    <div class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+
+<div class="nav-mobile" id="mobileMenu">
+  <a href="index.html">Domů</a>
+  <a href="O-mně.html">O mně</a>
+  <a href="Portfolio.html">Portfolio</a>
+  <a href="Aspekty.html">Aspekty</a>
+  <a href="Ceník.html">Ceník</a>
+  <a href="Objednávka.html">Objednávka</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-bg-letter" aria-hidden="true">M</div>
+  <div class="hero-scanline" aria-hidden="true"></div>
+  <div class="hero-eyebrow">MLX Media · Filmař · Tvůrce</div>
+  <h1 class="hero-title">Jmenuji se<br><em>Matouš</em></h1>
+  <p class="hero-subtitle">Filmaření je to, co mě baví od malička. Dnes natáčím s profesionální technikou a za sebou mám přes 35 projektů pro firmy, kamarády i soukromníky.</p>
+  <div class="hero-pills">
+    <a href="#intro"      class="pill"><span class="pill-dot"></span>Kdo jsem</a>
+    <a href="#cesta"      class="pill"><span class="pill-dot"></span>Moje cesta</a>
+    <a href="#proc-ja"    class="pill"><span class="pill-dot"></span>Proč já</a>
+    <a href="#filozofie"  class="pill"><span class="pill-dot"></span>Filozofie</a>
+  </div>
+  <div class="hero-scroll"><span>Scroll</span><div class="scroll-line"></div></div>
+</section>
+
+<!-- STATS -->
+<div class="stats-band">
+  <div class="stats-inner">
+    <div class="stat-block reveal d1"><div class="stat-num js-count" data-target="35">0<span>+</span></div><div class="stat-label">Projektů celkem</div></div>
+    <div class="stat-block reveal d2"><div class="stat-num js-count" data-target="4">0<span>+</span></div><div class="stat-label">Roky zkušeností</div></div>
+    <div class="stat-block reveal d3"><div class="stat-num js-count" data-target="95">0<span>%</span></div><div class="stat-label">Klientů doporučí</div></div>
+    <div class="stat-block reveal d4"><div class="stat-num">6<span>K</span></div><div class="stat-label">RAW rozlišení</div></div>
+  </div>
+</div>
+
+<!-- INTRO -->
+<section id="intro" class="intro-section">
+  <div class="intro-inner">
+    <div class="reveal-left">
+      <div class="intro-tag">Kdo stojí za MLX Media</div>
+      <h2 class="intro-title">Filmař<br>z <em>vášně</em></h2>
+      <p class="intro-body">Je mi <strong>15 let</strong> a filmaření dělám od roku 2022. Začínal jsem s telefonem — natáčel jsem festivaly a eventy pro přátele a školu. Dnes mám za sebou desítky projektů pro firmy, kamarády i soukromníky.</p>
+      <p class="intro-body">Věřím, že každý příběh si zaslouží být vyprávěn. Každá firma má něco speciálního, co jde zachytit pouze filmem — a já jsem ta osoba, která vám to dokáže zprostředkovat.</p>
+    </div>
+    <div class="reveal-right">
+      <div class="sig-card">
+        <div class="sig-quote">„Jedno video může <em>změnit pohled</em> na váš byznys navždy."</div>
+        <div class="sig-meta">
+          <div class="sig-dot">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <div>
+            <div class="sig-name">Matouš Lexa</div>
+            <div class="sig-role">Zakladatel · MLX Media</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section id="cesta" class="timeline-section">
+  <div class="timeline-header">
+    <div class="timeline-eyebrow reveal">Jak jsem se dostal sem</div>
+    <h2 class="timeline-headline reveal">Moje<br><em>cesta</em></h2>
+  </div>
+  <div class="timeline-body">
+
+    <div class="era-card reveal d1">
+      <div class="era-num" aria-hidden="true">01</div>
+      <div class="era-period">2019 – 2021</div>
+      <h3 class="era-title">Začátky</h3>
+      <p class="era-desc">První pokusy o natáčení krátkých filmů a skečů — jen s telefonem v ruce, bez střihu, bez světel. Ale ten zápal byl od první vteřiny.</p>
+    </div>
+
+    <div class="era-card reveal d2">
+      <div class="era-num" aria-hidden="true">02</div>
+      <div class="era-period">2021 – 2022</div>
+      <h3 class="era-title">Start</h3>
+      <p class="era-desc">První filmy se střihem a efekty — stále na telefon. Začínám chápat, co střih dokáže udělat s příběhem, a neodpouštím si jedinou záběr navíc.</p>
+    </div>
+
+    <div class="era-card reveal d3">
+      <div class="era-num" aria-hidden="true">03</div>
+      <div class="era-period">2022 – 2024</div>
+      <h3 class="era-title">Plnohodnotné filmy</h3>
+      <p class="era-desc">Technika se rozšiřuje — první filmy s příběhem, scénářem, osvětlením a profesionální kamerovou prací. Výsledky už mají charakter i hloubku.</p>
+    </div>
+
+    <div class="era-card reveal d4">
+      <div class="era-num" aria-hidden="true">04</div>
+      <div class="era-period">2024 – dnes</div>
+      <h3 class="era-title">Plný výkon</h3>
+      <p class="era-desc">Blackmagic 6K, gimbál, zvuková technika, světla — a vznik MLX Media. Desítky projektů, kurzy, tábory, spokojení klienti. Tohle je teprve začátek.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- STRENGTHS -->
+<section id="proc-ja" class="strengths-section">
+  <div class="strengths-inner">
+    <div class="strengths-top">
+      <div class="reveal-left">
+        <div class="strengths-eyebrow">Proč pracovat se mnou</div>
+        <h2 class="strengths-headline">V čem<br><em>vynikám</em></h2>
+      </div>
+      <p class="strengths-lead reveal-right">Jsem menší firma. To znamená, že každý projekt dostane plnou pozornost — ne jen šablonu. Nikdy si nepůjčuji techniku, nikdy nepotřebuji extra čas na přípravu.</p>
+    </div>
+
+    <div class="strengths-grid">
+
+      <div class="strength-item reveal d1">
+        <div class="strength-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        </div>
+        <div>
+          <div class="strength-num">01</div>
+          <div class="strength-name">Osobní přístup</div>
+          <p class="strength-desc">Každý projekt beru jako svůj vlastní. Díky tomu, že nejsme velká agentura, věnuji se každému klientovi naplno — od prvního hovoru až po finální doručení.</p>
+        </div>
+      </div>
+
+      <div class="strength-item reveal d2">
+        <div class="strength-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div>
+          <div class="strength-num">02</div>
+          <div class="strength-name">Rychlost</div>
+          <p class="strength-desc">Vlastní technika znamená žádné čekání na půjčovnu. Jsem schopný natočit rychleji než konkurence — bez kompromisů na kvalitě.</p>
+        </div>
+      </div>
+
+      <div class="strength-item reveal d3">
+        <div class="strength-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        </div>
+        <div>
+          <div class="strength-num">03</div>
+          <div class="strength-name">Špičková technika</div>
+          <p class="strength-desc">Blackmagic 6K, Sigma 18–35mm f/1.8, DJI Ronin RS4 Pro — profesionální sada, kterou osobně vlastním. To mi nezdražuje projekty ani nekomplikuje logistiku.</p>
+        </div>
+      </div>
+
+      <div class="strength-item reveal d4">
+        <div class="strength-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        </div>
+        <div>
+          <div class="strength-num">04</div>
+          <div class="strength-name">Férové ceny</div>
+          <p class="strength-desc">Nejnižší ceny v poměru k technice a dovednostem, které MLX Media nabízí. Kvalita filmové produkce bez ceny velké agentury.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PHILOSOPHY -->
+<section id="filozofie" class="philosophy">
+  <div class="philosophy-inner">
+    <div class="philosophy-eyebrow reveal">Moje filozofie</div>
+    <h2 class="philosophy-quote reveal">„Každý příběh si zaslouží<br>být <em>vyprávěn</em>."</h2>
+    <p class="philosophy-body reveal">Nezáleží na tom, jak velká vaše firma je. Každý projekt dostane stejnou péči, stejný um, stejnou vášeň. Protože film není jen obraz — je to způsob, jak říct světu, proč existujete.</p>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+  <div class="cta-inner reveal">
+    <div>
+      <div class="cta-eyebrow">Hledám nové klienty</div>
+      <div class="cta-title">Máte projekt?<br><em>Pojďme ho natočit.</em></div>
+    </div>
+    <a href="Objednávka.html" class="btn-primary">
+      Objednat video
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="f-stripe" id="fStripe"></div>
+
+  <div class="f-grid">
+    <div class="footer-reveal">
+      <div class="f-brand-name">ML<span>X</span> MEDIA</div>
+      <div class="f-brand-tagline">Filmování · Střih · Postprodukce</div>
+      <p class="f-brand-desc">Věřím, že každý příběh si zaslouží být vyprávěn. Pomáhám firmám a jednotlivcům zachytit jejich vizi prostřednictvím profesionálního videa.</p>
+      <div class="f-social-row">
+        <a href="https://www.youtube.com/@MLX-Media" target="_blank" rel="noopener" class="f-social-btn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 00.5 6.2 31.3 31.3 0 000 12a31.3 31.3 0 00.5 5.8 3 3 0 002.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 002.1-2.1A31.3 31.3 0 0024 12a31.3 31.3 0 00-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+          YouTube
+        </a>
+        <a href="https://www.instagram.com/mlxmedia" target="_blank" rel="noopener" class="f-social-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          Instagram
+        </a>
+      </div>
+    </div>
+
+    <div class="footer-reveal">
+      <div class="f-col-title">Navigace</div>
+      <ul class="f-links">
+        <li><a href="index.html">Domovská stránka</a></li>
+        <li><a href="O-mně.html">O mně</a></li>
+        <li><a href="Portfolio.html">Portfolio</a></li>
+        <li><a href="Aspekty.html">Aspekty</a></li>
+        <li><a href="Ceník.html">Ceník</a></li>
+        <li><a href="Objednávka.html">Objednávka</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-reveal">
+      <div class="f-col-title">Služby</div>
+      <ul class="f-links">
+        <li><a href="Ceník.html">Firemní videa</a></li>
+        <li><a href="Ceník.html">Reklamní spot</a></li>
+        <li><a href="Ceník.html">Reels &amp; TikTok</a></li>
+        <li><a href="Ceník.html">Color grading</a></li>
+        <li><a href="Ceník.html">Zvukový design</a></li>
+        <li><a href="Ceník.html">Dronové záběry</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-reveal">
+      <div class="f-col-title">Kontakt</div>
+      <div class="f-contact-item">
+        <div class="f-contact-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <div><div class="f-contact-label">Email</div><div class="f-contact-value"><a href="mailto:info@mlxmedia.cz">info@mlxmedia.cz</a></div></div>
+      </div>
+      <div class="f-contact-item">
+        <div class="f-contact-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.7 10.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012.6 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.55a16 16 0 006.29 6.29l.96-.96a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        </div>
+        <div><div class="f-contact-label">Telefon</div><div class="f-contact-value"><a href="tel:+420777413600">+420 777 413 600</a></div></div>
+      </div>
+      <div class="f-contact-item">
+        <div class="f-contact-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div><div class="f-contact-label">Oblast</div><div class="f-contact-value">Praha 5, Praha 6, Beroun</div></div>
+      </div>
+      <div class="f-contact-item">
+        <div class="f-contact-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div><div class="f-contact-label">Dodání</div><div class="f-contact-value">4–10 dní od natáčení</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="f-stats-band">
+    <div class="f-stat-item"><div class="f-stat-number">35<span>+</span></div><div class="f-stat-label">Projektů</div></div>
+    <div class="f-stat-item"><div class="f-stat-number">3<span>+</span></div><div class="f-stat-label">Roky zkušeností</div></div>
+    <div class="f-stat-item"><div class="f-stat-number">95<span>%</span></div><div class="f-stat-label">Doporučení</div></div>
+    <div class="f-stat-item"><div class="f-stat-number">6<span>K</span></div><div class="f-stat-label">RAW rozlišení</div></div>
+  </div>
+
+  <div class="f-cta-wrap">
+    <div class="f-cta-inner" id="fCta">
+      <div>
+        <div class="f-cta-eyebrow">Hledám nové klienty</div>
+        <div class="f-cta-title">Máte projekt? Pojďme ho natočit.</div>
+      </div>
+      <a href="Objednávka.html" class="f-cta-btn">
+        Objednat video
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="f-bottom">
+    <div class="f-copy">© <span id="fyear"></span> <span>MLX Media</span> · Matouš Lexa · Všechna práva vyhrazena</div>
+    <div class="f-legal"><a href="#">Ochrana soukromí</a><a href="#">Cookies</a><a href="Objednávka.html">Kontakt</a></div>
+  </div>
+</footer>
+
+<script>
+  // theme
+  const root = document.documentElement;
+  root.setAttribute('data-theme', localStorage.getItem('mlx-theme') || 'dark');
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    localStorage.setItem('mlx-theme', next);
+  });
+
+  // nav scroll
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 20);
+    document.getElementById('backToTop').classList.toggle('show', window.scrollY > 400);
+  }, { passive: true });
+
+  // hamburger
+  const ham = document.getElementById('hamburger');
+  const mob = document.getElementById('mobileMenu');
+  ham.addEventListener('click', () => { ham.classList.toggle('open'); mob.classList.toggle('open'); });
+  mob.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { ham.classList.remove('open'); mob.classList.remove('open'); }));
+
+  // year
+  document.getElementById('fyear').textContent = new Date().getFullYear();
+
+  // page reveals
+  const io = new IntersectionObserver(e => e.forEach(x => { if(x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.1 });
+  document.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(el => io.observe(el));
+
+  // footer reveals
+  const fio = new IntersectionObserver(e => e.forEach(x => { if(x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.12 });
+  [document.getElementById('fStripe'), document.getElementById('fCta'), ...document.querySelectorAll('.footer-reveal,.f-stat-item')].filter(Boolean).forEach(el => fio.observe(el));
+
+  // stat counters
+  const cio = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target, target = parseInt(el.dataset.target), suf = el.querySelector('span')?.textContent || '';
+      let n = 0; const iv = Math.max(Math.floor(1200/target), 12);
+      const t = setInterval(() => { n++; el.innerHTML = n+'<span>'+suf+'</span>'; if(n>=target) clearInterval(t); }, iv);
+      cio.unobserve(el);
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.js-count').forEach(el => cio.observe(el));
+</script>
+</body>
+</html>

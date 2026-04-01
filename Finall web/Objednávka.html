@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="cs" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Objednávka – MLX Media</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <style>
+    :root {
+      --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
+      --font-display:'Bebas Neue', sans-serif;
+      --font-body:   'DM Sans', sans-serif;
+      --nav-h:       64px;
+      --trans:       0.45s var(--ease-out);
+    }
+    [data-theme="dark"] {
+      --bg:          #0d0d0d;
+      --bg-surface:  #111111;
+      --bg-card:     #161616;
+      --border:      rgba(255,255,255,0.07);
+      --accent:      #FF8A00;
+      --accent-soft: rgba(255,138,0,0.10);
+      --accent-glow: rgba(255,138,0,0.22);
+      --text:        #e8e4de;
+      --text-muted:  #5e5a56;
+      --text-dim:    #8a8580;
+      --noise-op:    0.028;
+      --hero-grad:   linear-gradient(160deg,#0d0d0d 0%,#141008 100%);
+      --stripe:      linear-gradient(90deg,transparent,#FF8A00,#ffb347,transparent);
+      --footer-desc: #888480;
+    }
+    [data-theme="light"] {
+      --bg:          #f6f5f2;
+      --bg-surface:  #ffffff;
+      --bg-card:     #fafaf8;
+      --border:      rgba(0,0,0,0.08);
+      --accent:      #00BFA6;
+      --accent-soft: rgba(0,191,166,0.08);
+      --accent-glow: rgba(0,191,166,0.20);
+      --text:        #0f1e1c;
+      --text-muted:  #a0a8a6;
+      --text-dim:    #6b7574;
+      --noise-op:    0.018;
+      --hero-grad:   linear-gradient(160deg,#f6f5f2 0%,#e8f7f5 100%);
+      --stripe:      linear-gradient(90deg,transparent,#00BFA6,#7dd7cc,transparent);
+      --footer-desc: #6b7574;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); overflow-x: hidden; transition: background var(--trans), color var(--trans); position: relative; }
+    body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); opacity:var(--noise-op); pointer-events:none; z-index:9999; transition:opacity var(--trans); }
+
+    /* ── NAV ── */
+    .nav { position:fixed; top:0; left:0; right:0; height:var(--nav-h); z-index:1000; display:flex; align-items:center; justify-content:space-between; padding:0 clamp(20px,4vw,48px); transition:background var(--trans),border-color var(--trans); }
+    .nav.scrolled { background:color-mix(in srgb,var(--bg) 85%,transparent); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border-bottom:1px solid var(--border); }
+    .nav-logo { font-family:var(--font-display); font-size:1.55rem; letter-spacing:0.12em; color:var(--text); text-decoration:none; transition:color var(--trans); }
+    .nav-logo span { color:var(--accent); transition:color var(--trans); }
+    .nav-links { display:flex; align-items:center; gap:clamp(12px,2vw,32px); list-style:none; }
+    .nav-links a { font-size:0.78rem; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; text-decoration:none; color:var(--text-dim); transition:color 0.2s; white-space:nowrap; }
+    .nav-links a:hover, .nav-links a.active { color:var(--accent); }
+    .theme-toggle { width:48px; height:26px; background:var(--bg-card); border:1px solid var(--border); border-radius:99px; cursor:pointer; position:relative; flex-shrink:0; transition:background var(--trans),border-color var(--trans); }
+    .theme-toggle::after { content:''; position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%; background:var(--accent); transition:transform 0.35s var(--ease-out),background var(--trans); }
+    [data-theme="light"] .theme-toggle::after { transform:translateX(22px); }
+    .toggle-icons { position:absolute; inset:0; display:flex; align-items:center; justify-content:space-between; padding:0 5px; font-size:10px; pointer-events:none; }
+    .nav-hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:4px; }
+    .nav-hamburger span { display:block; width:22px; height:2px; background:var(--text); border-radius:2px; transition:transform 0.3s,opacity 0.3s,background var(--trans); }
+    .nav-hamburger.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity:0; }
+    .nav-hamburger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
+    .nav-mobile { display:flex; flex-direction:column; position:fixed; top:var(--nav-h); left:0; right:0; background:color-mix(in srgb,var(--bg) 96%,transparent); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:20px 24px 28px; z-index:999; visibility:hidden; opacity:0; transform:translateY(-8px); transition:opacity 0.3s var(--ease-out),transform 0.3s var(--ease-out),visibility 0.3s,background var(--trans),border-color var(--trans); pointer-events:none; }
+    .nav-mobile.open { visibility:visible; opacity:1; transform:translateY(0); pointer-events:auto; }
+    .nav-mobile a { font-size:0.9rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; text-decoration:none; color:var(--text-dim); padding:12px 0; border-bottom:1px solid var(--border); opacity:0; transform:translateX(-14px); transition:opacity 0.28s var(--ease-out),transform 0.28s var(--ease-out),color 0.2s,border-color var(--trans); }
+    .nav-mobile a:last-of-type { border-bottom:none; }
+    .nav-mobile a:hover { color:var(--accent); }
+    .nav-mobile.open a:nth-child(1){opacity:1;transform:translateX(0);transition-delay:0.06s}
+    .nav-mobile.open a:nth-child(2){opacity:1;transform:translateX(0);transition-delay:0.11s}
+    .nav-mobile.open a:nth-child(3){opacity:1;transform:translateX(0);transition-delay:0.16s}
+    .nav-mobile.open a:nth-child(4){opacity:1;transform:translateX(0);transition-delay:0.21s}
+    .nav-mobile.open a:nth-child(5){opacity:1;transform:translateX(0);transition-delay:0.26s}
+    .nav-mobile.open a:nth-child(6){opacity:1;transform:translateX(0);transition-delay:0.31s}
+    @media(max-width:768px){ .nav-links{display:none;} .nav-hamburger{display:flex;} }
+
+    /* ── HERO ── */
+    .hero { min-height: 80svh; background:var(--hero-grad); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:calc(var(--nav-h)+40px) clamp(20px,5vw,80px) 80px; text-align:center; position:relative; overflow:hidden; transition:background var(--trans); }
+    .hero-bg-letter { position:absolute; font-family:var(--font-display); font-size:clamp(200px,38vw,520px); color:var(--accent); opacity:0.04; line-height:1; pointer-events:none; user-select:none; letter-spacing:-0.04em; top:50%; left:50%; transform:translate(-50%,-50%); transition:color var(--trans); }
+    .hero-eyebrow { font-size:clamp(0.65rem,1.5vw,0.75rem); letter-spacing:0.35em; text-transform:uppercase; color:var(--accent); margin-bottom:20px; opacity:0; transform:translateY(16px); animation:fadeUp 0.8s var(--ease-out) 0.2s forwards; transition:color var(--trans); }
+    .hero-title { font-family:var(--font-display); font-size:clamp(3.5rem,10vw,9rem); letter-spacing:0.06em; line-height:0.95; color:var(--text); margin-bottom:8px; opacity:0; transform:translateY(24px); animation:fadeUp 0.9s var(--ease-out) 0.35s forwards; transition:color var(--trans); }
+    .hero-title em { font-style:normal; color:var(--accent); transition:color var(--trans); }
+    .hero-subtitle { font-size:clamp(0.88rem,2vw,1.05rem); font-weight:300; color:var(--text-dim); max-width:560px; line-height:1.75; margin:24px auto 0; opacity:0; transform:translateY(16px); animation:fadeUp 0.9s var(--ease-out) 0.55s forwards; transition:color var(--trans); }
+    .hero-scroll { position: absolute; bottom: 36px; top: 87%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; animation: fadeUp 0.8s var(--ease-out) 1.1s forwards; }    .hero-scroll span { font-size:0.65rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--text-muted); }
+    .scroll-line { width:1px; height:40px; background:linear-gradient(to bottom,var(--accent),transparent); animation:scrollPulse 2s ease-in-out 1.5s infinite; }
+    @keyframes scrollPulse { 0%,100%{opacity:.4;transform:scaleY(1)} 50%{opacity:1;transform:scaleY(1.2)} }
+    @keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+    .hero-actions { display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-top:44px; opacity:0; transform:translateY(16px); animation:fadeUp 0.9s var(--ease-out) 0.72s forwards; }
+
+    /* ── BUTTONS ── */
+    .btn-primary { display:inline-flex; align-items:center; gap:10px; padding:15px 32px; background:var(--accent); color:var(--bg); font-family:var(--font-body); font-size:0.8rem; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; text-decoration:none; border-radius:4px; white-space:nowrap; transition:transform 0.2s,box-shadow 0.2s,background var(--trans),color var(--trans); }
+    .btn-primary:hover { transform:translateY(-2px); box-shadow:0 10px 32px var(--accent-glow); }
+    .btn-primary svg { width:15px; height:15px; }
+    .btn-ghost { display:inline-flex; align-items:center; gap:10px; padding:14px 30px; background:transparent; color:var(--text); font-family:var(--font-body); font-size:0.8rem; font-weight:500; letter-spacing:0.14em; text-transform:uppercase; text-decoration:none; border:1px solid var(--border); border-radius:4px; white-space:nowrap; transition:border-color 0.2s,color 0.2s,background var(--trans); }
+    .btn-ghost:hover { border-color:var(--accent); color:var(--accent); }
+    .btn-ghost svg { width:14px; height:14px; }
+
+    /* ── COMMON ── */
+    section { scroll-margin-top:var(--nav-h); }
+    .reveal { opacity:0; transform:translateY(28px); transition:opacity 0.75s var(--ease-out),transform 0.75s var(--ease-out); }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+    .reveal-left { opacity:0; transform:translateX(-32px); transition:opacity 0.75s var(--ease-out),transform 0.75s var(--ease-out); }
+    .reveal-left.visible { opacity:1; transform:translateX(0); }
+    .reveal-right { opacity:0; transform:translateX(32px); transition:opacity 0.75s var(--ease-out),transform 0.75s var(--ease-out); }
+    .reveal-right.visible { opacity:1; transform:translateX(0); }
+    .d1{transition-delay:.05s}.d2{transition-delay:.15s}.d3{transition-delay:.25s}.d4{transition-delay:.35s}.d5{transition-delay:.45s}
+
+    .section-wrap { max-width:1200px; margin:0 auto; padding:clamp(72px,9vw,110px) clamp(20px,4vw,48px); }
+    .section-tag { display:inline-flex; align-items:center; gap:7px; font-size:0.68rem; letter-spacing:0.28em; text-transform:uppercase; color:var(--accent); margin-bottom:18px; transition:color var(--trans); }
+    .section-tag::before { content:''; display:block; width:24px; height:1px; background:var(--accent); transition:background var(--trans); }
+    .section-title { font-family:var(--font-display); font-size:clamp(2.4rem,5.5vw,3.8rem); letter-spacing:0.05em; color:var(--text); margin-bottom:14px; line-height:1; transition:color var(--trans); }
+    .section-title em { font-style:normal; color:var(--accent); transition:color var(--trans); }
+    .section-desc { font-size:clamp(0.9rem,1.5vw,1rem); font-weight:300; color:var(--text-dim); max-width:580px; line-height:1.8; transition:color var(--trans); }
+
+    /* ── PROCESS STEPS ── */
+    .process { border-top:1px solid var(--border); transition:border-color var(--trans); }
+    .process-header { margin-bottom:clamp(48px,6vw,72px); }
+    .steps-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:2px; }
+    @media(max-width:900px){ .steps-grid{ grid-template-columns:repeat(2,1fr); } }
+    @media(max-width:480px){ .steps-grid{ grid-template-columns:1fr; } }
+
+    .step-card { background:var(--bg-card); border:1px solid var(--border); padding:clamp(24px,3vw,36px); position:relative; overflow:hidden; transition:border-color 0.3s,background var(--trans); }
+    .step-card:hover { border-color:var(--accent); }
+    .step-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--accent); transform:scaleX(0); transform-origin:left; transition:transform 0.4s var(--ease-out); }
+    .step-card:hover::before { transform:scaleX(1); }
+    .step-num { font-family:var(--font-display); font-size:3.2rem; color:var(--accent); opacity:0.1; line-height:1; letter-spacing:-0.04em; margin-bottom:16px; transition:color var(--trans),opacity 0.3s; }
+    .step-card:hover .step-num { opacity:0.2; }
+    .step-icon { width:38px; height:38px; border:1px solid var(--border); border-radius:6px; display:flex; align-items:center; justify-content:center; color:var(--accent); background:var(--accent-soft); margin-bottom:16px; transition:border-color 0.2s,background var(--trans),color var(--trans); }
+    .step-icon svg { width:17px; height:17px; }
+    .step-card:hover .step-icon { border-color:var(--accent); }
+    .step-name { font-family:var(--font-display); font-size:1.2rem; letter-spacing:0.08em; color:var(--text); margin-bottom:8px; transition:color var(--trans); }
+    .step-desc { font-size:0.83rem; font-weight:300; line-height:1.72; color:var(--text-dim); transition:color var(--trans); }
+    .step-connector { position:absolute; top:50%; right:-1px; width:20px; height:2px; background:var(--accent); opacity:0.2; transform:translateY(-50%); }
+    @media(max-width:900px){ .step-connector{ display:none; } }
+
+    /* ── BIG CTA BLOCK ── */
+    .cta-block { background:var(--bg-surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border); transition:background var(--trans),border-color var(--trans); }
+    .cta-block-inner { max-width:1200px; margin:0 auto; padding:clamp(64px,8vw,100px) clamp(20px,4vw,48px); display:grid; grid-template-columns:1fr 1fr; gap:clamp(40px,6vw,80px); align-items:center; }
+    @media(max-width:760px){ .cta-block-inner{ grid-template-columns:1fr; } }
+    .cta-left-eyebrow { font-size:0.68rem; letter-spacing:0.32em; text-transform:uppercase; color:var(--accent); margin-bottom:16px; display:flex; align-items:center; gap:10px; transition:color var(--trans); }
+    .cta-left-eyebrow::before { content:''; display:block; width:24px; height:1px; background:var(--accent); }
+    .cta-left-title { font-family:var(--font-display); font-size:clamp(2.4rem,5.5vw,4rem); letter-spacing:0.05em; line-height:0.96; color:var(--text); margin-bottom:20px; transition:color var(--trans); }
+    .cta-left-title em { font-style:normal; color:var(--accent); transition:color var(--trans); }
+    .cta-left-body { font-size:clamp(0.9rem,1.5vw,1rem); font-weight:300; line-height:1.82; color:var(--text-dim); margin-bottom:36px; transition:color var(--trans); }
+    .cta-right-card { background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:clamp(28px,4vw,44px); position:relative; overflow:hidden; transition:background var(--trans),border-color var(--trans); }
+    .cta-right-card::before { content:''; position:absolute; top:-1px; left:10%; right:10%; height:2px; background:var(--stripe); transition:background var(--trans); }
+    .cta-feature-list { list-style:none; display:flex; flex-direction:column; gap:14px; margin-bottom:32px; }
+    .cta-feature-list li { display:flex; align-items:flex-start; gap:12px; font-size:0.88rem; color:var(--text-dim); line-height:1.55; transition:color var(--trans); }
+    .cta-feature-list li::before { content:''; display:block; width:5px; height:5px; border-radius:50%; background:var(--accent); margin-top:6px; flex-shrink:0; transition:background var(--trans); }
+    .cta-feature-list strong { color:var(--text); font-weight:500; }
+    .cta-btn-large { display:flex; align-items:center; justify-content:center; gap:12px; padding:18px 32px; background:var(--accent); color:var(--bg); font-family:var(--font-body); font-size:0.88rem; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; text-decoration:none; border-radius:4px; width:100%; transition:transform 0.2s,box-shadow 0.2s,background var(--trans),color var(--trans); }
+    .cta-btn-large:hover { transform:translateY(-2px); box-shadow:0 12px 36px var(--accent-glow); }
+    .cta-btn-large svg { width:16px; height:16px; }
+    .cta-note { font-size:0.72rem; color:var(--text-muted); text-align:center; margin-top:12px; letter-spacing:0.04em; transition:color var(--trans); }
+
+    /* ── CALENDAR ── */
+    .calendar-section { border-top:1px solid var(--border); transition:border-color var(--trans); }
+    .calendar-grid { display:grid; grid-template-columns:1fr auto; gap:clamp(40px,6vw,80px); align-items:start; margin-top:clamp(40px,5vw,56px); }
+    @media(max-width:760px){ .calendar-grid{ grid-template-columns:1fr; } }
+
+    .cal-wrap { background:var(--bg-card); border:1px solid var(--border); border-radius:6px; overflow:hidden; transition:background var(--trans),border-color var(--trans); }
+    .cal-nav { display:flex; align-items:center; justify-content:space-between; padding:20px 24px; border-bottom:1px solid var(--border); transition:border-color var(--trans); }
+    .cal-btn { width:36px; height:36px; border:1px solid var(--border); border-radius:4px; background:transparent; cursor:pointer; color:var(--text-dim); display:flex; align-items:center; justify-content:center; transition:border-color 0.2s,color 0.2s,background var(--trans); }
+    .cal-btn:hover { border-color:var(--accent); color:var(--accent); }
+    .cal-month { font-family:var(--font-display); font-size:1.2rem; letter-spacing:0.12em; color:var(--text); transition:color var(--trans); }
+    .cal-weekdays { display:grid; grid-template-columns:repeat(7,1fr); padding:12px 16px 6px; gap:2px; }
+    .cal-weekday { text-align:center; font-size:0.64rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-muted); padding:6px 0; transition:color var(--trans); }
+    .cal-days { display:grid; grid-template-columns:repeat(7,1fr); padding:0 16px 16px; gap:3px; }
+    .cal-day { aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:0.82rem; color:var(--text-dim); border-radius:4px; cursor:default; transition:color var(--trans),background 0.2s; }
+    .cal-day.empty { background:transparent; }
+    .cal-day.today { color:var(--accent); font-weight:600; border:1px solid var(--accent); }
+    .cal-day.booked-full { background:rgba(220,50,50,0.12); color:#e05555; }
+    .cal-day.booked-partial { background:rgba(255,138,0,0.12); color:var(--accent); }
+    .cal-day.hard-to-book { background:rgba(255,200,0,0.08); color:#c8a800; }
+
+    .cal-sidebar { min-width:240px; display:flex; flex-direction:column; gap:24px; }
+    .cal-legend { display:flex; flex-direction:column; gap:12px; }
+    .cal-legend-item { display:flex; align-items:center; gap:12px; font-size:0.82rem; color:var(--text-dim); line-height:1.4; transition:color var(--trans); }
+    .cal-dot { width:12px; height:12px; border-radius:3px; flex-shrink:0; }
+    .dot-free { background:var(--bg-card); border:1px solid var(--border); }
+    .dot-partial { background:rgba(255,138,0,0.2); border:1px solid rgba(255,138,0,0.4); }
+    .dot-full { background:rgba(220,50,50,0.18); border:1px solid rgba(220,50,50,0.4); }
+    .dot-hard { background:rgba(255,200,0,0.14); border:1px solid rgba(255,200,0,0.4); }
+    .cal-note { font-size:0.82rem; font-weight:300; color:var(--text-dim); line-height:1.7; padding:16px; background:var(--bg-card); border:1px solid var(--border); border-radius:6px; transition:background var(--trans),border-color var(--trans),color var(--trans); }
+    .cal-cta-link { display:inline-flex; align-items:center; gap:8px; font-size:0.78rem; letter-spacing:0.12em; text-transform:uppercase; font-weight:600; color:var(--accent); text-decoration:none; transition:gap 0.2s,color var(--trans); margin-top:4px; }
+    .cal-cta-link:hover { gap:14px; }
+    .cal-cta-link svg { width:14px; height:14px; }
+
+    /* ── MAP ── */
+    .map-section { border-top:1px solid var(--border); transition:border-color var(--trans); }
+    #leaflet-map { height:380px; border-radius:6px; overflow:hidden; border:1px solid var(--border); margin-top:clamp(36px,4vw,52px); transition:border-color var(--trans); }
+    .map-tiles-dark { filter:invert(1) hue-rotate(180deg) brightness(0.85) saturate(0.7); }
+
+    .map-zones { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; margin-top:2px; }
+    @media(max-width:700px){ .map-zones{ grid-template-columns:1fr; } }
+    .map-zone-card { background:var(--bg-card); border:1px solid var(--border); padding:clamp(20px,3vw,32px); position:relative; overflow:hidden; transition:border-color 0.3s,background var(--trans); }
+    .map-zone-card:hover { border-color:var(--accent); }
+    .map-zone-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--accent); transform:scaleX(0); transform-origin:left; transition:transform 0.4s var(--ease-out); }
+    .map-zone-card:hover::before { transform:scaleX(1); }
+    .map-zone-tag { font-size:0.66rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--accent); margin-bottom:8px; transition:color var(--trans); }
+    .map-zone-name { font-family:var(--font-display); font-size:1.6rem; letter-spacing:0.08em; color:var(--text); margin-bottom:10px; transition:color var(--trans); }
+    .map-zone-detail { font-size:0.83rem; font-weight:300; line-height:1.7; color:var(--text-dim); transition:color var(--trans); }
+
+    /* travel info strip */
+    .travel-strip { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; margin-top:2px; }
+    @media(max-width:700px){ .travel-strip{ grid-template-columns:1fr; } }
+    .travel-card { background:var(--bg-surface); border:1px solid var(--border); padding:clamp(18px,2.5vw,28px); display:flex; align-items:flex-start; gap:14px; transition:border-color 0.3s,background var(--trans); }
+    .travel-card:hover { border-color:var(--accent); }
+    .travel-icon { width:36px; height:36px; border:1px solid var(--border); border-radius:6px; display:flex; align-items:center; justify-content:center; color:var(--accent); background:var(--accent-soft); flex-shrink:0; transition:border-color 0.2s,background var(--trans),color var(--trans); }
+    .travel-icon svg { width:16px; height:16px; }
+    .travel-card:hover .travel-icon { border-color:var(--accent); }
+    .travel-text strong { display:block; font-size:0.86rem; font-weight:600; color:var(--text); margin-bottom:4px; transition:color var(--trans); }
+    .travel-text span { font-size:0.8rem; font-weight:300; color:var(--text-dim); line-height:1.6; transition:color var(--trans); }
+
+    /* ── FAQ ── */
+    .faq-section { border-top:1px solid var(--border); transition:border-color var(--trans); }
+    .faq-cols { display:grid; grid-template-columns:1fr 1fr; gap:2px; margin-top:clamp(40px,5vw,56px); }
+    @media(max-width:760px){ .faq-cols{ grid-template-columns:1fr; } }
+    .faq-col { display:flex; flex-direction:column; gap:0; }
+    .faq-item { border-bottom:1px solid var(--border); transition:border-color var(--trans); }
+    .faq-item:first-child { border-top:1px solid var(--border); }
+    .faq-question { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:20px 0; cursor:pointer; user-select:none; }
+    .faq-q-text { font-size:0.92rem; font-weight:500; color:var(--text); transition:color 0.2s; }
+    .faq-item.open .faq-q-text { color:var(--accent); }
+    .faq-icon { width:28px; height:28px; border:1px solid var(--border); border-radius:4px; display:flex; align-items:center; justify-content:center; flex-shrink:0; color:var(--text-muted); transition:border-color 0.2s,color 0.2s,transform 0.3s,background var(--trans); }
+    .faq-item.open .faq-icon { border-color:var(--accent); color:var(--accent); transform:rotate(45deg); }
+    .faq-answer { max-height:0; overflow:hidden; transition:max-height 0.45s var(--ease-out); }
+    .faq-answer-inner { font-size:0.86rem; font-weight:300; line-height:1.78; color:var(--text-dim); padding:0 0 20px; transition:color var(--trans); }
+
+    /* ── CONTACT CARDS ── */
+    .contact-section { background:var(--bg-surface); border-top:1px solid var(--border); transition:background var(--trans),border-color var(--trans); }
+    .contact-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:2px; margin-top:clamp(40px,5vw,56px); }
+    @media(max-width:900px){ .contact-grid{ grid-template-columns:repeat(2,1fr); } }
+    @media(max-width:500px){ .contact-grid{ grid-template-columns:1fr; } }
+    .contact-card { background:var(--bg-card); border:1px solid var(--border); padding:clamp(22px,3vw,32px); display:flex; flex-direction:column; gap:12px; transition:border-color 0.3s,background var(--trans); }
+    .contact-card:hover { border-color:var(--accent); }
+    .contact-card-icon { width:40px; height:40px; border:1px solid var(--border); border-radius:6px; display:flex; align-items:center; justify-content:center; color:var(--accent); background:var(--accent-soft); transition:border-color 0.2s,background var(--trans),color var(--trans); }
+    .contact-card:hover .contact-card-icon { border-color:var(--accent); }
+    .contact-card-icon svg { width:18px; height:18px; }
+    .contact-card-label { font-size:0.66rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--text-muted); transition:color var(--trans); }
+    .contact-card-value { font-size:0.92rem; color:var(--text); font-weight:500; line-height:1.4; transition:color var(--trans); }
+    .contact-card-value a { color:inherit; text-decoration:none; transition:color 0.2s; }
+    .contact-card-value a:hover { color:var(--accent); }
+    .contact-card-sub { font-size:0.78rem; font-weight:300; color:var(--text-dim); line-height:1.5; transition:color var(--trans); }
+
+    /* ── BOTTOM CTA STRIP ── */
+    .bottom-cta { border-top:1px solid var(--border); transition:border-color var(--trans); }
+    .bottom-cta-inner { max-width:1200px; margin:0 auto; padding:clamp(56px,8vw,96px) clamp(20px,4vw,48px); }
+    .bottom-cta-card { border:1px solid var(--border); border-radius:8px; padding:clamp(36px,5vw,64px); display:flex; align-items:center; justify-content:space-between; gap:32px; flex-wrap:wrap; background:var(--bg-card); position:relative; overflow:hidden; transition:background var(--trans),border-color var(--trans); }
+    .bottom-cta-card::before { content:''; position:absolute; top:-1px; left:10%; right:10%; height:2px; background:var(--stripe); transition:background var(--trans); }
+    .bottom-cta-eyebrow { font-size:0.68rem; letter-spacing:0.28em; text-transform:uppercase; color:var(--accent); margin-bottom:8px; transition:color var(--trans); }
+    .bottom-cta-title { font-family:var(--font-display); font-size:clamp(1.6rem,4vw,2.8rem); letter-spacing:0.06em; color:var(--text); transition:color var(--trans); }
+
+    /* ── FOOTER ── */
+    .mlx-footer { background:var(--bg); border-top:1px solid var(--border); position:relative; overflow:hidden; transition:background var(--trans),border-color var(--trans); }
+    .mlx-footer::before { content:''; position:absolute; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E"); opacity:var(--noise-op); pointer-events:none; z-index:0; transition:opacity var(--trans); }
+    .footer-stripe-line { height:3px; background:var(--stripe); transform-origin:left; transform:scaleX(0); transition:transform 1s var(--ease-out) 0.2s,background var(--trans); }
+    .footer-stripe-line.visible { transform:scaleX(1); }
+    .footer-main-grid { position:relative; z-index:1; max-width:1200px; margin:0 auto; padding:72px 40px 48px; display:grid; grid-template-columns:2fr 1fr 1fr 1.4fr; gap:48px 40px; }
+    @media(max-width:960px){ .footer-main-grid{ grid-template-columns:1fr 1fr; padding:56px 28px 40px; } }
+    @media(max-width:600px){ .footer-main-grid{ grid-template-columns:1fr; padding:48px 24px 32px; gap:36px; } }
+    .footer-reveal { opacity:0; transform:translateY(22px); transition:opacity 0.7s var(--ease-out),transform 0.7s var(--ease-out); }
+    .footer-reveal.visible { opacity:1; transform:translateY(0); }
+    .footer-reveal:nth-child(1){transition-delay:0.05s} .footer-reveal:nth-child(2){transition-delay:0.15s}
+    .footer-reveal:nth-child(3){transition-delay:0.25s} .footer-reveal:nth-child(4){transition-delay:0.35s}
+    .f-brand-logo { font-family:var(--font-display); font-size:3rem; letter-spacing:0.12em; color:var(--text); line-height:1; margin-bottom:6px; display:inline-block; transition:color var(--trans); }
+    .f-brand-logo span { color:var(--accent); transition:color var(--trans); }
+    .f-brand-tagline { font-size:0.7rem; letter-spacing:0.32em; text-transform:uppercase; color:var(--text-muted); margin-bottom:20px; transition:color var(--trans); }
+    .f-brand-desc { font-size:0.88rem; line-height:1.75; color:var(--footer-desc); max-width:280px; margin-bottom:28px; transition:color var(--trans); }
+    .f-social-row { display:flex; gap:12px; flex-wrap:wrap; }
+    .f-social-btn { display:flex; align-items:center; gap:8px; padding:9px 16px; border:1px solid var(--border); border-radius:4px; text-decoration:none; color:var(--text-muted); font-size:0.78rem; letter-spacing:0.06em; font-weight:500; position:relative; overflow:hidden; transition:border-color 0.25s,color 0.25s,transform 0.2s,background var(--trans); }
+    .f-social-btn::after { content:''; position:absolute; inset:0; background:var(--accent); opacity:0; transition:opacity 0.25s; z-index:-1; }
+    .f-social-btn:hover { border-color:var(--accent); color:var(--bg); transform:translateY(-2px); }
+    .f-social-btn:hover::after { opacity:1; }
+    .f-social-btn svg { width:15px; height:15px; flex-shrink:0; }
+    .f-col-title { font-family:var(--font-display); font-size:0.95rem; letter-spacing:0.22em; color:var(--accent); text-transform:uppercase; margin-bottom:22px; display:flex; align-items:center; gap:10px; transition:color var(--trans); }
+    .f-col-title::after { content:''; flex:1; height:1px; background:var(--border); transition:background var(--trans); }
+    .f-links { list-style:none; display:flex; flex-direction:column; gap:10px; }
+    .f-links a { color:var(--text-muted); text-decoration:none; font-size:0.88rem; display:flex; align-items:center; gap:8px; transition:color 0.2s,gap 0.2s; }
+    .f-links a::before { content:''; width:6px; height:1px; background:var(--accent); opacity:0; transition:opacity 0.2s,width 0.2s,background var(--trans); }
+    .f-links a:hover { color:var(--text); gap:12px; }
+    .f-links a:hover::before { opacity:1; width:10px; }
+    .f-contact-item { display:flex; align-items:flex-start; gap:12px; margin-bottom:18px; }
+    .f-contact-icon { width:36px; height:36px; border:1px solid var(--border); border-radius:4px; display:flex; align-items:center; justify-content:center; flex-shrink:0; color:var(--accent); transition:border-color 0.2s,background 0.2s,color var(--trans); }
+    .f-contact-item:hover .f-contact-icon { border-color:var(--accent); background:var(--accent-soft); }
+    .f-contact-label { font-size:0.7rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-muted); margin-bottom:3px; transition:color var(--trans); }
+    .f-contact-value { font-size:0.86rem; color:var(--text); transition:color var(--trans); }
+    .f-contact-value a { color:inherit; text-decoration:none; transition:color 0.2s; }
+    .f-contact-value a:hover { color:var(--accent); }
+    .f-stats-band { position:relative; z-index:1; max-width:1200px; margin:0 auto; padding:0 40px 40px; display:grid; grid-template-columns:repeat(4,1fr); gap:1px; border-top:1px solid var(--border); transition:border-color var(--trans); }
+    @media(max-width:960px){ .f-stats-band{ grid-template-columns:repeat(2,1fr); padding:0 28px 32px; } }
+    @media(max-width:600px){ .f-stats-band{ padding:0 24px 28px; } }
+    .f-stat-item { padding:28px 20px; text-align:center; opacity:0; transform:translateY(14px); border-right:1px solid var(--border); transition:opacity 0.6s var(--ease-out),transform 0.6s var(--ease-out),border-color var(--trans); }
+    .f-stat-item:last-child { border-right:none; }
+    .f-stat-item.visible { opacity:1; transform:translateY(0); }
+    .f-stat-item:nth-child(1){transition-delay:0.1s} .f-stat-item:nth-child(2){transition-delay:0.2s}
+    .f-stat-item:nth-child(3){transition-delay:0.3s} .f-stat-item:nth-child(4){transition-delay:0.4s}
+    .f-stat-number { font-family:var(--font-display); font-size:2.4rem; letter-spacing:0.05em; color:var(--text); line-height:1; margin-bottom:4px; transition:color var(--trans); }
+    .f-stat-number span { color:var(--accent); transition:color var(--trans); }
+    .f-stat-label { font-size:0.7rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--text-muted); transition:color var(--trans); }
+    .f-cta-wrap { position:relative; z-index:1; max-width:1200px; margin:0 auto 40px; padding:0 40px; }
+    @media(max-width:600px){ .f-cta-wrap{ padding:0 24px; } }
+    .f-cta-inner { border:1px solid var(--border); border-radius:6px; padding:32px 40px; display:flex; align-items:center; justify-content:space-between; gap:24px; background:var(--bg-surface); opacity:0; transform:translateY(16px); transition:opacity 0.7s var(--ease-out) 0.3s,transform 0.7s var(--ease-out) 0.3s,background var(--trans),border-color var(--trans); flex-wrap:wrap; }
+    .f-cta-inner.visible { opacity:1; transform:translateY(0); }
+    .f-cta-eyebrow { font-size:0.68rem; letter-spacing:0.26em; text-transform:uppercase; color:var(--accent); margin-bottom:6px; transition:color var(--trans); }
+    .f-cta-title { font-family:var(--font-display); font-size:1.7rem; letter-spacing:0.06em; color:var(--text); transition:color var(--trans); }
+    .f-cta-btn { display:inline-flex; align-items:center; gap:10px; padding:14px 30px; background:var(--accent); color:var(--bg); font-size:0.82rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; text-decoration:none; border-radius:4px; transition:transform 0.2s,box-shadow 0.2s,background var(--trans),color var(--trans); white-space:nowrap; }
+    .f-cta-btn:hover { transform:translateY(-2px); box-shadow:0 8px 28px var(--accent-glow); }
+    .f-cta-btn svg { width:16px; height:16px; }
+    .f-bottom { position:relative; z-index:1; border-top:1px solid var(--border); padding:18px 40px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; transition:border-color var(--trans); }
+    @media(max-width:600px){ .f-bottom{ padding:18px 24px; flex-direction:column; text-align:center; } }
+    .f-copy { font-size:0.75rem; color:var(--text-muted); letter-spacing:0.04em; transition:color var(--trans); }
+    .f-copy span { color:var(--accent); transition:color var(--trans); }
+    .f-legal { display:flex; gap:20px; }
+    .f-legal a { font-size:0.72rem; color:var(--text-muted); text-decoration:none; letter-spacing:0.08em; transition:color 0.2s; }
+    .f-legal a:hover { color:var(--text); }
+    .back-top { position:fixed; bottom:32px; right:32px; width:44px; height:44px; background:var(--bg-surface); border:1px solid var(--border); border-radius:4px; display:flex; align-items:center; justify-content:center; color:var(--accent); cursor:pointer; opacity:0; transform:translateY(12px); transition:opacity 0.3s,transform 0.3s,border-color 0.2s,background var(--trans); z-index:99; }
+    .back-top.show { opacity:1; transform:translateY(0); }
+    .back-top:hover { border-color:var(--accent); }
+    .back-top svg { width:18px; height:18px; }
+    @media(max-width:480px){ .back-top{ bottom:20px; right:20px; } }
+  </style>
+</head>
+<body>
+
+<button class="back-top" id="backToTop" aria-label="Zpět nahoru" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<!-- NAV -->
+<nav class="nav" id="mainNav">
+  <a href="index.html" class="nav-logo">ML<span>X</span> MEDIA</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Domů</a></li>
+    <li><a href="O-mně.html">O mně</a></li>
+    <li><a href="Portfolio.html">Portfolio</a></li>
+    <li><a href="Aspekty.html">Aspekty</a></li>
+    <li><a href="Ceník.html">Ceník</a></li>
+    <li><a href="Objednávkový-formulář.html" class="active">Objednávka</a></li>
+  </ul>
+  <div style="display:flex;align-items:center;gap:14px;">
+    <button class="theme-toggle" id="themeToggle" aria-label="Přepnout téma">
+      <div class="toggle-icons"><span>🌙</span><span>☀️</span></div>
+    </button>
+    <div class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+
+<div class="nav-mobile" id="mobileMenu">
+  <a href="index.html">Domů</a>
+  <a href="O-mně.html">O mně</a>
+  <a href="Portfolio.html">Portfolio</a>
+  <a href="Aspekty.html">Aspekty</a>
+  <a href="Ceník.html">Ceník</a>
+  <a href="Objednávkový-formulář.html">Objednávka</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-bg-letter" aria-hidden="true">O</div>
+  <div class="hero-eyebrow">MLX Media · Začněte spolupráci</div>
+  <h1 class="hero-title">Pojďme<br>to <em>natočit.</em></h1>
+  <p class="hero-subtitle">Řekněte mi o svém projektu — já se postarám o zbytek. Od první zprávy po finální video jsem tu pro vás osobně.</p>
+  <div class="hero-actions">
+    <a href="Objednávkový-formulář.html" class="btn-primary">
+      Vyplnit objednávku
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+    <a href="Ceník.html" class="btn-ghost">
+      Prohlédnout ceník
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+  </div>
+  <div class="hero-scroll"><span>Scroll</span><div class="scroll-line"></div></div>
+</section>
+
+<!-- PROCESS STEPS -->
+<section id="postup" class="process">
+  <div class="section-wrap">
+    <div class="process-header reveal">
+      <div class="section-tag">Jak to funguje</div>
+      <h2 class="section-title">Od nápadu<br><em>k hotovému videu</em></h2>
+      <p class="section-desc">Pět jasných kroků. Žádné překvapení, žádné zbytečné čekání.</p>
+    </div>
+
+    <div class="steps-grid">
+      <div class="step-card reveal d1">
+        <div class="step-num" aria-hidden="true">01</div>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        </div>
+        <div class="step-name">Poptávka</div>
+        <p class="step-desc">Vyplníte objednávkový formulář — popíšete projekt, termín a představu. Odpovím do 24 hodin.</p>
+        <div class="step-connector"></div>
+      </div>
+      <div class="step-card reveal d2">
+        <div class="step-num" aria-hidden="true">02</div>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        </div>
+        <div class="step-name">Konzultace</div>
+        <p class="step-desc">Zavolám vám nebo si napíšeme. Upřesním detaily, navrhnu řešení a domluvíme termín natáčení.</p>
+        <div class="step-connector"></div>
+      </div>
+      <div class="step-card reveal d3">
+        <div class="step-num" aria-hidden="true">03</div>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M22 8l-5 4 5 4V8z"/></svg>
+        </div>
+        <div class="step-name">Natáčení</div>
+        <p class="step-desc">Přijedu na domluvené místo s celou technikou. Natáčíme dle scénáře nebo run-and-gun stylem.</p>
+        <div class="step-connector"></div>
+      </div>
+      <div class="step-card reveal d4">
+        <div class="step-num" aria-hidden="true">04</div>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div class="step-name">Střih & post</div>
+        <p class="step-desc">Střih, color grading, zvuk a grafika. Pošlu vám náhled, zapracuji vaše připomínky (2× v ceně).</p>
+        <div class="step-connector"></div>
+      </div>
+      <div class="step-card reveal d5">
+        <div class="step-num" aria-hidden="true">05</div>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </div>
+        <div class="step-name">Dodání</div>
+        <p class="step-desc">Do 4–8 dní od natáčení dostanete finální video ve všech domluvených formátech. Hotovo.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BIG CTA BLOCK -->
+<section id="objednat" class="cta-block">
+  <div class="cta-block-inner">
+    <div class="reveal-left">
+      <div class="cta-left-eyebrow">Objednávkový formulář</div>
+      <h2 class="cta-left-title">Řekněte mi<br>o svém<br><em>projektu.</em></h2>
+      <p class="cta-left-body">
+        Formulář vám zabere asi 3 minuty. Čím víc mi toho řeknete, tím přesnější nabídku dostanete. Nejste si jistí rozsahem nebo cenou? Vyplňte co víte — zbytek dořešíme přes telefon nebo email.
+      </p>
+      <a href="Objednávkový-formulář.html" class="btn-primary">
+        Přejít na formulář
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+
+    <div class="reveal-right">
+      <div class="cta-right-card">
+        <ul class="cta-feature-list">
+          <li><strong>Odpovím do 24 hodin</strong> — přes email nebo telefon, podle vašich preferencí</li>
+          <li><strong>Žádné závazky předem</strong> — formulář je nezávazná poptávka, ne smlouva</li>
+          <li><strong>2 revize zdarma</strong> — v ceně každého projektu, bez zbytečných diskuzí</li>
+          <li><strong>50 % záloha při potvrzení</strong> — zbytek po dodání finálního videa</li>
+          <li><strong>Dodání 4–8 pracovních dní</strong> — expresní možné, domluvíme se</li>
+          <li><strong>Celá ČR na požádání</strong> — Beroun, Praha 5 a Praha 6 bez příplatku</li>
+        </ul>
+        <a href="Objednávkový-formulář.html" class="cta-btn-large">
+          Vyplnit objednávku
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        <p class="cta-note">Nezávazná poptávka · Odpovím do 24 h</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CALENDAR -->
+<section id="kalendar" class="calendar-section">
+  <div class="section-wrap">
+    <div class="reveal">
+      <div class="section-tag">Dostupnost</div>
+      <h2 class="section-title">Kdy jsem <em>volný</em></h2>
+      <p class="section-desc">Termíny se obsazují rychle, zvláště o víkendech. Plánujte dopředu — napište mi a domluvíme se.</p>
+    </div>
+
+    <div class="calendar-grid reveal">
+      <div class="cal-wrap">
+        <div class="cal-nav">
+          <button class="cal-btn" id="cal-prev">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <div class="cal-month" id="cal-month-label">Duben 2025</div>
+          <button class="cal-btn" id="cal-next">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+        <div class="cal-weekdays">
+          <div class="cal-weekday">Po</div><div class="cal-weekday">Út</div><div class="cal-weekday">St</div>
+          <div class="cal-weekday">Čt</div><div class="cal-weekday">Pá</div><div class="cal-weekday">So</div><div class="cal-weekday">Ne</div>
+        </div>
+        <div class="cal-days" id="cal-days"></div>
+      </div>
+
+      <div class="cal-sidebar">
+        <div>
+          <div class="section-tag" style="margin-bottom:16px;">Legenda</div>
+          <div class="cal-legend">
+            <div class="cal-legend-item"><div class="cal-dot dot-free"></div>Volno — lze rezervovat</div>
+            <div class="cal-legend-item"><div class="cal-dot dot-partial"></div>Pouze prioritní projekty</div>
+            <div class="cal-legend-item"><div class="cal-dot dot-hard"></div>Možné, ale hůře — domluvte se</div>
+            <div class="cal-legend-item"><div class="cal-dot dot-full"></div>Plně obsazeno</div>
+          </div>
+        </div>
+        <div class="cal-note">
+          Volné dny nejsou označeny. Chcete konkrétní termín? Napište mi — odpovím do 24 hodin.
+        </div>
+        <a href="Objednávkový-formulář.html" class="cal-cta-link">
+          Zarezervovat termín
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAP + TRAVEL -->
+<section id="mapa" class="map-section">
+  <div class="section-wrap">
+    <div class="reveal">
+      <div class="section-tag">Oblast pokrytí</div>
+      <h2 class="section-title">Kde a <em>jak točím</em></h2>
+      <p class="section-desc">Primárně Praha a okolí. Na vzdálenější lokace se domluvíme individuálně — nebojte se zeptat.</p>
+    </div>
+
+    <div id="leaflet-map" class="reveal"></div>
+
+    <div class="map-zones">
+      <div class="map-zone-card reveal d1">
+        <div class="map-zone-tag">Zóna A · Bez příplatku</div>
+        <div class="map-zone-name">BEROUN</div>
+        <div class="map-zone-detail">Beroun a okolí do 5 km. Cestovné není účtováno, skvělé pro outdoor natáčení v přírodě nebo historickém centru.</div>
+      </div>
+      <div class="map-zone-card reveal d2">
+        <div class="map-zone-tag">Zóna A · Bez příplatku</div>
+        <div class="map-zone-name">PRAHA 5</div>
+        <div class="map-zone-detail">Smíchov, Stodůlky, Zličín a okolí. Výborná dostupnost MHD, bez příplatku za dopravu.</div>
+      </div>
+      <div class="map-zone-card reveal d3">
+        <div class="map-zone-tag">Zóna A · Bez příplatku</div>
+        <div class="map-zone-name">PRAHA 6</div>
+        <div class="map-zone-detail">Dejvice, Bubeneč, Řepy, Ruzyně. Bez příplatku, blízko mezinárodního letiště — vhodné i pro letištní záběry.</div>
+      </div>
+    </div>
+
+    <!-- How I travel -->
+    <div class="travel-strip">
+      <div class="travel-card reveal d1">
+        <div class="travel-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        </div>
+        <div class="travel-text">
+          <strong>Auto nebo veřejná doprava</strong>
+          <span>Do Prahy jezdím MHD nebo autem podle povahy projektu. Těžká technika = auto, rychlé natáčení = metro.</span>
+        </div>
+      </div>
+      <div class="travel-card reveal d2">
+        <div class="travel-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div class="travel-text">
+          <strong>Celá Česká republika</strong>
+          <span>Na zajímavé projekty jedu kamkoliv po ČR. Cestovné nad rámec primárních zón účtuji individuálně.</span>
+        </div>
+      </div>
+      <div class="travel-card reveal d3">
+        <div class="travel-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="travel-text">
+          <strong>Flexibilní termíny</strong>
+          <span>Natáčím ve všední dny i o víkendech. Ranní i odpolední světlo, vnitřní i venkovní lokace.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="faq-section">
+  <div class="section-wrap">
+    <div class="reveal">
+      <div class="section-tag">Časté otázky</div>
+      <h2 class="section-title">Co vás <em>zajímá</em></h2>
+    </div>
+
+    <div class="faq-cols">
+      <div class="faq-col">
+        <div class="faq-item reveal">
+          <div class="faq-question">
+            <span class="faq-q-text">Jak probíhá platba?</span>
+            <div class="faq-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+          </div>
+          <div class="faq-answer"><div class="faq-answer-inner">Platba ve dvou krocích: 50 % záloha při potvrzení projektu, zbývajících 50 % po dodání finálního videa. Přijímám bankovní převod nebo hotovost.</div></div>
+        </div>
+        <div class="faq-item reveal">
+          <div class="faq-question">
+            <span class="faq-q-text">Jak dlouho trvá dodání?</span>
+            <div class="faq-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+          </div>
+          <div class="faq-answer"><div class="faq-answer-inner">Standardní dodací lhůta je 4–10 pracovních dní od natáčení ale záleží na velikosti projektu. Potřebujete to dřív? Expresní dodání do 48 hodin je možné za příplatek — napište mi a domluvíme se.</div></div>
+        </div>
+        <div class="faq-item reveal">
+          <div class="faq-question">
+            <span class="faq-q-text">Co jsou revize a kolik jich dostanu?</span>
+            <div class="faq-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+          </div>
+          <div class="faq-answer"><div class="faq-answer-inner">Revize = jedno kolo zpětné vazby, kdy mi pošlete seznam změn a já je zapracuji. Každý projekt zahrnuje 2 kola revizí zdarma. Další kola jsou možná za příplatek.</div></div>
+        </div>
+        <div class="faq-item reveal">
+          <div class="faq-question">
+            <span class="faq-q-text">V jakých formátech dodáte video?</span>
+            <div class="faq-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+          </div>
+          <div class="faq-answer"><div class="faq-answer-inner">Masterfile vždy dostanete v nejvyšší kvalitě (MP4, H.265). Další exporty dle potřeby — YouTube 4K, Instagram Reels, TikTok, web, TV a další. Každý extra formát je malý příplatek.</div></div>
+        </div>
+      </div>
+
+      <div class="faq-col">
+        <div class="faq-item reveal">
+          <div class="faq-question">
+            <span class="faq-q-text">Točíte i mimo Prahu a Beroun?</span>
+            <div class="faq-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+          </div>
+          <div class="faq-answer"><div class="faq-answer-inner">Ano. Pokrývám celou ČR a v případě zajímavého projektu i okolní státy. Pro lokace mimo primární zóny (Praha 5, Praha 6, Beroun) domluvíme cestovné individuálně — většinou se jedná o náklady na dopravu.</div></div>
+        </div>
+        <div class="faq-item reveal">
+          <div class="faq-question">
+            <span class="faq-q-text">Jak se dostanete na místo natáčení?</span>
+            <div class="faq-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+          </div>
+          <div class="faq-answer"><div class="faq-answer-inner">V Praze používám MHD nebo auto podle množství techniky. Na vzdálenější lokace mám menší problém přepravy a je promě složitější se tam dostat ale vše jde domluvit</div></div>
+        </div>
+        <div class="faq-item reveal">
+          <div class="faq-question">
+            <span class="faq-q-text">Co když se natáčení protáhne?</span>
+            <div class="faq-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+          </div>
+          <div class="faq-answer"><div class="faq-answer-inner">Každá hodina nad rámec dohodnutého času se účtuje jako přesčas. O překročení vás vždy informuji předem — nikdy nic nepřekvapivě neprodloužím bez vašeho vědomí.</div></div>
+        </div>
+        <div class="faq-item reveal">
+          <div class="faq-question">
+            <span class="faq-q-text">Potřebuji mít scénář připravený předem?</span>
+            <div class="faq-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+          </div>
+          <div class="faq-answer"><div class="faq-answer-inner">Ne, není to povinné. Můžete přijít jen s nápadem a my scénář nebo shot list vypracujeme společně při konzultaci. Samozřejmně scénář se velmi hodí</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT CARDS -->
+<section id="kontakt" class="contact-section">
+  <div class="section-wrap">
+    <div class="reveal">
+      <div class="section-tag">Přímý kontakt</div>
+      <h2 class="section-title">Raději <em>zavoláte?</em></h2>
+      <p class="section-desc">Formulář není povinný. Pokud preferujete přímou komunikaci, tady mě najdete.</p>
+    </div>
+
+    <div class="contact-grid">
+      <div class="contact-card reveal d1">
+        <div class="contact-card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.7 10.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012.6 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.55a16 16 0 006.29 6.29l.96-.96a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        </div>
+        <div class="contact-card-label">Telefon</div>
+        <div class="contact-card-value"><a href="tel:+420777413600">+420 777 413 600</a></div>
+        <div class="contact-card-sub">Po–Pá 9–19 h · Reaguju rychle</div>
+      </div>
+      <div class="contact-card reveal d2">
+        <div class="contact-card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <div class="contact-card-label">Email</div>
+        <div class="contact-card-value"><a href="mailto:info@mlxmedia.cz">info@mlxmedia.cz</a></div>
+        <div class="contact-card-sub">Odpovím do 24 hodin</div>
+      </div>
+      <div class="contact-card reveal d3">
+        <div class="contact-card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div class="contact-card-label">Oblast</div>
+        <div class="contact-card-value">Praha 5 · Praha 6 · Beroun</div>
+        <div class="contact-card-sub">Zóna A — bez příplatku za cestu</div>
+      </div>
+      <div class="contact-card reveal d4">
+        <div class="contact-card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="contact-card-label">Dodání</div>
+        <div class="contact-card-value">4–10 pracovních dní</div>
+        <div class="contact-card-sub">Expresní dodání na vyžádání</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOTTOM CTA -->
+<div class="bottom-cta">
+  <div class="bottom-cta-inner">
+    <div class="bottom-cta-card reveal">
+      <div>
+        <div class="bottom-cta-eyebrow">Připraveni začít?</div>
+        <div class="bottom-cta-title">Vyplňte formulář — zbytek nechte na mě.</div>
+      </div>
+      <a href="Objednávkový-formulář.html" class="btn-primary">
+        Objednávkový formulář
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="mlx-footer">
+  <div class="footer-stripe-line" id="fStripe"></div>
+  <div class="footer-main-grid">
+    <div class="footer-reveal">
+      <a href="index.html" class="f-brand-logo">ML<span>X</span> MEDIA</a>
+      <div class="f-brand-tagline">Filmování · Střih · Postprodukce</div>
+      <p class="f-brand-desc">Věřím, že každý příběh si zaslouží být vyprávěn. Pomáhám firmám a jednotlivcům zachytit jejich vizi prostřednictvím profesionálního videa.</p>
+      <div class="f-social-row">
+        <a href="https://www.youtube.com/@MLX-Media" target="_blank" rel="noopener" class="f-social-btn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 00.5 6.2 31.3 31.3 0 000 12a31.3 31.3 0 00.5 5.8 3 3 0 002.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 002.1-2.1A31.3 31.3 0 0024 12a31.3 31.3 0 00-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>YouTube
+        </a>
+        <a href="https://www.instagram.com/mlxmedia" target="_blank" rel="noopener" class="f-social-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>Instagram
+        </a>
+      </div>
+    </div>
+    <div class="footer-reveal">
+      <div class="f-col-title">Navigace</div>
+      <ul class="f-links">
+        <li><a href="index.html">Domovská stránka</a></li>
+        <li><a href="O-mně.html">O mně</a></li>
+        <li><a href="Portfolio.html">Portfolio</a></li>
+        <li><a href="Aspekty.html">Aspekty</a></li>
+        <li><a href="Ceník.html">Ceník</a></li>
+        <li><a href="Objednávka.html">Objednávka</a></li>
+      </ul>
+    </div>
+    <div class="footer-reveal">
+      <div class="f-col-title">Služby</div>
+      <ul class="f-links">
+        <li><a href="Ceník.html">Firemní videa</a></li>
+        <li><a href="Ceník.html">Reklamní spot</a></li>
+        <li><a href="Ceník.html">Reels &amp; TikTok</a></li>
+        <li><a href="Ceník.html">Color grading</a></li>
+        <li><a href="Ceník.html">Zvukový design</a></li>
+        <li><a href="Ceník.html">Dronové záběry</a></li>
+      </ul>
+    </div>
+    <div class="footer-reveal">
+      <div class="f-col-title">Kontakt</div>
+      <div class="f-contact-item">
+        <div class="f-contact-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+        <div><div class="f-contact-label">Email</div><div class="f-contact-value"><a href="mailto:info@mlxmedia.cz">info@mlxmedia.cz</a></div></div>
+      </div>
+      <div class="f-contact-item">
+        <div class="f-contact-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.7 10.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012.6 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.55a16 16 0 006.29 6.29l.96-.96a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>
+        <div><div class="f-contact-label">Telefon</div><div class="f-contact-value"><a href="tel:+420777413600">+420 777 413 600</a></div></div>
+      </div>
+      <div class="f-contact-item">
+        <div class="f-contact-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+        <div><div class="f-contact-label">Oblast</div><div class="f-contact-value">Praha 5, Praha 6, Beroun</div></div>
+      </div>
+      <div class="f-contact-item">
+        <div class="f-contact-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <div><div class="f-contact-label">Dodání</div><div class="f-contact-value">4–8 dní od natáčení</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="f-stats-band">
+    <div class="f-stat-item"><div class="f-stat-number">25<span>+</span></div><div class="f-stat-label">Projektů</div></div>
+    <div class="f-stat-item"><div class="f-stat-number">3<span>+</span></div><div class="f-stat-label">Roky zkušeností</div></div>
+    <div class="f-stat-item"><div class="f-stat-number">95<span>%</span></div><div class="f-stat-label">Doporučení</div></div>
+    <div class="f-stat-item"><div class="f-stat-number">6<span>K</span></div><div class="f-stat-label">RAW rozlišení</div></div>
+  </div>
+
+  <div class="f-cta-wrap">
+    <div class="f-cta-inner" id="fCta">
+      <div>
+        <div class="f-cta-eyebrow">Hledám nové klienty</div>
+        <div class="f-cta-title">Máte projekt? Pojďme ho natočit.</div>
+      </div>
+      <a href="Objednávka.html" class="f-cta-btn">
+        Objednat video
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="f-bottom">
+    <div class="f-copy">© <span id="fyear"></span> <span>MLX Media</span> · Matouš Lexa · Všechna práva vyhrazena</div>
+    <div class="f-legal"><a href="#">Ochrana soukromí</a><a href="#">Cookies</a><a href="Objednávka.html">Kontakt</a></div>
+  </div>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  // ── THEME ──
+  const root = document.documentElement;
+  root.setAttribute('data-theme', localStorage.getItem('mlx-theme') || 'dark');
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    localStorage.setItem('mlx-theme', next);
+  });
+
+  // ── NAV ──
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 20);
+    document.getElementById('backToTop').classList.toggle('show', window.scrollY > 400);
+  }, { passive: true });
+
+  // ── HAMBURGER ──
+  const ham = document.getElementById('hamburger');
+  const mob = document.getElementById('mobileMenu');
+  ham.addEventListener('click', () => { ham.classList.toggle('open'); mob.classList.toggle('open'); });
+  mob.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { ham.classList.remove('open'); mob.classList.remove('open'); }));
+
+  // ── YEAR ──
+  document.getElementById('fyear').textContent = new Date().getFullYear();
+
+  // ── REVEALS ──
+  const io = new IntersectionObserver(e => e.forEach(x => { if(x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.08 });
+  document.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(el => io.observe(el));
+
+  // ── FOOTER REVEALS ──
+  const fio = new IntersectionObserver(e => e.forEach(x => { if(x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.12 });
+  [document.getElementById('fStripe'), document.getElementById('fCta'), ...document.querySelectorAll('.footer-reveal,.f-stat-item')].filter(Boolean).forEach(el => fio.observe(el));
+
+  // ── CALENDAR ──
+  const BOOKED_FULL    = ['2025-04-05','2025-04-12','2025-04-19','2025-04-26','2025-05-03','2025-05-10','2025-05-24','2025-06-07','2025-06-14'];
+  const BOOKED_PARTIAL = ['2025-04-07','2025-04-14','2025-04-21','2025-05-01','2025-05-08','2025-05-17','2025-06-01','2025-06-21'];
+  const HARD           = ['2025-04-06','2025-04-13','2025-04-20','2025-05-11','2025-05-18','2025-06-08','2025-06-15'];
+  const MONTHS_CS = ['Leden','Únor','Březen','Duben','Květen','Červen','Červenec','Srpen','Září','Říjen','Listopad','Prosinec'];
+  let calDate = new Date(); calDate.setDate(1);
+
+  function renderCal() {
+    document.getElementById('cal-month-label').textContent = MONTHS_CS[calDate.getMonth()] + ' ' + calDate.getFullYear();
+    const container = document.getElementById('cal-days');
+    container.innerHTML = '';
+    const first = new Date(calDate.getFullYear(), calDate.getMonth(), 1);
+    const last  = new Date(calDate.getFullYear(), calDate.getMonth() + 1, 0);
+    let startDay = first.getDay() === 0 ? 6 : first.getDay() - 1;
+    for (let i = 0; i < startDay; i++) {
+      const el = document.createElement('div'); el.className = 'cal-day empty'; container.appendChild(el);
+    }
+    const today = new Date(); today.setHours(0,0,0,0);
+    for (let d = 1; d <= last.getDate(); d++) {
+      const el = document.createElement('div'); el.className = 'cal-day';
+      el.textContent = d;
+      const key = `${calDate.getFullYear()}-${String(calDate.getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const thisDate = new Date(calDate.getFullYear(), calDate.getMonth(), d);
+      if (thisDate.getTime() === today.getTime()) el.classList.add('today');
+      if (BOOKED_FULL.includes(key))         el.classList.add('booked-full');
+      else if (BOOKED_PARTIAL.includes(key)) el.classList.add('booked-partial');
+      else if (HARD.includes(key))           el.classList.add('hard-to-book');
+      container.appendChild(el);
+    }
+  }
+  document.getElementById('cal-prev').addEventListener('click', () => { calDate.setMonth(calDate.getMonth()-1); renderCal(); });
+  document.getElementById('cal-next').addEventListener('click', () => { calDate.setMonth(calDate.getMonth()+1); renderCal(); });
+  renderCal();
+
+  // ── MAP ──
+  window.addEventListener('load', () => {
+    const isDark = root.getAttribute('data-theme') === 'dark';
+    const map = L.map('leaflet-map', { zoomControl: true, scrollWheelZoom: false }).setView([50.04, 14.30], 10);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors',
+      className: isDark ? 'map-tiles-dark' : ''
+    }).addTo(map);
+
+    const zones = [
+      { name: 'Beroun',  lat: 49.9644, lng: 14.0718 },
+      { name: 'Praha 5', lat: 50.0580, lng: 14.3800 },
+      { name: 'Praha 6', lat: 50.1050, lng: 14.3700 },
+    ];
+    zones.forEach(z => {
+      L.circle([z.lat, z.lng], { color:'#FF8A00', fillColor:'#FF8A00', fillOpacity:0.10, weight:1.5, radius:5000 })
+        .addTo(map).bindPopup(`<strong>${z.name}</strong><br>Zóna A – bez příplatku`);
+      L.circleMarker([z.lat, z.lng], { color:'#FF8A00', fillColor:'#FF8A00', fillOpacity:0.9, radius:6, weight:2 })
+        .addTo(map).bindPopup(`<strong>${z.name}</strong>`);
+    });
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      setTimeout(() => map.invalidateSize(), 450);
+    });
+  });
+
+  // ── FAQ ──
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.querySelector('.faq-question').addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(other => {
+        other.classList.remove('open');
+        other.querySelector('.faq-answer').style.maxHeight = null;
+      });
+      if (!isOpen) {
+        item.classList.add('open');
+        const ans = item.querySelector('.faq-answer');
+        ans.style.maxHeight = ans.scrollHeight + 'px';
+      }
+    });
+  });
+</script>
+</body>
+</html>

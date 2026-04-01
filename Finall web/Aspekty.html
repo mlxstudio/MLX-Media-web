@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="cs" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Technika – MLX Media</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
+      --font-display:'Bebas Neue', sans-serif;
+      --font-body:   'DM Sans', sans-serif;
+      --nav-h:       64px;
+      --trans:       0.45s var(--ease-out);
+    }
+
+    [data-theme="dark"] {
+      --bg:          #0d0d0d;
+      --bg-surface:  #111111;
+      --bg-card:     #161616;
+      --border:      rgba(255,255,255,0.07);
+      --accent:      #FF8A00;
+      --accent-soft: rgba(255,138,0,0.10);
+      --accent-glow: rgba(255,138,0,0.22);
+      --text:        #e8e4de;
+      --text-muted:  #5e5a56;
+      --text-dim:    #8a8580;
+      --noise-op:    0.028;
+      --hero-grad:   linear-gradient(160deg,#0d0d0d 0%,#141008 100%);
+      --stripe:      linear-gradient(90deg,transparent,#FF8A00,#ffb347,transparent);
+      --footer-desc: #888480;
+    }
+
+    [data-theme="light"] {
+      --bg:          #f6f5f2;
+      --bg-surface:  #ffffff;
+      --bg-card:     #fafaf8;
+      --border:      rgba(0,0,0,0.08);
+      --accent:      #00BFA6;
+      --accent-soft: rgba(0,191,166,0.08);
+      --accent-glow: rgba(0,191,166,0.20);
+      --text:        #0f1e1c;
+      --text-muted:  #a0a8a6;
+      --text-dim:    #6b7574;
+      --noise-op:    0.018;
+      --hero-grad:   linear-gradient(160deg,#f6f5f2 0%,#e8f7f5 100%);
+      --stripe:      linear-gradient(90deg,transparent,#00BFA6,#7dd7cc,transparent);
+      --footer-desc: #6b7574;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg); color: var(--text);
+      overflow-x: hidden;
+      transition: background var(--trans), color var(--trans);
+      position: relative;
+    }
+
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: var(--noise-op); pointer-events: none; z-index: 9999;
+      transition: opacity var(--trans);
+    }
+
+    /* ── NAV ── */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h);
+      z-index: 1000; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 clamp(20px,4vw,48px);
+      transition: background var(--trans), border-color var(--trans);
+    }
+    .nav.scrolled {
+      background: color-mix(in srgb, var(--bg) 85%, transparent);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: var(--font-display); font-size: 1.55rem; letter-spacing: 0.12em; color: var(--text); text-decoration: none; transition: color var(--trans); }
+    .nav-logo span { color: var(--accent); transition: color var(--trans); }
+    .nav-links { display: flex; align-items: center; gap: clamp(12px,2vw,32px); list-style: none; }
+    .nav-links a { font-size: 0.78rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; color: var(--text-dim); transition: color 0.2s; white-space: nowrap; }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+
+    .theme-toggle {
+      width: 48px; height: 26px; background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 99px; cursor: pointer; position: relative; flex-shrink: 0;
+      transition: background var(--trans), border-color var(--trans);
+    }
+    .theme-toggle::after {
+      content: ''; position: absolute; top: 3px; left: 3px;
+      width: 18px; height: 18px; border-radius: 50%; background: var(--accent);
+      transition: transform 0.35s var(--ease-out), background var(--trans);
+    }
+    [data-theme="light"] .theme-toggle::after { transform: translateX(22px); }
+    .toggle-icons { position: absolute; inset: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 5px; font-size: 10px; pointer-events: none; }
+
+    .nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+    .nav-hamburger span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 2px; transition: transform 0.3s, opacity 0.3s, background var(--trans); }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* mobile menu — visibility-based so CSS transitions fire */
+    .nav-mobile {
+      display: flex; flex-direction: column;
+      position: fixed; top: var(--nav-h); left: 0; right: 0;
+      background: color-mix(in srgb, var(--bg) 96%, transparent);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 24px 28px; z-index: 999;
+      visibility: hidden; opacity: 0; transform: translateY(-8px);
+      transition: opacity 0.3s var(--ease-out), transform 0.3s var(--ease-out),
+                  visibility 0.3s, background var(--trans), border-color var(--trans);
+      pointer-events: none;
+    }
+    .nav-mobile.open { visibility: visible; opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+    /* staggered link animations */
+    .nav-mobile a {
+      font-size: 0.9rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+      text-decoration: none; color: var(--text-dim); padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      opacity: 0; transform: translateX(-14px);
+      transition: opacity 0.28s var(--ease-out), transform 0.28s var(--ease-out),
+                  color 0.2s, border-color var(--trans);
+    }
+    .nav-mobile a:last-of-type { border-bottom: none; }
+    .nav-mobile a:hover { color: var(--accent); }
+    .nav-mobile.open a:nth-child(1) { opacity:1; transform:translateX(0); transition-delay:0.06s; }
+    .nav-mobile.open a:nth-child(2) { opacity:1; transform:translateX(0); transition-delay:0.11s; }
+    .nav-mobile.open a:nth-child(3) { opacity:1; transform:translateX(0); transition-delay:0.16s; }
+    .nav-mobile.open a:nth-child(4) { opacity:1; transform:translateX(0); transition-delay:0.21s; }
+    .nav-mobile.open a:nth-child(5) { opacity:1; transform:translateX(0); transition-delay:0.26s; }
+    .nav-mobile.open a:nth-child(6) { opacity:1; transform:translateX(0); transition-delay:0.31s; }
+
+    @media (max-width: 768px) { .nav-links { display: none; } .nav-hamburger { display: flex; } }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100svh; background: var(--hero-grad);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: calc(var(--nav-h) + 40px) clamp(20px,5vw,80px) 80px;
+      text-align: center; position: relative; overflow: hidden;
+      transition: background var(--trans);
+    }
+    .hero-bg-letter {
+      position: absolute; font-family: var(--font-display);
+      font-size: clamp(200px,38vw,520px); color: var(--accent); opacity: 0.04;
+      line-height: 1; pointer-events: none; user-select: none; letter-spacing: -0.04em;
+      transition: color var(--trans); top: 50%; left: 50%; transform: translate(-50%,-50%);
+    }
+    .hero-eyebrow { font-size: clamp(0.65rem,1.5vw,0.75rem); letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; opacity: 0; transform: translateY(16px); animation: fadeUp 0.8s var(--ease-out) 0.2s forwards; transition: color var(--trans); }
+    .hero-title { font-family: var(--font-display); font-size: clamp(3.5rem,10vw,9rem); letter-spacing: 0.06em; line-height: 0.95; color: var(--text); margin-bottom: 8px; opacity: 0; transform: translateY(24px); animation: fadeUp 0.9s var(--ease-out) 0.35s forwards; transition: color var(--trans); }
+    .hero-title em { font-style: normal; color: var(--accent); transition: color var(--trans); }
+    .hero-subtitle { font-size: clamp(0.88rem,2vw,1.05rem); font-weight: 300; color: var(--text-dim); max-width: 540px; line-height: 1.75; margin: 24px auto 0; opacity: 0; transform: translateY(16px); animation: fadeUp 0.9s var(--ease-out) 0.55s forwards; transition: color var(--trans); }
+    .hero-scroll { position: absolute; bottom: 36px; top: 85%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; animation: fadeUp 0.8s var(--ease-out) 1.1s forwards; }    .hero-scroll span { font-size: 0.65rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-muted); }
+    .scroll-line { width: 1px; height: 40px; background: linear-gradient(to bottom, var(--accent), transparent); animation: scrollPulse 2s ease-in-out 1.5s infinite; }
+    @keyframes scrollPulse { 0%,100%{opacity:.4;transform:scaleY(1)} 50%{opacity:1;transform:scaleY(1.2)} }
+    @keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+
+    .hero-pills { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 48px; opacity: 0; transform: translateY(16px); animation: fadeUp 0.9s var(--ease-out) 0.75s forwards; }
+    .pill { display: inline-flex; align-items: center; gap: 8px; padding: 9px 20px; border: 1px solid var(--border); border-radius: 99px; font-size: 0.78rem; font-weight: 500; letter-spacing: 0.08em; color: var(--text-dim); text-decoration: none; background: var(--accent-soft); transition: border-color 0.2s, color 0.2s, background 0.2s, transform 0.2s; }
+    .pill:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+    .pill-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); transition: background var(--trans); }
+
+    /* ── COMMON ── */
+    section { scroll-margin-top: var(--nav-h); }
+
+    .reveal { opacity:0; transform:translateY(28px); transition: opacity 0.75s var(--ease-out), transform 0.75s var(--ease-out); }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+    .reveal-left { opacity:0; transform:translateX(-32px); transition: opacity 0.75s var(--ease-out), transform 0.75s var(--ease-out); }
+    .reveal-left.visible { opacity:1; transform:translateX(0); }
+    .reveal-right { opacity:0; transform:translateX(32px); transition: opacity 0.75s var(--ease-out), transform 0.75s var(--ease-out); }
+    .reveal-right.visible { opacity:1; transform:translateX(0); }
+    .d1{transition-delay:.05s} .d2{transition-delay:.15s} .d3{transition-delay:.25s} .d4{transition-delay:.35s}
+
+    /* ── STATS ── */
+    .stats-band { border-top: 1px solid var(--border); background: var(--bg-surface); transition: background var(--trans), border-color var(--trans); }
+    .stats-inner { max-width: 1200px; margin: 0 auto; padding: 0 clamp(20px,4vw,48px); display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; }
+    @media(max-width:640px){ .stats-inner{ grid-template-columns:repeat(2,1fr); } }
+    .stat-block { padding: clamp(28px,4vw,48px) 24px; text-align: center; border-right: 1px solid var(--border); transition: border-color var(--trans); }
+    .stat-block:last-child { border-right: none; }
+    .stat-num { font-family: var(--font-display); font-size: clamp(2.2rem,5vw,3.4rem); letter-spacing: 0.04em; color: var(--text); line-height: 1; margin-bottom: 6px; transition: color var(--trans); }
+    .stat-num span { color: var(--accent); transition: color var(--trans); }
+    .stat-label { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); transition: color var(--trans); }
+
+    /* ── DISCIPLINE ── */
+    .discipline { border-top: 1px solid var(--border); transition: border-color var(--trans); }
+    .discipline-inner { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px,5vw,80px); align-items: center; padding: clamp(60px,8vw,110px) clamp(20px,4vw,48px); max-width: 1200px; margin: 0 auto; }
+    .discipline-inner.flip { direction: rtl; }
+    .discipline-inner.flip > * { direction: ltr; }
+    @media(max-width:760px){ .discipline-inner, .discipline-inner.flip { grid-template-columns:1fr; direction:ltr; } .discipline-inner.flip > * { direction:ltr; } }
+
+    .discipline-number { font-family: var(--font-display); font-size: clamp(5rem,14vw,10rem); line-height: 1; color: var(--accent); opacity: 0.12; position: absolute; top: -24px; left: -12px; pointer-events: none; letter-spacing: -0.04em; transition: color var(--trans); }
+    .discipline-text { position: relative; }
+    .discipline-tag { display: inline-flex; align-items: center; gap: 7px; font-size: 0.68rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; transition: color var(--trans); }
+    .discipline-tag::before { content:''; display:block; width:24px; height:1px; background: var(--accent); transition: background var(--trans); }
+    .discipline-title { font-family: var(--font-display); font-size: clamp(2.4rem,5.5vw,4rem); letter-spacing: 0.05em; line-height: 1.05; color: var(--text); margin-bottom: 14px; transition: color var(--trans); }
+    .discipline-lead { font-size: clamp(0.98rem,1.7vw,1.12rem); font-weight: 500; line-height: 1.6; color: var(--text); margin-bottom: 12px; transition: color var(--trans); }
+    .discipline-desc { font-size: clamp(0.86rem,1.4vw,0.96rem); font-weight: 300; line-height: 1.82; color: var(--text-dim); margin-bottom: 26px; transition: color var(--trans); }
+    .why-list { list-style: none; display: flex; flex-direction: column; gap: 11px; }
+    .why-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 0.86rem; color: var(--text-dim); line-height: 1.6; transition: color var(--trans); }
+    .why-list li::before { content:''; display:block; width:6px; height:6px; border-radius:50%; background: var(--accent); margin-top:6px; flex-shrink:0; transition: background var(--trans); }
+
+    .discipline-visual { position: relative; border-radius: 8px; overflow: hidden; background: var(--bg-card); border: 1px solid var(--border); aspect-ratio: 4/3; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: background var(--trans), border-color var(--trans); }
+    .discipline-visual::before { content:''; position:absolute; inset:0; background: var(--accent-soft); opacity:0; transition: opacity 0.4s; }
+    .discipline-visual:hover::before { opacity:1; }
+    .visual-icon { color: var(--accent); opacity: 0.45; margin-bottom: 16px; transition: color var(--trans), transform 0.4s var(--ease-out), opacity 0.3s; }
+    .discipline-visual:hover .visual-icon { opacity:0.8; transform:scale(1.08); }
+    .visual-label { font-family: var(--font-display); font-size: clamp(0.8rem,2vw,1rem); letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-muted); transition: color var(--trans); }
+    .discipline-visual::after { content:''; position:absolute; bottom:0; right:0; width:60px; height:60px; border-bottom:2px solid var(--accent); border-right:2px solid var(--accent); opacity:0.3; border-radius:0 0 8px 0; transition: opacity 0.4s, border-color var(--trans); }
+    .discipline-visual:hover::after { opacity:0.7; }
+    .visual-stat { position:absolute; top:16px; right:16px; background: var(--bg-surface); border:1px solid var(--border); border-radius:99px; padding:6px 14px; font-size:0.7rem; letter-spacing:0.1em; font-weight:500; color: var(--accent); transition: background var(--trans), border-color var(--trans), color var(--trans); }
+
+    /* ── PHILOSOPHY ── */
+    .philosophy { background: var(--bg-surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); transition: background var(--trans), border-color var(--trans); }
+    .philosophy-inner { max-width: 900px; margin: 0 auto; padding: clamp(56px,8vw,100px) clamp(20px,4vw,48px); text-align: center; }
+    .philosophy-eyebrow { font-size:0.68rem; letter-spacing:0.32em; text-transform:uppercase; color: var(--accent); margin-bottom:24px; transition: color var(--trans); }
+    .philosophy-quote { font-family: var(--font-display); font-size: clamp(1.8rem,4.5vw,3.2rem); letter-spacing:0.04em; line-height:1.25; color: var(--text); margin-bottom:32px; transition: color var(--trans); }
+    .philosophy-quote em { font-style:normal; color: var(--accent); transition: color var(--trans); }
+    .philosophy-body { font-size: clamp(0.88rem,1.5vw,1rem); font-weight:300; line-height:1.85; color: var(--text-dim); max-width:620px; margin:0 auto; transition: color var(--trans); }
+
+    /* ── CTA ── */
+    .cta-section { max-width:1200px; margin:0 auto; padding: clamp(56px,8vw,100px) clamp(20px,4vw,48px); }
+    .cta-inner { border:1px solid var(--border); border-radius:8px; padding: clamp(32px,5vw,64px); display:flex; align-items:center; justify-content:space-between; gap:32px; flex-wrap:wrap; background: var(--bg-card); position:relative; overflow:hidden; transition: background var(--trans), border-color var(--trans); }
+    .cta-inner::before { content:''; position:absolute; top:-1px; left:10%; right:10%; height:2px; background: var(--stripe); transition: background var(--trans); }
+    .cta-eyebrow { font-size:0.68rem; letter-spacing:0.28em; text-transform:uppercase; color: var(--accent); margin-bottom:8px; transition: color var(--trans); }
+    .cta-title { font-family: var(--font-display); font-size: clamp(1.6rem,4vw,2.8rem); letter-spacing:0.06em; color: var(--text); transition: color var(--trans); }
+    .btn-primary { display:inline-flex; align-items:center; gap:10px; padding:15px 32px; background: var(--accent); color: var(--bg); font-family: var(--font-body); font-size:0.8rem; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; text-decoration:none; border-radius:4px; white-space:nowrap; transition: transform 0.2s, box-shadow 0.2s, background var(--trans), color var(--trans); }
+    .btn-primary:hover { transform:translateY(-2px); box-shadow:0 10px 32px var(--accent-glow); }
+    .btn-primary svg { width:15px; height:15px; }
+
+    /* ── FOOTER — FULLY THEME-AWARE ── */
+    .mlx-footer { background: var(--bg); border-top:1px solid var(--border); position:relative; overflow:hidden; transition: background var(--trans), border-color var(--trans); }
+    .mlx-footer::before { content:''; position:absolute; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E"); opacity: var(--noise-op); pointer-events:none; z-index:0; transition: opacity var(--trans); }
+
+    .footer-stripe-line { height:3px; background: var(--stripe); transform-origin:left; transform:scaleX(0); transition: transform 1s var(--ease-out) 0.2s, background var(--trans); }
+    .footer-stripe-line.visible { transform:scaleX(1); }
+
+    .footer-main-grid { position:relative; z-index:1; max-width:1200px; margin:0 auto; padding:72px 40px 48px; display:grid; grid-template-columns:2fr 1fr 1fr 1.4fr; gap:48px 40px; }
+    @media(max-width:960px){ .footer-main-grid{ grid-template-columns:1fr 1fr; padding:56px 28px 40px; } }
+    @media(max-width:600px){ .footer-main-grid{ grid-template-columns:1fr; padding:48px 24px 32px; gap:36px; } }
+
+    .footer-reveal { opacity:0; transform:translateY(22px); transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out); }
+    .footer-reveal.visible { opacity:1; transform:translateY(0); }
+    .footer-reveal:nth-child(1){ transition-delay:0.05s; }
+    .footer-reveal:nth-child(2){ transition-delay:0.15s; }
+    .footer-reveal:nth-child(3){ transition-delay:0.25s; }
+    .footer-reveal:nth-child(4){ transition-delay:0.35s; }
+
+    .f-brand-logo { font-family: var(--font-display); font-size:3rem; letter-spacing:0.12em; color: var(--text); line-height:1; margin-bottom:6px; display:inline-block; transition: color var(--trans); }
+    .f-brand-logo span { color: var(--accent); transition: color var(--trans); }
+    .f-brand-tagline { font-size:0.7rem; letter-spacing:0.32em; text-transform:uppercase; color: var(--text-muted); margin-bottom:20px; transition: color var(--trans); }
+    .f-brand-desc { font-size:0.88rem; line-height:1.75; color: var(--footer-desc); max-width:280px; margin-bottom:28px; transition: color var(--trans); }
+
+    .f-social-row { display:flex; gap:12px; flex-wrap:wrap; }
+    .f-social-btn { display:flex; align-items:center; gap:8px; padding:9px 16px; border:1px solid var(--border); border-radius:4px; text-decoration:none; color: var(--text-muted); font-size:0.78rem; letter-spacing:0.06em; font-weight:500; position:relative; overflow:hidden; transition: border-color 0.25s, color 0.25s, transform 0.2s, background var(--trans); }
+    .f-social-btn::after { content:''; position:absolute; inset:0; background: var(--accent); opacity:0; transition: opacity 0.25s; z-index:-1; }
+    .f-social-btn:hover { border-color: var(--accent); color: var(--bg); transform:translateY(-2px); }
+    .f-social-btn:hover::after { opacity:1; }
+    .f-social-btn svg { width:15px; height:15px; flex-shrink:0; }
+
+    .f-col-title { font-family: var(--font-display); font-size:0.95rem; letter-spacing:0.22em; color: var(--accent); text-transform:uppercase; margin-bottom:22px; display:flex; align-items:center; gap:10px; transition: color var(--trans); }
+    .f-col-title::after { content:''; flex:1; height:1px; background: var(--border); transition: background var(--trans); }
+
+    .f-links { list-style:none; display:flex; flex-direction:column; gap:10px; }
+    .f-links a { color: var(--text-muted); text-decoration:none; font-size:0.88rem; display:flex; align-items:center; gap:8px; transition: color 0.2s, gap 0.2s; }
+    .f-links a::before { content:''; width:6px; height:1px; background: var(--accent); opacity:0; transition: opacity 0.2s, width 0.2s, background var(--trans); }
+    .f-links a:hover { color: var(--text); gap:12px; }
+    .f-links a:hover::before { opacity:1; width:10px; }
+
+    .f-contact-item { display:flex; align-items:flex-start; gap:12px; margin-bottom:18px; }
+    .f-contact-icon { width:36px; height:36px; border:1px solid var(--border); border-radius:4px; display:flex; align-items:center; justify-content:center; flex-shrink:0; color: var(--accent); transition: border-color 0.2s, background 0.2s, color var(--trans); }
+    .f-contact-item:hover .f-contact-icon { border-color: var(--accent); background: var(--accent-soft); }
+    .f-contact-label { font-size:0.7rem; letter-spacing:0.14em; text-transform:uppercase; color: var(--text-muted); margin-bottom:3px; transition: color var(--trans); }
+    .f-contact-value { font-size:0.86rem; color: var(--text); transition: color var(--trans); }
+    .f-contact-value a { color:inherit; text-decoration:none; transition:color 0.2s; }
+    .f-contact-value a:hover { color: var(--accent); }
+
+    .f-stats-band { position:relative; z-index:1; max-width:1200px; margin:0 auto; padding:0 40px 40px; display:grid; grid-template-columns:repeat(4,1fr); gap:1px; border-top:1px solid var(--border); transition: border-color var(--trans); }
+    @media(max-width:960px){ .f-stats-band{ grid-template-columns:repeat(2,1fr); padding:0 28px 32px; } }
+    @media(max-width:600px){ .f-stats-band{ padding:0 24px 28px; } }
+
+    .f-stat-item { padding:28px 20px; text-align:center; opacity:0; transform:translateY(14px); border-right:1px solid var(--border); transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out), border-color var(--trans); }
+    .f-stat-item:last-child { border-right:none; }
+    .f-stat-item.visible { opacity:1; transform:translateY(0); }
+    .f-stat-item:nth-child(1){ transition-delay:0.1s; } .f-stat-item:nth-child(2){ transition-delay:0.2s; }
+    .f-stat-item:nth-child(3){ transition-delay:0.3s; } .f-stat-item:nth-child(4){ transition-delay:0.4s; }
+    .f-stat-number { font-family: var(--font-display); font-size:2.4rem; letter-spacing:0.05em; color: var(--text); line-height:1; margin-bottom:4px; transition: color var(--trans); }
+    .f-stat-number span { color: var(--accent); transition: color var(--trans); }
+    .f-stat-label { font-size:0.7rem; letter-spacing:0.18em; text-transform:uppercase; color: var(--text-muted); transition: color var(--trans); }
+
+    .f-cta-wrap { position:relative; z-index:1; max-width:1200px; margin:0 auto 40px; padding:0 40px; }
+    @media(max-width:600px){ .f-cta-wrap{ padding:0 24px; } }
+    .f-cta-inner { border:1px solid var(--border); border-radius:6px; padding:32px 40px; display:flex; align-items:center; justify-content:space-between; gap:24px; background: var(--bg-surface); opacity:0; transform:translateY(16px); transition: opacity 0.7s var(--ease-out) 0.3s, transform 0.7s var(--ease-out) 0.3s, background var(--trans), border-color var(--trans); flex-wrap:wrap; }
+    .f-cta-inner.visible { opacity:1; transform:translateY(0); }
+    .f-cta-eyebrow { font-size:0.68rem; letter-spacing:0.26em; text-transform:uppercase; color: var(--accent); margin-bottom:6px; transition: color var(--trans); }
+    .f-cta-title { font-family: var(--font-display); font-size:1.7rem; letter-spacing:0.06em; color: var(--text); transition: color var(--trans); }
+    .f-cta-btn { display:inline-flex; align-items:center; gap:10px; padding:14px 30px; background: var(--accent); color: var(--bg); font-size:0.82rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; text-decoration:none; border-radius:4px; transition: transform 0.2s, box-shadow 0.2s, background var(--trans), color var(--trans); white-space:nowrap; }
+    .f-cta-btn:hover { transform:translateY(-2px); box-shadow:0 8px 28px var(--accent-glow); }
+    .f-cta-btn svg { width:16px; height:16px; }
+
+    .f-bottom { position:relative; z-index:1; border-top:1px solid var(--border); padding:18px 40px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; transition: border-color var(--trans); }
+    @media(max-width:600px){ .f-bottom{ padding:18px 24px; flex-direction:column; text-align:center; } }
+    .f-copy { font-size:0.75rem; color: var(--text-muted); letter-spacing:0.04em; transition: color var(--trans); }
+    .f-copy span { color: var(--accent); transition: color var(--trans); }
+    .f-legal { display:flex; gap:20px; }
+    .f-legal a { font-size:0.72rem; color: var(--text-muted); text-decoration:none; letter-spacing:0.08em; transition:color 0.2s; }
+    .f-legal a:hover { color: var(--text); }
+
+    /* ── BACK TO TOP ── */
+    .back-top { position:fixed; bottom:32px; right:32px; width:44px; height:44px; background: var(--bg-surface); border:1px solid var(--border); border-radius:4px; display:flex; align-items:center; justify-content:center; color: var(--accent); cursor:pointer; opacity:0; transform:translateY(12px); transition: opacity 0.3s, transform 0.3s, border-color 0.2s, background var(--trans); z-index:99; }
+    .back-top.show { opacity:1; transform:translateY(0); }
+    .back-top:hover { border-color: var(--accent); }
+    .back-top svg { width:18px; height:18px; }
+    @media(max-width:480px){ .back-top{ bottom:20px; right:20px; } }
+  </style>
+</head>
+<body>
+
+<button class="back-top" id="backToTop" aria-label="Zpět nahoru" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<nav class="nav" id="mainNav">
+  <a href="index.html" class="nav-logo">ML<span>X</span> MEDIA</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Domů</a></li>
+    <li><a href="O-mně.html">O mně</a></li>
+    <li><a href="Portfolio.html">Portfolio</a></li>
+    <li><a href="Aspekty.html" class="active">Aspekty</a></li>
+    <li><a href="Ceník.html">Ceník</a></li>
+    <li><a href="Objednávka.html">Objednávka</a></li>
+  </ul>
+  <div style="display:flex;align-items:center;gap:14px;">
+    <button class="theme-toggle" id="themeToggle" aria-label="Přepnout téma">
+      <div class="toggle-icons"><span>🌙</span><span>☀️</span></div>
+    </button>
+    <div class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+
+<div class="nav-mobile" id="mobileMenu">
+  <a href="index.html">Domů</a>
+  <a href="O-mně.html">O mně</a>
+  <a href="Portfolio.html">Portfolio</a>
+  <a href="Aspekty.html">Aspekty</a>
+  <a href="Ceník.html">Ceník</a>
+  <a href="Objednávka.html">Objednávka</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-bg-letter" aria-hidden="true">V</div>
+  <div class="hero-eyebrow">MLX Media · Co je součástí vašeho videa</div>
+  <h1 class="hero-title">Co děláme<br><em>navíc</em></h1>
+  <p class="hero-subtitle">Základ je kamera. Ale výsledek tvoří detaily — zvuk, světlo, barva, pohyb. Každá složka přidává hodnotu vašemu videu. A každá z nich je na výběr.</p>
+  <div class="hero-pills">
+    <a href="#obraz"  class="pill"><span class="pill-dot"></span>Obraz</a>
+    <a href="#zvuk"   class="pill"><span class="pill-dot"></span>Zvuk</a>
+    <a href="#svetlo" class="pill"><span class="pill-dot"></span>Osvětlení</a>
+    <a href="#color"  class="pill"><span class="pill-dot"></span>Color Grading</a>
+    <a href="#strih"  class="pill"><span class="pill-dot"></span>Střih</a>
+    <a href="#pohyb"  class="pill"><span class="pill-dot"></span>Pohyb</a>
+  </div>
+  <div class="hero-scroll"><span>Scroll</span><div class="scroll-line"></div></div>
+</section>
+
+<!-- STATS -->
+<div class="stats-band">
+  <div class="stats-inner">
+    <div class="stat-block reveal d1"><div class="stat-num js-count" data-target="35">0<span>+</span></div><div class="stat-label">Projektů dokončeno</div></div>
+    <div class="stat-block reveal d2"><div class="stat-num js-count" data-target="6">0<span>K</span></div><div class="stat-label">RAW rozlišení kamery</div></div>
+    <div class="stat-block reveal d3"><div class="stat-num js-count" data-target="4">0<span>+</span></div><div class="stat-label">Roky zkušeností</div></div>
+    <div class="stat-block reveal d4"><div class="stat-num js-count" data-target="95">0<span>%</span></div><div class="stat-label">Klientů doporučí</div></div>
+  </div>
+</div>
+
+<!-- 01 OBRAZ -->
+<section id="obraz" class="discipline">
+  <div class="discipline-inner">
+    <div class="discipline-text reveal-left">
+      <div class="discipline-number" aria-hidden="true">01</div>
+      <div class="discipline-tag">Základ každého videa</div>
+      <h2 class="discipline-title">Filmový<br>obraz</h2>
+      <p class="discipline-lead">Váš zákazník vidí váš brand dřív, než si přečte jediné slovo.</p>
+      <p class="discipline-desc">Rozdíl mezi videem natočeným telefonem a filmovou kamerou poznáte do jedné vteřiny. Pracujeme s Blackmagic 6K — stejnou kamerou, jakou používají profesionální produkce. Váš výsledek? Firma, která vypadá jako velký hráč, i když je malá a osobní.</p>
+      <ul class="why-list">
+        <li>Vysoké rozlišení zajistí skvělý výsledek na webu, sociálních sítích i velké obrazovce</li>
+        <li>Filmová hloubka ostrosti oddělí váš produkt od pozadí — přirozeně a elegantně</li>
+        <li>Zákazníci nevědomky spojují kvalitu videa s kvalitou vaší firmy</li>
+      </ul>
+    </div>
+    <div class="discipline-visual reveal-right">
+      <div class="visual-stat">6K RAW</div>
+      <svg class="visual-icon" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="6" width="20" height="14" rx="2"/><path d="M22 11l-6-3v8l6-3z"/><circle cx="8" cy="13" r="2"/>
+      </svg>
+      <div class="visual-label">Blackmagic 6K</div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 ZVUK -->
+<section id="zvuk" class="discipline">
+  <div class="discipline-inner flip">
+    <div class="discipline-text reveal-right">
+      <div class="discipline-number" aria-hidden="true">02</div>
+      <div class="discipline-tag">Přidaná hodnota · Doporučujeme</div>
+      <h2 class="discipline-title">Čistý<br>zvuk</h2>
+      <p class="discipline-lead">Diváci odpustí průměrný obraz. Špatný zvuk odpustit nedokážou.</p>
+      <p class="discipline-desc">Šum mikrofonu, ozvěna prázdné místnosti nebo hluk z venku — divák to nevnímá vědomě, ale okamžitě přestane sledovat. Čistý zvuk zajistí, že vaše poselství skutečně dolehne. Máme mikrofony na každou situaci — lavalier, shotgun boom, i rekordér Zoom F1 a Tascam DR-70.</p>
+      <ul class="why-list">
+        <li>Čistý hlas = vaše zpráva se dostane k zákazníkovi bez rušivých prvků</li>
+        <li>Profesionální zvuk výrazně prodlužuje čas, po který divák sleduje vaše video</li>
+        <li>Ideální pro rozhovory, firemní prezentace a zákaznické reference</li>
+      </ul>
+    </div>
+    <div class="discipline-visual reveal-left">
+      <div class="visual-stat">Lavalier · Shotgun · Boom</div>
+      <svg class="visual-icon" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+        <line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>
+      </svg>
+      <div class="visual-label">Zvukový design</div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 SVETLO -->
+<section id="svetlo" class="discipline">
+  <div class="discipline-inner">
+    <div class="discipline-text reveal-left">
+      <div class="discipline-number" aria-hidden="true">03</div>
+      <div class="discipline-tag">Přidaná hodnota · Populární volba</div>
+      <h2 class="discipline-title">Osvětlení<br>scény</h2>
+      <p class="discipline-lead">Světlo rozhoduje, jestli váš produkt vypadá luxusně — nebo jako z e-shopu za 200 Kč.</p>
+      <p class="discipline-desc">Tmavá kancelář, špatně osvětlená provozovna nebo přeexponovaný venkov — to kamera sama nevyřeší. Přinášíme vlastní světla a nasvítíme scénu tak, aby váš prostor, produkt nebo tým vypadal přesně tak, jak chcete.</p>
+      <ul class="why-list">
+        <li>Profesionální světlo promění průměrný prostor ve fotogenické místo</li>
+        <li>Barva a intenzita světla podporuje emoci, kterou chcete u zákazníka vyvolat</li>
+        <li>Výsledek je konzistentní — nezáleží na počasí, denní době ani prostoru</li>
+      </ul>
+    </div>
+    <div class="discipline-visual reveal-right">
+      <div class="visual-stat">RGB + Bi-Color COB</div>
+      <svg class="visual-icon" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"/>
+        <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+        <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+      <div class="visual-label">Lighting Design</div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 COLOR -->
+<section id="color" class="discipline">
+  <div class="discipline-inner flip">
+    <div class="discipline-text reveal-right">
+      <div class="discipline-number" aria-hidden="true">04</div>
+      <div class="discipline-tag">Přidaná hodnota · Vizuální identita</div>
+      <h2 class="discipline-title">Color<br>grading</h2>
+      <p class="discipline-lead">Color grading je rozdíl mezi "dobré video" a "tohle vypadá jako reklama velké značky".</p>
+      <p class="discipline-desc">Jde o finální ladění barev celého videa — teplota, nálada, kontrast. Výsledek je konzistentní vizuální styl, který okamžitě vypadá profesionálně a dává vašemu videu jasnou identitu. Zákazník to nedokáže pojmenovat, ale okamžitě to pocítí.</p>
+      <ul class="why-list">
+        <li>Každé vaše video bude vizuálně konzistentní — působí jako ucelená série</li>
+        <li>Správná barva vyvolá přesnou emoci — důvěra, prestiž, vzrušení nebo klid</li>
+        <li>Odlišíte se od konkurence, která video jen "vyexportuje" bez jakýchkoliv úprav</li>
+      </ul>
+    </div>
+    <div class="discipline-visual reveal-left">
+      <div class="visual-stat">Blackmagic RAW · DaVinci</div>
+      <svg class="visual-icon" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="8" cy="8" r="4"/><circle cx="16" cy="8" r="4"/><circle cx="12" cy="16" r="4"/>
+      </svg>
+      <div class="visual-label">Color Grading</div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 STRIH -->
+<section id="strih" class="discipline">
+  <div class="discipline-inner">
+    <div class="discipline-text reveal-left">
+      <div class="discipline-number" aria-hidden="true">05</div>
+      <div class="discipline-tag">Základ · Vždy v ceně</div>
+      <h2 class="discipline-title">Střih<br>&amp; tempo</h2>
+      <p class="discipline-lead">Prvních 5 sekund rozhoduje, jestli váš zákazník zůstane — nebo odejde.</p>
+      <p class="discipline-desc">Střih není jen "dání záběrů za sebou". Je to výběr nejlepšího momentu, správné tempo, hudba a přechody. Výsledek je video, které drží pozornost od začátku do konce a přiměje diváka udělat to, co chcete — zavolat, koupit nebo navštívit váš web.</p>
+      <ul class="why-list">
+        <li>Rychlé tempo pro sociální sítě, klidnější pro prezentace — přizpůsobíme vždy</li>
+        <li>Dobře sestříhané video zvyšuje dokoukatelnost, a tím i šanci na konverzi</li>
+        <li>Součástí je výběr hudby, titulky a export do všech potřebných formátů</li>
+      </ul>
+    </div>
+    <div class="discipline-visual reveal-right">
+      <div class="visual-stat">DaVinci Resolve</div>
+      <svg class="visual-icon" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/>
+        <line x1="1" y1="10" x2="16" y2="10"/><line x1="7" y1="10" x2="7" y2="19"/>
+      </svg>
+      <div class="visual-label">Editing &amp; Post</div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 POHYB -->
+<section id="pohyb" class="discipline">
+  <div class="discipline-inner flip">
+    <div class="discipline-text reveal-right">
+      <div class="discipline-number" aria-hidden="true">06</div>
+      <div class="discipline-tag">Přidaná hodnota · Wow efekt</div>
+      <h2 class="discipline-title">Pohyb<br>&amp; gimbal</h2>
+      <p class="discipline-lead">Jedno drone video udělá pro váš prostor víc než desítka statických fotek.</p>
+      <p class="discipline-desc">Plynulý pohyb kamery přes gimbal nebo letecké záběry dronem jsou vizuální páka — okamžitě zvyšují vnímanou hodnotu toho, co ukazujete. Restaurace, výrobní hala, penzion nebo stavba. Z výšky nebo v pohybu to vypadá impozantně vždy. Máme letecký certifikát, žádná komplikace.</p>
+      <ul class="why-list">
+        <li>Drone záběry zhodnotí váš prostor nebo lokalitu v očích zákazníka okamžitě</li>
+        <li>Plynulý pohyb gimbalem dává videu filmový pocit, který statický záběr nedosáhne</li>
+        <li>Ideální pro nemovitosti, eventy, gastronomii, průmysl a prezentace lokalit</li>
+      </ul>
+    </div>
+    <div class="discipline-visual reveal-left">
+      <div class="visual-stat">Drone · Gimbal · Certifikát</div>
+      <svg class="visual-icon" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+        <path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+      </svg>
+      <div class="visual-label">Motion &amp; Aerial</div>
+    </div>
+  </div>
+</section>
+
+<!-- PHILOSOPHY -->
+<div class="philosophy">
+  <div class="philosophy-inner reveal">
+    <div class="philosophy-eyebrow">Přístup MLX Media</div>
+    <h2 class="philosophy-quote">"Jedno video může změnit<br>pohled na váš <em>byznys navždy.</em>"</h2>
+    <p class="philosophy-body">Každá z těchto složek je volitelná přidaná hodnota k vašemu videu. Nemusíte rozumět technice — stačí vědět, jaký výsledek chcete. My víme, co k tomu potřebujeme.</p>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <div class="cta-inner reveal">
+    <div>
+      <div class="cta-eyebrow">Hledám nové klienty</div>
+      <h2 class="cta-title">Máte projekt? Pojďme ho natočit.</h2>
+    </div>
+    <a href="Objednávka.html" class="btn-primary">
+      Objednat video
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="mlx-footer">
+  <div class="footer-stripe-line" id="fStripe"></div>
+  <div class="footer-main-grid">
+    <div class="footer-reveal">
+      <div class="f-brand-logo">ML<span>X</span> MEDIA</div>
+      <div class="f-brand-tagline">Filmování · Střih · Postprodukce</div>
+      <p class="f-brand-desc">Věřím, že každý příběh si zaslouží být vyprávěn. Pomáhám firmám a jednotlivcům zachytit jejich vizi prostřednictvím profesionálního videa.</p>
+      <div class="f-social-row">
+        <a href="https://www.youtube.com/@MLX-Media" target="_blank" rel="noopener" class="f-social-btn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 00.5 6.2 31.3 31.3 0 000 12a31.3 31.3 0 00.5 5.8 3 3 0 002.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 002.1-2.1A31.3 31.3 0 0024 12a31.3 31.3 0 00-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+          YouTube
+        </a>
+        <a href="https://www.instagram.com/mlxmedia" target="_blank" rel="noopener" class="f-social-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          Instagram
+        </a>
+      </div>
+    </div>
+    <div class="footer-reveal">
+      <div class="f-col-title">Navigace</div>
+      <ul class="f-links">
+        <li><a href="index.html">Domovská stránka</a></li>
+        <li><a href="O-mně.html">O mně</a></li>
+        <li><a href="Portfolio.html">Portfolio</a></li>
+        <li><a href="Aspekty.html">Aspekty</a></li>
+        <li><a href="Ceník.html">Ceník</a></li>
+        <li><a href="Objednávka.html">Objednávka</a></li>
+      </ul>
+    </div>
+    <div class="footer-reveal">
+      <div class="f-col-title">Služby</div>
+      <ul class="f-links">
+        <li><a href="Ceník.html">Firemní videa</a></li>
+        <li><a href="Ceník.html">Reklamní spot</a></li>
+        <li><a href="Ceník.html">Reels &amp; TikTok</a></li>
+        <li><a href="Ceník.html">Color grading</a></li>
+        <li><a href="Ceník.html">Zvukový design</a></li>
+        <li><a href="Ceník.html">Dronové záběry</a></li>
+      </ul>
+    </div>
+    <div class="footer-reveal">
+      <div class="f-col-title">Kontakt</div>
+      <div class="f-contact-item">
+        <div class="f-contact-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <div><div class="f-contact-label">Email</div><div class="f-contact-value"><a href="mailto:info@mlxmedia.cz">info@mlxmedia.cz</a></div></div>
+      </div>
+      <div class="f-contact-item">
+        <div class="f-contact-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.7 10.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012.6 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.55a16 16 0 006.29 6.29l.96-.96a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        </div>
+        <div><div class="f-contact-label">Telefon</div><div class="f-contact-value"><a href="tel:+420777413600">+420 777 413 600</a></div></div>
+      </div>
+      <div class="f-contact-item">
+        <div class="f-contact-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div><div class="f-contact-label">Oblast</div><div class="f-contact-value">Praha 5, Praha 6, Beroun</div></div>
+      </div>
+      <div class="f-contact-item">
+        <div class="f-contact-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div><div class="f-contact-label">Dodání</div><div class="f-contact-value">4–10 dní od natáčení</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="f-stats-band">
+    <div class="f-stat-item"><div class="f-stat-number">25<span>+</span></div><div class="f-stat-label">Projektů</div></div>
+    <div class="f-stat-item"><div class="f-stat-number">3<span>+</span></div><div class="f-stat-label">Roky zkušeností</div></div>
+    <div class="f-stat-item"><div class="f-stat-number">95<span>%</span></div><div class="f-stat-label">Doporučení</div></div>
+    <div class="f-stat-item"><div class="f-stat-number">6<span>K</span></div><div class="f-stat-label">RAW rozlišení</div></div>
+  </div>
+
+  <div class="f-cta-wrap">
+    <div class="f-cta-inner" id="fCta">
+      <div>
+        <div class="f-cta-eyebrow">Hledám nové klienty</div>
+        <div class="f-cta-title">Máte projekt? Pojďme ho natočit.</div>
+      </div>
+      <a href="Objednávka.html" class="f-cta-btn">
+        Objednat video
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="f-bottom">
+    <div class="f-copy">© <span id="fyear"></span> <span>MLX Media</span> · Matouš Lexa · Všechna práva vyhrazena</div>
+    <div class="f-legal"><a href="#">Ochrana soukromí</a><a href="#">Cookies</a><a href="Objednávka.html">Kontakt</a></div>
+  </div>
+</footer>
+
+<script>
+  // theme
+  const root = document.documentElement;
+  root.setAttribute('data-theme', localStorage.getItem('mlx-theme') || 'dark');
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    localStorage.setItem('mlx-theme', next);
+  });
+
+  // nav
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 20);
+    document.getElementById('backToTop').classList.toggle('show', window.scrollY > 400);
+  }, { passive: true });
+
+  // hamburger
+  const ham = document.getElementById('hamburger');
+  const mob = document.getElementById('mobileMenu');
+  ham.addEventListener('click', () => { ham.classList.toggle('open'); mob.classList.toggle('open'); });
+  mob.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { ham.classList.remove('open'); mob.classList.remove('open'); }));
+
+  // year
+  document.getElementById('fyear').textContent = new Date().getFullYear();
+
+  // page reveals
+  const io = new IntersectionObserver(e => e.forEach(x => { if(x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.1 });
+  document.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(el => io.observe(el));
+
+  // footer reveals
+  const fio = new IntersectionObserver(e => e.forEach(x => { if(x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.12 });
+  [document.getElementById('fStripe'), document.getElementById('fCta'), ...document.querySelectorAll('.footer-reveal,.f-stat-item')].filter(Boolean).forEach(el => fio.observe(el));
+
+  // stat counters
+  const cio = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target, target = parseInt(el.dataset.target), suf = el.querySelector('span')?.textContent || '';
+      let n = 0; const iv = Math.max(Math.floor(1200/target), 12);
+      const t = setInterval(() => { n++; el.innerHTML = n+'<span>'+suf+'</span>'; if(n>=target) clearInterval(t); }, iv);
+      cio.unobserve(el);
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.js-count').forEach(el => cio.observe(el));
+
+  // footer stat counters
+  const fcio = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target, m = el.textContent.match(/^(\d+)(.*)/);
+      if (!m) return;
+      const end = parseInt(m[1]), suf = m[2]; let n = 0;
+      const t = setInterval(() => { n++; el.innerHTML = n+'<span>'+suf+'</span>'; if(n>=end) clearInterval(t); }, Math.max(Math.floor(1200/end),12));
+      fcio.unobserve(el);
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.f-stat-number').forEach(el => fcio.observe(el));
+</script>
+</body>
+</html>
