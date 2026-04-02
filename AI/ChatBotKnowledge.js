@@ -11,7 +11,7 @@ const knowledge = {
 
 // ---- 2. OBJEDNÁVKA ----
   "objednávka, objednat, objednej, rezervace, chci objednat, jak objednat, můžu objednat, objednávku, objednání, rezervovat": [
-    "Objednávku provedete jednoduše vyplněním online formuláře. Ihned po odeslání dostanete potvrzovací email. Během téhož nebo následujícího dne vám zavoláme a domluvíme podrobnosti. Pokud by formulář nefungoval, můžete napsat na email nebo zavolat.<br><button class='mlx-ai-btn' data-dest='Objednávka.html' data-nav='nav a[href=\"Objednávka.html\"]'><span class='mlx-icon'>📝</span> Vyplnit formulář</button><br><button class='mlx-ai-btn' data-dest='mailto:mlx.studio2222@gmail.com' data-nav='nav a[href=\"mailto:mlx.studio2222@gmail.com\"]'><span class='mlx-icon'>✉️</span> Napsat email</button><br><button class='mlx-ai-btn' data-dest='tel:+420123456789' data-nav='nav a[href=\"tel:+420123456789\"]'><span class='mlx-icon'>📞</span> Zavolat</button> 😊"
+    "Objednávku provedete jednoduše vyplněním online formuláře. Ihned po odeslání dostanete potvrzovací email. Během téhož nebo následujícího dne vám zavoláme a domluvíme podrobnosti. Pokud by formulář nefungoval, můžete napsat na email nebo zavolat.<br><button class='mlx-ai-btn' data-dest='Objednávka.html' data-nav='nav a[href=\"Objednávka.html\"]'><span class='mlx-icon'>📝</span> Vyplnit formulář</button><br><button class='mlx-ai-btn' data-dest='mailto:mlx.studio2222@gmail.com' data-nav='nav a[href=\"mailto:mlx.studio2222@gmail.com\"]'><span class='mlx-icon'>✉️</span> Napsat email</button><br><button class='mlx-ai-btn' data-dest='tel:+420777413600' data-nav='nav a[href=\"tel:+420777413600\"]'><span class='mlx-icon'>📞</span> Zavolat</button> 😊"
   ],
   "formulář, vyplnit formulář, kde je formulář, formulář objednávka, online formulář, objednávkový formulář, rezervační formulář, kde najdu formulář, formulář na webu, vyplňování formuláře": [
     "Formulář pro objednávku najdete na stránce Objednávka. Po jeho vyplnění se objednávka automaticky zaregistruje a přijde vám ověřovací email.<br><button class='mlx-ai-btn' data-dest='Objednávka.html' data-nav='nav a[href=\"Objednávka.html\"]'><span class='mlx-icon'>📝</span> Otevřít formulář</button>"
@@ -20,7 +20,7 @@ const knowledge = {
     "Po vyplnění formuláře vám dorazí ověřovací email. Ten potvrzuje, že systém objednávku správně přijal a že vaše údaje sedí. Následně se vám ozveme telefonicky pro doladění detailů.<br><button class='mlx-ai-btn' data-dest='Objednávka.html' data-nav='nav a[href=\"Objednávka.html\"]'><span class='mlx-icon'>📝</span> Vyplnit formulář</button>"
   ],
   "po objednávce, co se stane po objednávce, reakce, jak dlouho čekat, ozvete se, kdy zavoláte, co dál, postup po objednávce, co následuje, reakce na objednávku": [
-    "Jakmile odešlete formulář, přijde potvrzovací email. Poté vám zavoláme – většinou ten samý den, maximálně následující pracovní den. Domluvíme spolu všechny detaily natáčení či služby.<br><button class='mlx-ai-btn' data-dest='tel:+420123456789' data-nav='nav a[href=\"tel:+420123456789\"]'><span class='mlx-icon'>📞</span> Čekat na hovor</button>"
+    "Jakmile odešlete formulář, přijde potvrzovací email. Poté vám zavoláme – většinou ten samý den, maximálně následující pracovní den. Domluvíme spolu všechny detaily natáčení či služby.<br><button class='mlx-ai-btn' data-dest='tel:+420777413600' data-nav='nav a[href=\"tel:+420777413600\"]'><span class='mlx-icon'>📞</span> Čekat na hovor</button>"
   ],
   "telefonát, zavoláte mi, kdy zavoláte, budete volat, kdy voláte, ozvete se, voláte, volání, zpětný hovor, čekám na telefon": [
     "Telefonicky se ozýváme po každé objednávce – někdy hned během pár hodin, jindy až následující den (podle času odeslání). Pokud bychom se dlouho neozývali, napište prosím na email.<br><button class='mlx-ai-btn' data-dest='mailto:mlx.studio2222@gmail.com' data-nav='nav a[href=\"mailto:mlx.studio2222@gmail.com\"]'><span class='mlx-icon'>✉️</span> Napsat email</button>"
@@ -32,7 +32,7 @@ const knowledge = {
     "Rezervaci provedete vyplněním formuláře. Pokud by to nešlo, napište mi na email. Potvrzení rezervace dostanete zpět emailem a následně i telefonicky.<br><button class='mlx-ai-btn' data-dest='Objednávka.html' data-nav='nav a[href=\"Objednávka.html\"]'><span class='mlx-icon'>📝</span> Rezervovat přes formulář</button><br><button class='mlx-ai-btn' data-dest='mailto:mlx.studio2222@gmail.com' data-nav='nav a[href=\"mailto:mlx.studio2222@gmail.com\"]'><span class='mlx-icon'>✉️</span> Rezervovat emailem</button>"
   ],
   "problém s objednávkou, nejde objednat, formulář nefunguje, neodeslalo se, problém formulář, nefunguje objednávka, chyba objednávka, objednávka se nezdařila, neodesláno, nejde vyplnit": [
-    "Pokud by formulář nefungoval, napište mi prosím rovnou na email nebo zavolejte. Občas může být krátký výpadek, ale email i telefon fungují vždy.<br><button class='mlx-ai-btn' data-dest='mailto:mlx.studio2222@gmail.com' data-nav='nav a[href=\"mailto:mlx.studio2222@gmail.com\"]'><span class='mlx-icon'>✉️</span> Napsat email</button><br><button class='mlx-ai-btn' data-dest='tel:+420123456789' data-nav='nav a[href=\"tel:+420123456789\"]'><span class='mlx-icon'>📞</span> Zavolat</button>"
+    "Pokud by formulář nefungoval, napište mi prosím rovnou na email nebo zavolejte. Občas může být krátký výpadek, ale email i telefon fungují vždy.<br><button class='mlx-ai-btn' data-dest='mailto:mlx.studio2222@gmail.com' data-nav='nav a[href=\"mailto:mlx.studio2222@gmail.com\"]'><span class='mlx-icon'>✉️</span> Napsat email</button><br><button class='mlx-ai-btn' data-dest='tel:+420777413600' data-nav='nav a[href=\"tel:+420777413600\"]'><span class='mlx-icon'>📞</span> Zavolat</button>"
   ],
   "storno, zrušení objednávky, chci zrušit, zrušit rezervaci, zrušit objednávku, storno objednávky, odhlásit, zrušit termín, ruším objednávku, zrušení": [
     "Pokud potřebujete objednávku zrušit, stačí napsat email. Storno řešíme vždy individuálně a férově. 🙂<br><button class='mlx-ai-btn' data-dest='mailto:mlx.studio2222@gmail.com' data-nav='nav a[href=\"mailto:mlx.studio2222@gmail.com\"]'><span class='mlx-icon'>✉️</span> Zrušit emailem</button>"
@@ -41,13 +41,13 @@ const knowledge = {
 
 // ---- 3. KONTAKT ----
 "kontakt, jak kontaktovat, spojení, kde vás najdu, kontaktujte, kontakt na vás, spojit se, spojení s vámi, kontakt info, vaše kontakty": [
-  "Najdete mě snadno 😊<br>Email: <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a><br>Telefon: <a href='tel:+420123456789'>+420 123 456 789</a><br>YouTube: <a href='https://www.youtube.com/@MLX-Media' target='_blank'>MLX YouTube</a><br><button class='mlx-ai-btn' data-dest='#footer' data-target='#footer' data-outline='rounded'><span class='mlx-icon'>👇</span> Zobrazit kontakty dole</button>"
+  "Najdete mě snadno 😊<br>Email: <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a><br>Telefon: <a href='tel:+420777413600'>+420 777 413 600</a><br>YouTube: <a href='https://www.youtube.com/@MLX-Media' target='_blank'>MLX YouTube</a><br><button class='mlx-ai-btn' data-dest='#footer' data-target='#footer' data-outline='rounded'><span class='mlx-icon'>👇</span> Zobrazit kontakty dole</button>"
 ],
 "email, napište email, mail, napiš mi, emailová adresa, kontakt email, váš email, email prosím, email info, napište mi email": [
   "Můj email je <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a>. Nejrychleji se domluvíme právě přes email. ✉️"
 ],
 "telefon, volejte, číslo, mobil, zavolat, volejte mi, vaše číslo, jaké číslo, kontakt číslo, tel": [
-  "Můžete mi zavolat na <a href='tel:+420123456789'>+420 123 456 789</a>. 📞 Pokud bych hovor nezvedl, zkuste email."
+  "Můžete mi zavolat na <a href='tel:+420777413600'>+420 777 413 600</a>. 📞 Pokud bych hovor nezvedl, zkuste email."
 ],
 "web, webová stránka, stránky, web link, adresa webu, web prosím, vaše stránky, stránka mlx, odkaz, link": [
   "Oficiální web je <a href='https://www.mlxmedia.cz' target='_blank'>www.mlxmedia.cz</a>. Najdete tam portfolio, ceník i objednávku. 🌐"
@@ -56,7 +56,7 @@ const knowledge = {
   "Ukázky videí jsou na mém YouTube kanále 🎬 👉 <a href='https://www.youtube.com/@MLX-Media' target='_blank'>MLX YouTube</a>."
 ],
 "instagram, instagram profil, vaše ig, máte instagram, odkaz instagram, link ig, vaše insta, ukázky instagram, reels, vaše fotky": [
-  "Na Instagramu sdílím krátká videa a fotky ze zákulisí 📸 👉 <a href='https://instagram.com/tvoje-insta' target='_blank'>@tvoje-insta</a>."
+  "Na Instagramu sdílím krátká videa a fotky ze zákulisí 📸 👉 <a href='https://instagram.com/mlx_media_' target='_blank'>@mlx_media_</a>."
 ],
 "portfolio, reference, ukázky, vaše práce, ukázky videí, reference projekty, ukázkové video, ukázka tvorby, ukázky práce, vaše projekty": [
   "Portfolio je dostupné zde: <button class='mlx-ai-btn' data-dest='Portfolio.html' data-nav='nav a[href=\"Portfolio.html\"]'><span class='mlx-icon'>🖼️</span> Ukázat portfolio</button> Najdete tam filmy, promo videa i firemní projekty. 🎥"
@@ -229,7 +229,7 @@ const knowledge = {
   "✂️ Střih videa z vašich záběrů od 1500 Kč.<br><small>Stříhám v DaVinci Resolve.</small>"
 ],
 "jen kamera, kameraman, natáčení, jen natáčet, kamerová práce, kamera služby, kamerování, kameraman služby, natočíte, natočit": [
-  "📸 Nabízím čistě kameramanské služby (Blackmagic 6K).<br><small>Kontakt: <a href='tel:+420123456789'>+420 123 456 789</a></small>"
+  "📸 Nabízím čistě kameramanské služby (Blackmagic 6K).<br><small>Kontakt: <a href='tel:+420777413600'>+420 777 413 600</a></small>"
 ],
 
   // ---- 8. TECHNIKA ----
@@ -456,21 +456,21 @@ const knowledge = {
 
 // ---- 16. ZTRÁTY A NÁLEZY ----
 "ztráta, ztracené, zapomenuté věci, ztracený předmět, něco jsem ztratil": [
-  "📦 Pokud jste při natáčení nebo spolupráci něco ztratili, dejte mi prosím vědět co nejdříve. Kontaktujte mě na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a> nebo na čísle <a href='tel:+420123456789'>+420 123 456 789</a>.",
-  "🔑 Já osobně se snažím všechny ztracené věci uschovat – napište mi na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a> nebo zavolejte na <a href='tel:+420123456789'>+420 123 456 789</a>, a zkusíme to dohledat.",
-  "📱 Často se věci rychle najdou, když se ozvete hned po natáčení – pište na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a> nebo volejte <a href='tel:+420123456789'>+420 123 456 789</a>."
+  "📦 Pokud jste při natáčení nebo spolupráci něco ztratili, dejte mi prosím vědět co nejdříve. Kontaktujte mě na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a> nebo na čísle <a href='tel:+420777413600'>+420 777 413 600</a>.",
+  "🔑 Já osobně se snažím všechny ztracené věci uschovat – napište mi na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a> nebo zavolejte na <a href='tel:+420777413600'>+420 777 413 600</a>, a zkusíme to dohledat.",
+  "📱 Často se věci rychle najdou, když se ozvete hned po natáčení – pište na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a> nebo volejte <a href='tel:+420777413600'>+420 777 413 600</a>."
 ],
 
 "nález, našel jsem, nalezený předmět, našel jsem věc, mám vaši věc": [
-  "🙏 Pokud jste našli něco, co by mohlo patřit mně (např. technika, baterie, kabely), budu moc vděčný, když mi dáte vědět. Ozvěte se prosím na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a> nebo na číslo <a href='tel:+420123456789'>+420 123 456 789</a>.",
-  "✉️ Nejlépe napište na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a>, případně zavolejte na <a href='tel:+420123456789'>+420 123 456 789</a> – vše si domluvíme.",
-  "Děkuji předem za poctivost a ochotu! Prosím dejde mi prosím vědět přes telefon nebo email. 🙂 Kontakt: <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a> | <a href='tel:+420123456789'>+420 123 456 789</a>."
+  "🙏 Pokud jste našli něco, co by mohlo patřit mně (např. technika, baterie, kabely), budu moc vděčný, když mi dáte vědět. Ozvěte se prosím na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a> nebo na číslo <a href='tel:+420777413600'>+420 777 413 600</a>.",
+  "✉️ Nejlépe napište na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a>, případně zavolejte na <a href='tel:+420777413600'>+420 777 413 600</a> – vše si domluvíme.",
+  "Děkuji předem za poctivost a ochotu! Prosím dejde mi prosím vědět přes telefon nebo email. 🙂 Kontakt: <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a> | <a href='tel:+420777413600'>+420 777 413 600</a>."
 ],
 
 "ztráty a nálezy, něco se ztratilo, hledám věci, hledám předmět": [
-  "📦 Pokud jde o moje vybavení, vždy je možnost, že se něco zapomnělo na place. Ozvěte se prosím na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a> nebo zavolejte na <a href='tel:+420123456789'>+420 123 456 789</a>.",
-  "✉️ Děkuji moc za snahu vrácení, Nejlepší je napsat mi na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a> nebo zavolat na <a href='tel:+420123456789'>+420 123 456 789</a> – probereme detaily a ověříme, jestli věc patří mně.",
-  "🙏 Děkuji moc za ochotu pomoci! Nejlépe mi zavolejte nebo napište. Kontakt: <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a> | <a href='tel:+420123456789'>+420 123 456 789</a>."
+  "📦 Pokud jde o moje vybavení, vždy je možnost, že se něco zapomnělo na place. Ozvěte se prosím na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a> nebo zavolejte na <a href='tel:+420777413600'>+420 777 413 600</a>.",
+  "✉️ Děkuji moc za snahu vrácení, Nejlepší je napsat mi na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a> nebo zavolat na <a href='tel:+420777413600'>+420 777 413 600</a> – probereme detaily a ověříme, jestli věc patří mně.",
+  "🙏 Děkuji moc za ochotu pomoci! Nejlépe mi zavolejte nebo napište. Kontakt: <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a> | <a href='tel:+420777413600'>+420 777 413 600</a>."
 ],
 
 // ---- 17. LOKACE A CESTOVÁNÍ ----
@@ -559,6 +559,55 @@ const knowledge = {
   ],
 
 
+
+
+// ---- 19. DOBA DODÁNÍ / TURNAROUND ----
+"jak dlouho trvá střih, jak dlouho střih, jak dlouho zpracování, kdy hotové video, kdy dodáte, kdy video bude, délka střihu, jak rychle hotové, jak rychle střih, turnaround": [
+  "⏱️ Orientačně: menší videa (do 2 min) dodávám za <b>4–10 dní</b> po natáčení. Větší projekty mohou trvat <b>2–4 týdny</b>.<br><small>Přesný termín domluvíme po briefu – záleží na délce a složitosti.</small><br><button class='mlx-ai-btn' data-dest='mailto:mlx.studio2222@gmail.com'><span class='mlx-icon'>✉️</span> Napsat pro přesný odhad</button>"
+],
+"expresní střih, rychlý střih, rychle zpracovat, rush zakázka, urgentní střih, asap střih, spěchám se střihem, rychle potřebuji video, video rychle, dodání expres": [
+  "⚡ Expresní zpracování je možné po domluvě – napište mi co nejdřív a zkusíme to vyřešit.<br><small>Expresní zakázky mohou mít příplatek podle náročnosti.</small><br><button class='mlx-ai-btn' data-dest='mailto:mlx.studio2222@gmail.com'><span class='mlx-icon'>✉️</span> Napsat o expresní zakázce</button>"
+],
+
+// ---- 20. HUDBA A ZVUK ----
+"hudba ve videu, soundtrack, jakou hudbu, hudba projekt, hudba k videu, podkresová hudba, bg hudba, background music, royalty free, hudební podkres": [
+  "🎵 Hudbu vybírám z <b>royalty-free knihovny</b> – je součástí ceny, bez příplatku.<br><small>Žádné problémy s autorskými právy na YouTube ani jiných sítích.</small>"
+],
+"vlastní hudba, moje hudba, přinesu si hudbu, mám svoji hudbu, chci konkrétní skladbu, konkrétní song, vlastní song, hudba od klienta, nahrát vlastní hudbu, použít svoji hudbu": [
+  "🎶 Pokud máte vlastní hudbu nebo konkrétní přání, klidně ji přinesete – použijeme ji. Jen si pohlídejte licenci (autorská práva), aby video mohlo jít na sítě. 😊"
+],
+"autorská práva, copyright hudba, licencovaná hudba, licencovat hudbu, copyright video, copyright, ip hudba, práva k hudbě, smí se použít hudba, youtube copyright": [
+  "⚠️ <b>Pozor na autorská práva!</b> Proto standardně používám royalty-free hudbu – video pak může bez problémů na YouTube, Instagram i jinde.<br><small>Pokud chcete konkrétní komerční skladbu, domluvíme to předem.</small>"
+],
+
+// ---- 21. ŠPATNÉ POČASÍ ----
+"špatné počasí, déšť, dešťový den, co se stane při dešti, prší, špatné podmínky, nepřízeň počasí, sníh, bouřka, mlha, nenatáčíte v dešti, déšť natáčení, počasí problém": [
+  "🌧️ Při špatném počasí termín přesuneme – <b>ve většině případů bez příplatku</b>. Domluvíme nový datum tak, aby nám oba vyhovovalo.<br><small>Napište hned jak zjistíte předpověď, ať to naplánujeme včas.</small>"
+],
+"počasí záloha, přesun termínu, zrušení kvůli počasí, odložit natáčení, přeplánovat natáčení, posunout termín, termín přesun, přesun datum, datum přeložit, přeložit natáčení": [
+  "📅 Pokud je potřeba přeložit termín (třeba kvůli počasí nebo neočekávané situaci), ozve se co nejdřív a najdeme náhradní datum. <b>Žádné zbytečné storno poplatky</b> – vždy to řeším férovně. 🙂"
+],
+
+// ---- 22. STUDENTSKÁ SLEVA / ŠKOLY / NEZISKOVKY ----
+"studentská sleva, sleva pro studenty, student sleva, jsem student, školní projekt, škola projekt, studentský projekt, nezisková organizace, neziskovka, charita sleva": [
+  "🎓 Slevy pro studenty nebo neziskovky řeším <b>individuálně po domluvě</b> – záleží na projektu a rozsahu.<br>Napište mi email s popisem projektu a podíváme se na to.<br><button class='mlx-ai-btn' data-dest='mailto:mlx.studio2222@gmail.com'><span class='mlx-icon'>✉️</span> Napsat o slevě</button>"
+],
+
+// ---- 23. SCÉNÁŘ, PŘÍPRAVA, KONCEPT ----
+"scénář, pomoc se scénářem, napsat scénář, mám napsat scénář, script, nápad na video, nemám nápad, nevím co chci, co natáčet, co točit": [
+  "🎬 Pokud přijdete <b>s vlastním konceptem</b>, výborně – práce bude rychlejší a levnější.<br>Pokud si nejste jistí, pomůžu s nápadem – ale záleží na míře zapojení. Větší kreativní příprava může být za příplatek, domluvíme se.<br><button class='mlx-ai-btn' data-dest='mailto:mlx.studio2222@gmail.com'><span class='mlx-icon'>✉️</span> Prodiskutovat projekt emailem</button>"
+],
+"příprava natáčení, briefing, co si připravit, příprava, co mít hotové, co dodat, jak se připravit, příprava projektu, předprodukce, co dát k dispozici": [
+  "📋 Před natáčením si domluvíme <b>brief</b> – co chcete natočit, kde, kdy a proč. Čím víc víte předem, tím lépe pro výsledek.<br><small>Nemusíte mít hotový scénář – stačí základní představa a rozvineme to spolu.</small>"
+],
+"mám vlastní nápad, mám scénář, přinesu scénář, mám napsaný scénář, připravil jsem scénář, já vymyslel, přijdu s konceptem, mám příběh, mám nápad, přijdu s nápadem": [
+  "🤩 Skvělé! S vaším vlastním scénářem nebo konceptem je práce snazší a výsledek přesnější. Pošlete mi detaily a probereme postup.<br><button class='mlx-ai-btn' data-dest='mailto:mlx.studio2222@gmail.com'><span class='mlx-icon'>✉️</span> Poslat nápad emailem</button>"
+],
+
+// ---- 24. FOTOGRAFIE ----
+"fotografie, fotky, focení, fotonabídka, foto služba, foto projekt, foto cena, fotografujete, děláte fotky, foto na web": [
+  "📷 Fotografie není moje hlavní zaměření – specializuji se primárně na video produkci. Pokud je to součást většího projektu, domluvíme se individuálně.<br><button class='mlx-ai-btn' data-dest='mailto:mlx.studio2222@gmail.com'><span class='mlx-icon'>✉️</span> Napsat o focení</button>"
+],
 
 };
 
@@ -720,5 +769,41 @@ lokace: [
     "dostupnost","volné termíny","obsazenost","volno","kalendář","termíny",
     "kdy máš čas","jak jsi volný","máš volno","rezervace termínu","rezervovat čas",
     "kdy to půjde","volný termín","free termín","kdy natáčíš"
+  ],
+
+  hudba: [
+    "hudba","soundtrack","royalty free","royalty-free","hudební podkres","bg music",
+    "background music","podkresová hudba","jakou hudbu","hudba k videu",
+    "vlastní hudba","moje hudba","konkrétní skladba","píseň do videa",
+    "copyright hudba","autorská práva hudba"
+  ],
+
+  pocasi: [
+    "počasí","déšť","prší","bouřka","sníh","špatné podmínky","špatné počasí",
+    "prší zítra","nepřízeň","vítr","špatná předpověď","přesun termínu",
+    "zrušit kvůli počasí","odložit kvůli dešti","nepřízeň počasí"
+  ],
+
+  dodani_cas: [
+    "jak dlouho","kdy hotové","kdy dodáte","turnaround","jak rychle",
+    "délka zpracování","kdy video bude hotové","jak dlouho střih",
+    "jak dlouho trvá střih","kdy pošlete hotové","průběh zpracování"
+  ],
+
+  sleva_student: [
+    "student sleva","jsem student","studentský projekt","školní video",
+    "škola projekt","gymnázium","střední škola","neziskovka","charita",
+    "levněji student","sleva škola","studentský discount"
+  ],
+
+  scenar: [
+    "scénář","script","nemám nápad","nevím co chci","pomozte s nápadem",
+    "vymyslet video","co točit","o čem video","nápad na video",
+    "příprava projektu","brief","předprodukce","co si připravit"
+  ],
+
+  foto: [
+    "fotky","focení","fotografie","fotografujete","děláte foto","foto cena",
+    "chci fotky","potřebuji fotos","produktové foto","foto na web","foto projekt"
   ]
 };
