@@ -1,13 +1,30 @@
 <!DOCTYPE html>
 <html lang="cs" data-theme="dark">
 <head>
-  <link rel="icon" type="image/png" href="favicon.png"> 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Objednejte profesionální video produkci a střih od MLX Media. Natáčení, color grading a postprodukce pro vaše projekty." />
+  <meta name="keywords" content="objednávka, video produkce, natáčení, střih, MLX Media, Matouš Lexa" />
+  <link rel="canonical" href="Objednávka.html" />
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <meta property="og:title" content="Objednávka – MLX Media" />
+  <meta property="og:description" content="Objednejte profesionální video produkci a střih od MLX Media. Natáčení, color grading a postprodukce pro vaše projekty." />
+  <meta property="og:image" content="https://example.com/images/objednavka-og.jpg" />
+  <meta property="og:url" content="https://example.com/Objednávka.html" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Objednávka – MLX Media" />
+  <meta name="twitter:description" content="Objednejte profesionální video produkci a střih od MLX Media. Natáčení, color grading a postprodukce pro vaše projekty." />
+  <meta name="twitter:image" content="https://example.com/images/objednavka-og.jpg" />
   <title>Objednávka – MLX Media</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="AI/ChatBot.css">
+  <script src="AI/ChatBotKnowledge.js"></script>
+  <script src="AI/ChatBot.js"></script>
+  <script src="AI/mlx_highlight.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
   <style>
@@ -466,7 +483,7 @@
           <li><strong>Žádné závazky předem</strong> — formulář je nezávazná poptávka, ne smlouva</li>
           <li><strong>2 revize zdarma</strong> — v ceně každého projektu, bez zbytečných diskuzí</li>
           <li><strong>50 % záloha při potvrzení</strong> — zbytek po dodání finálního videa</li>
-          <li><strong>Dodání 4–8 pracovních dní</strong> — expresní možné, domluvíme se</li>
+          <li><strong>Dodání 4–10 pracovních dní</strong> — expresní možné, domluvíme se</li>
           <li><strong>Celá ČR na požádání</strong> — Beroun, Praha 5 a Praha 6 bez příplatku</li>
         </ul>
         <a href="Objednávkový-formulář.html" class="cta-btn-large">
@@ -847,10 +864,30 @@
   const fio = new IntersectionObserver(e => e.forEach(x => { if(x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.12 });
   [document.getElementById('fStripe'), document.getElementById('fCta'), ...document.querySelectorAll('.footer-reveal,.f-stat-item')].filter(Boolean).forEach(el => fio.observe(el));
 
-  // ── CALENDAR ──
-  const BOOKED_FULL    = ['2025-04-05','2025-04-12','2025-04-19','2025-04-26','2025-05-03','2025-05-10','2025-05-24','2025-06-07','2025-06-14'];
-  const BOOKED_PARTIAL = ['2025-04-07','2025-04-14','2025-04-21','2025-05-01','2025-05-08','2025-05-17','2025-06-01','2025-06-21'];
-  const HARD           = ['2025-04-06','2025-04-13','2025-04-20','2025-05-11','2025-05-18','2025-06-08','2025-06-15'];
+const BOOKED_FULL = [
+  "2026-05-26","2026-05-27","2026-05-28"
+];
+
+const BOOKED_PARTIAL = [
+  "2026-05-12","2026-05-13","2026-05-14","2026-05-19","2026-05-20"
+];
+
+const HARD = [
+  "2026-04-06","2026-04-07","2026-04-08","2026-04-09","2026-04-10",
+  "2026-04-13","2026-04-14","2026-04-15","2026-04-16","2026-04-17",
+  "2026-04-20","2026-04-21","2026-04-22","2026-04-23","2026-04-24",
+  "2026-04-27","2026-04-28","2026-04-29","2026-04-30","2026-05-01",
+  "2026-05-04","2026-05-05","2026-05-06","2026-05-07","2026-05-08",
+  "2026-05-11","2026-05-12","2026-05-18","2026-05-19","2026-05-22",
+  "2026-05-25","2026-05-26","2026-06-01","2026-06-02","2026-06-03",
+  "2026-06-04","2026-06-05","2026-06-08","2026-06-09","2026-06-10",
+  "2026-06-11","2026-06-12","2026-06-15","2026-06-16","2026-06-17",
+  "2026-06-18","2026-06-19","2026-06-22","2026-06-23","2026-06-24",
+  "2026-06-25","2026-06-26","2026-06-29","2026-06-30","2026-07-01",
+  "2026-07-02","2026-07-03","2026-07-06","2026-07-07","2026-07-08",
+  "2026-07-09","2026-07-10","2026-07-13","2026-07-14","2026-07-15",
+  "2026-07-16","2026-07-17"
+];
   const MONTHS_CS = ['Leden','Únor','Březen','Duben','Květen','Červen','Červenec','Srpen','Září','Říjen','Listopad','Prosinec'];
   let calDate = new Date(); calDate.setDate(1);
 
@@ -882,27 +919,37 @@
   renderCal();
 
   // ── MAP ──
+  let tileLayer;
+  let markers = [];
   window.addEventListener('load', () => {
     const isDark = root.getAttribute('data-theme') === 'dark';
     const map = L.map('leaflet-map', { zoomControl: true, scrollWheelZoom: false }).setView([50.04, 14.30], 10);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors',
-      className: isDark ? 'map-tiles-dark' : ''
-    }).addTo(map);
+    const tileUrl = isDark ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png' : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    const attribution = isDark ? '© CartoDB, © OpenStreetMap contributors' : '© OpenStreetMap contributors';
+    tileLayer = L.tileLayer(tileUrl, { attribution }).addTo(map);
 
     const zones = [
       { name: 'Beroun',  lat: 49.9644, lng: 14.0718 },
       { name: 'Praha 5', lat: 50.0580, lng: 14.3800 },
       { name: 'Praha 6', lat: 50.1050, lng: 14.3700 },
     ];
+    const markerColor = isDark ? '#FF8A00' : '#008080';
     zones.forEach(z => {
-      L.circle([z.lat, z.lng], { color:'#FF8A00', fillColor:'#FF8A00', fillOpacity:0.10, weight:1.5, radius:5000 })
+      const circle = L.circle([z.lat, z.lng], { color: markerColor, fillColor: markerColor, fillOpacity: 0.10, weight: 1.5, radius: 5000 })
         .addTo(map).bindPopup(`<strong>${z.name}</strong><br>Zóna A – bez příplatku`);
-      L.circleMarker([z.lat, z.lng], { color:'#FF8A00', fillColor:'#FF8A00', fillOpacity:0.9, radius:6, weight:2 })
+      const marker = L.circleMarker([z.lat, z.lng], { color: markerColor, fillColor: markerColor, fillOpacity: 0.9, radius: 6, weight: 2 })
         .addTo(map).bindPopup(`<strong>${z.name}</strong>`);
+      markers.push(circle, marker);
     });
     document.getElementById('themeToggle').addEventListener('click', () => {
       setTimeout(() => map.invalidateSize(), 450);
+      const isDark = root.getAttribute('data-theme') === 'dark';
+      const newTileUrl = isDark ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png' : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      const newAttribution = isDark ? '© CartoDB, © OpenStreetMap contributors' : '© OpenStreetMap contributors';
+      map.removeLayer(tileLayer);
+      tileLayer = L.tileLayer(newTileUrl, { attribution: newAttribution }).addTo(map);
+      const newMarkerColor = isDark ? '#FF8A00' : '#008080';
+      markers.forEach(m => m.setStyle({ color: newMarkerColor, fillColor: newMarkerColor }));
     });
   });
 
