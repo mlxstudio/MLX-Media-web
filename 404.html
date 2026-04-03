@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="cs" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404 – Scéna nenalezena | MLX Media</title>
+  <meta name="description" content="Tato stránka se ztratila v postprodukci. Vraťte se domů nebo si zahrajte MLX Runner!" />
+  <link rel="icon" type="image/png" href="/Obrázky/favicon.png" />
+  <meta property="og:title" content="404 – Scéna nenalezena | MLX Media" />
+  <meta property="og:description" content="Tato stránka se ztratila v postprodukci." />
+  <meta property="og:image" content="https://mlxmedia.cz/Obrázky/MLXLogo.png" />
+  <meta property="og:url" content="https://mlxmedia.cz/404.html" />
+  <meta property="og:type" content="website" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
+      --font-display:'Bebas Neue', sans-serif;
+      --font-body:   'DM Sans', sans-serif;
+      --nav-h:       64px;
+      --trans:       0.45s var(--ease-out);
+    }
+
+    [data-theme="dark"] {
+      --bg:          #0d0d0d;
+      --bg-surface:  #111111;
+      --bg-card:     #161616;
+      --border:      rgba(255,255,255,0.07);
+      --accent:      #FF8A00;
+      --accent-soft: rgba(255,138,0,0.10);
+      --accent-glow: rgba(255,138,0,0.22);
+      --text:        #e8e4de;
+      --text-muted:  #5e5a56;
+      --text-dim:    #8a8580;
+      --noise-op:    0.028;
+      --hero-grad:   linear-gradient(160deg,#0d0d0d 0%,#141008 100%);
+      --stripe:      linear-gradient(90deg,transparent,#FF8A00,#ffb347,transparent);
+      --footer-desc: #888480;
+      --game-ground: #2a2520;
+      --game-line:   rgba(255,138,0,0.25);
+      --game-sky:    #0d0d0d;
+      --game-cloud:  rgba(255,255,255,0.04);
+    }
+
+    [data-theme="light"] {
+      --bg:          #f6f5f2;
+      --bg-surface:  #ffffff;
+      --bg-card:     #fafaf8;
+      --border:      rgba(0,0,0,0.08);
+      --accent:      #00BFA6;
+      --accent-soft: rgba(0,191,166,0.08);
+      --accent-glow: rgba(0,191,166,0.20);
+      --text:        #0f1e1c;
+      --text-muted:  #a0a8a6;
+      --text-dim:    #6b7574;
+      --noise-op:    0.018;
+      --hero-grad:   linear-gradient(160deg,#f6f5f2 0%,#e8f7f5 100%);
+      --stripe:      linear-gradient(90deg,transparent,#00BFA6,#7dd7cc,transparent);
+      --footer-desc: #6b7574;
+      --game-ground: #e0deda;
+      --game-line:   rgba(0,191,166,0.3);
+      --game-sky:    #f6f5f2;
+      --game-cloud:  rgba(0,0,0,0.04);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      transition: background var(--trans), color var(--trans);
+      position: relative;
+    }
+
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: var(--noise-op); pointer-events: none; z-index: 9999;
+      transition: opacity var(--trans);
+    }
+
+    /* ── NAV ── */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h);
+      z-index: 1000; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 clamp(20px,4vw,48px);
+      transition: background var(--trans), border-color var(--trans);
+    }
+    .nav.scrolled {
+      background: color-mix(in srgb, var(--bg) 85%, transparent);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: var(--font-display); font-size: 1.55rem; letter-spacing: 0.12em; color: var(--text); text-decoration: none; transition: color var(--trans); }
+    .nav-logo span { color: var(--accent); transition: color var(--trans); }
+    .nav-links { display: flex; align-items: center; gap: clamp(12px,2vw,32px); list-style: none; }
+    .nav-links a { font-size: 0.78rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; color: var(--text-dim); transition: color 0.2s; white-space: nowrap; }
+    .nav-links a:hover { color: var(--accent); }
+    @media (max-width: 768px) { .nav-links { display: none; } }
+
+    .theme-toggle {
+      width: 48px; height: 26px; background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 99px; cursor: pointer; position: relative; flex-shrink: 0;
+      transition: background var(--trans), border-color var(--trans);
+    }
+    .theme-toggle::after {
+      content: ''; position: absolute; top: 3px; left: 3px;
+      width: 18px; height: 18px; border-radius: 50%; background: var(--accent);
+      transition: transform 0.35s var(--ease-out), background var(--trans);
+    }
+    [data-theme="light"] .theme-toggle::after { transform: translateX(22px); }
+    .toggle-icons { position: absolute; inset: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 5px; font-size: 10px; pointer-events: none; }
+
+    /* ── HERO 404 ── */
+    .hero-404 {
+      min-height: 100svh; background: var(--hero-grad);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: calc(var(--nav-h) + 40px) clamp(20px,5vw,80px) 80px;
+      text-align: center; position: relative; overflow: hidden;
+      transition: background var(--trans);
+    }
+    .hero-bg-letter {
+      position: absolute; font-family: var(--font-display);
+      font-size: clamp(220px,38vw,620px); color: var(--accent); opacity: 0.06;
+      line-height: 1; pointer-events: none; user-select: none; letter-spacing: -0.04em;
+      top: 50%; left: 50%; transform: translate(-50%,-50%);
+    }
+    .glitch {
+      font-family: var(--font-display);
+      font-size: clamp(6rem,15vw,14rem);
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      color: var(--text);
+      text-shadow: 2px 2px 0 var(--accent), -2px -2px 0 var(--accent);
+      animation: glitch-anim 800ms linear infinite alternate;
+      transition: color var(--trans);
+    }
+    @keyframes glitch-anim {
+      0%   { transform: translate(0); }
+      20%  { transform: translate(-3px, 3px); }
+      40%  { transform: translate(3px, -3px); }
+      60%  { transform: translate(-2px, 2px); }
+      80%  { transform: translate(2px, -2px); }
+      100% { transform: translate(0); }
+    }
+    .hero-subtitle {
+      font-size: clamp(1.1rem,2.5vw,1.6rem);
+      max-width: 680px; margin: 24px auto 40px;
+      color: var(--text-dim); line-height: 1.5; transition: color var(--trans);
+    }
+    .btn-home {
+      display: inline-flex; align-items: center; gap: 12px;
+      background: var(--accent); color: var(--bg);
+      font-family: var(--font-body); font-size: 0.95rem; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      padding: 18px 42px; border-radius: 6px; text-decoration: none;
+      transition: all 0.3s var(--ease-out);
+    }
+    .btn-home:hover { transform: translateY(-4px); box-shadow: 0 20px 40px var(--accent-glow); }
+
+    /* ── MASCOT ── */
+    #mascot-block {
+      position: absolute; top: 75%; left: 75%;
+      transform: translate(-50%, -50%) rotate(12deg);
+      z-index: 2; pointer-events: none; user-select: none;
+    }
+    #mascot-block img { height: 1500px; width: auto; display: block; object-fit: contain; filter: drop-shadow(0 8px 24px rgba(0,0,0,0.35)); transition: opacity 0.4s ease; }
+    [data-theme="dark"]  #mascot-lux  { display: none; }
+    [data-theme="light"] #mascot-luma { display: none; }
+
+    /* ── GAME SECTION ── */
+    .game-section {
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border);
+      padding: 80px clamp(20px,5vw,80px);
+      transition: background var(--trans), border-color var(--trans);
+    }
+    .game-inner { max-width: 900px; margin: 0 auto; }
+    .game-header { text-align: center; margin-bottom: 40px; }
+    .game-header h2 {
+      font-family: var(--font-display); font-size: clamp(2.4rem,5vw,3.8rem);
+      letter-spacing: 0.06em; color: var(--text); transition: color var(--trans);
+    }
+    .game-header p { font-size: 1.05rem; color: var(--text-dim); max-width: 520px; margin: 12px auto 0; transition: color var(--trans); }
+    .game-hint {
+      font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--text-muted); margin-bottom: 14px; text-align: center; transition: color var(--trans);
+    }
+    .game-hint span { color: var(--accent); }
+
+    .game-container {
+      border: 1px solid var(--border); border-radius: 12px;
+      background: var(--bg-card); overflow: hidden; position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      transition: background var(--trans), border-color var(--trans);
+    }
+    .game-container::before {
+      content: ''; position: absolute; top: -1px; left: 10%; right: 10%; height: 2px;
+      background: var(--stripe); transition: background var(--trans); z-index: 1;
+    }
+    .game-hud {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 20px 10px; border-bottom: 1px solid var(--border); transition: border-color var(--trans);
+    }
+    .game-hud-label { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); transition: color var(--trans); }
+    .game-score-val { font-family: var(--font-display); font-size: 1.4rem; letter-spacing: 0.1em; color: var(--accent); transition: color var(--trans); }
+    .game-hi-val { font-family: var(--font-display); font-size: 1.4rem; letter-spacing: 0.1em; color: var(--text-dim); transition: color var(--trans); }
+    canvas#gameCanvas { display: block; width: 100%; height: 200px; cursor: pointer; image-rendering: pixelated; }
+    .game-overlay {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 8px;
+      background: color-mix(in srgb, var(--bg-card) 80%, transparent);
+      backdrop-filter: blur(4px); transition: opacity 0.3s, background var(--trans);
+    }
+    .game-overlay.hidden { opacity: 0; pointer-events: none; }
+    .overlay-title { font-family: var(--font-display); font-size: clamp(1.2rem,3vw,1.8rem); letter-spacing: 0.12em; color: var(--text); transition: color var(--trans); }
+    .overlay-sub { font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-dim); transition: color var(--trans); }
+    .overlay-key {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); border-radius: 4px; padding: 6px 16px; margin-top: 4px;
+      font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--accent); background: var(--accent-soft);
+      transition: border-color var(--trans), color var(--trans), background var(--trans);
+    }
+    .game-instructions {
+      display: flex; justify-content: center; gap: 32px;
+      margin-top: 18px; font-size: 0.9rem; color: var(--text-muted);
+      flex-wrap: wrap; transition: color var(--trans);
+    }
+    .game-instructions span { display: flex; align-items: center; gap: 8px; }
+    .game-instructions kbd {
+      background: var(--bg-card); padding: 3px 9px; border-radius: 4px;
+      font-family: monospace; font-weight: 600; color: var(--accent);
+      border: 1px solid var(--border);
+      transition: background var(--trans), border-color var(--trans), color var(--trans);
+    }
+
+    /* ── SCROLL CUE ── */
+    .scroll-cue { margin-top: 80px; font-size: 0.85rem; letter-spacing: 0.2em; color: var(--text-muted); text-transform: uppercase; transition: color var(--trans); }
+
+    /* ── REVEAL ── */
+    .reveal { opacity:0; transform:translateY(28px); transition: opacity 0.75s var(--ease-out), transform 0.75s var(--ease-out); }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+
+    /* ════════════════════════════════════════════════════════
+       FOOTER — full Aspekty-grade footer
+    ════════════════════════════════════════════════════════ */
+    .mlx-footer { background: var(--bg); border-top: 1px solid var(--border); position: relative; overflow: hidden; transition: background var(--trans), border-color var(--trans); }
+    .mlx-footer::before { content:''; position:absolute; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E"); opacity: var(--noise-op); pointer-events:none; z-index:0; transition: opacity var(--trans); }
+
+    .footer-stripe-line { height:3px; background: var(--stripe); transform-origin:left; transform:scaleX(0); transition: transform 1s var(--ease-out) 0.2s, background var(--trans); }
+    .footer-stripe-line.visible { transform:scaleX(1); }
+
+    .footer-main-grid { position:relative; z-index:1; max-width:1200px; margin:0 auto; padding:72px 40px 48px; display:grid; grid-template-columns:2fr 1fr 1fr 1.4fr; gap:48px 40px; }
+    @media(max-width:960px){ .footer-main-grid{ grid-template-columns:1fr 1fr; padding:56px 28px 40px; } }
+    @media(max-width:600px){ .footer-main-grid{ grid-template-columns:1fr; padding:48px 24px 32px; gap:36px; } }
+
+    .footer-reveal { opacity:0; transform:translateY(22px); transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out); }
+    .footer-reveal.visible { opacity:1; transform:translateY(0); }
+    .footer-reveal:nth-child(1){ transition-delay:0.05s; }
+    .footer-reveal:nth-child(2){ transition-delay:0.15s; }
+    .footer-reveal:nth-child(3){ transition-delay:0.25s; }
+    .footer-reveal:nth-child(4){ transition-delay:0.35s; }
+
+    .f-brand-logo { font-family: var(--font-display); font-size:3rem; letter-spacing:0.12em; color: var(--text); line-height:1; margin-bottom:6px; display:inline-block; transition: color var(--trans); }
+    .f-brand-logo span { color: var(--accent); transition: color var(--trans); }
+    .f-brand-tagline { font-size:0.7rem; letter-spacing:0.32em; text-transform:uppercase; color: var(--text-muted); margin-bottom:20px; transition: color var(--trans); }
+    .f-brand-desc { font-size:0.88rem; line-height:1.75; color: var(--footer-desc); max-width:280px; margin-bottom:28px; transition: color var(--trans); }
+
+    .f-social-row { display:flex; gap:12px; flex-wrap:wrap; }
+    .f-social-btn { display:flex; align-items:center; gap:8px; padding:9px 16px; border:1px solid var(--border); border-radius:4px; text-decoration:none; color: var(--text-muted); font-size:0.78rem; letter-spacing:0.06em; font-weight:500; position:relative; overflow:hidden; transition: border-color 0.25s, color 0.25s, transform 0.2s, background var(--trans); }
+    .f-social-btn::after { content:''; position:absolute; inset:0; background: var(--accent); opacity:0; transition: opacity 0.25s; z-index:-1; }
+    .f-social-btn:hover { border-color: var(--accent); color: var(--bg); transform:translateY(-2px); }
+    .f-social-btn:hover::after { opacity:1; }
+    .f-social-btn svg { width:15px; height:15px; flex-shrink:0; }
+
+    .f-col-title { font-family: var(--font-display); font-size:0.95rem; letter-spacing:0.22em; color: var(--accent); text-transform:uppercase; margin-bottom:22px; display:flex; align-items:center; gap:10px; transition: color var(--trans); }
+    .f-col-title::after { content:''; flex:1; height:1px; background: var(--border); transition: background var(--trans); }
+
+    .f-links { list-style:none; display:flex; flex-direction:column; gap:10px; }
+    .f-links a { color: var(--text-muted); text-decoration:none; font-size:0.88rem; display:flex; align-items:center; gap:8px; transition: color 0.2s, gap 0.2s; }
+    .f-links a::before { content:''; width:6px; height:1px; background: var(--accent); opacity:0; transition: opacity 0.2s, width 0.2s, background var(--trans); }
+    .f-links a:hover { color: var(--text); gap:12px; }
+    .f-links a:hover::before { opacity:1; width:10px; }
+
+    .f-contact-item { display:flex; align-items:flex-start; gap:12px; margin-bottom:18px; }
+    .f-contact-icon { width:36px; height:36px; border:1px solid var(--border); border-radius:4px; display:flex; align-items:center; justify-content:center; flex-shrink:0; color: var(--accent); transition: border-color 0.2s, background 0.2s, color var(--trans); }
+    .f-contact-item:hover .f-contact-icon { border-color: var(--accent); background: var(--accent-soft); }
+    .f-contact-label { font-size:0.7rem; letter-spacing:0.14em; text-transform:uppercase; color: var(--text-muted); margin-bottom:3px; transition: color var(--trans); }
+    .f-contact-value { font-size:0.86rem; color: var(--text); transition: color var(--trans); }
+    .f-contact-value a { color:inherit; text-decoration:none; transition:color 0.2s; }
+    .f-contact-value a:hover { color: var(--accent); }
+
+    .f-stats-band { position:relative; z-index:1; max-width:1200px; margin:0 auto; padding:0 40px 40px; display:grid; grid-template-columns:repeat(4,1fr); gap:1px; border-top:1px solid var(--border); transition: border-color var(--trans); }
+    @media(max-width:960px){ .f-stats-band{ grid-template-columns:repeat(2,1fr); padding:0 28px 32px; } }
+    @media(max-width:600px){ .f-stats-band{ padding:0 24px 28px; } }
+
+    .f-stat-item { padding:28px 20px; text-align:center; opacity:0; transform:translateY(14px); border-right:1px solid var(--border); transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out), border-color var(--trans); }
+    .f-stat-item:last-child { border-right:none; }
+    .f-stat-item.visible { opacity:1; transform:translateY(0); }
+    .f-stat-item:nth-child(1){ transition-delay:0.1s; } .f-stat-item:nth-child(2){ transition-delay:0.2s; }
+    .f-stat-item:nth-child(3){ transition-delay:0.3s; } .f-stat-item:nth-child(4){ transition-delay:0.4s; }
+    .f-stat-number { font-family: var(--font-display); font-size:2.4rem; letter-spacing:0.05em; color: var(--text); line-height:1; margin-bottom:4px; transition: color var(--trans); }
+    .f-stat-number span { color: var(--accent); transition: color var(--trans); }
+    .f-stat-label { font-size:0.7rem; letter-spacing:0.18em; text-transform:uppercase; color: var(--text-muted); transition: color var(--trans); }
+
+    .f-cta-wrap { position:relative; z-index:1; max-width:1200px; margin:0 auto 40px; padding:0 40px; }
+    @media(max-width:600px){ .f-cta-wrap{ padding:0 24px; } }
+    .f-cta-inner { border:1px solid var(--border); border-radius:6px; padding:32px 40px; display:flex; align-items:center; justify-content:space-between; gap:24px; background: var(--bg-surface); opacity:0; transform:translateY(16px); transition: opacity 0.7s var(--ease-out) 0.3s, transform 0.7s var(--ease-out) 0.3s, background var(--trans), border-color var(--trans); flex-wrap:wrap; position:relative; overflow:hidden; }
+    .f-cta-inner::before { content:''; position:absolute; top:-1px; left:10%; right:10%; height:2px; background: var(--stripe); transition: background var(--trans); }
+    .f-cta-inner.visible { opacity:1; transform:translateY(0); }
+    .f-cta-eyebrow { font-size:0.68rem; letter-spacing:0.26em; text-transform:uppercase; color: var(--accent); margin-bottom:6px; transition: color var(--trans); }
+    .f-cta-title { font-family: var(--font-display); font-size:1.7rem; letter-spacing:0.06em; color: var(--text); transition: color var(--trans); }
+    .f-cta-btn { display:inline-flex; align-items:center; gap:10px; padding:14px 30px; background: var(--accent); color: var(--bg); font-size:0.82rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; text-decoration:none; border-radius:4px; transition: transform 0.2s, box-shadow 0.2s, background var(--trans), color var(--trans); white-space:nowrap; }
+    .f-cta-btn:hover { transform:translateY(-2px); box-shadow:0 8px 28px var(--accent-glow); }
+    .f-cta-btn svg { width:16px; height:16px; }
+
+    .f-bottom { position:relative; z-index:1; border-top:1px solid var(--border); padding:18px 40px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; transition: border-color var(--trans); }
+    @media(max-width:600px){ .f-bottom{ padding:18px 24px; flex-direction:column; text-align:center; } }
+    .f-copy { font-size:0.75rem; color: var(--text-muted); letter-spacing:0.04em; transition: color var(--trans); }
+    .f-copy span { color: var(--accent); transition: color var(--trans); }
+    .f-legal { display:flex; gap:20px; }
+    .f-legal a { font-size:0.72rem; color: var(--text-muted); text-decoration:none; letter-spacing:0.08em; transition:color 0.2s; }
+    .f-legal a:hover { color: var(--text); }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="mainNav">
+  <a href="index.html" class="nav-logo">ML<span>X</span> MEDIA</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Domů</a></li>
+    <li><a href="O-mně.html">O mně</a></li>
+    <li><a href="Portfolio.html">Portfolio</a></li>
+    <li><a href="Aspekty.html">Aspekty</a></li>
+    <li><a href="Ceník.html">Ceník</a></li>
+    <li><a href="Objednávka.html">Objednávka</a></li>
+  </ul>
+  <div style="display:flex;align-items:center;gap:14px;">
+    <button class="theme-toggle" id="themeToggle" aria-label="Přepnout téma">
+      <div class="toggle-icons"><span>🌙</span><span>☀️</span></div>
+    </button>
+  </div>
+</nav>
+
+<!-- 404 HERO -->
+<section class="hero-404" id="top">
+  <div class="hero-bg-letter" aria-hidden="true">404</div>
+  <h1 class="glitch">404</h1>
+  <p class="hero-subtitle">
+    Scéna nenalezena.<br>
+    Ztratila se někde v postprodukci…
+  </p>
+  <a href="index.html" class="btn-home">
+    ← VRÁTIT SE DOMŮ
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+  </a>
+  <div class="scroll-cue">Nebo si zahrajte níže ↓</div>
+  <div id="mascot-block" aria-hidden="true">
+    <img id="mascot-luma" src="/Finall web/Maskoti/Luma-sad-T-R.png" alt="" />
+    <img id="mascot-lux"  src="/Finall web/Maskoti/Lux-sad-T-U-R.png" alt="" />
+  </div>
+</section>
+
+<!-- GAME SECTION -->
+<section class="game-section reveal" id="game">
+  <div class="game-inner">
+    <div class="game-header">
+      <h2>MLX RUNNER</h2>
+      <p>Zatímco hledáte správnou stránku, uběhněte pár záběrů.</p>
+    </div>
+
+    <p class="game-hint">
+      <span>MEZERNÍK</span> / <span>↑</span> Skok &nbsp;·&nbsp;
+      <span>↓</span> / <span>S</span> Sehnout &nbsp;·&nbsp;
+      <span>TAP</span> Mobilní skok
+    </p>
+
+    <div class="game-container">
+      <div class="game-hud">
+        <div>
+          <div class="game-hud-label">Skóre</div>
+          <div class="game-score-val" id="scoreDisplay">0000</div>
+        </div>
+        <div style="text-align:center;">
+          <div class="game-hud-label">Rychlost</div>
+          <div class="game-score-val" id="speedDisplay" style="font-size:1rem;">1×</div>
+        </div>
+        <div style="text-align:right">
+          <div class="game-hud-label">Rekord</div>
+          <div class="game-hi-val" id="hiDisplay">0000</div>
+        </div>
+      </div>
+      <canvas id="gameCanvas" width="900" height="200"></canvas>
+      <div class="game-overlay" id="gameOverlay">
+        <div class="overlay-title" id="overlayTitle">MLX RUNNER</div>
+        <div class="overlay-sub" id="overlaySub">Video production never stops</div>
+        <div class="overlay-key" id="overlayKey">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 11 12 6 17 11"/><line x1="12" y1="18" x2="12" y2="6"/></svg>
+          Stiskněte MEZERNÍK / ↑ pro start
+        </div>
+      </div>
+    </div>
+
+    <div class="game-instructions">
+      <span><kbd>MEZERNÍK</kbd> nebo <kbd>↑</kbd> Skok</span>
+      <span><kbd>↓</kbd> nebo <kbd>S</kbd> Sehnout</span>
+      <span><kbd>TAP</kbd> Mobilní skok</span>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════
+     FOOTER — full Aspekty-grade footer
+════════════════════════════════════════════════════════ -->
+<footer class="mlx-footer">
+  <div class="footer-stripe-line" id="fStripe"></div>
+
+  <div class="footer-main-grid">
+    <!-- Brand -->
+    <div class="footer-reveal">
+      <div class="f-brand-logo">ML<span>X</span> MEDIA</div>
+      <div class="f-brand-tagline">Filmování · Střih · Postprodukce</div>
+      <p class="f-brand-desc">Věřím, že každý příběh si zaslouží být vyprávěn. Pomáhám firmám a jednotlivcům zachytit jejich vizi prostřednictvím profesionálního videa.</p>
+      <div class="f-social-row">
+        <a href="https://www.youtube.com/@MLX-Media" target="_blank" rel="noopener" class="f-social-btn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 00.5 6.2 31.3 31.3 0 000 12a31.3 31.3 0 00.5 5.8 3 3 0 002.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 002.1-2.1A31.3 31.3 0 0024 12a31.3 31.3 0 00-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+          YouTube
+        </a>
+        <a href="https://www.instagram.com/mlxmedia" target="_blank" rel="noopener" class="f-social-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          Instagram
+        </a>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="footer-reveal">
+      <div class="f-col-title">Navigace</div>
+      <ul class="f-links">
+        <li><a href="index.html">Domovská stránka</a></li>
+        <li><a href="O-mně.html">O mně</a></li>
+        <li><a href="Portfolio.html">Portfolio</a></li>
+        <li><a href="Aspekty.html">Aspekty</a></li>
+        <li><a href="Ceník.html">Ceník</a></li>
+        <li><a href="Objednávka.html">Objednávka</a></li>
+      </ul>
+    </div>
+
+    <!-- Services -->
+    <div class="footer-reveal">
+      <div class="f-col-title">Služby</div>
+      <ul class="f-links">
+        <li><a href="Ceník.html">Firemní videa</a></li>
+        <li><a href="Ceník.html">Reklamní spot</a></li>
+        <li><a href="Ceník.html">Reels &amp; TikTok</a></li>
+        <li><a href="Ceník.html">Color grading</a></li>
+        <li><a href="Ceník.html">Zvukový design</a></li>
+        <li><a href="Ceník.html">Dronové záběry</a></li>
+      </ul>
+    </div>
+
+    <!-- Contact -->
+    <div class="footer-reveal">
+      <div class="f-col-title">Kontakt</div>
+      <div class="f-contact-item">
+        <div class="f-contact-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <div>
+          <div class="f-contact-label">Email</div>
+          <div class="f-contact-value"><a href="mailto:info@mlxmedia.cz">info@mlxmedia.cz</a></div>
+        </div>
+      </div>
+      <div class="f-contact-item">
+        <div class="f-contact-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.7 10.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012.6 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.55a16 16 0 006.29 6.29l.96-.96a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        </div>
+        <div>
+          <div class="f-contact-label">Telefon</div>
+          <div class="f-contact-value"><a href="tel:+420777413600">+420 777 413 600</a></div>
+        </div>
+      </div>
+      <div class="f-contact-item">
+        <div class="f-contact-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div>
+          <div class="f-contact-label">Oblast</div>
+          <div class="f-contact-value">Praha 5, Praha 6, Beroun</div>
+        </div>
+      </div>
+      <div class="f-contact-item">
+        <div class="f-contact-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div>
+          <div class="f-contact-label">Dodání</div>
+          <div class="f-contact-value">4–10 dní od natáčení</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats band -->
+  <div class="f-stats-band">
+    <div class="f-stat-item">
+      <div class="f-stat-number" data-target="35">35<span>+</span></div>
+      <div class="f-stat-label">Projektů</div>
+    </div>
+    <div class="f-stat-item">
+      <div class="f-stat-number" data-target="4">4<span>+</span></div>
+      <div class="f-stat-label">Roky zkušeností</div>
+    </div>
+    <div class="f-stat-item">
+      <div class="f-stat-number" data-target="95">95<span>%</span></div>
+      <div class="f-stat-label">Doporučení</div>
+    </div>
+    <div class="f-stat-item">
+      <div class="f-stat-number">6<span>K</span></div>
+      <div class="f-stat-label">RAW rozlišení</div>
+    </div>
+  </div>
+
+  <!-- CTA band -->
+  <div class="f-cta-wrap">
+    <div class="f-cta-inner" id="fCta">
+      <div>
+        <div class="f-cta-eyebrow">Hledám nové klienty</div>
+        <div class="f-cta-title">Máte projekt? Pojďme ho natočit.</div>
+      </div>
+      <a href="Objednávka.html" class="f-cta-btn">
+        Objednat video
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- Bottom bar -->
+  <div class="f-bottom">
+    <div class="f-copy">© <span id="fyear"></span> <span>MLX Media</span> · Matouš Lexa · Všechna práva vyhrazena</div>
+    <div class="f-legal">
+      <a href="#">Ochrana soukromí</a>
+      <a href="#">Cookies</a>
+      <a href="Objednávka.html">Kontakt</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ── THEME ──
+  const root = document.documentElement;
+  root.setAttribute('data-theme', localStorage.getItem('mlx-theme') || 'dark');
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    localStorage.setItem('mlx-theme', next);
+  });
+
+  // ── NAV SCROLL ──
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 20);
+  }, { passive: true });
+
+  // ── FOOTER YEAR ──
+  document.getElementById('fyear').textContent = new Date().getFullYear();
+
+  // ── REVEAL ──
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // ── FOOTER STRIPE ──
+  const stripeIo = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.3 });
+  const stripe = document.getElementById('fStripe');
+  if (stripe) stripeIo.observe(stripe);
+
+  // ── FOOTER REVEALS ──
+  const fio = new IntersectionObserver(e => e.forEach(x => {
+    if (x.isIntersecting) x.target.classList.add('visible');
+  }), { threshold: 0.12 });
+  [document.getElementById('fCta'), ...document.querySelectorAll('.footer-reveal, .f-stat-item')].filter(Boolean).forEach(el => fio.observe(el));
+
+  // ── STAT COUNTERS ──
+  const fcio = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      const target = parseInt(el.dataset.target);
+      if (!target) return;
+      const suf = el.querySelector('span')?.textContent || '';
+      let n = 0;
+      const interval = Math.max(Math.floor(1200 / target), 12);
+      const t = setInterval(() => {
+        n++;
+        el.innerHTML = n + '<span>' + suf + '</span>';
+        if (n >= target) clearInterval(t);
+      }, interval);
+      fcio.unobserve(el);
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.f-stat-number[data-target]').forEach(el => fcio.observe(el));
+
+  // ════════════════════════════════════════════════════════════════
+  // MLX RUNNER — Enhanced game engine
+  // Camera character · Clapperboard + Tripod + Drone obstacles
+  // Day/Night cycle · Duck mechanic · Progressive difficulty
+  // ════════════════════════════════════════════════════════════════
+
+  const canvas = document.getElementById('gameCanvas');
+  const ctx    = canvas.getContext('2d');
+
+  let gameState = 'idle';
+  let score     = 0;
+  let hiScore   = parseInt(localStorage.getItem('mlx-hiscore') || '0');
+  let frameCount = 0;
+  let speed      = 5;
+  let animFrame;
+  let dayPhase   = 0;   // 0 = day, cycles to π = night, 2π = day again
+
+  // Pre-generated stars (drawn at night)
+  const STAR_COUNT = 35;
+  const starPositions = [];
+
+  document.getElementById('hiDisplay').textContent = String(hiScore).padStart(4, '0');
+
+  // ── RESPONSIVE CANVAS ──
+  let W, H, GROUND_Y;
+  function resizeCanvas() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    const dpr  = window.devicePixelRatio || 1;
+    canvas.width  = Math.floor(rect.width * dpr);
+    canvas.height = 200 * dpr;
+    canvas.style.width  = rect.width + 'px';
+    canvas.style.height = '200px';
+    ctx.scale(dpr, dpr);
+    W        = rect.width;
+    H        = 200;
+    GROUND_Y = H - 32;
+
+    // Regenerate stars for new dimensions
+    starPositions.length = 0;
+    for (let i = 0; i < STAR_COUNT; i++) {
+      starPositions.push({
+        x: Math.random() * W,
+        y: 8 + Math.random() * (GROUND_Y - 50),
+        r: 0.5 + Math.random() * 1.2
+      });
+    }
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  // ── CSS VAR HELPER ──
+  function getCSSVar(v) {
+    return getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  }
+
+  // ── COLOR LERP HELPER ──
+  function lerpHex(hex1, hex2, t) {
+    const r1 = parseInt(hex1.slice(1,3),16), g1 = parseInt(hex1.slice(3,5),16), b1 = parseInt(hex1.slice(5,7),16);
+    const r2 = parseInt(hex2.slice(1,3),16), g2 = parseInt(hex2.slice(3,5),16), b2 = parseInt(hex2.slice(5,7),16);
+    const r = Math.round(r1 + (r2-r1)*t);
+    const g = Math.round(g1 + (g2-g1)*t);
+    const b = Math.round(b1 + (b2-b1)*t);
+    return `rgb(${r},${g},${b})`;
+  }
+
+  // ── PLAYER (Camera) ──
+  const player = {
+    x: 80, y: 0, w: 34, h: 26,
+    vy: 0, grounded: true, jumpCount: 0, maxJumps: 1,
+    legPhase: 0, ducking: false,
+
+    reset() {
+      this.h = 26;
+      this.y = GROUND_Y - this.h;
+      this.vy = 0; this.grounded = true; this.jumpCount = 0; this.ducking = false;
+    },
+    jump() {
+      if (this.ducking) return; // can't jump while ducking
+      if (this.jumpCount < this.maxJumps) {
+        this.vy = -12.5; this.grounded = false; this.jumpCount++;
+        flashEffect = 6;
+      }
+    },
+    startDuck() {
+      if (!this.grounded) return;
+      this.ducking = true;
+      this.h = 14;
+      this.y = GROUND_Y - this.h;
+    },
+    stopDuck() {
+      this.ducking = false;
+      this.h = 26;
+      this.y = GROUND_Y - this.h;
+    },
+    update() {
+      this.legPhase += 0.35;
+      if (!this.grounded) {
+        this.vy += 0.68;
+        this.y  += this.vy;
+        if (this.y >= GROUND_Y - this.h) {
+          this.y = GROUND_Y - this.h;
+          this.vy = 0; this.grounded = true; this.jumpCount = 0;
+        }
+      } else if (this.ducking) {
+        this.y = GROUND_Y - this.h;
+      }
+    },
+    draw() {
+      const accent = getCSSVar('--accent');
+      const text   = getCSSVar('--text');
+      const bg     = getCSSVar('--bg');
+      const card   = getCSSVar('--bg-card');
+      const x = this.x, y = this.y, w = this.w, h = this.h;
+      ctx.save();
+
+      if (this.ducking) {
+        // ── Crouched camera (horizontal wide body) ──
+        const cw = 42, ch = 14;
+        ctx.fillStyle = text;
+        ctx.beginPath(); ctx.roundRect(x - 4, y, cw, ch, 3); ctx.fill();
+        ctx.fillStyle = card;
+        ctx.beginPath(); ctx.roundRect(x - 2, y + 2, cw - 4, ch - 4, 2); ctx.fill();
+        // Lens (wide angle)
+        ctx.fillStyle = accent;
+        ctx.beginPath(); ctx.arc(x + cw * 0.65, y + ch * 0.5, 5, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = bg;
+        ctx.beginPath(); ctx.arc(x + cw * 0.65, y + ch * 0.5, 3, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,0.35)';
+        ctx.beginPath(); ctx.arc(x + cw * 0.65 - 1, y + ch * 0.5 - 1, 1.2, 0, Math.PI * 2); ctx.fill();
+        // Wheels (ducked = rolling)
+        ctx.fillStyle = text;
+        ctx.beginPath(); ctx.arc(x + 4, y + ch + 1, 4, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(x + cw - 8, y + ch + 1, 4, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = bg;
+        ctx.beginPath(); ctx.arc(x + 4, y + ch + 1, 1.5, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(x + cw - 8, y + ch + 1, 1.5, 0, Math.PI * 2); ctx.fill();
+      } else {
+        // ── Normal standing camera ──
+        ctx.fillStyle = text;
+        ctx.beginPath(); ctx.roundRect(x, y + 4, w, h - 4, 4); ctx.fill();
+        ctx.fillStyle = card;
+        ctx.beginPath(); ctx.roundRect(x + 2, y + 6, w - 4, h - 8, 3); ctx.fill();
+        // Lens
+        ctx.fillStyle = accent;
+        ctx.beginPath(); ctx.arc(x + w * 0.62, y + h * 0.4, 7, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = bg;
+        ctx.beginPath(); ctx.arc(x + w * 0.62, y + h * 0.4, 4.5, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,0.35)';
+        ctx.beginPath(); ctx.arc(x + w * 0.62 - 1.5, y + h * 0.4 - 1.5, 1.5, 0, Math.PI * 2); ctx.fill();
+        // Viewfinder bump
+        ctx.fillStyle = text;
+        ctx.beginPath(); ctx.roundRect(x + 4, y, 10, 6, 2); ctx.fill();
+        // Record dot
+        if (gameState === 'running' && Math.floor(frameCount / 20) % 2 === 0) {
+          ctx.fillStyle = '#ff3333';
+          ctx.beginPath(); ctx.arc(x + w - 7, y + 9, 3, 0, Math.PI * 2); ctx.fill();
+        }
+        // Legs
+        const legSwing = this.grounded ? Math.sin(this.legPhase) * 5 : 0;
+        ctx.strokeStyle = text; ctx.lineWidth = 3; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(x + 8,  y + h); ctx.lineTo(x + 8  + legSwing, y + h + 8); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x + 18, y + h); ctx.lineTo(x + 18 - legSwing, y + h + 8); ctx.stroke();
+      }
+
+      ctx.restore();
+    },
+    getHitbox() {
+      if (this.ducking) {
+        return { x: this.x + 2, y: this.y + 2, w: 38, h: this.h - 4 };
+      }
+      return { x: this.x + 4, y: this.y + 4, w: this.w - 8, h: this.h - 4 };
+    }
+  };
+
+  // ── GROUND OBSTACLES ──
+  class Obstacle {
+    constructor() {
+      this.x    = W + 20;
+      this.type = Math.random() < 0.55 ? 'clapperboard' : 'tripod';
+      this.w    = this.type === 'clapperboard' ? 28 : 24;
+      this.h    = this.type === 'clapperboard' ? 34 : 44;
+      this.y    = GROUND_Y - this.h;
+    }
+    update() { this.x -= speed; }
+    draw() {
+      const accent = getCSSVar('--accent');
+      const text   = getCSSVar('--text');
+      const bg     = getCSSVar('--bg');
+      ctx.save();
+      if (this.type === 'clapperboard') {
+        ctx.fillStyle = text;
+        ctx.beginPath(); ctx.roundRect(this.x, this.y, this.w, this.h * 0.72, 3); ctx.fill();
+        ctx.fillStyle = bg;
+        ctx.beginPath(); ctx.roundRect(this.x + 3, this.y + 4, this.w - 6, this.h * 0.72 - 8, 2); ctx.fill();
+        // Stripes
+        ctx.fillStyle = accent;
+        const sw = (this.w - 6) / 3;
+        for (let i = 0; i < 3; i++) {
+          if (i % 2 === 0) {
+            ctx.fillRect(this.x + 3 + i * sw, this.y + 4, sw, 6);
+          }
+        }
+        // Hinge
+        ctx.fillStyle = text;
+        ctx.beginPath(); ctx.roundRect(this.x, this.y - 6, this.w, 8, 2); ctx.fill();
+        // Stand
+        ctx.strokeStyle = text; ctx.lineWidth = 3; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(this.x + this.w / 2, this.y + this.h * 0.72); ctx.lineTo(this.x + this.w / 2, GROUND_Y); ctx.stroke();
+      } else {
+        // Tripod + camera on top
+        const cx = this.x + this.w / 2, y = this.y;
+        ctx.fillStyle = text;
+        ctx.beginPath(); ctx.roundRect(cx - 12, y, 24, 14, 3); ctx.fill();
+        ctx.fillStyle = accent;
+        ctx.beginPath(); ctx.arc(cx + 4, y + 7, 4, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = bg;
+        ctx.beginPath(); ctx.arc(cx + 4, y + 7, 2, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = text; ctx.lineWidth = 3; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(cx, y + 14); ctx.lineTo(cx, y + this.h - 8); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx, y + this.h * 0.5); ctx.lineTo(cx - 12, y + this.h); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx, y + this.h * 0.5); ctx.lineTo(cx + 12, y + this.h); ctx.stroke();
+      }
+      ctx.restore();
+    }
+    getHitbox() {
+      if (this.type === 'clapperboard') return { x: this.x + 2, y: this.y + 4, w: this.w - 4, h: this.h - 4 };
+      return { x: this.x + 4, y: this.y + 4, w: this.w - 8, h: this.h - 4 };
+    }
+    isOffscreen() { return this.x + this.w < -20; }
+  }
+
+  // ── DRONE OBSTACLE (requires duck or jump) ──
+  class Drone {
+    constructor() {
+      this.x         = W + 20;
+      this.w         = 52;
+      this.h         = 28;
+      // Drone flies at fixed height: player must duck to avoid
+      // Hitbox bottom = GROUND_Y - 14 = standing player head-area
+      this.y         = GROUND_Y - 40;
+      this.rotorPhase = Math.random() * Math.PI * 2;
+    }
+    update() {
+      this.x -= speed * 0.92; // slightly slower than ground obstacles = more dramatic
+      this.rotorPhase += 0.45;
+    }
+    draw() {
+      const accent = getCSSVar('--accent');
+      const text   = getCSSVar('--text');
+      const bg     = getCSSVar('--bg');
+      const cx = this.x + this.w / 2;
+      const cy = this.y + this.h / 2;
+      ctx.save();
+
+      // Arms (horizontal bar)
+      ctx.strokeStyle = text; ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(this.x + 4, cy - 2); ctx.lineTo(this.x + this.w - 4, cy - 2); ctx.stroke();
+
+      // Rotors at arm tips (left and right)
+      [this.x + 6, this.x + this.w - 6].forEach((rx, idx) => {
+        // Rotor circle (blur)
+        ctx.strokeStyle = text; ctx.globalAlpha = 0.2; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(rx, cy - 2, 9, 0, Math.PI * 2); ctx.stroke();
+        // Rotor blade
+        ctx.globalAlpha = 0.85; ctx.strokeStyle = accent; ctx.lineWidth = 2.5;
+        const ang = this.rotorPhase * (idx === 0 ? 1 : -1);
+        ctx.beginPath();
+        ctx.moveTo(rx + Math.cos(ang) * 8, cy - 2 + Math.sin(ang) * 2.5);
+        ctx.lineTo(rx - Math.cos(ang) * 8, cy - 2 - Math.sin(ang) * 2.5);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      });
+
+      // Central body
+      ctx.fillStyle = text;
+      ctx.beginPath(); ctx.roundRect(cx - 10, cy - 7, 20, 12, 3); ctx.fill();
+      ctx.fillStyle = bg;
+      ctx.beginPath(); ctx.roundRect(cx - 7, cy - 4, 14, 7, 2); ctx.fill();
+
+      // Blinking LED
+      if (Math.floor(frameCount / 18) % 2 === 0) {
+        ctx.fillStyle = accent;
+        ctx.globalAlpha = 0.9;
+        ctx.beginPath(); ctx.arc(cx, cy + 3, 2.5, 0, Math.PI * 2); ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+
+      // Gimbal camera below body
+      ctx.fillStyle = text;
+      ctx.beginPath(); ctx.arc(cx, cy + 10, 5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = bg;
+      ctx.beginPath(); ctx.arc(cx, cy + 10, 2.5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.4)';
+      ctx.beginPath(); ctx.arc(cx - 1, cy + 9, 1, 0, Math.PI * 2); ctx.fill();
+
+      ctx.restore();
+    }
+    getHitbox() {
+      // Tight center hitbox — duck clears it (ducked player top > drone hitbox bottom)
+      return { x: this.x + 10, y: this.y + 6, w: this.w - 20, h: 16 };
+    }
+    isOffscreen() { return this.x + this.w < -20; }
+  }
+
+  // ── CLOUDS ──
+  class Cloud {
+    constructor(x) {
+      this.x     = x != null ? x : W + Math.random() * 200;
+      this.y     = 15 + Math.random() * 55;
+      this.speed = 0.7 + Math.random() * 0.6;
+      this.scale = 0.5 + Math.random() * 0.9;
+    }
+    update() { this.x -= this.speed; }
+    draw() {
+      const cloud = getCSSVar('--game-cloud');
+      ctx.save();
+      ctx.fillStyle = cloud;
+      ctx.translate(this.x, this.y);
+      ctx.scale(this.scale, this.scale);
+      ctx.beginPath();
+      ctx.arc(0,   0,  12, 0, Math.PI * 2);
+      ctx.arc(16, -4,  16, 0, Math.PI * 2);
+      ctx.arc(33,  0,  10, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+    isOffscreen() { return this.x < -100; }
+  }
+
+  // ── PARTICLES ──
+  let particles = [];
+  function spawnParticles(x, y) {
+    const accent = getCSSVar('--accent');
+    for (let i = 0; i < 14; i++) {
+      particles.push({
+        x, y,
+        vx: (Math.random() - 0.5) * 7,
+        vy: -Math.random() * 5.5 - 2,
+        life: 1,
+        size: 2 + Math.random() * 3.5,
+        color: accent
+      });
+    }
+  }
+
+  // ── GAME STATE ──
+  let obstacles = [], clouds = [];
+  let flashEffect = 0, nextObstacleIn = 90, deathTimer = 0;
+  let lastMilestone = 0;
+
+  for (let i = 0; i < 5; i++) clouds.push(new Cloud(Math.random() * W));
+
+  // ── COLLISION ──
+  function rectsOverlap(a, b) {
+    return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+  }
+
+  // ── DRAW SKY (Day/Night cycle) ──
+  function drawSky() {
+    const isDark = root.getAttribute('data-theme') === 'dark';
+    const nightIntensity = Math.max(0, Math.min(1, 0.5 - 0.5 * Math.cos(dayPhase)));
+
+    let skyColor;
+    if (isDark) {
+      skyColor = lerpHex('#0d0d0d', '#04060f', nightIntensity);
+    } else {
+      skyColor = lerpHex('#f0ede8', '#c8d4e8', nightIntensity);
+    }
+
+    ctx.fillStyle = skyColor;
+    ctx.fillRect(0, 0, W, H);
+
+    // Stars (appear at night)
+    if (nightIntensity > 0.15) {
+      const starAlpha = Math.min(1, (nightIntensity - 0.15) / 0.4) * 0.8;
+      ctx.fillStyle = isDark ? `rgba(255,255,255,${starAlpha})` : `rgba(80,100,140,${starAlpha * 0.5})`;
+      starPositions.forEach(s => {
+        const twinkle = 0.5 + 0.5 * Math.sin(frameCount * 0.03 + s.x);
+        ctx.globalAlpha = starAlpha * twinkle;
+        ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill();
+      });
+      ctx.globalAlpha = 1;
+    }
+
+    // Subtle horizon glow at dusk/dawn
+    const glowAlpha = Math.sin(dayPhase) * 0.12;
+    if (glowAlpha > 0) {
+      const grad = ctx.createLinearGradient(0, GROUND_Y - 60, 0, GROUND_Y);
+      grad.addColorStop(0, 'transparent');
+      grad.addColorStop(1, isDark
+        ? `rgba(255,120,0,${glowAlpha})`
+        : `rgba(255,160,80,${glowAlpha})`);
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, GROUND_Y - 60, W, 60);
+    }
+  }
+
+  // ── DRAW GROUND ──
+  function drawGround() {
+    const groundColor = getCSSVar('--game-ground');
+    const lineColor   = getCSSVar('--game-line');
+    const accent      = getCSSVar('--accent');
+
+    ctx.fillStyle = groundColor;
+    ctx.fillRect(0, GROUND_Y, W, H - GROUND_Y);
+
+    ctx.strokeStyle = accent; ctx.globalAlpha = 0.35; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(0, GROUND_Y); ctx.lineTo(W, GROUND_Y); ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    if (gameState === 'running') {
+      ctx.strokeStyle = lineColor; ctx.lineWidth = 1;
+      const dashOffset = (frameCount * speed * 0.5) % 60;
+      for (let i = 0; i < W / 60 + 2; i++) {
+        const dx = i * 60 - dashOffset;
+        ctx.beginPath(); ctx.moveTo(dx, GROUND_Y + 7); ctx.lineTo(dx + 20, GROUND_Y + 7); ctx.stroke();
+      }
+    }
+  }
+
+  // ── SCORE ──
+  function updateScore() {
+    const s = Math.floor(score);
+    document.getElementById('scoreDisplay').textContent = String(s).padStart(4, '0');
+    const tier = 1 + Math.floor(s / 100) * 0.3;
+    document.getElementById('speedDisplay').textContent = tier.toFixed(1) + '×';
+    if (s > hiScore) {
+      hiScore = s;
+      localStorage.setItem('mlx-hiscore', hiScore);
+      document.getElementById('hiDisplay').textContent = String(hiScore).padStart(4, '0');
+    }
+    // Milestone flash every 100 pts
+    if (Math.floor(s / 100) > lastMilestone) {
+      lastMilestone = Math.floor(s / 100);
+      flashEffect = 12;
+    }
+  }
+
+  // ── MAIN LOOP ──
+  function loop() {
+    ctx.clearRect(0, 0, W, H);
+
+    drawSky();
+
+    // Clouds
+    clouds.forEach(c => { c.update(); c.draw(); });
+    clouds = clouds.filter(c => !c.isOffscreen());
+    if (clouds.length < 6) clouds.push(new Cloud());
+
+    drawGround();
+
+    if (gameState === 'running') {
+      frameCount++;
+      score += 0.09 * (speed / 5);
+
+      // Speed — smooth and capped, like original dino
+      const rawSpeed = 5 + Math.floor(score / 100) * 0.3;
+      speed = Math.min(rawSpeed, 14);
+
+      // Day/night: cycle starts after score 150, one full cycle every ~2200 frames
+      if (score > 150) {
+        dayPhase += 0.0028;
+      }
+
+      updateScore();
+
+      // Obstacle spawning — interval shrinks with score, has a floor
+      nextObstacleIn--;
+      if (nextObstacleIn <= 0) {
+        const minGap = Math.max(32, 58 - score / 80);
+        const maxGap = Math.max(50, 80 - score / 100);
+        nextObstacleIn = minGap + Math.random() * (maxGap - minGap);
+
+        // Spawn drone after score 200; increasing probability
+        const droneChance = score > 200 ? Math.min(0.38, (score - 200) / 1800) : 0;
+        if (Math.random() < droneChance) {
+          obstacles.push(new Drone());
+        } else {
+          obstacles.push(new Obstacle());
+        }
+      }
+
+      obstacles.forEach(o => { o.update(); o.draw(); });
+      obstacles = obstacles.filter(o => !o.isOffscreen());
+
+      player.update();
+
+      const ph = player.getHitbox();
+      for (const o of obstacles) {
+        if (rectsOverlap(ph, o.getHitbox())) {
+          gameState = 'dead';
+          spawnParticles(player.x + player.w / 2, player.y + player.h / 2);
+          deathTimer = 90;
+          break;
+        }
+      }
+
+      if (flashEffect > 0) {
+        ctx.fillStyle = getCSSVar('--accent');
+        ctx.globalAlpha = flashEffect / 24;
+        ctx.fillRect(0, 0, W, H);
+        ctx.globalAlpha = 1;
+        flashEffect--;
+      }
+    }
+
+    if (gameState === 'dead') {
+      obstacles.forEach(o => o.draw());
+      deathTimer--;
+      if (deathTimer <= 0) showDeadOverlay();
+    }
+
+    // Particles
+    particles = particles.filter(p => p.life > 0);
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.vy += 0.3; p.life -= 0.05;
+      ctx.globalAlpha = p.life;
+      ctx.fillStyle = p.color;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = 1;
+    });
+
+    player.draw();
+    animFrame = requestAnimationFrame(loop);
+  }
+
+  function startGame() {
+    score = 0; speed = 5; frameCount = 0; dayPhase = 0; lastMilestone = 0;
+    obstacles = []; particles = [];
+    player.reset();
+    gameState = 'running';
+    document.getElementById('gameOverlay').classList.add('hidden');
+  }
+
+  function showDeadOverlay() {
+    if (gameState !== 'dead') return;
+    document.getElementById('overlayTitle').textContent = 'ZÁBĚR ZNIČEN';
+    document.getElementById('overlaySub').textContent   = 'Skóre: ' + String(Math.floor(score)).padStart(4, '0');
+    document.getElementById('overlayKey').innerHTML = `
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 11 12 6 17 11"/><line x1="12" y1="18" x2="12" y2="6"/></svg>
+      Hrát znovu
+    `;
+    document.getElementById('gameOverlay').classList.remove('hidden');
+  }
+
+  function handleJump() {
+    if (gameState === 'idle' || gameState === 'dead') startGame();
+    else if (gameState === 'running') player.jump();
+  }
+
+  // ── KEYBOARD ──
+  const duckKeys = new Set(['ArrowDown', 'KeyS']);
+  const jumpKeys = new Set(['Space', 'ArrowUp', 'KeyW']);
+
+  document.addEventListener('keydown', e => {
+    if (jumpKeys.has(e.code)) { e.preventDefault(); handleJump(); }
+    if (duckKeys.has(e.code) && gameState === 'running') { e.preventDefault(); player.startDuck(); }
+  });
+  document.addEventListener('keyup', e => {
+    if (duckKeys.has(e.code)) player.stopDuck();
+  });
+
+  // ── TOUCH ──
+  canvas.addEventListener('touchstart', e => {
+    e.preventDefault();
+    handleJump();
+  }, { passive: false });
+
+  canvas.addEventListener('click', handleJump);
+
+  // ── START LOOP ──
+  player.reset();
+  loop();
+</script>
+</body>
+</html>
