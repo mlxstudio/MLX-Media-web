@@ -332,11 +332,153 @@
     .f-legal a:hover { color: var(--text); }
 
     /* ── BACK TO TOP ── */
-    .back-top { position:fixed; bottom:32px; right:32px; width:44px; height:44px; background: var(--bg-surface); border:1px solid var(--border); border-radius:4px; display:flex; align-items:center; justify-content:center; color: var(--accent); cursor:pointer; opacity:0; transform:translateY(12px); transition: opacity 0.3s, transform 0.3s, border-color 0.2s, background var(--trans); z-index:99; }
+    .back-top { position:fixed; bottom:120px; right:32px; width:44px; height:44px; background: var(--bg-surface); border:1px solid var(--border); border-radius:4px; display:flex; align-items:center; justify-content:center; color: var(--accent); cursor:pointer; opacity:0; transform:translateY(12px); transition: opacity 0.3s, transform 0.3s, border-color 0.2s, background var(--trans); z-index:9999; }
     .back-top.show { opacity:1; transform:translateY(0); }
     .back-top:hover { border-color: var(--accent); }
     .back-top svg { width:18px; height:18px; }
     @media(max-width:480px){ .back-top{ bottom:20px; right:20px; } }
+
+/* ── SECTION SIDEBAR (SMOOTH OPTIMIZED) ── */
+.section-sidebar {
+  position: fixed;
+  right: 15px;
+  top: 20%;
+  transform: translateY(-50%) translateX(20px) scale(0.95) translateZ(0);
+  z-index: 9998;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s cubic-bezier(0.23, 1, 0.320, 1), 
+              transform 0.5s cubic-bezier(0.23, 1, 0.320, 1);
+  will-change: opacity, transform;
+}
+
+.section-sidebar.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(-50%) translateX(0) scale(1);
+}
+
+@media (max-width: 1024px) {
+  .section-sidebar {
+    display: none;
+  }
+}
+
+.section-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+
+
+/* Links */
+.section-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  /* KEEP layout stable */
+  padding: 6px 10px;
+  border: 1px solid transparent;
+
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  font-weight: 500;
+
+  opacity: 0.7;
+
+  /* PERFORMANCE */
+  transform: translateZ(0);
+  will-change: transform, opacity;
+
+  /* ONLY animate cheap properties */
+  transition:
+    transform 0.25s ease,
+    opacity 0.25s ease,
+    color 0.25s ease,
+    background-color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+/* Dot */
+.section-link::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  flex-shrink: 0;
+
+  transition: background-color 0.25s ease, transform 0.25s ease;
+}
+
+/* Hover (NO layout shift) */
+.section-link:hover {
+  transform: translateX(-4px) scale(1.04);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--bg-surface) 90%, transparent);
+  color: var(--text);
+  opacity: 1;
+  padding: 6px 10px;
+}
+
+/* Dot hover */
+.section-link:hover::before {
+  background: var(--accent);
+  transform: scale(1.2);
+}
+
+/* Active */
+.section-link.active {
+  transform: translateX(-4px) scale(1.04);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--bg-surface));
+  color: var(--accent);
+  opacity: 1;
+  padding: 6px 10px;
+}
+
+/* Active dot */
+.section-link.active::before {
+  background: var(--accent);
+}
+
+/* Base state */
+.section-link {
+  --offset-x: 0px;
+  opacity: 0;
+  transform: translateX(calc(10px + var(--offset-x))) scale(1);
+}
+
+/* When sidebar shows */
+.section-sidebar.show .section-link {
+  opacity: 0.7;
+  transform: translateX(var(--offset-x)) scale(1);
+}
+
+/* Hover */
+.section-link:hover {
+  --offset-x: -4px;
+}
+
+/* Active */
+.section-link.active {
+  --offset-x: -4px;
+}
+
+/* Stagger delays */
+.section-sidebar.show .section-link:nth-child(1) { transition-delay: 0.05s; }
+.section-sidebar.show .section-link:nth-child(2) { transition-delay: 0.1s; }
+.section-sidebar.show .section-link:nth-child(3) { transition-delay: 0.15s; }
+.section-sidebar.show .section-link:nth-child(4) { transition-delay: 0.2s; }
+.section-sidebar.show .section-link:nth-child(5) { transition-delay: 0.25s; }
+.section-sidebar.show .section-link:nth-child(6) { transition-delay: 0.3s; }
   </style>
 </head>
 <body>
@@ -344,6 +486,18 @@
 <button class="back-top" id="backToTop" aria-label="Zpět nahoru" onclick="window.scrollTo({top:0,behavior:'smooth'})">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
 </button>
+
+<!-- SECTION SIDEBAR -->
+<nav class="section-sidebar" id="sectionSidebar">
+  <div class="section-nav">
+    <a href="#obraz" class="section-link" data-section="obraz">Obraz</a>
+    <a href="#zvuk" class="section-link" data-section="zvuk">Zvuk</a>
+    <a href="#svetlo" class="section-link" data-section="svetlo">Světlo</a>
+    <a href="#color" class="section-link" data-section="color">Color</a>
+    <a href="#strih" class="section-link" data-section="strih">Střih</a>
+    <a href="#pohyb" class="section-link" data-section="pohyb">Pohyb</a>
+  </div>
+</nav>
 
 <nav class="nav" id="mainNav">
   <a href="index.html" class="nav-logo">ML<span>X</span> MEDIA</a>
@@ -651,8 +805,8 @@
   </div>
 
   <div class="f-stats-band">
-    <div class="f-stat-item"><div class="f-stat-number">25<span>+</span></div><div class="f-stat-label">Projektů</div></div>
-    <div class="f-stat-item"><div class="f-stat-number">3<span>+</span></div><div class="f-stat-label">Roky zkušeností</div></div>
+    <div class="f-stat-item"><div class="f-stat-number">35<span>+</span></div><div class="f-stat-label">Projektů</div></div>
+    <div class="f-stat-item"><div class="f-stat-number">4<span>+</span></div><div class="f-stat-label">Roky zkušeností</div></div>
     <div class="f-stat-item"><div class="f-stat-number">95<span>%</span></div><div class="f-stat-label">Doporučení</div></div>
     <div class="f-stat-item"><div class="f-stat-number">6<span>K</span></div><div class="f-stat-label">RAW rozlišení</div></div>
   </div>
@@ -733,7 +887,64 @@
       fcio.unobserve(el);
     });
   }, { threshold: 0.5 });
-  document.querySelectorAll('.f-stat-number').forEach(el => fcio.observe(el));
+  document.querySelectorAll('.f-stat-number, .fstat-n').forEach(el => fcio.observe(el));
+
+  // ── SECTION SIDEBAR ──
+  const sectionSidebar = document.getElementById('sectionSidebar');
+  const sectionLinks = document.querySelectorAll('.section-link');
+  const sections = ['obraz', 'zvuk', 'svetlo', 'color', 'strih', 'pohyb'];
+  let currentSection = null;
+  let sidebarVisible = false;
+
+  // Show/hide sidebar after scrolling past hero
+  window.addEventListener('scroll', () => {
+    const heroHeight = document.querySelector('.hero')?.offsetHeight || 0;
+    const shouldShow = window.scrollY > heroHeight - 100;
+    
+    if (shouldShow && !sidebarVisible) {
+      sidebarVisible = true;
+      sectionSidebar.classList.add('show');
+    } else if (!shouldShow && sidebarVisible) {
+      sidebarVisible = false;
+      sectionSidebar.classList.remove('show');
+    }
+  }, { passive: true });
+
+  // Scroll-spy: highlight active section with smooth tracking
+  const sectionObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      currentSection = e.target.id;
+      sectionLinks.forEach(link => {
+        const isActive = link.dataset.section === currentSection;
+        link.classList.toggle('active', isActive);
+      });
+    });
+  }, { threshold: 0.35 });
+
+  sections.forEach(sectionId => {
+    const el = document.getElementById(sectionId);
+    if (el) sectionObserver.observe(el);
+  });
+
+  // Click to navigate with smooth scroll
+  sectionLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const targetId = link.dataset.section;
+      const targetEl = document.getElementById(targetId);
+      if (targetEl) {
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+
+    // Light pulse effect on hover
+    link.addEventListener('mouseenter', function() {
+      this.style.animation = 'none';
+      setTimeout(() => { this.style.animation = ''; }, 10);
+    });
+  });
+
 </script>
 </body>
 </html>
