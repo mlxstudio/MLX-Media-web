@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="cs" data-theme="dark">
+<html lang="cs" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -343,11 +343,45 @@
     .f-legal { display:flex; gap:20px; }
     .f-legal a { font-size:0.72rem; color:var(--text-muted); text-decoration:none; letter-spacing:0.08em; transition:color 0.2s; }
     .f-legal a:hover { color:var(--text); }
-    .back-top { position:fixed; bottom:32px; right:32px; width:44px; height:44px; background:var(--bg-surface); border:1px solid var(--border); border-radius:4px; display:flex; align-items:center; justify-content:center; color:var(--accent); cursor:pointer; opacity:0; transform:translateY(12px); transition:opacity 0.3s,transform 0.3s,border-color 0.2s,background var(--trans); z-index:99; }
+    .back-top { position:fixed; bottom:100px; right:32px; width:44px; height:44px; background:var(--bg-surface); border:1px solid var(--border); border-radius:4px; display:flex; align-items:center; justify-content:center; color:var(--accent); cursor:pointer; opacity:0; transform:translateY(12px); transition:opacity 0.3s,transform 0.3s,border-color 0.2s,background var(--trans); z-index:9999; }
     .back-top.show { opacity:1; transform:translateY(0); }
     .back-top:hover { border-color:var(--accent); }
     .back-top svg { width:18px; height:18px; }
     @media(max-width:480px){ .back-top{ bottom:20px; right:20px; } }
+
+    /* ── SECTION SIDEBAR ── */
+.section-sidebar {
+  position: fixed; right: 15px; top: 20%;
+  transform: translateY(-50%) translateX(20px) scale(0.95) translateZ(0);
+  z-index: 9998; opacity: 0; pointer-events: none;
+  transition: opacity 0.5s cubic-bezier(0.23,1,0.320,1), transform 0.5s cubic-bezier(0.23,1,0.320,1);
+  will-change: opacity, transform;
+}
+.section-sidebar.show { opacity: 1; pointer-events: auto; transform: translateY(-50%) translateX(0) scale(1); }
+@media (max-width: 1024px) { .section-sidebar { display: none; } }
+.section-nav { display: flex; flex-direction: column; gap: 8px; position: relative; }
+.section-link {
+  display: flex; align-items: center; gap: 8px; padding: 6px 10px;
+  border: 1px solid transparent; background: transparent; color: var(--text-muted);
+  font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase;
+  text-decoration: none; white-space: nowrap; font-weight: 500;
+  --offset-x: 0px; opacity: 0;
+  transform: translateX(calc(10px + var(--offset-x))) scale(1);
+  transition: transform 0.25s ease, opacity 0.25s ease, color 0.25s ease, background-color 0.25s ease, border-color 0.25s ease;
+  will-change: transform, opacity; transform: translateZ(0);
+}
+.section-link::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--text-muted); flex-shrink: 0; transition: background-color 0.25s ease, transform 0.25s ease; }
+.section-link:hover { --offset-x: -4px; transform: translateX(-4px) scale(1.04); border-color: var(--accent); background: color-mix(in srgb, var(--bg-surface) 90%, transparent); color: var(--text); opacity: 1; }
+.section-link:hover::before { background: var(--accent); transform: scale(1.2); }
+.section-link.active { --offset-x: -4px; transform: translateX(-4px) scale(1.04); border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--bg-surface)); color: var(--accent); opacity: 1; }
+.section-link.active::before { background: var(--accent); }
+.section-sidebar.show .section-link { opacity: 0.7; transform: translateX(var(--offset-x)) scale(1); }
+.section-sidebar.show .section-link:nth-child(1) { transition-delay: 0.05s; }
+.section-sidebar.show .section-link:nth-child(2) { transition-delay: 0.1s; }
+.section-sidebar.show .section-link:nth-child(3) { transition-delay: 0.15s; }
+.section-sidebar.show .section-link:nth-child(4) { transition-delay: 0.2s; }
+.section-sidebar.show .section-link:nth-child(5) { transition-delay: 0.25s; }
+.section-sidebar.show .section-link:nth-child(6) { transition-delay: 0.3s; }
   </style>
 </head>
 <body>
@@ -355,6 +389,18 @@
 <button class="back-top" id="backToTop" aria-label="Zpět nahoru" onclick="window.scrollTo({top:0,behavior:'smooth'})">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
 </button>
+
+<!-- SECTION SIDEBAR -->
+<nav class="section-sidebar" id="sectionSidebar">
+  <div class="section-nav">
+    <a href="#postup"    class="section-link" data-section="postup">Postup</a>
+    <a href="#objednat"  class="section-link" data-section="objednat">Objednat</a>
+    <a href="#kalendar"  class="section-link" data-section="kalendar">Kalendář</a>
+    <a href="#mapa"      class="section-link" data-section="mapa">Mapa</a>
+    <a href="#faq"   class="section-link" data-section="faq">FAQ</a>
+    <a href="#kontakt"   class="section-link" data-section="kontakt">Kontakt</a>
+  </div>
+</nav>
 
 <!-- NAV -->
 <nav class="nav" id="mainNav">
@@ -455,7 +501,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         </div>
         <div class="step-name">Dodání</div>
-        <p class="step-desc">Do 4–8 dní od natáčení dostanete finální video ve všech domluvených formátech. Hotovo.</p>
+        <p class="step-desc">Do 4–10 dní od natáčení dostanete finální video ve všech domluvených formátech. Hotovo.</p>
       </div>
     </div>
   </div>
@@ -804,8 +850,8 @@
   </div>
 
   <div class="f-stats-band">
-    <div class="f-stat-item"><div class="f-stat-number">25<span>+</span></div><div class="f-stat-label">Projektů</div></div>
-    <div class="f-stat-item"><div class="f-stat-number">3<span>+</span></div><div class="f-stat-label">Roky zkušeností</div></div>
+    <div class="f-stat-item"><div class="f-stat-number">35<span>+</span></div><div class="f-stat-label">Projektů</div></div>
+    <div class="f-stat-item"><div class="f-stat-number">4<span>+</span></div><div class="f-stat-label">Roky zkušeností</div></div>
     <div class="f-stat-item"><div class="f-stat-number">95<span>%</span></div><div class="f-stat-label">Doporučení</div></div>
     <div class="f-stat-item"><div class="f-stat-number">6<span>K</span></div><div class="f-stat-label">RAW rozlišení</div></div>
   </div>
@@ -863,6 +909,27 @@
   // ── FOOTER REVEALS ──
   const fio = new IntersectionObserver(e => e.forEach(x => { if(x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.12 });
   [document.getElementById('fStripe'), document.getElementById('fCta'), ...document.querySelectorAll('.footer-reveal,.f-stat-item')].filter(Boolean).forEach(el => fio.observe(el));
+
+  // ── FOOTER STAT COUNTERS ──
+  const fCountIO = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      const m = el.textContent.match(/^(\d+)(.*)/);
+      if (!m) return;
+      const end = parseInt(m[1], 10);
+      const suffix = m[2] || '';
+      let n = 0;
+      const iv = Math.max(Math.floor(1200/Math.max(end,1)), 12);
+      const timer = setInterval(() => {
+        n++;
+        el.innerHTML = n + '<span>' + suffix + '</span>';
+        if (n >= end) clearInterval(timer);
+      }, iv);
+      fCountIO.unobserve(el);
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.f-stat-number, .fstat-n').forEach(el => fCountIO.observe(el));
 
 const BOOKED_FULL = [
   "2026-05-26","2026-05-27","2026-05-28"
@@ -968,6 +1035,36 @@ const HARD = [
       }
     });
   });
+
+  // ── SECTION SIDEBAR ──
+const sectionSidebar = document.getElementById('sectionSidebar');
+const sectionLinks = document.querySelectorAll('.section-link');
+const sections = ['postup', 'objednat', 'kalendar', 'mapa', 'faq', 'kontakt'];
+let sidebarVisible = false;
+
+window.addEventListener('scroll', () => {
+  const heroHeight = document.querySelector('.hero')?.offsetHeight || 0;
+  const shouldShow = window.scrollY > heroHeight - 100;
+  if (shouldShow && !sidebarVisible) { sidebarVisible = true; sectionSidebar.classList.add('show'); }
+  else if (!shouldShow && sidebarVisible) { sidebarVisible = false; sectionSidebar.classList.remove('show'); }
+}, { passive: true });
+
+const sectionObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    sectionLinks.forEach(link => link.classList.toggle('active', link.dataset.section === e.target.id));
+  });
+}, { threshold: 0.35 });
+sections.forEach(id => { const el = document.getElementById(id); if (el) sectionObserver.observe(el); });
+
+sectionLinks.forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    const el = document.getElementById(link.dataset.section);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
 </script>
 </body>
 </html>
