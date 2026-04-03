@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="cs" data-theme="dark">
+<html lang="cs" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Profesionální video produkce a střih od Matouše Lexy. Natáčení, color grading a postprodukce pro firmy a soukromníky v České republice." />
   <meta name="keywords" content="video produkce, natáčení, střih, color grading, Matouš Lexa, MLX Media, Česká republika" />
   <link rel="canonical" href="index.html" />
-  <link rel="icon" href="/favicon.png" type="image/png">
+  <link rel="icon" type="image/png" href="/Obrázky/favicon.png" />
   <meta property="og:title" content="MLX Media – Matouš Lexa" />
   <meta property="og:description" content="Profesionální video produkce a střih od Matouše Lexy. Natáčení, color grading a postprodukce pro firmy a soukromníky v České republice." />
   <meta property="og:image" content="https://mlxmedia.cz/Obrázky/MLXLogo.png" />
@@ -516,12 +516,44 @@
     .f-legal a:hover { color: var(--text); }
 
     /* ── BACK TO TOP ── */
-    .back-top { position:fixed; bottom:32px; right:32px; width:44px; height:44px; background: var(--bg-surface); border:1px solid var(--border); border-radius:4px; display:flex; align-items:center; justify-content:center; color: var(--accent); cursor:pointer; opacity:0; transform:translateY(12px); transition: opacity 0.3s, transform 0.3s, border-color 0.2s, background var(--trans); z-index:99; }
+    .back-top { position:fixed; bottom:120px; right:32px; width:44px; height:44px; background: var(--bg-surface); border:1px solid var(--border); border-radius:4px; display:flex; align-items:center; justify-content:center; color: var(--accent); cursor:pointer; opacity:0; transform:translateY(12px); transition: opacity 0.3s, transform 0.3s, border-color 0.2s, background var(--trans); z-index:9999; }
     .back-top.show { opacity:1; transform:translateY(0); }
     .back-top:hover { border-color: var(--accent); }
     .back-top svg { width:18px; height:18px; }
     @media(max-width:480px){ .back-top{ bottom:20px; right:20px; } }
-  </style>
+    /* ── SECTION SIDEBAR ── */
+.section-sidebar {
+  position: fixed; right: 15px; top: 20%;
+  transform: translateY(-50%) translateX(20px) scale(0.95) translateZ(0);
+  z-index: 9998; opacity: 0; pointer-events: none;
+  transition: opacity 0.5s cubic-bezier(0.23,1,0.320,1), transform 0.5s cubic-bezier(0.23,1,0.320,1);
+  will-change: opacity, transform;
+}
+.section-sidebar.show { opacity: 1; pointer-events: auto; transform: translateY(-50%) translateX(0) scale(1); }
+@media (max-width: 1024px) { .section-sidebar { display: none; } }
+.section-nav { display: flex; flex-direction: column; gap: 8px; position: relative; }
+.section-link {
+  display: flex; align-items: center; gap: 8px; padding: 6px 10px;
+  border: 1px solid transparent; background: transparent; color: var(--text-muted);
+  font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase;
+  text-decoration: none; white-space: nowrap; font-weight: 500;
+  --offset-x: 0px; opacity: 0;
+  transform: translateX(calc(10px + var(--offset-x))) scale(1);
+  transition: transform 0.25s ease, opacity 0.25s ease, color 0.25s ease, background-color 0.25s ease, border-color 0.25s ease;
+  will-change: transform, opacity; transform: translateZ(0);
+}
+.section-link::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--text-muted); flex-shrink: 0; transition: background-color 0.25s ease, transform 0.25s ease; }
+.section-link:hover { --offset-x: -4px; transform: translateX(-4px) scale(1.04); border-color: var(--accent); background: color-mix(in srgb, var(--bg-surface) 90%, transparent); color: var(--text); opacity: 1; }
+.section-link:hover::before { background: var(--accent); transform: scale(1.2); }
+.section-link.active { --offset-x: -4px; transform: translateX(-4px) scale(1.04); border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--bg-surface)); color: var(--accent); opacity: 1; }
+.section-link.active::before { background: var(--accent); }
+.section-sidebar.show .section-link { opacity: 0.7; transform: translateX(var(--offset-x)) scale(1); }
+.section-sidebar.show .section-link:nth-child(1) { transition-delay: 0.05s; }
+.section-sidebar.show .section-link:nth-child(2) { transition-delay: 0.1s; }
+.section-sidebar.show .section-link:nth-child(3) { transition-delay: 0.15s; }
+.section-sidebar.show .section-link:nth-child(4) { transition-delay: 0.2s; }
+.section-sidebar.show .section-link:nth-child(5) { transition-delay: 0.25s; }
+</style>
 </head>
 <body>
 
@@ -529,9 +561,20 @@
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
 </button>
 
+<!-- SECTION SIDEBAR -->
+<nav class="section-sidebar" id="sectionSidebar">
+  <div class="section-nav">
+    <a href="#o-mne"   class="section-link" data-section="o-mne">O mně</a>
+    <a href="#sluzby"  class="section-link" data-section="sluzby">Služby</a>
+    <a href="#proc-ja" class="section-link" data-section="proc-ja">Proč já</a>
+    <a href="#prace"   class="section-link" data-section="prace">Práce</a>
+    <a href="#presvedceni" class="section-link" data-section="presvedceni">Přesvědčení</a>
+  </div>
+</nav>
+
 <!-- NAV -->
 <nav class="nav" id="mainNav">
-  <a href="index.html" class="nav-logo">ML<span>X</span> MEDIA</a>
+  <a href="Linktree.html" class="nav-logo">ML<span>X</span> MEDIA</a>
   <ul class="nav-links">
     <li><a href="index.html" class="active">Domů</a></li>
     <li><a href="O-mně.html">O mně</a></li>
@@ -563,7 +606,7 @@
 
   <div class="hero-inner">
     <div class="hero-rule"></div>
-    <div class="hero-eyebrow">Beroun · Filmová produkce · Blackmagic 6K</div>
+    <div class="hero-eyebrow">Beroun · Filmová produkce · Matouš Lexa</div>
 
     <h1 class="hero-title">
       Váš příběh<br>
@@ -571,7 +614,7 @@
     </h1>
 
     <p class="hero-tagline">
-      Jsem Matouš Lexa — Režisér,Kameraman a Střihač za MLX Media. Natáčím reklamy, firemní videa a kreativní projekty s technikou, která mluví za sebe.
+      Jsem Matouš Lexa — Režisér, Kameraman a Střihač za MLX Media. Natáčím reklamy, firemní videa a kreativní projekty s technikou, která mluví za sebe.
     </p>
 
     <div class="hero-actions">
@@ -629,9 +672,9 @@
       <div class="about-tag">O mně</div>
       <h2 class="about-title">Jmenuji se<br>Matouš<br><em>Lexa.</em></h2>
       <p class="about-body">
-        Stojím za značkou <strong>MLX Media</strong> — jednou z mála jednosměrných produkcí v Praze, která pracuje se skutečně filmovou technikou. Specializuji se na tvorbu <strong>reklamních spotů, firemních videí</strong> a kreativních projektů, kde technická přesnost a vizuální originalita jdou ruku v ruce.
+        Stojím za značkou <strong>MLX Media</strong> — Specializuji se na tvorbu <strong>reklamních spotů, firemních videí</strong> a kreativních projektů, kde technická přesnost a vizuální originalita jdou ruku v ruce.
         <br><br>
-        Věřím, že každý příběh si zaslouží být vyprávěn dobře. Od první konzultace až po finální střih — jsem tu pro vás osobně, bez mezičlánků.
+        Věřím, že každý příběh si zaslouží být vyprávěn. Od první konzultace až po finální střih — jsem tu pro vás osobně, bez mezičlánků.
       </p>
       <a href="O-mně.html" class="btn-ghost">
         Více o mně
@@ -842,16 +885,16 @@
       <!-- large card -->
       <a href="Portfolio.html" class="feat-card large" style="text-decoration:none;">
         <div class="feat-thumb">
-          <img src="https://img.youtube.com/vi/CgU8gh_i99s/maxresdefault.jpg" alt="Jak vnímá mladá generace demokracii" loading="lazy" onerror="this.style.background='var(--bg-card)'">
+          <img src="https://img.youtube.com/vi/aP4Cebk-60Q/maxresdefault.jpg" alt="Jak vnímá mladá generace demokracii" loading="lazy" onerror="this.style.background='var(--bg-card)'">
           <div class="feat-play">
             <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
           </div>
         </div>
         <div class="feat-body">
-          <div class="feat-type">Dokumentární · Brno</div>
-          <div class="feat-title">Jak vnímá mladá generace demokracii a totalitu</div>
+          <div class="feat-type">Dokumentární · Nižbor</div>
+          <div class="feat-title">Dokument o rodinách potíkající se z Downovým syndromem.</div>
           <div class="feat-roles">
-            <span class="role-tag">Kamera</span><span class="role-tag">Střih</span><span class="role-tag">Režie</span>
+            <span class="role-tag">Režie</span><span class="role-tag">Kamera</span><span class="role-tag">Střih</span>
           </div>
         </div>
       </a>
@@ -860,31 +903,31 @@
       <div class="featured-stack">
         <a href="Portfolio.html" class="feat-card" style="text-decoration:none;">
           <div class="feat-thumb">
-            <img src="https://img.youtube.com/vi/fm08JltjGLI/maxresdefault.jpg" alt="IFHY" loading="lazy" onerror="this.style.background='var(--bg-card)'">
+            <img src="https://img.youtube.com/vi/CgU8gh_i99s/maxresdefault.jpg" alt="IFHY" loading="lazy" onerror="this.style.background='var(--bg-card)'">
             <div class="feat-play">
               <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
             </div>
           </div>
           <div class="feat-body">
-            <div class="feat-type">Drama · Brno</div>
-            <div class="feat-title">IFHY</div>
+            <div class="feat-type">Dokumentární · Praha 6</div>
+            <div class="feat-title">Jak vnímá mladá generace demokracii</div>
             <div class="feat-roles">
-              <span class="role-tag">Kamera</span><span class="role-tag">Herec</span><span class="role-tag">Střih</span>
+              <span class="role-tag">Režie</span><span class="role-tag">Kamera</span><span class="role-tag">Střih</span>
             </div>
           </div>
         </a>
         <a href="Portfolio.html" class="feat-card" style="text-decoration:none;">
           <div class="feat-thumb">
-            <img src="https://img.youtube.com/vi/15GEOKTmj4k/maxresdefault.jpg" alt="Dva z nás" loading="lazy" onerror="this.style.background='var(--bg-card)'">
+            <img src="https://img.youtube.com/vi/pfXmR3jXRCI/maxresdefault.jpg" alt="Dva z nás" loading="lazy" onerror="this.style.background='var(--bg-card)'">
             <div class="feat-play">
               <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
             </div>
           </div>
           <div class="feat-body">
-            <div class="feat-type">Thriller · Praha</div>
-            <div class="feat-title">Dva z nás</div>
+            <div class="feat-type">Krátký Film · Praha</div>
+            <div class="feat-title">Cesta</div>
             <div class="feat-roles">
-              <span class="role-tag">Střih</span><span class="role-tag">Herec</span>
+              <span class="role-tag">Režie</span><span class="role-tag">Kamera</span><span class="role-tag">Střih</span>
             </div>
           </div>
         </a>
@@ -895,7 +938,7 @@
 </section>
 
 <!-- ══ PHILOSOPHY ══ -->
-<section class="philosophy">
+<section class="philosophy" id="presvedceni">
   <div class="philosophy-inner reveal">
     <div class="philosophy-eyebrow">Mé přesvědčení</div>
     <div class="philosophy-quote">
@@ -985,8 +1028,8 @@
   </div>
 
   <div class="f-stats-band">
-    <div class="f-stat-item"><div class="f-stat-number">25<span>+</span></div><div class="f-stat-label">Projektů</div></div>
-    <div class="f-stat-item"><div class="f-stat-number">3<span>+</span></div><div class="f-stat-label">Roky zkušeností</div></div>
+    <div class="f-stat-item"><div class="f-stat-number">35<span>+</span></div><div class="f-stat-label">Projektů</div></div>
+    <div class="f-stat-item"><div class="f-stat-number">4<span>+</span></div><div class="f-stat-label">Roky zkušeností</div></div>
     <div class="f-stat-item"><div class="f-stat-number">95<span>%</span></div><div class="f-stat-label">Doporučení</div></div>
     <div class="f-stat-item"><div class="f-stat-number">6<span>K</span></div><div class="f-stat-label">RAW rozlišení</div></div>
   </div>
@@ -1055,6 +1098,56 @@
     });
   }, { threshold: 0.5 });
   document.querySelectorAll('.js-count').forEach(el => cio.observe(el));
+
+  // ── FOOTER STAT COUNTERS ──
+  const fCountIO = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      const m = el.textContent.match(/^(\d+)(.*)/);
+      if (!m) return;
+      const end = parseInt(m[1], 10);
+      const suffix = m[2] || '';
+      let n = 0;
+      const iv = Math.max(Math.floor(1200/Math.max(end,1)), 12);
+      const timer = setInterval(() => {
+        n++;
+        el.innerHTML = n + '<span>' + suffix + '</span>';
+        if (n >= end) clearInterval(timer);
+      }, iv);
+      fCountIO.unobserve(el);
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.f-stat-number, .fstat-n').forEach(el => fCountIO.observe(el));
+  // ── SECTION SIDEBAR ──
+const sectionSidebar = document.getElementById('sectionSidebar');
+const sectionLinks = document.querySelectorAll('.section-link');
+const sections = ['o-mne', 'sluzby', 'proc-ja', 'prace', 'presvedceni'];
+let sidebarVisible = false;
+
+window.addEventListener('scroll', () => {
+  const heroHeight = document.querySelector('.hero')?.offsetHeight || 0;
+  const shouldShow = window.scrollY > heroHeight - 100;
+  if (shouldShow && !sidebarVisible) { sidebarVisible = true; sectionSidebar.classList.add('show'); }
+  else if (!shouldShow && sidebarVisible) { sidebarVisible = false; sectionSidebar.classList.remove('show'); }
+}, { passive: true });
+
+const sectionObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    sectionLinks.forEach(link => link.classList.toggle('active', link.dataset.section === e.target.id));
+  });
+}, { threshold: 0.35 });
+sections.forEach(id => { const el = document.getElementById(id); if (el) sectionObserver.observe(el); });
+
+sectionLinks.forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    const el = document.getElementById(link.dataset.section);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
 </script>
 </body>
 </html>
