@@ -205,7 +205,7 @@
     .notice-cta svg{width:14px;height:14px}
 
     /* BACK TO TOP */
-    .back-top{position:fixed;bottom:32px;right:32px;width:44px;height:44px;background:var(--bg-surface);border:1px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;color:var(--accent);cursor:pointer;opacity:0;transform:translateY(12px);transition:opacity 0.3s,transform 0.3s,border-color 0.2s,background var(--trans);z-index:99}
+    .back-top{position:fixed;bottom:120px;right:32px;width:44px;height:44px;background:var(--bg-surface);border:1px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;color:var(--accent);cursor:pointer;opacity:0;transform:translateY(12px);transition:opacity 0.3s,transform 0.3s,border-color 0.2s,background var(--trans);z-index:9999}
     .back-top.show{opacity:1;transform:translateY(0)}
     .back-top:hover{border-color:var(--accent)}
     .back-top svg{width:18px;height:18px}
@@ -266,6 +266,39 @@
     .flegal{display:flex;gap:20px}
     .flegal a{font-size:0.72rem;color:var(--text-muted);text-decoration:none;letter-spacing:0.08em;transition:color 0.2s}
     .flegal a:hover{color:var(--text)}
+
+
+    /* ── SECTION SIDEBAR ── */
+.section-sidebar {
+  position: fixed; right: 15px; top: 15%;
+  transform: translateY(-50%) translateX(20px) scale(0.95) translateZ(0);
+  z-index: 9998; opacity: 0; pointer-events: none;
+  transition: opacity 0.5s cubic-bezier(0.23,1,0.320,1), transform 0.5s cubic-bezier(0.23,1,0.320,1);
+  will-change: opacity, transform;
+}
+.section-sidebar.show { opacity: 1; pointer-events: auto; transform: translateY(-50%) translateX(0) scale(1); }
+@media (max-width: 1024px) { .section-sidebar { display: none; } }
+.section-nav { display: flex; flex-direction: column; gap: 8px; position: relative; }
+.section-link {
+  display: flex; align-items: center; gap: 8px; padding: 6px 10px;
+  border: 1px solid transparent; background: transparent; color: var(--text-muted);
+  font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase;
+  text-decoration: none; white-space: nowrap; font-weight: 500;
+  --offset-x: 0px; opacity: 0;
+  transform: translateX(calc(10px + var(--offset-x))) scale(1);
+  transition: transform 0.25s ease, opacity 0.25s ease, color 0.25s ease, background-color 0.25s ease, border-color 0.25s ease;
+  will-change: transform, opacity; transform: translateZ(0);
+}
+.section-link::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--text-muted); flex-shrink: 0; transition: background-color 0.25s ease, transform 0.25s ease; }
+.section-link:hover { --offset-x: -4px; transform: translateX(-4px) scale(1.04); border-color: var(--accent); background: color-mix(in srgb, var(--bg-surface) 90%, transparent); color: var(--text); opacity: 1; }
+.section-link:hover::before { background: var(--accent); transform: scale(1.2); }
+.section-link.active { --offset-x: -4px; transform: translateX(-4px) scale(1.04); border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--bg-surface)); color: var(--accent); opacity: 1; }
+.section-link.active::before { background: var(--accent); }
+.section-sidebar.show .section-link { opacity: 0.7; transform: translateX(var(--offset-x)) scale(1); }
+.section-sidebar.show .section-link:nth-child(1) { transition-delay: 0.05s; }
+.section-sidebar.show .section-link:nth-child(2) { transition-delay: 0.1s; }
+.section-sidebar.show .section-link:nth-child(3) { transition-delay: 0.15s; }
+.section-sidebar.show .section-link:nth-child(4) { transition-delay: 0.2s; }
   </style>
 </head>
 <body>
@@ -273,6 +306,16 @@
 <button class="back-top" id="backToTop" aria-label="Zpět nahoru" onclick="window.scrollTo({top:0,behavior:'smooth'})">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
 </button>
+
+<!-- SECTION SIDEBAR -->
+<nav class="section-sidebar" id="sectionSidebar">
+  <div class="section-nav">
+    <a href="#proces"  class="section-link" data-section="proces">Postup</a>
+    <a href="#balicky" class="section-link" data-section="balicky">Balíčky</a>
+    <a href="#kalkulator" class="section-link" data-section="kalkulator">Kalkulátor</a>
+    <a href="#domluvme-se" class="section-link" data-section="domluvme-se">Domluv se</a>
+  </div>
+</nav>
 
 <nav class="nav" id="mainNav">
   <a href="index.html" class="nav-logo">ML<span>X</span> MEDIA</a>
@@ -302,7 +345,7 @@
 <!-- HERO -->
 <section class="hero" id="top">
   <div class="hero-bg-letter">C</div>
-  <div class="hero-eyebrow">MLX Media · Ceník 2025</div>
+  <div class="hero-eyebrow">MLX Media · Ceník 2026</div>
   <h1 class="hero-title">CO<br>DOSTANETE<br>ZA <em>CENU</em></h1>
   <p class="hero-subtitle">Přehled služeb a orientační ceny. Každý projekt je jiný — finální cenu vždy sestavíme společně po konzultaci.</p>
   <div class="hero-disclaimer">
@@ -559,8 +602,8 @@
     </div>
   </div>
   <div class="fband">
-    <div class="fstat"><div class="fstat-n">25<span>+</span></div><div class="fstat-l">Projektů</div></div>
-    <div class="fstat"><div class="fstat-n">3<span>+</span></div><div class="fstat-l">Roky zkušeností</div></div>
+    <div class="fstat"><div class="fstat-n">35<span>+</span></div><div class="fstat-l">Projektů</div></div>
+    <div class="fstat"><div class="fstat-n">4<span>+</span></div><div class="fstat-l">Roky zkušeností</div></div>
     <div class="fstat"><div class="fstat-n">95<span>%</span></div><div class="fstat-l">Doporučení</div></div>
     <div class="fstat"><div class="fstat-n">6<span>K</span></div><div class="fstat-l">RAW rozlišení</div></div>
   </div>
@@ -590,6 +633,27 @@
   document.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(el=>io.observe(el));
   const fio=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible')}),{threshold:0.1});
   [document.getElementById('fStripe'),document.getElementById('fCta'),...document.querySelectorAll('.fr,.fstat')].filter(Boolean).forEach(el=>fio.observe(el));
+
+  // ── FOOTER STAT COUNTERS ──
+  const fCountIO = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      const m = el.textContent.match(/^(\d+)(.*)/);
+      if (!m) return;
+      const end = parseInt(m[1], 10);
+      const suffix = m[2] || '';
+      let n = 0;
+      const iv = Math.max(Math.floor(1200/Math.max(end,1)), 12);
+      const timer = setInterval(() => {
+        n++;
+        el.innerHTML = n + '<span>' + suffix + '</span>';
+        if (n >= end) clearInterval(timer);
+      }, iv);
+      fCountIO.unobserve(el);
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.f-stat-number, .fstat-n').forEach(el => fCountIO.observe(el));
 
   // CALC
   const S={hours:4,cameras:1,minutes:3,complexity:1.0,revisions:0,audio:'none',drone:0,lighting:0,scenes:1,graphics:0,grading:0,exports:1,express:0};
@@ -655,6 +719,34 @@
   document.getElementById('c-scenes').addEventListener('input',e=>{S.scenes=Math.max(1,parseInt(e.target.value)||1);calc()});
   document.getElementById('c-exports').addEventListener('input',e=>{S.exports=Math.max(1,parseInt(e.target.value)||1);calc()});
   calc();
+  // ── SECTION SIDEBAR ──
+const sectionSidebar = document.getElementById('sectionSidebar');
+const sectionLinks = document.querySelectorAll('.section-link');
+const sections = ['proces', 'balicky', 'kalkulator', 'domluvme-se'];
+let sidebarVisible = false;
+
+window.addEventListener('scroll', () => {
+  const heroHeight = document.querySelector('.hero')?.offsetHeight || 0;
+  const shouldShow = window.scrollY > heroHeight - 250;
+  if (shouldShow && !sidebarVisible) { sidebarVisible = true; sectionSidebar.classList.add('show'); }
+  else if (!shouldShow && sidebarVisible) { sidebarVisible = false; sectionSidebar.classList.remove('show'); }
+}, { passive: true });
+
+const sectionObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    sectionLinks.forEach(link => link.classList.toggle('active', link.dataset.section === e.target.id));
+  });
+}, { threshold: 0.35 });
+sections.forEach(id => { const el = document.getElementById(id); if (el) sectionObserver.observe(el); });
+
+sectionLinks.forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    const el = document.getElementById(link.dataset.section);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
 </script>
 </body>
 </html>
