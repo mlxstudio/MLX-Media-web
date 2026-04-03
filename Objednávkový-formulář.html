@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="cs" data-theme="dark">
+<html lang="cs" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -21,6 +21,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="AI/ChatBot.css">
   <script src="AI/ChatBotKnowledge.js"></script>
   <script src="AI/ChatBot.js"></script>
@@ -340,12 +341,51 @@
     }
     .calendar-embed iframe { display: block; border: none; width: 100%; }
 
+    /* Custom calendar widget */
+    .cal-wrap { background:var(--bg-card); border:1px solid var(--border); border-radius:6px; overflow:hidden; transition:background var(--trans),border-color var(--trans); }
+    .cal-nav { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--border); transition:border-color var(--trans); }
+    .cal-btn { width:34px; height:34px; border:1px solid var(--border); border-radius:4px; background:transparent; cursor:pointer; color:var(--text-dim); display:flex; align-items:center; justify-content:center; transition:border-color 0.2s,color 0.2s,background var(--trans); }
+    .cal-btn:hover { border-color:var(--accent); color:var(--accent); }
+    .cal-month { font-family:var(--font-display); font-size:1.1rem; letter-spacing:0.12em; color:var(--text); transition:color var(--trans); }
+    .cal-weekdays { display:grid; grid-template-columns:repeat(7,1fr); padding:10px 14px 4px; gap:2px; }
+    .cal-weekday { text-align:center; font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-muted); padding:5px 0; transition:color var(--trans); }
+    .cal-days { display:grid; grid-template-columns:repeat(7,1fr); padding:0 14px 14px; gap:3px; }
+    .cal-day { aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:0.8rem; color:var(--text-dim); border-radius:4px; transition:color var(--trans),background 0.2s,border-color 0.2s; }
+    .cal-day.empty { background:transparent; pointer-events:none; }
+    .cal-day.past { opacity:0.3; cursor:not-allowed; }
+    .cal-day.today { color:var(--accent); font-weight:600; border:1px solid var(--accent); }
+    .cal-day.booked-full { background:rgba(220,50,50,0.12); color:#e05555; cursor:not-allowed; }
+    .cal-day.booked-partial { background:rgba(255,138,0,0.12); color:var(--accent); cursor:pointer; }
+    .cal-day.hard-to-book { background:rgba(255,200,0,0.08); color:#c8a800; cursor:pointer; }
+    .cal-day.free { cursor:pointer; }
+    .cal-day.free:hover { background:var(--accent-soft); color:var(--accent); border:1px solid var(--accent); }
+    .cal-day.selected { background:var(--accent); color:var(--bg) !important; font-weight:600; }
+    .cal-day.booked-partial:hover, .cal-day.hard-to-book:hover { opacity:0.8; }
+
+    /* Calendar status message */
+    .cal-status-msg { margin-top:10px; padding:12px 16px; border-radius:4px; font-size:0.82rem; line-height:1.55; display:none; transition:background var(--trans),border-color var(--trans); }
+    .cal-status-msg.show { display:block; }
+    .cal-status-msg.booked { background:rgba(220,50,50,0.08); border:1px solid rgba(220,50,50,0.3); color:#e05555; }
+    .cal-status-msg.partial { background:rgba(255,138,0,0.08); border:1px solid rgba(255,138,0,0.25); color:var(--accent); }
+    .cal-status-msg.hard { background:rgba(255,200,0,0.07); border:1px solid rgba(255,200,0,0.3); color:#c8a800; }
+    .cal-status-msg.free { background:rgba(34,197,94,0.07); border:1px solid rgba(34,197,94,0.25); color:#22c55e; }
+
+    /* Calendar legend */
+    .cal-legend-row { display:flex; flex-wrap:wrap; gap:12px 20px; margin-top:10px; }
+    .cal-legend-item { display:flex; align-items:center; gap:7px; font-size:0.75rem; color:var(--text-dim); }
+    .cal-dot { width:10px; height:10px; border-radius:3px; flex-shrink:0; }
+    .dot-free { background:var(--bg-card); border:1px solid var(--border); }
+    .dot-partial { background:rgba(255,138,0,0.2); border:1px solid rgba(255,138,0,0.4); }
+    .dot-full { background:rgba(220,50,50,0.18); border:1px solid rgba(220,50,50,0.4); }
+    .dot-hard { background:rgba(255,200,0,0.14); border:1px solid rgba(255,200,0,0.4); }
+
     /* Map */
     .map-embed {
       border-radius: 6px; overflow: hidden; margin-top: 8px;
       border: 1px solid var(--border); transition: border-color var(--trans);
     }
     .map-embed iframe { display: block; border: none; width: 100%; }
+    #leaflet-map-form { height:280px; border-radius:6px; border:1px solid var(--border); margin-top:8px; transition:border-color var(--trans); }
 
     /* Conditional section */
     .conditional { display: none; }
@@ -425,7 +465,7 @@
     .d1{transition-delay:.05s} .d2{transition-delay:.15s}
 
     /* ── BACK TO TOP ── */
-    .back-top { position:fixed; bottom:32px; right:32px; width:44px; height:44px; background: var(--bg-surface); border:1px solid var(--border); border-radius:4px; display:flex; align-items:center; justify-content:center; color: var(--accent); cursor:pointer; opacity:0; transform:translateY(12px); transition: opacity 0.3s, transform 0.3s, border-color 0.2s, background var(--trans); z-index:99; }
+    .back-top { position:fixed; bottom:120px; right:32px; width:44px; height:44px; background: var(--bg-surface); border:1px solid var(--border); border-radius:4px; display:flex; align-items:center; justify-content:center; color: var(--accent); cursor:pointer; opacity:0; transform:translateY(12px); transition: opacity 0.3s, transform 0.3s, border-color 0.2s, background var(--trans); z-index:9999; }
     .back-top.show { opacity:1; transform:translateY(0); }
     .back-top:hover { border-color: var(--accent); }
     .back-top svg { width:18px; height:18px; }
@@ -745,8 +785,29 @@
               <input type="date" id="orderDate" name="orderDate" />
               <div class="field-error" id="err-orderDate">Prosím vyberte požadovaný termín.</div>
             </div>
-            <div class="calendar-embed">
-              <iframe src="https://calendar.google.com/calendar/embed?height=420&wkst=1&ctz=Europe%2FPrague&showPrint=0&showTabs=0&showCalendars=0&mode=MONTH&src=bWx4LnN0dWRpbzIyMjJAZ21haWwuY29t&src=Y3MuY3plY2kjaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23039be5&color=%230b8043" height="420" frameborder="0" scrolling="no" loading="lazy"></iframe>
+            <!-- Custom interactive calendar (delivery date) -->
+            <div class="cal-wrap" style="margin-top:12px">
+              <div class="cal-nav">
+                <button type="button" class="cal-btn" id="cal-prev-delivery">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <div class="cal-month" id="cal-month-delivery">Duben 2026</div>
+                <button type="button" class="cal-btn" id="cal-next-delivery">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+              </div>
+              <div class="cal-weekdays">
+                <div class="cal-weekday">Po</div><div class="cal-weekday">Út</div><div class="cal-weekday">St</div>
+                <div class="cal-weekday">Čt</div><div class="cal-weekday">Pá</div><div class="cal-weekday">So</div><div class="cal-weekday">Ne</div>
+              </div>
+              <div class="cal-days" id="cal-days-delivery"></div>
+            </div>
+            <div class="cal-status-msg" id="cal-status-delivery"></div>
+            <div class="cal-legend-row">
+              <div class="cal-legend-item"><div class="cal-dot dot-free"></div>Volno</div>
+              <div class="cal-legend-item"><div class="cal-dot dot-partial"></div>Prioritní projekty</div>
+              <div class="cal-legend-item"><div class="cal-dot dot-hard"></div>Hůře dostupné</div>
+              <div class="cal-legend-item"><div class="cal-dot dot-full"></div>Obsazeno</div>
             </div>
           </div>
 
@@ -757,16 +818,36 @@
               <input type="text" id="location" name="location" placeholder="Ulice, město nebo popis místa…" />
               <div class="field-error" id="err-location">Prosím zadejte lokalitu natáčení.</div>
             </div>
-            <div class="map-embed">
-              <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d242222.43857222228!2d14.324413493345219!3d50.05586478445109!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x470b939c0970798b%3A0x400af0f66164090!2sPraha!5e1!3m2!1scs!2scz!4v1754743220287!5m2!1scs!2scz" height="280" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-            </div>
+            <!-- Custom Leaflet map -->
+            <div id="leaflet-map-form"></div>
             <div class="field" style="margin-top:18px" id="field-shootDate">
               <label class="field-label" for="shootDate">Datum natáčení <span class="req">*</span></label>
               <input type="date" id="shootDate" name="shootDate" />
               <div class="field-error" id="err-shootDate">Prosím vyberte datum natáčení.</div>
             </div>
-            <div class="calendar-embed" style="margin-top:8px">
-              <iframe src="https://calendar.google.com/calendar/embed?height=420&wkst=1&ctz=Europe%2FPrague&showPrint=0&showTabs=0&showCalendars=0&mode=MONTH&src=bWx4LnN0dWRpbzIyMjJAZ21haWwuY29t&src=Y3MuY3plY2kjaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23039be5&color=%230b8043" height="420" frameborder="0" scrolling="no" loading="lazy"></iframe>
+            <!-- Custom interactive calendar (shoot date) -->
+            <div class="cal-wrap" style="margin-top:8px">
+              <div class="cal-nav">
+                <button type="button" class="cal-btn" id="cal-prev-shoot">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <div class="cal-month" id="cal-month-shoot">Duben 2026</div>
+                <button type="button" class="cal-btn" id="cal-next-shoot">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+              </div>
+              <div class="cal-weekdays">
+                <div class="cal-weekday">Po</div><div class="cal-weekday">Út</div><div class="cal-weekday">St</div>
+                <div class="cal-weekday">Čt</div><div class="cal-weekday">Pá</div><div class="cal-weekday">So</div><div class="cal-weekday">Ne</div>
+              </div>
+              <div class="cal-days" id="cal-days-shoot"></div>
+            </div>
+            <div class="cal-status-msg" id="cal-status-shoot"></div>
+            <div class="cal-legend-row">
+              <div class="cal-legend-item"><div class="cal-dot dot-free"></div>Volno</div>
+              <div class="cal-legend-item"><div class="cal-dot dot-partial"></div>Prioritní projekty</div>
+              <div class="cal-legend-item"><div class="cal-dot dot-hard"></div>Hůře dostupné</div>
+              <div class="cal-legend-item"><div class="cal-dot dot-full"></div>Obsazeno</div>
             </div>
           </div>
 
@@ -845,7 +926,7 @@
         <div class="f-contact-icon">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
         </div>
-        <div><div class="f-contact-label">Email</div><div class="f-contact-value"><a href="mailto:mlx.studio2222@gmail.com">mlx.studio2222@gmail.com</a></div></div>
+        <div><div class="f-contact-label">Email</div><div class="f-contact-value"><a href="mailto:info@mlxmedia.cz">info@mlxmedia.cz</a></div></div>
       </div>
       <div class="f-contact-item">
         <div class="f-contact-icon">
@@ -869,8 +950,8 @@
   </div>
 
   <div class="f-stats-band">
-    <div class="f-stat-item"><div class="f-stat-number">25<span>+</span></div><div class="f-stat-label">Projektů</div></div>
-    <div class="f-stat-item"><div class="f-stat-number">3<span>+</span></div><div class="f-stat-label">Roky zkušeností</div></div>
+    <div class="f-stat-item"><div class="f-stat-number">35<span>+</span></div><div class="f-stat-label">Projektů</div></div>
+    <div class="f-stat-item"><div class="f-stat-number">4<span>+</span></div><div class="f-stat-label">Roky zkušeností</div></div>
     <div class="f-stat-item"><div class="f-stat-number">95<span>%</span></div><div class="f-stat-label">Doporučení</div></div>
     <div class="f-stat-item"><div class="f-stat-number">6<span>K</span></div><div class="f-stat-label">RAW rozlišení</div></div>
   </div>
@@ -894,7 +975,7 @@
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script>
   // ── Theme ──
   const root = document.documentElement;
   root.setAttribute('data-theme', localStorage.getItem('mlx-theme') || 'dark');
@@ -926,11 +1007,179 @@
   const fio = new IntersectionObserver(e => e.forEach(x => { if (x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.12 });
   [document.getElementById('fStripe'), document.getElementById('fCta'), ...document.querySelectorAll('.footer-reveal,.f-stat-item')].filter(Boolean).forEach(el => fio.observe(el));
 
-  // ── Booked dates ──
-  const bookedDates = [
-    "2025-08-11","2025-08-12","2025-08-13","2025-08-14","2025-08-15",
-    "2025-08-18","2025-08-19","2025-08-20","2025-08-21","2025-08-22"
+  // ── FOOTER STAT COUNTERS ──
+  const fCountIO = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      const m = el.textContent.match(/^(\d+)(.*)/);
+      if (!m) return;
+      const end = parseInt(m[1], 10);
+      const suffix = m[2] || '';
+      let n = 0;
+      const iv = Math.max(Math.floor(1200/Math.max(end,1)), 12);
+      const timer = setInterval(() => {
+        n++;
+        el.innerHTML = n + '<span>' + suffix + '</span>';
+        if (n >= end) clearInterval(timer);
+      }, iv);
+      fCountIO.unobserve(el);
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.f-stat-number, .fstat-n').forEach(el => fCountIO.observe(el));
+
+  // ── Booked dates (synced with Objednávka.html) ──
+  const BOOKED_FULL = [
+    "2026-05-26","2026-05-27","2026-05-28"
   ];
+  const BOOKED_PARTIAL = [
+    "2026-05-12","2026-05-13","2026-05-14","2026-05-19","2026-05-20"
+  ];
+  const HARD = [
+    "2026-04-06","2026-04-07","2026-04-08","2026-04-09","2026-04-10",
+    "2026-04-13","2026-04-14","2026-04-15","2026-04-16","2026-04-17",
+    "2026-04-20","2026-04-21","2026-04-22","2026-04-23","2026-04-24",
+    "2026-04-27","2026-04-28","2026-04-29","2026-04-30","2026-05-01",
+    "2026-05-04","2026-05-05","2026-05-06","2026-05-07","2026-05-08",
+    "2026-05-11","2026-05-12","2026-05-18","2026-05-19","2026-05-22",
+    "2026-05-25","2026-05-26","2026-06-01","2026-06-02","2026-06-03",
+    "2026-06-04","2026-06-05","2026-06-08","2026-06-09","2026-06-10",
+    "2026-06-11","2026-06-12","2026-06-15","2026-06-16","2026-06-17",
+    "2026-06-18","2026-06-19","2026-06-22","2026-06-23","2026-06-24",
+    "2026-06-25","2026-06-26","2026-06-29","2026-06-30","2026-07-01",
+    "2026-07-02","2026-07-03","2026-07-06","2026-07-07","2026-07-08",
+    "2026-07-09","2026-07-10","2026-07-13","2026-07-14","2026-07-15",
+    "2026-07-16","2026-07-17"
+  ];
+
+  // Keep legacy bookedDates for existing date input validation
+  const bookedDates = BOOKED_FULL;
+
+  const MONTHS_CS = ['Leden','Únor','Březen','Duben','Květen','Červen','Červenec','Srpen','Září','Říjen','Listopad','Prosinec'];
+
+  function buildCalendar(calDate, daysId, monthLabelId, statusId, dateInputId) {
+    document.getElementById(monthLabelId).textContent = MONTHS_CS[calDate.getMonth()] + ' ' + calDate.getFullYear();
+    const container = document.getElementById(daysId);
+    container.innerHTML = '';
+    const first = new Date(calDate.getFullYear(), calDate.getMonth(), 1);
+    const last  = new Date(calDate.getFullYear(), calDate.getMonth() + 1, 0);
+    let startDay = first.getDay() === 0 ? 6 : first.getDay() - 1;
+    const today = new Date(); today.setHours(0,0,0,0);
+    for (let i = 0; i < startDay; i++) {
+      const el = document.createElement('div'); el.className = 'cal-day empty'; container.appendChild(el);
+    }
+    for (let d = 1; d <= last.getDate(); d++) {
+      const el = document.createElement('div'); el.className = 'cal-day';
+      el.textContent = d;
+      const key = `${calDate.getFullYear()}-${String(calDate.getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const thisDate = new Date(calDate.getFullYear(), calDate.getMonth(), d);
+      if (thisDate < today) { el.classList.add('past'); container.appendChild(el); continue; }
+      if (thisDate.getTime() === today.getTime()) el.classList.add('today');
+      if (BOOKED_FULL.includes(key)) {
+        el.classList.add('booked-full');
+      } else if (BOOKED_PARTIAL.includes(key)) {
+        el.classList.add('booked-partial');
+        el.classList.add('free');
+      } else if (HARD.includes(key)) {
+        el.classList.add('hard-to-book');
+        el.classList.add('free');
+      } else {
+        el.classList.add('free');
+      }
+      // Click handler
+      el.addEventListener('click', function() {
+        if (el.classList.contains('past') || el.classList.contains('booked-full')) return;
+        // Deselect previous
+        container.querySelectorAll('.selected').forEach(s => s.classList.remove('selected'));
+        el.classList.add('selected');
+        // Set the date input
+        const dateInput = document.getElementById(dateInputId);
+        if (dateInput) dateInput.value = key;
+        // Show status message
+        const statusEl = document.getElementById(statusId);
+        if (statusEl) {
+          statusEl.className = 'cal-status-msg show';
+          if (BOOKED_PARTIAL.includes(key)) {
+            statusEl.classList.add('partial');
+            statusEl.innerHTML = '⚠️ Tento den je <strong>částečně obsazený</strong> — je rezervován pro prioritní projekty. Pro velký nebo urgentní projekt mě kontaktujte a domluvíme se.';
+          } else if (HARD.includes(key)) {
+            statusEl.classList.add('hard');
+            statusEl.innerHTML = '🟡 Tento den je <strong>hůře dostupný</strong> — je možné natáčení domluvit, ale bude složitější. Zkuste jiný termín nebo mě kontaktujte přímo.';
+          } else {
+            statusEl.classList.add('free');
+            statusEl.innerHTML = '✅ Tento den je <strong>volný</strong> — termín lze rezervovat. Pokračujte v objednávce níže.';
+          }
+        }
+        // Trigger change event to clear existing date error
+        dateInput && dateInput.dispatchEvent(new Event('input'));
+      });
+      container.appendChild(el);
+    }
+  }
+
+  // Click on booked-full: show message without selecting
+  function addBookedClickHandlers(daysId, statusId) {
+    document.getElementById(daysId).addEventListener('click', function(e) {
+      const el = e.target.closest('.cal-day');
+      if (!el || !el.classList.contains('booked-full')) return;
+      const statusEl = document.getElementById(statusId);
+      if (statusEl) {
+        statusEl.className = 'cal-status-msg show booked';
+        statusEl.innerHTML = '🔴 Tento den je <strong>plně obsazený</strong> — bohužel sem se nedostanete. Vyberte prosím jiný termín. Máte velký projekt a chcete se domluvit na výjimce? <a href="tel:+420777413600" style="color:inherit;font-weight:600">Zavolejte mi</a>.';
+      }
+    });
+  }
+
+  // ── Delivery calendar ──
+  let calDateDelivery = new Date(); calDateDelivery.setDate(1);
+  function renderCalDelivery() { buildCalendar(calDateDelivery, 'cal-days-delivery', 'cal-month-delivery', 'cal-status-delivery', 'orderDate'); }
+  document.getElementById('cal-prev-delivery').addEventListener('click', () => { calDateDelivery.setMonth(calDateDelivery.getMonth()-1); renderCalDelivery(); });
+  document.getElementById('cal-next-delivery').addEventListener('click', () => { calDateDelivery.setMonth(calDateDelivery.getMonth()+1); renderCalDelivery(); });
+  addBookedClickHandlers('cal-days-delivery', 'cal-status-delivery');
+  renderCalDelivery();
+
+  // ── Shoot calendar ──
+  let calDateShoot = new Date(); calDateShoot.setDate(1);
+  function renderCalShoot() { buildCalendar(calDateShoot, 'cal-days-shoot', 'cal-month-shoot', 'cal-status-shoot', 'shootDate'); }
+  document.getElementById('cal-prev-shoot').addEventListener('click', () => { calDateShoot.setMonth(calDateShoot.getMonth()-1); renderCalShoot(); });
+  document.getElementById('cal-next-shoot').addEventListener('click', () => { calDateShoot.setMonth(calDateShoot.getMonth()+1); renderCalShoot(); });
+  addBookedClickHandlers('cal-days-shoot', 'cal-status-shoot');
+  renderCalShoot();
+
+  // ── Leaflet map ──
+  let formTileLayer;
+  let formMarkers = [];
+  window.addEventListener('load', () => {
+    const isDark = root.getAttribute('data-theme') === 'dark';
+    const mapEl = document.getElementById('leaflet-map-form');
+    if (!mapEl) return;
+    const map = L.map('leaflet-map-form', { zoomControl: true, scrollWheelZoom: false }).setView([50.04, 14.30], 10);
+    const tileUrl = isDark ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png' : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    const attribution = isDark ? '© CartoDB, © OpenStreetMap contributors' : '© OpenStreetMap contributors';
+    formTileLayer = L.tileLayer(tileUrl, { attribution }).addTo(map);
+    const zones = [
+      { name: 'Beroun',  lat: 49.9644, lng: 14.0718 },
+      { name: 'Praha 5', lat: 50.0580, lng: 14.3800 },
+      { name: 'Praha 6', lat: 50.1050, lng: 14.3700 },
+    ];
+    const markerColor = isDark ? '#FF8A00' : '#008080';
+    zones.forEach(z => {
+      const circle = L.circle([z.lat, z.lng], { color: markerColor, fillColor: markerColor, fillOpacity: 0.10, weight: 1.5, radius: 5000 })
+        .addTo(map).bindPopup(`<strong>${z.name}</strong><br>Zóna A – bez příplatku`);
+      const marker = L.circleMarker([z.lat, z.lng], { color: markerColor, fillColor: markerColor, fillOpacity: 0.9, radius: 6, weight: 2 })
+        .addTo(map).bindPopup(`<strong>${z.name}</strong>`);
+      formMarkers.push(circle, marker);
+    });
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      setTimeout(() => map.invalidateSize(), 450);
+      const isDarkNow = root.getAttribute('data-theme') === 'dark';
+      const newTileUrl = isDarkNow ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png' : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      map.removeLayer(formTileLayer);
+      formTileLayer = L.tileLayer(newTileUrl, { attribution: isDarkNow ? '© CartoDB, © OpenStreetMap contributors' : '© OpenStreetMap contributors' }).addTo(map);
+      const newColor = isDarkNow ? '#FF8A00' : '#008080';
+      formMarkers.forEach(m => m.setStyle({ color: newColor, fillColor: newColor }));
+    });
+  });
 
   // ── Natáčení toggle ──
   const nataseniCb = document.getElementById('nataseni');
@@ -1099,10 +1348,12 @@
       btn.disabled = false;
       btn.innerHTML = `Odeslat objednávku <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`;
       const errEl = document.getElementById('formError');
-      document.getElementById('formErrorText').textContent = 'Chyba při odesílání. Zkuste to prosím znovu nebo nás kontaktujte přímo.';
-      errEl.classList.add('show');
+      const errText = document.getElementById('formErrorText');
+      if (errEl) errEl.classList.add('show');
+      if (errText) errText.textContent = 'Chyba při odesílání. Zkuste to prosím znovu nebo mě kontaktujte přímo.';
     });
   });
+
 </script>
 </body>
 </html>
