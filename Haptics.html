@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📳 Haptic Vibes • Full Demo</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+        
+        :root {
+            --primary: #00ff88;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a, #1a1a2e);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.05);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.1);
+        }
+        
+        header {
+            background: #111;
+            padding: 25px;
+            text-align: center;
+            border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+        }
+        
+        h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #1a1a1a;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #00ff88;
+            animation: pulse 2s infinite;
+        }
+        
+        main {
+            padding: 30px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .section h2 {
+            margin-bottom: 18px;
+            font-size: 20px;
+            color: var(--primary);
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 14px;
+        }
+        
+        .card {
+            background: #1a1a2e;
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+        
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 20px rgba(0, 255, 136, 0.15);
+        }
+        
+        .card:active {
+            transform: scale(0.95);
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        
+        .card-desc {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+        
+        .pattern-preview {
+            font-family: monospace;
+            font-size: 13px;
+            background: #0f0f1e;
+            padding: 4px 10px;
+            border-radius: 8px;
+            margin-top: 12px;
+            display: inline-block;
+        }
+        
+        .custom {
+            background: #1a1a2e;
+            padding: 20px;
+            border-radius: 16px;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--primary);
+        }
+        
+        button.big {
+            background: var(--primary);
+            color: #000;
+            font-weight: 600;
+            font-size: 18px;
+            padding: 18px 30px;
+            border: none;
+            border-radius: 50px;
+            width: 100%;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        button.big:active {
+            transform: scale(0.95);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 13px;
+            opacity: 0.6;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📳 Haptic Vibes</h1>
+            <p style="opacity: 0.8;">Complete vibration demo for your phone website</p>
+            
+            <div class="status" id="status">
+                <span class="dot"></span>
+                <span id="status-text">Checking vibration support...</span>
+            </div>
+        </header>
+
+        <main>
+            <!-- Quick Tap -->
+            <div class="section">
+                <h2>🔥 Quick Taps</h2>
+                <div class="grid">
+                    <div class="card" onclick="vibrate(50)">
+                        <div class="card-title">Micro Tap</div>
+                        <div class="card-desc">Super short feedback (like button press)</div>
+                        <div class="pattern-preview">[50]</div>
+                    </div>
+                    <div class="card" onclick="vibrate(200)">
+                        <div class="card-title">Short Buzz</div>
+                        <div class="card-desc">Classic click feel</div>
+                        <div class="pattern-preview">[200]</div>
+                    </div>
+                    <div class="card" onclick="vibrate(500)">
+                        <div class="card-title">Long Buzz</div>
+                        <div class="card-desc">Heavy press or hold</div>
+                        <div class="pattern-preview">[500]</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Patterns -->
+            <div class="section">
+                <h2>🎨 Pattern Library</h2>
+                <div class="grid">
+                    <div class="card" onclick="vibrate([100, 50, 100])">
+                        <div class="card-title">Double Tap</div>
+                        <div class="card-desc">Like a notification tap</div>
+                        <div class="pattern-preview">[100, 50, 100]</div>
+                    </div>
+                    <div class="card" onclick="vibrate([200, 100, 200, 100, 200])">
+                        <div class="card-title">Triple Pulse</div>
+                        <div class="card-desc">Success / achievement</div>
+                        <div class="pattern-preview">[200, 100, 200, 100, 200]</div>
+                    </div>
+                    <div class="card" onclick="vibrate([500, 100, 100])">
+                        <div class="card-title">Error / Alert</div>
+                        <div class="card-desc">Warning vibration</div>
+                        <div class="pattern-preview">[500, 100, 100]</div>
+                    </div>
+                    <div class="card" onclick="vibrate([100, 50, 100, 300, 100, 50, 100])">
+                        <div class="card-title">Heartbeat</div>
+                        <div class="card-desc">Romantic / exciting</div>
+                        <div class="pattern-preview">[100,50,100,300,100,50,100]</div>
+                    </div>
+                    <div class="card" onclick="vibrate([50, 30, 50, 30, 50, 30, 50, 30, 50])">
+                        <div class="card-title">Rapid Fire</div>
+                        <div class="card-desc">Game combo / intense</div>
+                        <div class="pattern-preview">[50,30,50,30,50,30,50,30,50]</div>
+                    </div>
+                    <div class="card" onclick="vibrate([800, 200, 800])">
+                        <div class="card-title">Heavy Thump</div>
+                        <div class="card-desc">Big event / boss hit</div>
+                        <div class="pattern-preview">[800, 200, 800]</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Custom Builder -->
+            <div class="section">
+                <h2>🛠️ Custom Vibration Builder</h2>
+                <div class="custom">
+                    <label><strong>Duration (ms):</strong></label>
+                    <input type="range" id="duration" min="50" max="2000" value="300" step="10" oninput="document.getElementById('durationVal').textContent = this.value">
+                    <div style="display:flex; justify-content:space-between; font-size:14px; margin-top:4px;">
+                        <span>50ms</span>
+                        <span id="durationVal">300</span>
+                        <span>2000ms</span>
+                    </div>
+                    
+                    <button class="big" onclick="customVibrate()">
+                        🔥 VIBRATE NOW (Custom)
+                    </button>
+                    
+                    <p style="text-align:center; margin-top:16px; font-size:14px; opacity:0.7;">
+                        Pattern: <span id="customPattern" style="font-family:monospace">[300]</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Stop Button -->
+            <button onclick="stopVibration()" style="background:#ff3366; color:white; width:100%; padding:16px; border:none; border-radius:50px; font-size:16px; font-weight:600; margin-top:10px;">
+                ⏹️ STOP ALL VIBRATION
+            </button>
+        </main>
+
+        <div class="footer">
+            ✅ Works on Android Chrome/Edge/Firefox<br>
+            ⚠️ iOS Safari support is limited (partial in iOS 18+)<br>
+            🔒 Must be on HTTPS + user tap<br>
+            <br>
+            Just copy this entire file and use it in your site!<br>
+            Made for you ❤️
+        </div>
+    </div>
+
+    <script>
+        // Main vibration function
+        function vibrate(pattern) {
+            if ("vibrate" in navigator) {
+                try {
+                    navigator.vibrate(pattern);
+                    console.log('%c✅ Vibrating with pattern:', 'color:#00ff88', pattern);
+                } catch (e) {
+                    console.log("Vibration failed", e);
+                }
+            } else {
+                alert("❌ Your device or browser doesn't support vibration");
+            }
+        }
+
+        // Custom vibration from slider
+        function customVibrate() {
+            const duration = parseInt(document.getElementById('duration').value);
+            const patternDisplay = document.getElementById('customPattern');
+            patternDisplay.textContent = `[${duration}]`;
+            vibrate(duration);
+        }
+
+        // Stop any ongoing vibration
+        function stopVibration() {
+            if ("vibrate" in navigator) {
+                navigator.vibrate(0); // 0 = cancel
+            }
+        }
+
+        // Check support on load
+        function checkSupport() {
+            const statusDot = document.querySelector('.dot');
+            const statusText = document.getElementById('status-text');
+            
+            if ("vibrate" in navigator) {
+                statusDot.style.background = '#00ff88';
+                statusText.innerHTML = '✅ Vibration supported on this device!';
+                statusText.style.color = '#00ff88';
+            } else {
+                statusDot.style.background = '#ff3366';
+                statusText.innerHTML = '❌ No vibration support';
+                statusText.style.color = '#ff3366';
+            }
+        }
+
+        // Auto-check when page loads
+        window.onload = checkSupport;
+
+        // Bonus: Keyboard shortcuts for testing (press numbers 1-9)
+        document.addEventListener('keydown', function(e) {
+            if (e.key === '1') vibrate(50);
+            if (e.key === '2') vibrate(200);
+            if (e.key === '3') vibrate(500);
+            if (e.key === '4') vibrate([100, 50, 100]);
+            if (e.key === '5') vibrate([200, 100, 200, 100, 200]);
+            if (e.key === '6') vibrate([500, 100, 100]);
+            if (e.key === '7') vibrate([100, 50, 100, 300, 100, 50, 100]);
+            if (e.key === '8') vibrate([50, 30, 50, 30, 50, 30, 50, 30, 50]);
+            if (e.key === '9') vibrate([800, 200, 800]);
+        });
+    </script>
+</body>
+</html>
