@@ -1,349 +1,1731 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="cs" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📳 Haptic Vibes • Full Demo</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
-        
-        :root {
-            --primary: #00ff88;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Inter', system-ui, sans-serif;
-            background: linear-gradient(135deg, #0a0a0a, #1a1a2e);
-            color: #fff;
-            min-height: 100vh;
-            padding: 20px;
-            line-height: 1.6;
-        }
-        
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: rgba(255,255,255,0.05);
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.1);
-        }
-        
-        header {
-            background: #111;
-            padding: 25px;
-            text-align: center;
-            border-bottom: 1px solid rgba(0, 255, 136, 0.2);
-        }
-        
-        h1 {
-            font-size: 28px;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-        }
-        
-        .status {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: #1a1a1a;
-            padding: 6px 14px;
-            border-radius: 50px;
-            font-size: 14px;
-            margin-top: 10px;
-        }
-        
-        .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #00ff88;
-            animation: pulse 2s infinite;
-        }
-        
-        main {
-            padding: 30px;
-        }
-        
-        .section {
-            margin-bottom: 40px;
-        }
-        
-        .section h2 {
-            margin-bottom: 18px;
-            font-size: 20px;
-            color: var(--primary);
-        }
-        
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 14px;
-        }
-        
-        .card {
-            background: #1a1a2e;
-            border-radius: 16px;
-            padding: 20px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: 2px solid transparent;
-        }
-        
-        .card:hover {
-            transform: translateY(-4px);
-            border-color: var(--primary);
-            box-shadow: 0 10px 20px rgba(0, 255, 136, 0.15);
-        }
-        
-        .card:active {
-            transform: scale(0.95);
-        }
-        
-        .card-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
-        
-        .card-desc {
-            font-size: 14px;
-            opacity: 0.7;
-        }
-        
-        .pattern-preview {
-            font-family: monospace;
-            font-size: 13px;
-            background: #0f0f1e;
-            padding: 4px 10px;
-            border-radius: 8px;
-            margin-top: 12px;
-            display: inline-block;
-        }
-        
-        .custom {
-            background: #1a1a2e;
-            padding: 20px;
-            border-radius: 16px;
-        }
-        
-        input[type="range"] {
-            width: 100%;
-            accent-color: var(--primary);
-        }
-        
-        button.big {
-            background: var(--primary);
-            color: #000;
-            font-weight: 600;
-            font-size: 18px;
-            padding: 18px 30px;
-            border: none;
-            border-radius: 50px;
-            width: 100%;
-            margin-top: 20px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        button.big:active {
-            transform: scale(0.95);
-        }
-        
-        .footer {
-            text-align: center;
-            padding: 20px;
-            font-size: 13px;
-            opacity: 0.6;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Vyplňte objednávkový formulář pro profesionální video produkci a střih od MLX Media. Rychlá a snadná objednávka vašich projektů." />
+  <meta name="keywords" content="objednávkový formulář, video produkce, objednávka, MLX Media" />
+  <link rel="canonical" href="https://mlxmedia.cz/Objednávkový-formulář.html" />
+  <link rel="icon" type="image/png" href="/Obrázky/favicon.png">
+  <meta property="og:title" content="Objednávka – MLX Media" />
+  <meta property="og:description" content="Vyplňte objednávkový formulář pro profesionální video produkci a střih od MLX Media. Rychlá a snadná objednávka vašich projektů." />
+  <meta property="og:image" content="https://mlxmedia.cz/Obrázky/MLXLogo.png" />
+  <meta property="og:url" content="https://mlxmedia.cz/Objednávkový-formulář.html" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Objednávka – MLX Media" />
+  <meta name="twitter:description" content="Vyplňte objednávkový formulář pro profesionální video produkci a střih od MLX Media. Rychlá a snadná objednávka vašich projektů." />
+  <meta name="twitter:image" content="https://mlxmedia.cz/Obrázky/MLXLogo.png" />
+  <title>Objednávka – MLX Media</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="AI/ChatBot.css">
+  <script src="AI/ChatBotKnowledge.js"></script>
+  <script src="AI/ChatBot.js"></script>
+  <script src="AI/mlx_highlight.js"></script>
+  <script src="mlx-cursor.js" defer></script>
+
+  <style>
+    /* ── TOKENS ── */
+    :root {
+      --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
+      --font-display:'Bebas Neue', sans-serif;
+      --font-body:   'DM Sans', sans-serif;
+      --nav-h:       64px;
+      --trans:       0.45s var(--ease-out);
+    }
+
+    [data-theme="dark"] {
+      --bg:#0d0d0d; --bg-surface:#111111; --bg-card:#161616;
+      --border:rgba(255,255,255,0.07);
+      --accent:#FF8A00; --accent-soft:rgba(255,138,0,0.10); --accent-glow:rgba(255,138,0,0.22);
+      --text:#e8e4de; --text-muted:#5e5a56; --text-dim:#8a8580;
+      --noise-op:0.028; --noise-op2:0.015;
+      --hero-grad:linear-gradient(160deg,#0d0d0d 0%,#141008 100%);
+      --stripe:linear-gradient(90deg,transparent,#FF8A00,#ffb347,transparent);
+      --footer-desc:#888480;
+      --input-bg:#1a1a1a; --input-border:rgba(255,255,255,0.10); --input-focus:rgba(255,138,0,0.35);
+      --grid-line:rgba(255,138,0,0.04);
+      --vignette:rgba(0,0,0,0.35);
+      --tape-color:rgba(255,200,100,0.22); --tape-border:rgba(255,220,140,0.18);
+      --ruled-line:rgba(255,255,255,0.04);
+    }
+
+    [data-theme="light"] {
+      --bg:#f4f2ec; --bg-surface:#faf9f5; --bg-card:#fefefe;
+      --border:rgba(0,0,0,0.08);
+      --accent:#00BFA6; --accent-soft:rgba(0,191,166,0.08); --accent-glow:rgba(0,191,166,0.20);
+      --text:#0f1e1c; --text-muted:#a0a8a6; --text-dim:#6b7574;
+      --noise-op:0.050; --noise-op2:0.040;
+      --hero-grad:linear-gradient(160deg,#f4f2ec 0%,#e5f5f2 100%);
+      --stripe:linear-gradient(90deg,transparent,#00BFA6,#7dd7cc,transparent);
+      --footer-desc:#6b7574;
+      --input-bg:#ffffff; --input-border:rgba(0,0,0,0.12); --input-focus:rgba(0,191,166,0.25);
+      --grid-line:rgba(0,191,166,0.055);
+      --vignette:rgba(0,0,0,0.10);
+      --tape-color:rgba(210,185,120,0.40); --tape-border:rgba(180,155,80,0.30);
+      --ruled-line:rgba(0,0,0,0.055);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body); background: var(--bg); color: var(--text);
+      overflow-x: hidden; transition: background var(--trans), color var(--trans);
+      position: relative;
+    }
+
+    /* ── GRAIN LAYER 1 (body::before) ── */
+    body::before {
+      content:''; position:fixed; inset:0;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity:var(--noise-op); pointer-events:none; z-index:9999;
+      transition:opacity var(--trans); animation:grainDrift 8s steps(2) infinite;
+    }
+
+    /* ── GRAIN LAYER 2 ── */
+    .page-grain {
+      position:fixed; inset:0; pointer-events:none; z-index:9998;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.35' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+      opacity:var(--noise-op2); mix-blend-mode:overlay;
+      transition:opacity var(--trans); animation:grainDrift2 12s steps(3) infinite;
+    }
+
+    /* ── VIGNETTE ── */
+    .page-vignette {
+      position:fixed; inset:0; pointer-events:none; z-index:9996;
+      background:radial-gradient(ellipse at 50% 40%,transparent 55%,var(--vignette) 100%);
+      transition:background var(--trans);
+    }
+
+    @keyframes grainDrift {
+      0%{transform:translate(0,0)} 25%{transform:translate(-1%,.5%)}
+      50%{transform:translate(1%,-.5%)} 75%{transform:translate(-.5%,1%)}
+    }
+    @keyframes grainDrift2 {
+      0%{transform:translate(0,0)} 33%{transform:translate(1.5%,-1%)} 66%{transform:translate(-1%,1.5%)}
+    }
+
+    /* ── LANG WAVE CANVAS ── */
+    #langWaveCanvas { position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:99998; display:none; }
+    #langWaveCanvas.active { pointer-events:all; }
+
+    /* ── TEXT LANG TRANSITION ── */
+    .lang-fading { opacity:0 !important; filter:blur(5px) !important; transition:opacity .22s ease,filter .22s ease !important; will-change:opacity,filter; }
+    .lang-fading-in { opacity:1 !important; filter:blur(0px) !important; transition:opacity .24s ease .04s,filter .24s ease .04s !important; will-change:opacity,filter; }
+
+    /* ── TAPE STRIPS ── */
+    .photo-tape { position:absolute; top:-12px; width:56px; height:22px; background:var(--tape-color); border:1px solid var(--tape-border); border-radius:2px; backdrop-filter:blur(2px); transition:background var(--trans),border-color var(--trans); z-index:10; }
+    .photo-tape-left { left:20px; transform:rotate(-4deg); }
+    .photo-tape-right { right:20px; transform:rotate(3deg); }
+    .card-tape { position:absolute; width:48px; height:20px; background:var(--tape-color); border:1px solid var(--tape-border); border-radius:2px; backdrop-filter:blur(2px); transition:background var(--trans),border-color var(--trans); z-index:1; pointer-events:none; }
+    .card-tape-tl { top:-10px; left:26px; transform:rotate(-3deg); }
+    .card-tape-br { bottom:-10px; right:26px; transform:rotate(3deg); }
+
+    /* ── NAV ── */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h);
+      z-index: 1000; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 clamp(20px,4vw,48px);
+      transition: background var(--trans), border-color var(--trans);
+    }
+    .nav.scrolled {
+      background: color-mix(in srgb, var(--bg) 85%, transparent);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: var(--font-display); font-size: 1.55rem; letter-spacing: 0.12em; color: var(--text); text-decoration: none; transition: color var(--trans); }
+    .nav-logo span { color: var(--accent); transition: color var(--trans); }
+    .nav-links { display: flex; align-items: center; gap: clamp(12px,2vw,32px); list-style: none; }
+    .nav-links a { font-size: 0.78rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; color: var(--text-dim); transition: color 0.2s; white-space: nowrap; }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+
+    /* ── SOUND + THEME TOGGLE ── */
+    .sound-toggle, .theme-toggle {
+      width:48px; height:26px; background:var(--bg-card); border:1px solid var(--border);
+      border-radius:99px; cursor:pointer; position:relative; flex-shrink:0;
+      transition:background var(--trans),border-color var(--trans),box-shadow var(--trans);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 4px 10px rgba(0,0,0,.08);
+    }
+    .sound-toggle:hover, .theme-toggle:hover { transform:translateY(-1px); }
+    .sound-toggle::after, .theme-toggle::after {
+      content:''; position:absolute; top:3px; left:3px;
+      width:18px; height:18px; border-radius:50%; background:var(--accent);
+      box-shadow:0 1px 2px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.65);
+      transition:transform .35s var(--ease-out),box-shadow .35s var(--ease-out),background .35s var(--ease-out);
+    }
+    .sound-toggle.active::after, .theme-toggle.active::after { transform:translateX(22px); }
+    [data-theme="light"] .theme-toggle::after { transform:translateX(22px); }
+    .sound-icon, .toggle-icons {
+      position:absolute; inset:0; display:flex; align-items:center;
+      justify-content:space-between; padding:0 5px; font-size:10px;
+      pointer-events:none;
+      font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji","Segoe UI Symbol",sans-serif;
+    }
+
+    /* ── LANGUAGE TOGGLE ── */
+    .lang-toggle {
+      position:relative; display:flex; align-items:center; justify-content:space-between;
+      width:82px; background:var(--bg-card); border:1px solid var(--border);
+      border-radius:99px; cursor:pointer; overflow:hidden; height:28px; padding:3px; gap:1px;
+      transition:transform .2s ease,border-color var(--trans),background var(--trans),box-shadow var(--trans);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 4px 10px rgba(0,0,0,.08);
+    }
+    .lang-toggle:hover { transform:translateY(-1px); }
+    .lang-toggle::before {
+      content:''; position:absolute; top:3px; left:3px;
+      width:calc(50% - 3px); height:calc(100% - 6px); border-radius:99px;
+      background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 90%,#fff 10%),color-mix(in srgb,var(--accent) 80%,#000 20%));
+      box-shadow:0 8px 18px rgba(0,0,0,.14),inset 0 1px 0 rgba(255,255,255,.35);
+      transition:transform .35s var(--ease-out),background .35s var(--ease-out); z-index:0;
+    }
+    .lang-toggle[data-lang="en"]::before { transform:translateX(100%); }
+    .lang-option {
+      position:relative; z-index:1; width:50%; display:flex; align-items:center;
+      justify-content:center; font-family:var(--font-display); font-size:11px;
+      letter-spacing:.12em; color:var(--text-muted); transition:color .35s var(--ease-out);
+      line-height:1; user-select:none;
+    }
+    .lang-option.active { color:var(--bg); font-weight:700; }
+
+    /* ── HAMBURGER ── */
+    .nav-hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:4px; }
+    .nav-hamburger span { display:block; width:22px; height:2px; background:var(--text); border-radius:2px; transition:transform 0.3s,opacity 0.3s,background var(--trans); }
+    .nav-hamburger.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity:0; }
+    .nav-hamburger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
+
+    .nav-mobile {
+      display:flex; flex-direction:column;
+      position:fixed; top:var(--nav-h); left:0; right:0;
+      background:color-mix(in srgb,var(--bg) 96%,transparent);
+      backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+      border-bottom:1px solid var(--border);
+      padding:20px 24px 28px; z-index:999;
+      visibility:hidden; opacity:0; transform:translateY(-8px);
+      transition:opacity 0.3s var(--ease-out),transform 0.3s var(--ease-out),visibility 0.3s,background var(--trans),border-color var(--trans);
+      pointer-events:none;
+    }
+    .nav-mobile.open { visibility:visible; opacity:1; transform:translateY(0); pointer-events:auto; }
+    .nav-mobile a {
+      font-size:0.9rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase;
+      text-decoration:none; color:var(--text-dim); padding:12px 0;
+      border-bottom:1px solid var(--border);
+      opacity:0; transform:translateX(-14px);
+      transition:opacity 0.28s var(--ease-out),transform 0.28s var(--ease-out),color 0.2s,border-color var(--trans);
+    }
+    .nav-mobile a:last-of-type { border-bottom:none; }
+    .nav-mobile a:hover { color:var(--accent); }
+    .nav-mobile.open a:nth-child(1){opacity:1;transform:translateX(0);transition-delay:0.06s}
+    .nav-mobile.open a:nth-child(2){opacity:1;transform:translateX(0);transition-delay:0.11s}
+    .nav-mobile.open a:nth-child(3){opacity:1;transform:translateX(0);transition-delay:0.16s}
+    .nav-mobile.open a:nth-child(4){opacity:1;transform:translateX(0);transition-delay:0.21s}
+    .nav-mobile.open a:nth-child(5){opacity:1;transform:translateX(0);transition-delay:0.26s}
+    .nav-mobile.open a:nth-child(6){opacity:1;transform:translateX(0);transition-delay:0.31s}
+    @media(max-width:768px) { .nav-links{display:none;} .nav-hamburger{display:flex;} }
+
+    /* ── PARALLAX BG LAYER ── */
+    .pax-bg {
+      position:absolute;
+      inset:-35% 0;
+      pointer-events:none;
+      will-change:transform;
+      z-index:0;
+    }
+    /* Hero grid */
+    .hero-grid-layer {
+      background-image:
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+      background-size:40px 40px;
+      transition:background-image var(--trans);
+    }
+    /* Form notebook lines layer */
+    .form-lines-layer {
+      background-image:repeating-linear-gradient(transparent,transparent 31px,var(--ruled-line) 31px,var(--ruled-line) 32px);
+      transition:background-image var(--trans);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 70svh; background: var(--hero-grad);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: calc(var(--nav-h) + 60px) clamp(20px,5vw,80px) 100px;
+      text-align: center; position: relative; overflow: hidden; z-index: 0;
+      transition: background var(--trans);
+    }
+    .hero-bg-letter {
+      position: absolute; font-family: var(--font-display);
+      font-size: clamp(200px,38vw,520px); color: var(--accent); opacity: 0.04;
+      line-height: 1; pointer-events: none; user-select: none; letter-spacing: -0.04em;
+      transition: color var(--trans); top: 50%; left: 50%;
+      transform: translate(-50%,-50%); will-change: transform;
+    }
+    .hero-eyebrow { font-size: clamp(0.65rem,1.5vw,0.75rem); letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; opacity: 0; transform: translateY(16px); animation: fadeUp 0.8s var(--ease-out) 0.2s forwards; transition: color var(--trans); position:relative; z-index:1; }
+    .hero-title { font-family: var(--font-display); font-size: clamp(3.5rem,10vw,9rem); letter-spacing: 0.06em; line-height: 0.95; color: var(--text); margin-bottom: 8px; opacity: 0; transform: translateY(24px); animation: fadeUp 0.9s var(--ease-out) 0.35s forwards; transition: color var(--trans); position:relative; z-index:1; }
+    .hero-title em { font-style: normal; color: var(--accent); transition: color var(--trans); }
+    .hero-subtitle { font-size: clamp(0.88rem,2vw,1.05rem); font-weight: 300; color: var(--text-dim); max-width: 540px; line-height: 1.75; margin: 24px auto 0; opacity: 0; transform: translateY(16px); animation: fadeUp 0.9s var(--ease-out) 0.55s forwards; transition: color var(--trans); position:relative; z-index:1; }
+    .hero-scroll { position: absolute; bottom: 36px; top: 85%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; animation: fadeUp 0.8s var(--ease-out) 1.1s forwards; z-index:1; }
+    .hero-scroll span { font-size: 0.65rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-muted); }
+    .scroll-line { width: 1px; height: 40px; background: linear-gradient(to bottom, var(--accent), transparent); animation: scrollPulse 2s ease-in-out 1.5s infinite; }
+    @keyframes scrollPulse { 0%,100%{opacity:.4;transform:scaleY(1)} 50%{opacity:1;transform:scaleY(1.2)} }
+    @keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+
+    /* ── FORM SECTION ── */
+    .form-outer { position:relative; overflow:hidden; }
+    .form-section {
+      max-width: 760px; margin: 0 auto; position: relative; z-index: 1;
+      padding: clamp(56px,8vw,100px) clamp(20px,4vw,40px);
+    }
+
+    .form-steps {
+      display: flex; gap: 0; margin-bottom: 56px;
+      border: 1px solid var(--border); border-radius: 6px; overflow: hidden;
+      background: var(--bg-card); position: relative;
+      transition: border-color var(--trans), background var(--trans);
+    }
+    /* Tape on step indicator */
+    .form-steps .card-tape { display:block; }
+    .form-step {
+      flex: 1; padding: 18px 20px; text-align: center; position: relative;
+      border-right: 1px solid var(--border); cursor: pointer;
+      transition: background var(--trans), border-color var(--trans);
+    }
+    .form-step:last-child { border-right: none; }
+    .form-step.active { background: var(--accent-soft); }
+    .form-step-num { font-family: var(--font-display); font-size: 1.8rem; letter-spacing: 0.08em; line-height: 1; color: var(--text-muted); transition: color var(--trans); }
+    .form-step.active .form-step-num, .form-step.done .form-step-num { color: var(--accent); }
+    .form-step-label { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); margin-top: 4px; transition: color var(--trans); }
+    .form-step.active .form-step-label { color: var(--accent); }
+    .form-step.done .form-step-label { color: var(--text-dim); }
+    .step-check { position: absolute; top: 8px; right: 8px; width: 16px; height: 16px; border-radius: 50%; background: var(--accent); display: none; align-items: center; justify-content: center; }
+    .form-step.done .step-check { display: flex; }
+    .step-check svg { width: 9px; height: 9px; color: var(--bg); }
+
+    /* Step panels */
+    .step-panel { display: none; }
+    .step-panel.active { display: block; animation: panelIn 0.5s var(--ease-out) forwards; }
+    @keyframes panelIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+    /* Field groups */
+    .field-group {
+      border: 1px solid var(--border); border-radius: 6px;
+      background: var(--bg-card); overflow: visible; margin-bottom: 20px;
+      position: relative;
+      transition: border-color var(--trans), background var(--trans);
+    }
+    .field-group-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 18px 24px 16px; border-bottom: 1px solid var(--border);
+      transition: border-color var(--trans);
+    }
+    .field-group-icon {
+      width: 32px; height: 32px; border: 1px solid var(--border); border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--accent); flex-shrink: 0;
+      transition: border-color var(--trans);
+    }
+    .field-group-icon svg { width: 15px; height: 15px; }
+    .field-group-title { font-family: var(--font-display); font-size: 1.1rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text); transition: color var(--trans); }
+    .field-group-body { padding: 24px; display: flex; flex-direction: column; gap: 18px; }
+
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media(max-width:560px){ .row-2{ grid-template-columns:1fr; } }
+
+    .field { display: flex; flex-direction: column; gap: 7px; }
+    .field-label { font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-dim); font-weight: 500; display: flex; align-items: center; gap: 6px; transition: color var(--trans); }
+    .field-label .req { color: var(--accent); font-size: 0.7rem; transition: color var(--trans); }
+    .field-label .opt { color: var(--text-muted); font-size: 0.65rem; letter-spacing: 0.1em; font-weight: 400; transition: color var(--trans); }
+
+    .field input, .field textarea, .field select {
+      background: var(--input-bg); border: 1px solid var(--input-border);
+      border-radius: 4px; padding: 13px 16px;
+      color: var(--text); font-family: var(--font-body); font-size: 0.92rem;
+      outline: none; width: 100%;
+      transition: border-color 0.2s, box-shadow 0.2s, background var(--trans), color var(--trans);
+      appearance: none; -webkit-appearance: none;
+    }
+    .field input::placeholder, .field textarea::placeholder { color: var(--text-muted); }
+    .field input:focus, .field textarea:focus, .field select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--input-focus);
+    }
+    .field textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
+    .field select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a8580' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 14px center; background-size: 16px;
+      padding-right: 40px; cursor: pointer;
+    }
+    .field select option { background: var(--bg-card); color: var(--text); }
+
+    /* Phone prefix */
+    .phone-wrap { position: relative; }
+    .phone-prefix { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 0.92rem; color: var(--text-dim); pointer-events: none; transition: color var(--trans); }
+    .phone-wrap input { padding-left: 58px; }
+
+    /* Toggle switch */
+    .toggle-field { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--border); transition: border-color var(--trans); }
+    .toggle-field:last-of-type { border-bottom: none; padding-bottom: 0; }
+    .toggle-info { flex: 1; }
+    .toggle-label { font-size: 0.88rem; font-weight: 500; color: var(--text); margin-bottom: 3px; transition: color var(--trans); }
+    .toggle-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; transition: color var(--trans); }
+    .toggle-switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-track { position: absolute; inset: 0; background: var(--border); border-radius: 99px; cursor: pointer; border: 1px solid var(--border); transition: background 0.3s, border-color 0.3s; }
+    .toggle-track::after { content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%; background: var(--text-dim); transition: transform 0.3s var(--ease-out), background 0.3s; }
+    .toggle-switch input:checked + .toggle-track { background: var(--accent-soft); border-color: var(--accent); }
+    .toggle-switch input:checked + .toggle-track::after { transform: translateX(20px); background: var(--accent); }
+
+    /* Calendar */
+    .cal-wrap { background:var(--bg-card); border:1px solid var(--border); border-radius:6px; overflow:hidden; transition:background var(--trans),border-color var(--trans); }
+    .cal-nav { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--border); transition:border-color var(--trans); }
+    .cal-btn { width:34px; height:34px; border:1px solid var(--border); border-radius:4px; background:transparent; cursor:pointer; color:var(--text-dim); display:flex; align-items:center; justify-content:center; transition:border-color 0.2s,color 0.2s,background var(--trans); }
+    .cal-btn:hover { border-color:var(--accent); color:var(--accent); }
+    .cal-month { font-family:var(--font-display); font-size:1.1rem; letter-spacing:0.12em; color:var(--text); transition:color var(--trans); }
+    .cal-weekdays { display:grid; grid-template-columns:repeat(7,1fr); padding:10px 14px 4px; gap:2px; }
+    .cal-weekday { text-align:center; font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-muted); padding:5px 0; transition:color var(--trans); }
+    .cal-days { display:grid; grid-template-columns:repeat(7,1fr); padding:0 14px 14px; gap:3px; }
+    .cal-day { aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:0.8rem; color:var(--text-dim); border-radius:4px; transition:color var(--trans),background 0.2s,border-color 0.2s; }
+    .cal-day.empty { background:transparent; pointer-events:none; }
+    .cal-day.past { opacity:0.3; cursor:not-allowed; }
+    .cal-day.today { color:var(--accent); font-weight:600; border:1px solid var(--accent); }
+    .cal-day.booked-full { background:rgba(220,50,50,0.12); color:#e05555; cursor:not-allowed; }
+    .cal-day.booked-partial { background:rgba(255,138,0,0.12); color:var(--accent); cursor:pointer; }
+    .cal-day.hard-to-book { background:rgba(255,200,0,0.08); color:#c8a800; cursor:pointer; }
+    .cal-day.free { cursor:pointer; }
+    .cal-day.free:hover { background:var(--accent-soft); color:var(--accent); border:1px solid var(--accent); }
+    .cal-day.selected { background:var(--accent); color:var(--bg) !important; font-weight:600; }
+    .cal-day.booked-partial:hover, .cal-day.hard-to-book:hover { opacity:0.8; }
+
+    .cal-status-msg { margin-top:10px; padding:12px 16px; border-radius:4px; font-size:0.82rem; line-height:1.55; display:none; transition:background var(--trans),border-color var(--trans); }
+    .cal-status-msg.show { display:block; }
+    .cal-status-msg.booked { background:rgba(220,50,50,0.08); border:1px solid rgba(220,50,50,0.3); color:#e05555; }
+    .cal-status-msg.partial { background:rgba(255,138,0,0.08); border:1px solid rgba(255,138,0,0.25); color:var(--accent); }
+    .cal-status-msg.hard { background:rgba(255,200,0,0.07); border:1px solid rgba(255,200,0,0.3); color:#c8a800; }
+    .cal-status-msg.free { background:rgba(34,197,94,0.07); border:1px solid rgba(34,197,94,0.25); color:#22c55e; }
+
+    .cal-legend-row { display:flex; flex-wrap:wrap; gap:12px 20px; margin-top:10px; }
+    .cal-legend-item { display:flex; align-items:center; gap:7px; font-size:0.75rem; color:var(--text-dim); }
+    .cal-dot { width:10px; height:10px; border-radius:3px; flex-shrink:0; }
+    .dot-free { background:var(--bg-card); border:1px solid var(--border); }
+    .dot-partial { background:rgba(255,138,0,0.2); border:1px solid rgba(255,138,0,0.4); }
+    .dot-full { background:rgba(220,50,50,0.18); border:1px solid rgba(220,50,50,0.4); }
+    .dot-hard { background:rgba(255,200,0,0.14); border:1px solid rgba(255,200,0,0.4); }
+
+    /* Map */
+    #leaflet-map-form { height:280px; border-radius:6px; border:1px solid var(--border); margin-top:8px; transition:border-color var(--trans); }
+
+    /* Conditional section */
+    .conditional { display: none; }
+    .conditional.show { display: block; animation: panelIn 0.4s var(--ease-out) forwards; }
+
+    /* Navigation buttons */
+    .form-nav { display: flex; align-items: center; justify-content: space-between; margin-top: 32px; gap: 16px; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 24px; border: 1px solid var(--border); border-radius: 4px;
+      color: var(--text-dim); font-size: 0.8rem; font-weight: 500; letter-spacing: 0.1em;
+      text-transform: uppercase; cursor: pointer; background: transparent;
+      font-family: var(--font-body);
+      transition: border-color 0.2s, color 0.2s, background var(--trans);
+    }
+    .btn-back:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-back svg { width: 14px; height: 14px; }
+    .btn-next, .btn-submit {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 15px 32px; background: var(--accent); color: var(--bg);
+      font-family: var(--font-body); font-size: 0.82rem; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase; border: none;
+      border-radius: 4px; cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, background var(--trans), color var(--trans);
+    }
+    .btn-next:hover, .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 32px var(--accent-glow); }
+    .btn-next svg, .btn-submit svg { width: 15px; height: 15px; }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    /* Progress bar */
+    .progress-bar { height: 2px; background: var(--border); margin-bottom: 40px; border-radius: 2px; transition: background var(--trans); overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.5s var(--ease-out), background var(--trans); }
+
+    /* Error & success */
+    .field-error { font-size: 0.75rem; color: #ff4444; margin-top: 4px; display: none; align-items: center; gap: 5px; }
+    .field-error.show { display: flex; }
+    .field.invalid input, .field.invalid textarea, .field.invalid select { border-color: #ff4444; }
+    .form-msg { padding: 16px 20px; border-radius: 4px; font-size: 0.88rem; margin-top: 20px; display: none; align-items: center; gap: 12px; border: 1px solid; transition: background var(--trans); }
+    .form-msg.error { background: rgba(255,68,68,0.08); border-color: rgba(255,68,68,0.3); color: #ff6666; }
+    .form-msg.show { display: flex; }
+
+    /* Info note */
+    .info-note { font-size: 0.78rem; color: var(--text-muted); line-height: 1.6; padding: 14px 18px; border-radius: 4px; background: var(--accent-soft); border: 1px solid rgba(255,138,0,0.15); margin-bottom: 20px; transition: background var(--trans), border-color var(--trans), color var(--trans); }
+    [data-theme="light"] .info-note { border-color: rgba(0,191,166,0.2); }
+    .info-note strong { color: var(--accent); transition: color var(--trans); }
+
+    /* Scroll-driven reveals — JS drives these directly */
+    .reveal, .reveal-left, .reveal-right { opacity:0; will-change:opacity,transform; }
+    .reveal         { transform:translateY(28px); }
+    .reveal-left    { transform:translateX(-32px); }
+    .reveal-right   { transform:translateX(32px); }
+    @media(prefers-reduced-motion:reduce) {
+      .reveal,.reveal-left,.reveal-right { opacity:1 !important; transform:none !important; }
+    }
+    .d1,.d2,.d3,.d4,.d5 {}
+
+    /* ── BACK TO TOP ── */
+    .back-top { position:fixed; bottom:120px; right:32px; width:44px; height:44px; background:var(--bg-surface); border:1px solid var(--border); border-radius:4px; display:flex; align-items:center; justify-content:center; color:var(--accent); cursor:pointer; opacity:0; transform:translateY(12px); transition:opacity 0.3s,transform 0.3s,border-color 0.2s,background var(--trans); z-index:9999; }
+    .back-top.show { opacity:1; transform:translateY(0); }
+    .back-top:hover { border-color:var(--accent); }
+    .back-top svg { width:18px; height:18px; }
+
+    /* ── FOOTER ── */
+    .mlx-footer { background:var(--bg); border-top:1px solid var(--border); position:relative; overflow:hidden; transition:background var(--trans),border-color var(--trans); }
+    .mlx-footer::before { content:''; position:absolute; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E"); opacity:var(--noise-op); pointer-events:none; z-index:0; transition:opacity var(--trans); }
+    .footer-stripe-line { height:3px; background:var(--stripe); transform-origin:left; transform:scaleX(0); transition:background var(--trans); }
+    .footer-main-grid { position:relative; z-index:1; max-width:1200px; margin:0 auto; padding:72px 40px 48px; display:grid; grid-template-columns:2fr 1fr 1fr 1.4fr; gap:48px 40px; }
+    @media(max-width:960px){ .footer-main-grid{ grid-template-columns:1fr 1fr; padding:56px 28px 40px; } }
+    @media(max-width:600px){ .footer-main-grid{ grid-template-columns:1fr; padding:48px 24px 32px; gap:36px; } }
+    .footer-reveal { opacity:0; transform:translateY(22px); will-change:opacity,transform; }
+    .f-brand-logo { font-family:var(--font-display); font-size:3rem; letter-spacing:0.12em; color:var(--text); line-height:1; margin-bottom:6px; display:inline-block; transition:color var(--trans); }
+    .f-brand-logo span { color:var(--accent); transition:color var(--trans); }
+    .f-brand-tagline { font-size:0.7rem; letter-spacing:0.32em; text-transform:uppercase; color:var(--text-muted); margin-bottom:20px; transition:color var(--trans); }
+    .f-brand-desc { font-size:0.88rem; line-height:1.75; color:var(--footer-desc); max-width:280px; margin-bottom:28px; transition:color var(--trans); }
+    .f-social-row { display:flex; gap:12px; flex-wrap:wrap; }
+    .f-social-btn { display:flex; align-items:center; gap:8px; padding:9px 16px; border:1px solid var(--border); border-radius:4px; text-decoration:none; color:var(--text-muted); font-size:0.78rem; letter-spacing:0.06em; font-weight:500; position:relative; overflow:hidden; transition:border-color 0.25s,color 0.25s,transform 0.2s,background var(--trans); }
+    .f-social-btn::after { content:''; position:absolute; inset:0; background:var(--accent); opacity:0; transition:opacity 0.25s; z-index:-1; }
+    .f-social-btn:hover { border-color:var(--accent); color:var(--bg); transform:translateY(-2px); }
+    .f-social-btn:hover::after { opacity:1; }
+    .f-social-btn svg { width:15px; height:15px; flex-shrink:0; }
+    .f-col-title { font-family:var(--font-display); font-size:0.95rem; letter-spacing:0.22em; color:var(--accent); text-transform:uppercase; margin-bottom:22px; display:flex; align-items:center; gap:10px; transition:color var(--trans); }
+    .f-col-title::after { content:''; flex:1; height:1px; background:var(--border); transition:background var(--trans); }
+    .f-links { list-style:none; display:flex; flex-direction:column; gap:10px; }
+    .f-links a { color:var(--text-muted); text-decoration:none; font-size:0.88rem; display:flex; align-items:center; gap:8px; transition:color 0.2s,gap 0.2s; }
+    .f-links a::before { content:''; width:6px; height:1px; background:var(--accent); opacity:0; transition:opacity 0.2s,width 0.2s,background var(--trans); }
+    .f-links a:hover { color:var(--text); gap:12px; }
+    .f-links a:hover::before { opacity:1; width:10px; }
+    .f-contact-item { display:flex; align-items:flex-start; gap:12px; margin-bottom:18px; }
+    .f-contact-icon { width:36px; height:36px; border:1px solid var(--border); border-radius:4px; display:flex; align-items:center; justify-content:center; flex-shrink:0; color:var(--accent); transition:border-color 0.2s,background 0.2s,color var(--trans); }
+    .f-contact-item:hover .f-contact-icon { border-color:var(--accent); background:var(--accent-soft); }
+    .f-contact-label { font-size:0.7rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-muted); margin-bottom:3px; transition:color var(--trans); }
+    .f-contact-value { font-size:0.86rem; color:var(--text); transition:color var(--trans); }
+    .f-contact-value a { color:inherit; text-decoration:none; transition:color 0.2s; }
+    .f-contact-value a:hover { color:var(--accent); }
+    .f-stats-band { position:relative; z-index:1; max-width:1200px; margin:0 auto; padding:0 40px 40px; display:grid; grid-template-columns:repeat(4,1fr); gap:1px; border-top:1px solid var(--border); transition:border-color var(--trans); }
+    @media(max-width:960px){ .f-stats-band{ grid-template-columns:repeat(2,1fr); padding:0 28px 32px; } }
+    @media(max-width:600px){ .f-stats-band{ padding:0 24px 28px; } }
+    .f-stat-item { padding:28px 20px; text-align:center; opacity:0; transform:translateY(14px); border-right:1px solid var(--border); will-change:opacity,transform; }
+    .f-stat-item:last-child { border-right:none; }
+    .f-stat-number { font-family:var(--font-display); font-size:2.4rem; letter-spacing:0.05em; color:var(--text); line-height:1; margin-bottom:4px; transition:color var(--trans); }
+    .f-stat-number span { color:var(--accent); transition:color var(--trans); }
+    .f-stat-label { font-size:0.7rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--text-muted); transition:color var(--trans); }
+    .f-cta-wrap { position:relative; z-index:1; max-width:1200px; margin:0 auto 40px; padding:0 40px; }
+    @media(max-width:600px){ .f-cta-wrap{ padding:0 24px; } }
+    .f-cta-inner { border:1px solid var(--border); border-radius:6px; padding:32px 40px; display:flex; align-items:center; justify-content:space-between; gap:24px; background:var(--bg-surface); opacity:0; transform:translateY(16px); will-change:opacity,transform; transition:background var(--trans),border-color var(--trans); flex-wrap:wrap; }
+    .f-cta-eyebrow { font-size:0.68rem; letter-spacing:0.26em; text-transform:uppercase; color:var(--accent); margin-bottom:6px; transition:color var(--trans); }
+    .f-cta-title { font-family:var(--font-display); font-size:1.7rem; letter-spacing:0.06em; color:var(--text); transition:color var(--trans); }
+    .f-cta-btn { display:inline-flex; align-items:center; gap:10px; padding:14px 30px; background:var(--accent); color:var(--bg); font-size:0.82rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; text-decoration:none; border-radius:4px; transition:transform 0.2s,box-shadow 0.2s,background var(--trans),color var(--trans); white-space:nowrap; }
+    .f-cta-btn:hover { transform:translateY(-2px); box-shadow:0 8px 28px var(--accent-glow); }
+    .f-cta-btn svg { width:16px; height:16px; }
+    .f-bottom { position:relative; z-index:1; border-top:1px solid var(--border); padding:18px 40px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; transition:border-color var(--trans); }
+    @media(max-width:600px){ .f-bottom{ padding:18px 24px; flex-direction:column; text-align:center; } }
+    .f-copy { font-size:0.75rem; color:var(--text-muted); letter-spacing:0.04em; transition:color var(--trans); }
+    .f-copy span { color:var(--accent); transition:color var(--trans); }
+    .f-legal { display:flex; gap:20px; }
+    .f-legal a { font-size:0.72rem; color:var(--text-muted); text-decoration:none; letter-spacing:0.08em; transition:color 0.2s; }
+    .f-legal a:hover { color:var(--text); }
+    .footer-stripe-line { height:3px; background:var(--stripe); transform-origin:left; transform:scaleX(0); }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>📳 Haptic Vibes</h1>
-            <p style="opacity: 0.8;">Complete vibration demo for your phone website</p>
-            
-            <div class="status" id="status">
-                <span class="dot"></span>
-                <span id="status-text">Checking vibration support...</span>
-            </div>
-        </header>
 
-        <main>
-            <!-- Quick Tap -->
-            <div class="section">
-                <h2>🔥 Quick Taps</h2>
-                <div class="grid">
-                    <div class="card" onclick="vibrate(50)">
-                        <div class="card-title">Micro Tap</div>
-                        <div class="card-desc">Super short feedback (like button press)</div>
-                        <div class="pattern-preview">[50]</div>
-                    </div>
-                    <div class="card" onclick="vibrate(200)">
-                        <div class="card-title">Short Buzz</div>
-                        <div class="card-desc">Classic click feel</div>
-                        <div class="pattern-preview">[200]</div>
-                    </div>
-                    <div class="card" onclick="vibrate(500)">
-                        <div class="card-title">Long Buzz</div>
-                        <div class="card-desc">Heavy press or hold</div>
-                        <div class="pattern-preview">[500]</div>
-                    </div>
-                </div>
-            </div>
+<!-- Grain + vignette overlays -->
+<div class="page-grain"></div>
+<div class="page-vignette"></div>
 
-            <!-- Patterns -->
-            <div class="section">
-                <h2>🎨 Pattern Library</h2>
-                <div class="grid">
-                    <div class="card" onclick="vibrate([100, 50, 100])">
-                        <div class="card-title">Double Tap</div>
-                        <div class="card-desc">Like a notification tap</div>
-                        <div class="pattern-preview">[100, 50, 100]</div>
-                    </div>
-                    <div class="card" onclick="vibrate([200, 100, 200, 100, 200])">
-                        <div class="card-title">Triple Pulse</div>
-                        <div class="card-desc">Success / achievement</div>
-                        <div class="pattern-preview">[200, 100, 200, 100, 200]</div>
-                    </div>
-                    <div class="card" onclick="vibrate([500, 100, 100])">
-                        <div class="card-title">Error / Alert</div>
-                        <div class="card-desc">Warning vibration</div>
-                        <div class="pattern-preview">[500, 100, 100]</div>
-                    </div>
-                    <div class="card" onclick="vibrate([100, 50, 100, 300, 100, 50, 100])">
-                        <div class="card-title">Heartbeat</div>
-                        <div class="card-desc">Romantic / exciting</div>
-                        <div class="pattern-preview">[100,50,100,300,100,50,100]</div>
-                    </div>
-                    <div class="card" onclick="vibrate([50, 30, 50, 30, 50, 30, 50, 30, 50])">
-                        <div class="card-title">Rapid Fire</div>
-                        <div class="card-desc">Game combo / intense</div>
-                        <div class="pattern-preview">[50,30,50,30,50,30,50,30,50]</div>
-                    </div>
-                    <div class="card" onclick="vibrate([800, 200, 800])">
-                        <div class="card-title">Heavy Thump</div>
-                        <div class="card-desc">Big event / boss hit</div>
-                        <div class="pattern-preview">[800, 200, 800]</div>
-                    </div>
-                </div>
-            </div>
+<!-- Lang wave canvas -->
+<canvas id="langWaveCanvas"></canvas>
 
-            <!-- Custom Builder -->
-            <div class="section">
-                <h2>🛠️ Custom Vibration Builder</h2>
-                <div class="custom">
-                    <label><strong>Duration (ms):</strong></label>
-                    <input type="range" id="duration" min="50" max="2000" value="300" step="10" oninput="document.getElementById('durationVal').textContent = this.value">
-                    <div style="display:flex; justify-content:space-between; font-size:14px; margin-top:4px;">
-                        <span>50ms</span>
-                        <span id="durationVal">300</span>
-                        <span>2000ms</span>
-                    </div>
-                    
-                    <button class="big" onclick="customVibrate()">
-                        🔥 VIBRATE NOW (Custom)
-                    </button>
-                    
-                    <p style="text-align:center; margin-top:16px; font-size:14px; opacity:0.7;">
-                        Pattern: <span id="customPattern" style="font-family:monospace">[300]</span>
-                    </p>
-                </div>
-            </div>
+<!-- BACK TO TOP -->
+<button class="back-top" id="backToTop" aria-label="Zpět nahoru">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
 
-            <!-- Stop Button -->
-            <button onclick="stopVibration()" style="background:#ff3366; color:white; width:100%; padding:16px; border:none; border-radius:50px; font-size:16px; font-weight:600; margin-top:10px;">
-                ⏹️ STOP ALL VIBRATION
-            </button>
-        </main>
+<!-- NAV -->
+<nav class="nav" id="mainNav">
+  <a href="index.html" class="nav-logo">ML<span>X</span> MEDIA</a>
+  <ul class="nav-links">
+    <li><a href="index.html" data-i18n="nav-home">Domů</a></li>
+    <li><a href="O-mně.html" data-i18n="nav-about">O mně</a></li>
+    <li><a href="Portfolio.html" data-i18n="nav-portfolio">Portfolio</a></li>
+    <li><a href="Aspekty.html" data-i18n="nav-aspekty">Aspekty</a></li>
+    <li><a href="Ceník.html" data-i18n="nav-cenik">Ceník</a></li>
+    <li><a href="Objednávkový-formulář.html" class="active" data-i18n="nav-objednavka">Objednávka</a></li>
+  </ul>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <button class="lang-toggle" id="langToggle" aria-label="Switch language / Přepnout jazyk">
+      <span class="lang-option" id="langOptCZ">CZ</span>
+      <span class="lang-option" id="langOptEN">EN</span>
+    </button>
+    <button class="sound-toggle" id="soundToggle" aria-label="Zvuk">
+      <div class="sound-icon"><span>🔇</span><span>🔊</span></div>
+    </button>
+    <button class="theme-toggle" id="themeToggle" aria-label="Přepnout téma">
+      <div class="toggle-icons"><span>🌙</span><span>☀️</span></div>
+    </button>
+    <div class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></div>
+  </div>
+</nav>
 
-        <div class="footer">
-            ✅ Works on Android Chrome/Edge/Firefox<br>
-            ⚠️ iOS Safari support is limited (partial in iOS 18+)<br>
-            🔒 Must be on HTTPS + user tap<br>
-            <br>
-            Just copy this entire file and use it in your site!<br>
-            Made for you ❤️
-        </div>
+<div class="nav-mobile" id="mobileMenu">
+  <a href="index.html" data-i18n="nav-home">Domů</a>
+  <a href="O-mně.html" data-i18n="nav-about">O mně</a>
+  <a href="Portfolio.html" data-i18n="nav-portfolio">Portfolio</a>
+  <a href="Aspekty.html" data-i18n="nav-aspekty">Aspekty</a>
+  <a href="Ceník.html" data-i18n="nav-cenik">Ceník</a>
+  <a href="Objednávkový-formulář.html" data-i18n="nav-objednavka">Objednávka</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <!-- Parallax grid background — moves at 0.45× scroll speed relative to section -->
+  <div class="pax-bg hero-grid-layer" data-parallax="0.45" aria-hidden="true"></div>
+  <!-- Giant letter — barely drifts (0.04×) for subtle depth -->
+  <div class="hero-bg-letter" data-parallax="0.04" aria-hidden="true">O</div>
+  <div class="hero-eyebrow" data-i18n="hero-eyebrow">MLX Media · Začínáme spolupracovat</div>
+  <h1 class="hero-title" data-i18n-html="hero-title-html">Váš<br><em>projekt</em></h1>
+  <p class="hero-subtitle" data-i18n="hero-subtitle">Vyplňte formulář a do 24 hodin se vám ozvu. Žádné zbytečné otázky — jen to, co skutečně potřebuji vědět, abychom mohli začít.</p>
+  <div class="hero-scroll"><span>Scroll</span><div class="scroll-line"></div></div>
+</section>
+
+<!-- FORM -->
+<div class="form-outer">
+  <!-- Notebook ruled-lines layer behind the form — parallax at 0.18× -->
+  <div class="pax-bg form-lines-layer" data-parallax="0.18" data-pax-context="form-outer" aria-hidden="true" style="position:absolute;inset:-35% 0;"></div>
+
+  <main class="form-section">
+
+    <!-- Step indicator -->
+    <div class="form-steps reveal d1" id="stepIndicator">
+      <div class="card-tape card-tape-tl" aria-hidden="true"></div>
+      <div class="form-step active" data-step="1">
+        <div class="form-step-num">01</div>
+        <div class="form-step-label" data-i18n="step1-label">Kontakt</div>
+        <div class="step-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      </div>
+      <div class="form-step" data-step="2">
+        <div class="form-step-num">02</div>
+        <div class="form-step-label" data-i18n="step2-label">Projekt</div>
+        <div class="step-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      </div>
+      <div class="form-step" data-step="3">
+        <div class="form-step-num">03</div>
+        <div class="form-step-label" data-i18n="step3-label">Termín</div>
+        <div class="step-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      </div>
     </div>
 
-    <script>
-        // Main vibration function
-        function vibrate(pattern) {
-            if ("vibrate" in navigator) {
-                try {
-                    navigator.vibrate(pattern);
-                    console.log('%c✅ Vibrating with pattern:', 'color:#00ff88', pattern);
-                } catch (e) {
-                    console.log("Vibration failed", e);
-                }
-            } else {
-                alert("❌ Your device or browser doesn't support vibration");
-            }
+    <!-- Progress bar -->
+    <div class="progress-bar reveal d2">
+      <div class="progress-fill" id="progressFill" style="width:33.3%"></div>
+    </div>
+
+    <form id="orderForm" novalidate>
+
+      <!-- ── STEP 1: KONTAKT ── -->
+      <div class="step-panel active" id="step1">
+        <div class="field-group">
+          <div class="card-tape card-tape-tl" aria-hidden="true"></div>
+          <div class="field-group-header">
+            <div class="field-group-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div class="field-group-title" data-i18n="fg-contact-title">Vaše údaje</div>
+          </div>
+          <div class="field-group-body">
+            <div class="row-2">
+              <div class="field" id="field-name">
+                <label class="field-label" for="name" data-i18n="lbl-name">Jméno a příjmení <span class="req">*</span></label>
+                <input type="text" id="name" name="name" placeholder="Jan Novák" autocomplete="name" />
+                <div class="field-error" id="err-name" data-i18n="err-name-msg">Prosím vyplňte své jméno.</div>
+              </div>
+              <div class="field" id="field-company">
+                <label class="field-label" for="company" data-i18n="lbl-company">Firma / název projektu <span class="opt" data-i18n="opt-label">nepovinné</span></label>
+                <input type="text" id="company" name="company" placeholder="Novák s.r.o." autocomplete="organization" />
+              </div>
+            </div>
+            <div class="row-2">
+              <div class="field" id="field-email">
+                <label class="field-label" for="email">E-mail <span class="req">*</span></label>
+                <input type="email" id="email" name="email" placeholder="jan@novak.cz" autocomplete="email" />
+                <div class="field-error" id="err-email" data-i18n="err-email-msg">Prosím zadejte platnou e-mailovou adresu.</div>
+              </div>
+              <div class="field" id="field-phone">
+                <label class="field-label" for="phone" data-i18n="lbl-phone">Telefon <span class="req">*</span></label>
+                <div class="phone-wrap">
+                  <span class="phone-prefix">+420</span>
+                  <input type="tel" id="phone" name="phone" placeholder="777 413 600" autocomplete="tel" />
+                </div>
+                <div class="field-error" id="err-phone" data-i18n="err-phone-msg">Prosím zadejte platné telefonní číslo.</div>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label" for="web" data-i18n="lbl-web">Web nebo sociální síť <span class="opt" data-i18n="opt-label">nepovinné</span></label>
+              <input type="url" id="web" name="web" placeholder="https://vasefirma.cz nebo @instagram" />
+            </div>
+          </div>
+        </div>
+        <div class="form-nav">
+          <span></span>
+          <button type="button" class="btn-next" id="btn-next-1" onclick="nextStep(1)">
+            <span data-i18n="btn-continue">Pokračovat</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── STEP 2: PROJEKT ── -->
+      <div class="step-panel" id="step2">
+        <div class="field-group">
+          <div class="card-tape card-tape-tl" aria-hidden="true"></div>
+          <div class="card-tape card-tape-br" aria-hidden="true"></div>
+          <div class="field-group-header">
+            <div class="field-group-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+            </div>
+            <div class="field-group-title" data-i18n="fg-project-title">O projektu</div>
+          </div>
+          <div class="field-group-body">
+            <div class="row-2">
+              <div class="field" id="field-serviceType">
+                <label class="field-label" for="serviceType" data-i18n="lbl-service">Typ projektu <span class="req">*</span></label>
+                <select id="serviceType" name="serviceType">
+                  <option value="" disabled selected data-i18n="sel-service">Vyberte typ…</option>
+                  <option value="firemni-video" data-i18n="svc-1">Firemní / promo video</option>
+                  <option value="reklamni-spot" data-i18n="svc-2">Reklamní spot</option>
+                  <option value="reels-tiktok">Reels / TikTok</option>
+                  <option value="dokumentarni" data-i18n="svc-3">Dokumentární video</option>
+                  <option value="strih" data-i18n="svc-4">Pouze střih / postprodukce</option>
+                  <option value="color-grading" data-i18n="svc-5">Pouze color grading</option>
+                  <option value="jine" data-i18n="svc-6">Jiné</option>
+                </select>
+                <div class="field-error" id="err-serviceType" data-i18n="err-service-msg">Prosím vyberte typ projektu.</div>
+              </div>
+              <div class="field" id="field-budget">
+                <label class="field-label" for="budget" data-i18n="lbl-budget">Přibližný rozpočet <span class="opt" data-i18n="opt-label">nepovinné</span></label>
+                <select id="budget" name="budget">
+                  <option value="" disabled selected data-i18n="sel-budget">Vyberte rozsah…</option>
+                  <option value="do-5k" data-i18n="bdg-1">Do 5 000 Kč</option>
+                  <option value="5k-10k">5 000 – 10 000 Kč</option>
+                  <option value="10k-20k">10 000 – 20 000 Kč</option>
+                  <option value="20k-plus">20 000 Kč a více</option>
+                  <option value="domluvime" data-i18n="bdg-5">Chci se domluvit osobně</option>
+                </select>
+              </div>
+            </div>
+            <div class="field" id="field-description">
+              <label class="field-label" for="description" data-i18n="lbl-desc">Popis projektu <span class="req">*</span></label>
+              <textarea id="description" name="description" rows="5" data-i18n-placeholder="ph-desc" placeholder="Stručně popište, o čem má video být, pro koho je určeno, jaký účel má splnit a jestli máte nějakou konkrétní vizi…"></textarea>
+              <div class="field-error" id="err-description" data-i18n="err-desc-msg">Prosím popište váš projekt.</div>
+            </div>
+            <div class="row-2">
+              <div class="field">
+                <label class="field-label" for="platform" data-i18n="lbl-platform">Kde bude video zveřejněno <span class="opt" data-i18n="opt-label">nepovinné</span></label>
+                <select id="platform" name="platform">
+                  <option value="" disabled selected data-i18n="sel-platform">Vyberte platformu…</option>
+                  <option value="youtube">YouTube</option>
+                  <option value="instagram">Instagram / Facebook</option>
+                  <option value="tiktok">TikTok</option>
+                  <option value="web" data-i18n="plat-web">Firemní web</option>
+                  <option value="interní" data-i18n="plat-internal">Interní prezentace</option>
+                  <option value="vice" data-i18n="plat-multi">Více platforem</option>
+                </select>
+              </div>
+              <div class="field">
+                <label class="field-label" for="howFound" data-i18n="lbl-found">Jak jste nás našli <span class="opt" data-i18n="opt-label">nepovinné</span></label>
+                <select id="howFound" name="howFound">
+                  <option value="" disabled selected data-i18n="sel-found">Vyberte zdroj…</option>
+                  <option value="google">Google</option>
+                  <option value="instagram">Instagram</option>
+                  <option value="youtube">YouTube</option>
+                  <option value="doporuceni" data-i18n="found-ref">Doporučení</option>
+                  <option value="jine" data-i18n="found-other">Jiné</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-nav">
+          <button type="button" class="btn-back" id="btn-back-2" onclick="prevStep(2)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            <span data-i18n="btn-back">Zpět</span>
+          </button>
+          <button type="button" class="btn-next" id="btn-next-2" onclick="nextStep(2)">
+            <span data-i18n="btn-continue">Pokračovat</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── STEP 3: TERMÍN ── -->
+      <div class="step-panel" id="step3">
+        <div class="info-note" data-i18n="info-calendar">
+          Klikněte na kalendář pro přehled mé dostupnosti. <strong>Červeně</strong> označené dny jsou již obsazeny.
+        </div>
+
+        <div class="field-group">
+          <div class="card-tape card-tape-tl" aria-hidden="true"></div>
+          <div class="field-group-header">
+            <div class="field-group-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <div class="field-group-title" data-i18n="fg-schedule-title">Termín a natáčení</div>
+          </div>
+          <div class="field-group-body">
+            <div class="toggle-field">
+              <div class="toggle-info">
+                <div class="toggle-label" data-i18n="toggle-shoot-label">Potřebuji také natáčení</div>
+                <div class="toggle-desc" data-i18n="toggle-shoot-desc">Zapněte, pokud chcete, abych přijel natočit video u vás. Vypnuté = pouze postprodukce vlastního materiálu.</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="nataseni" name="nataseni">
+                <div class="toggle-track"></div>
+              </label>
+            </div>
+
+            <!-- Bez natáčení -->
+            <div id="noShootSection">
+              <div class="field" id="field-orderDate">
+                <label class="field-label" for="orderDate" data-i18n="lbl-delivery">Požadovaný termín dodání <span class="req">*</span></label>
+                <input type="date" id="orderDate" name="orderDate" />
+                <div class="field-error" id="err-orderDate" data-i18n="err-date-msg">Prosím vyberte požadovaný termín.</div>
+              </div>
+              <div class="cal-wrap" style="margin-top:12px">
+                <div class="cal-nav">
+                  <button type="button" class="cal-btn" id="cal-prev-delivery">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                  </button>
+                  <div class="cal-month" id="cal-month-delivery">Duben 2026</div>
+                  <button type="button" class="cal-btn" id="cal-next-delivery">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                  </button>
+                </div>
+                <div class="cal-weekdays">
+                  <div class="cal-weekday">Po</div><div class="cal-weekday">Út</div><div class="cal-weekday">St</div>
+                  <div class="cal-weekday">Čt</div><div class="cal-weekday">Pá</div><div class="cal-weekday">So</div><div class="cal-weekday">Ne</div>
+                </div>
+                <div class="cal-days" id="cal-days-delivery"></div>
+              </div>
+              <div class="cal-status-msg" id="cal-status-delivery"></div>
+              <div class="cal-legend-row">
+                <div class="cal-legend-item"><div class="cal-dot dot-free"></div><span data-i18n="cal-free">Volno</span></div>
+                <div class="cal-legend-item"><div class="cal-dot dot-partial"></div><span data-i18n="cal-partial">Prioritní projekty</span></div>
+                <div class="cal-legend-item"><div class="cal-dot dot-hard"></div><span data-i18n="cal-hard">Hůře dostupné</span></div>
+                <div class="cal-legend-item"><div class="cal-dot dot-full"></div><span data-i18n="cal-booked">Obsazeno</span></div>
+              </div>
+            </div>
+
+            <!-- S natáčením -->
+            <div id="shootSection" class="conditional">
+              <div class="field" id="field-location">
+                <label class="field-label" for="location" data-i18n="lbl-location">Lokalita natáčení <span class="req">*</span></label>
+                <input type="text" id="location" name="location" data-i18n-placeholder="ph-location" placeholder="Ulice, město nebo popis místa…" />
+                <div class="field-error" id="err-location" data-i18n="err-location-msg">Prosím zadejte lokalitu natáčení.</div>
+              </div>
+              <div id="leaflet-map-form"></div>
+              <div class="field" style="margin-top:18px" id="field-shootDate">
+                <label class="field-label" for="shootDate" data-i18n="lbl-shoot-date">Datum natáčení <span class="req">*</span></label>
+                <input type="date" id="shootDate" name="shootDate" />
+                <div class="field-error" id="err-shootDate" data-i18n="err-shoot-msg">Prosím vyberte datum natáčení.</div>
+              </div>
+              <div class="cal-wrap" style="margin-top:8px">
+                <div class="cal-nav">
+                  <button type="button" class="cal-btn" id="cal-prev-shoot">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                  </button>
+                  <div class="cal-month" id="cal-month-shoot">Duben 2026</div>
+                  <button type="button" class="cal-btn" id="cal-next-shoot">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                  </button>
+                </div>
+                <div class="cal-weekdays">
+                  <div class="cal-weekday">Po</div><div class="cal-weekday">Út</div><div class="cal-weekday">St</div>
+                  <div class="cal-weekday">Čt</div><div class="cal-weekday">Pá</div><div class="cal-weekday">So</div><div class="cal-weekday">Ne</div>
+                </div>
+                <div class="cal-days" id="cal-days-shoot"></div>
+              </div>
+              <div class="cal-status-msg" id="cal-status-shoot"></div>
+              <div class="cal-legend-row">
+                <div class="cal-legend-item"><div class="cal-dot dot-free"></div><span data-i18n="cal-free">Volno</span></div>
+                <div class="cal-legend-item"><div class="cal-dot dot-partial"></div><span data-i18n="cal-partial">Prioritní projekty</span></div>
+                <div class="cal-legend-item"><div class="cal-dot dot-hard"></div><span data-i18n="cal-hard">Hůře dostupné</span></div>
+                <div class="cal-legend-item"><div class="cal-dot dot-full"></div><span data-i18n="cal-booked">Obsazeno</span></div>
+              </div>
+            </div>
+
+            <div class="field" style="margin-top:4px">
+              <label class="field-label" for="additionalNote" data-i18n="lbl-note">Doplňující poznámka <span class="opt" data-i18n="opt-label">nepovinné</span></label>
+              <textarea id="additionalNote" name="additionalNote" rows="3" data-i18n-placeholder="ph-note" placeholder="Cokoliv dalšího, co bych měl vědět…"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-msg error" id="formError">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span id="formErrorText" data-i18n="err-submit">Chyba při odesílání. Zkuste to prosím znovu nebo mě kontaktujte přímo.</span>
+        </div>
+
+        <div class="form-nav">
+          <button type="button" class="btn-back" id="btn-back-3" onclick="prevStep(3)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            <span data-i18n="btn-back">Zpět</span>
+          </button>
+          <button type="submit" class="btn-submit" id="submitBtn">
+            <span data-i18n="btn-submit">Odeslat objednávku</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+
+    </form>
+  </main>
+</div><!-- /.form-outer -->
+
+<!-- FOOTER -->
+<footer class="mlx-footer">
+  <div class="footer-stripe-line" id="fStripe"></div>
+  <div class="footer-main-grid">
+    <div class="footer-reveal">
+      <div class="f-brand-logo">ML<span>X</span> MEDIA</div>
+      <div class="f-brand-tagline" data-i18n="f-tagline">Filmování · Střih · Postprodukce</div>
+      <p class="f-brand-desc" data-i18n="f-desc">Věřím, že každý příběh si zaslouží být vyprávěn. Pomáhám firmám a jednotlivcům zachytit jejich vizi prostřednictvím profesionálního videa.</p>
+      <div class="f-social-row">
+        <a href="https://www.youtube.com/@MLX-Media" target="_blank" rel="noopener" class="f-social-btn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 00.5 6.2 31.3 31.3 0 000 12a31.3 31.3 0 00.5 5.8 3 3 0 002.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 002.1-2.1A31.3 31.3 0 0024 12a31.3 31.3 0 00-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>YouTube
+        </a>
+        <a href="https://www.instagram.com/mlxmedia" target="_blank" rel="noopener" class="f-social-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>Instagram
+        </a>
+      </div>
+    </div>
+    <div class="footer-reveal">
+      <div class="f-col-title" data-i18n="f-nav-title">Navigace</div>
+      <ul class="f-links">
+        <li><a href="index.html" data-i18n="f-nav-1">Domovská stránka</a></li>
+        <li><a href="O-mně.html" data-i18n="f-nav-2">O mně</a></li>
+        <li><a href="Portfolio.html" data-i18n="f-nav-3">Portfolio</a></li>
+        <li><a href="Aspekty.html" data-i18n="f-nav-4">Aspekty</a></li>
+        <li><a href="Ceník.html" data-i18n="f-nav-5">Ceník</a></li>
+        <li><a href="Objednávkový-formulář.html" data-i18n="f-nav-6">Objednávka</a></li>
+      </ul>
+    </div>
+    <div class="footer-reveal">
+      <div class="f-col-title" data-i18n="f-svc-title">Služby</div>
+      <ul class="f-links">
+        <li><a href="Ceník.html" data-i18n="f-svc-1">Firemní videa</a></li>
+        <li><a href="Ceník.html" data-i18n="f-svc-2">Reklamní spot</a></li>
+        <li><a href="Ceník.html">Reels &amp; TikTok</a></li>
+        <li><a href="Ceník.html" data-i18n="f-svc-4">Color grading</a></li>
+        <li><a href="Ceník.html" data-i18n="f-svc-5">Zvukový design</a></li>
+        <li><a href="Ceník.html" data-i18n="f-svc-6">Dronové záběry</a></li>
+      </ul>
+    </div>
+    <div class="footer-reveal">
+      <div class="f-col-title">Kontakt</div>
+      <div class="f-contact-item">
+        <div class="f-contact-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+        <div><div class="f-contact-label">Email</div><div class="f-contact-value"><a href="mailto:info@mlxmedia.cz">info@mlxmedia.cz</a></div></div>
+      </div>
+      <div class="f-contact-item">
+        <div class="f-contact-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.7 10.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012.6 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.55a16 16 0 006.29 6.29l.96-.96a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>
+        <div><div class="f-contact-label">Telefon</div><div class="f-contact-value"><a href="tel:+420777413600">+420 777 413 600</a></div></div>
+      </div>
+      <div class="f-contact-item">
+        <div class="f-contact-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+        <div><div class="f-contact-label">Oblast</div><div class="f-contact-value">Praha 5, Praha 6, Beroun</div></div>
+      </div>
+      <div class="f-contact-item">
+        <div class="f-contact-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <div><div class="f-contact-label">Dodání</div><div class="f-contact-value">4–8 dní od natáčení</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="f-stats-band">
+    <div class="f-stat-item"><div class="f-stat-number">35<span>+</span></div><div class="f-stat-label" data-i18n="stat-projects">Projektů</div></div>
+    <div class="f-stat-item"><div class="f-stat-number">4<span>+</span></div><div class="f-stat-label" data-i18n="stat-years">Roky zkušeností</div></div>
+    <div class="f-stat-item"><div class="f-stat-number">95<span>%</span></div><div class="f-stat-label" data-i18n="stat-ref">Doporučení</div></div>
+    <div class="f-stat-item"><div class="f-stat-number">6<span>K</span></div><div class="f-stat-label" data-i18n="stat-raw">RAW rozlišení</div></div>
+  </div>
+
+  <div class="f-cta-wrap">
+    <div class="f-cta-inner" id="fCta">
+      <div>
+        <div class="f-cta-eyebrow" data-i18n="f-cta-eyebrow">Máte dotazy?</div>
+        <div class="f-cta-title" data-i18n="f-cta-title">Zavolejte nebo napište přímo.</div>
+      </div>
+      <a href="tel:+420777413600" class="f-cta-btn">
+        +420 777 413 600
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.7 10.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012.6 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.55a16 16 0 006.29 6.29l.96-.96a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="f-bottom">
+    <div class="f-copy">© <span id="fyear"></span> <span>MLX Media</span> · Matouš Lexa · <span data-i18n="f-rights">Všechna práva vyhrazena</span></div>
+    <div class="f-legal"><a href="#" data-i18n="f-legal-1">Ochrana soukromí</a><a href="#" data-i18n="f-legal-2">Cookies</a><a href="Objednávkový-formulář.html" data-i18n="f-legal-3">Kontakt</a></div>
+  </div>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+/* ════════════════════════════════════════════════
+   THEME
+   ════════════════════════════════════════════════ */
+const root = document.documentElement;
+root.setAttribute('data-theme', localStorage.getItem('mlx-theme') || 'dark');
+
+/* ════════════════════════════════════════════════
+   AUDIO SYSTEM
+   ════════════════════════════════════════════════ */
+function createAudio(src, volume = 0.16) {
+  const a = new Audio(src); a.preload = 'auto'; a.volume = volume; return a;
+}
+const soundLibrary = {
+  toggle:    createAudio('Audio/Togle.mp3',           0.16),
+  switch:    createAudio('Audio/Switch-page.mp3',     0.16),
+  language:  createAudio('Audio/Language-switch.mp3', 0.112),
+  language2: createAudio('Audio/Language-switch02.mp3', 0.067),
+  chat:      createAudio('Audio/Togle.mp3',           0.18),
+  up:        createAudio('Audio/Up-Button.mp3',       0.14),
+  universal: createAudio('Audio/Universal.mp3',       0.14),
+  email:     createAudio('Audio/Email.mp3',           0.16),
+};
+function playSound(key) {
+  if (!soundEnabled) return;
+  const s = soundLibrary[key];
+  if (!s) return;
+  s.cloneNode(true).play().catch(() => {});
+}
+
+/* ════════════════════════════════════════════════
+   HAPTICS — tied to soundEnabled so one switch controls both
+   ════════════════════════════════════════════════ */
+function haptic(pattern) {
+  if (!soundEnabled) return;
+  if (navigator.vibrate) navigator.vibrate(pattern);
+}
+
+/* ════════════════════════════════════════════════
+   SOUND TOGGLE
+   ════════════════════════════════════════════════ */
+const soundToggle = document.getElementById('soundToggle');
+let soundEnabled = localStorage.getItem('mlx-sound') !== 'off';
+function updateSoundToggle() {
+  if (!soundToggle) return;
+  soundToggle.classList.toggle('active', soundEnabled);
+  soundToggle.setAttribute('aria-label', soundEnabled ? 'Zvuk zapnutý' : 'Zvuk vypnutý');
+}
+soundToggle.addEventListener('click', () => {
+  soundEnabled = !soundEnabled;
+  localStorage.setItem('mlx-sound', soundEnabled ? 'on' : 'off');
+  updateSoundToggle();
+  if (soundEnabled) { playSound('toggle'); haptic(10); }
+});
+updateSoundToggle();
+
+/* ════════════════════════════════════════════════
+   THEME TOGGLE
+   ════════════════════════════════════════════════ */
+document.getElementById('themeToggle').addEventListener('click', () => {
+  playSound('toggle');
+  haptic(10);
+  const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  root.setAttribute('data-theme', next);
+  localStorage.setItem('mlx-theme', next);
+});
+
+/* ════════════════════════════════════════════════
+   GLOBAL CLICK SOUNDS (nav links, page links, email, chat)
+   ════════════════════════════════════════════════ */
+function isPageNavLink(el) {
+  const link = el.closest('a[href]');
+  if (!link) return false;
+  const href = link.getAttribute('href')?.trim();
+  if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:')) return false;
+  return href.endsWith('.html') || href.startsWith('/') || href.startsWith('./') || href.startsWith('../');
+}
+function navigateLink(link) {
+  const href = link.getAttribute('href')?.trim();
+  if (!href) return;
+  if (href.startsWith('mailto:')) { playSound('email'); haptic(20); window.location.href = href; return; }
+  if (href.startsWith('tel:') || href.startsWith('javascript:')) { window.location.href = href; return; }
+  playSound('switch'); haptic(20);
+  setTimeout(() => { window.location.href = href; }, 120);
+}
+document.addEventListener('click', event => {
+  const t = event.target.closest('#chat-toggle,.mlx-ai-btn,a[href],button');
+  if (!t) return;
+  if (t.closest('#soundToggle') || t.closest('#themeToggle') || t.closest('#langToggle')) return;
+  if (t.closest('#chat-toggle')) { playSound('chat'); return; }
+  const pageLink = t.closest('a[href]');
+  if (pageLink && isPageNavLink(pageLink)) { event.preventDefault(); navigateLink(pageLink); return; }
+  if (t.closest('a[href^="mailto:"]')) { playSound('email'); return; }
+  if (t.closest('#cb-send')) { playSound('email'); return; }
+  if (t.closest('.f-links a') || t.closest('.nav-links a')) { playSound('universal'); return; }
+});
+document.addEventListener('keydown', e => {
+  if (!soundEnabled) return;
+  if (e.key === 'Enter' && !e.shiftKey && e.target.closest?.('#chat-input')) playSound('email');
+});
+
+/* ════════════════════════════════════════════════
+   NAV SCROLL + BACK TO TOP
+   ════════════════════════════════════════════════ */
+const nav = document.getElementById('mainNav');
+const backToTopBtn = document.getElementById('backToTop');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 20);
+  backToTopBtn.classList.toggle('show', window.scrollY > 400);
+}, { passive: true });
+backToTopBtn.addEventListener('click', () => {
+  playSound('up'); haptic(15);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+/* ════════════════════════════════════════════════
+   HAMBURGER
+   ════════════════════════════════════════════════ */
+const ham = document.getElementById('hamburger');
+const mob = document.getElementById('mobileMenu');
+ham.addEventListener('click', () => {
+  ham.classList.toggle('open');
+  mob.classList.toggle('open');
+  playSound('toggle'); haptic(10);
+});
+mob.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+  ham.classList.remove('open'); mob.classList.remove('open');
+}));
+
+/* ════════════════════════════════════════════════
+   YEAR
+   ════════════════════════════════════════════════ */
+document.getElementById('fyear').textContent = new Date().getFullYear();
+
+/* ════════════════════════════════════════════════
+   TRANSLATIONS
+   ════════════════════════════════════════════════ */
+const translations = {
+  en: {
+    'nav-home':'Home','nav-about':'About','nav-portfolio':'Portfolio',
+    'nav-aspekty':'Aspects','nav-cenik':'Pricing','nav-objednavka':'Order',
+    'hero-eyebrow':'MLX Media · Starting a Collaboration',
+    'hero-title-html':'Your<br><em>Project</em>',
+    'hero-subtitle':'Fill out the form and I\'ll get back to you within 24 hours. No unnecessary questions — just what I need to get started.',
+    'step1-label':'Contact','step2-label':'Project','step3-label':'Schedule',
+    'fg-contact-title':'Your Details','fg-project-title':'About the Project',
+    'fg-schedule-title':'Schedule & Shooting',
+    'lbl-name':'Full Name','lbl-company':'Company / Project Name',
+    'lbl-phone':'Phone','lbl-web':'Website or Social Media',
+    'lbl-service':'Project Type','lbl-budget':'Approximate Budget',
+    'lbl-desc':'Project Description','lbl-platform':'Where will the video be published',
+    'lbl-found':'How did you find us','lbl-delivery':'Requested Delivery Date',
+    'lbl-location':'Shooting Location','lbl-shoot-date':'Shooting Date',
+    'lbl-note':'Additional Note','opt-label':'optional',
+    'btn-continue':'Continue','btn-back':'Back','btn-submit':'Send Order',
+    'sel-service':'Select type…','sel-budget':'Select range…',
+    'sel-platform':'Select platform…','sel-found':'Select source…',
+    'svc-1':'Corporate / Promo Video','svc-2':'Commercial Spot',
+    'svc-3':'Documentary Video','svc-4':'Editing / Post-production only',
+    'svc-5':'Color Grading only','svc-6':'Other',
+    'bdg-1':'Up to 5,000 CZK','bdg-5':'I want to discuss in person',
+    'plat-web':'Company Website','plat-internal':'Internal Presentation',
+    'plat-multi':'Multiple Platforms','found-ref':'Recommendation','found-other':'Other',
+    'toggle-shoot-label':'I also need filming',
+    'toggle-shoot-desc':'Enable if you want me to come and film at your location. Off = post-production of your own footage only.',
+    'info-calendar':'Click the calendar to see my availability. Days marked <strong>in red</strong> are already booked.',
+    'cal-free':'Available','cal-partial':'Priority Projects',
+    'cal-hard':'Hard to book','cal-booked':'Fully Booked',
+    'err-name-msg':'Please enter your name.',
+    'err-email-msg':'Please enter a valid email address.',
+    'err-phone-msg':'Please enter a valid phone number.',
+    'err-service-msg':'Please select a project type.',
+    'err-desc-msg':'Please describe your project.',
+    'err-date-msg':'Please select a date.',
+    'err-location-msg':'Please enter the shooting location.',
+    'err-shoot-msg':'Please select a shooting date.',
+    'err-submit':'Submission error. Please try again or contact me directly.',
+    'ph-desc':'Briefly describe what the video is about, who it\'s for, what purpose it should serve, and if you have a specific vision…',
+    'ph-location':'Street, city or description of the place…',
+    'ph-note':'Anything else I should know…',
+    'f-tagline':'Filming · Editing · Post-Production',
+    'f-desc':'I believe every story deserves to be told. I help businesses and individuals capture their vision through professional video.',
+    'f-nav-title':'Navigation','f-svc-title':'Services',
+    'f-nav-1':'Homepage','f-nav-2':'About','f-nav-3':'Portfolio',
+    'f-nav-4':'Aspects','f-nav-5':'Pricing','f-nav-6':'Order',
+    'f-svc-1':'Corporate Videos','f-svc-2':'Commercial Spot',
+    'f-svc-4':'Color Grading','f-svc-5':'Sound Design','f-svc-6':'Drone Footage',
+    'stat-projects':'Projects','stat-years':'Years of Experience',
+    'stat-ref':'Referrals','stat-raw':'RAW Resolution',
+    'f-cta-eyebrow':'Any questions?','f-cta-title':'Call or write directly.',
+    'f-rights':'All rights reserved',
+    'f-legal-1':'Privacy Policy','f-legal-2':'Cookies','f-legal-3':'Contact',
+  }
+};
+
+function applyTranslations(lang) {
+  const t = translations[lang];
+  if (!t) return;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    if (t[el.dataset.i18n] !== undefined) el.textContent = t[el.dataset.i18n];
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    if (t[el.dataset.i18nHtml] !== undefined) el.innerHTML = t[el.dataset.i18nHtml];
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    if (t[el.dataset.i18nPlaceholder] !== undefined) el.placeholder = t[el.dataset.i18nPlaceholder];
+  });
+  document.documentElement.lang = lang === 'en' ? 'en' : 'cs';
+  const yr = document.getElementById('fyear');
+  if (yr) yr.textContent = new Date().getFullYear();
+}
+
+/* ════════════════════════════════════════════════
+   LANGUAGE WAVE ANIMATION
+   ════════════════════════════════════════════════ */
+let _waveRunning = false;
+function animateLangWave(targetLang) {
+  if (_waveRunning) return;
+  _waveRunning = true;
+  const canvas = document.getElementById('langWaveCanvas');
+  canvas.style.display = 'block'; canvas.classList.add('active');
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  const ctx = canvas.getContext('2d');
+  const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+  const elemData = [...document.querySelectorAll('[data-i18n],[data-i18n-html]')]
+    .map(el => { const r = el.getBoundingClientRect(); return { el, cx: r.left + r.width * 0.5, swapped: false }; })
+    .sort((a, b) => a.cx - b.cx);
+  const PHASE_DUR = 560, AMP = 60, FREQ = 0.009, BAND = 100;
+  function eIO(t) { return t < 0.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2; }
+  function leftFill(fx, ph) {
+    const H = canvas.height; ctx.beginPath(); ctx.moveTo(0,0);
+    for (let y = 0; y <= H; y += 3) ctx.lineTo(fx + AMP * Math.sin(y * FREQ * Math.PI * 2 + ph), y);
+    ctx.lineTo(0,H); ctx.closePath();
+  }
+  function rightFill(fx, ph) {
+    const W = canvas.width, H = canvas.height; ctx.beginPath(); ctx.moveTo(W,0);
+    for (let y = 0; y <= H; y += 3) ctx.lineTo(fx + AMP * Math.sin(y * FREQ * Math.PI * 2 + ph), y);
+    ctx.lineTo(W,H); ctx.closePath();
+  }
+  function glowEdge(fx, ph) {
+    ctx.save(); ctx.shadowBlur=16; ctx.shadowColor=accent; ctx.strokeStyle=accent; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(fx + AMP * Math.sin(0), 0);
+    for (let y = 3; y <= canvas.height; y += 3) ctx.lineTo(fx + AMP * Math.sin(y * FREQ * Math.PI * 2 + ph), y);
+    ctx.stroke(); ctx.restore();
+  }
+  function drawFrame(fx, phase, elapsed) {
+    const W = canvas.width; ctx.clearRect(0,0,W,canvas.height);
+    const ph = elapsed * 0.003;
+    if (phase === 1) {
+      leftFill(fx, ph);
+      const gx = Math.max(0, fx - BAND);
+      const grad = ctx.createLinearGradient(gx,0,fx+AMP,0);
+      grad.addColorStop(0,accent+'ee'); grad.addColorStop(0.75,accent+'ee'); grad.addColorStop(1,accent+'c0');
+      ctx.fillStyle = grad; ctx.fill(); glowEdge(fx,ph);
+    } else {
+      rightFill(fx, ph+Math.PI);
+      const gx = fx - AMP;
+      const grad = ctx.createLinearGradient(gx,0,gx+BAND,0);
+      grad.addColorStop(0,accent+'00'); grad.addColorStop(0.25,accent+'c0'); grad.addColorStop(1,accent+'ee');
+      ctx.fillStyle = grad; ctx.fill(); glowEdge(fx,ph+Math.PI);
+    }
+  }
+  let startTime = null, phase = 1;
+  function tick(ts) {
+    if (!startTime) startTime = ts;
+    const elapsed = ts - startTime;
+    const raw = Math.min(elapsed / PHASE_DUR, 1);
+    const prog = eIO(raw);
+    const W = canvas.width;
+    const fx = -AMP + prog * (W + AMP * 2);
+    drawFrame(fx, phase, elapsed);
+    if (phase === 1) {
+      elemData.forEach(item => {
+        if (!item.swapped && item.cx < fx - AMP * 0.4) {
+          item.swapped = true;
+          item.el.classList.add('lang-fading');
+          setTimeout(() => {
+            const t = translations[targetLang];
+            const kh = item.el.dataset.i18nHtml, kt = item.el.dataset.i18n;
+            if (kh && t && t[kh] !== undefined) item.el.innerHTML = t[kh];
+            else if (kt && t && t[kt] !== undefined) item.el.textContent = t[kt];
+            item.el.classList.remove('lang-fading');
+            item.el.classList.add('lang-fading-in');
+            setTimeout(() => item.el.classList.remove('lang-fading-in'), 300);
+          }, 80);
         }
+      });
+      if (raw >= 1) {
+        // Flush remaining untranslated elements
+        if (targetLang !== 'cz') applyTranslations(targetLang);
+        else applyTranslations('cz');
+        document.documentElement.lang = targetLang === 'en' ? 'en' : 'cs';
+        const yr = document.getElementById('fyear');
+        if (yr) yr.textContent = new Date().getFullYear();
+        phase = 2; startTime = null;
+      }
+    } else {
+      if (raw >= 1) {
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        canvas.style.display='none'; canvas.classList.remove('active');
+        _waveRunning = false; return;
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
 
-        // Custom vibration from slider
-        function customVibrate() {
-            const duration = parseInt(document.getElementById('duration').value);
-            const patternDisplay = document.getElementById('customPattern');
-            patternDisplay.textContent = `[${duration}]`;
-            vibrate(duration);
-        }
+/* ════════════════════════════════════════════════
+   LANGUAGE TOGGLE UI
+   ════════════════════════════════════════════════ */
+let currentLang = localStorage.getItem('mlx-lang') || 'cz';
+function updateLangToggle() {
+  const toggle = document.getElementById('langToggle');
+  if (!toggle) return;
+  toggle.dataset.lang = currentLang;
+  document.getElementById('langOptCZ').classList.toggle('active', currentLang === 'cz');
+  document.getElementById('langOptEN').classList.toggle('active', currentLang === 'en');
+}
+document.getElementById('langToggle').addEventListener('click', () => {
+  if (_waveRunning) return;
+  const newLang = currentLang === 'cz' ? 'en' : 'cz';
+  playSound('toggle'); playSound('language2');
+  setTimeout(() => playSound('language'), 300);
+  haptic([20, 15, 20]);
+  currentLang = newLang;
+  localStorage.setItem('mlx-lang', newLang);
+  updateLangToggle();
+  animateLangWave(newLang);
+});
+updateLangToggle();
+if (currentLang === 'en') applyTranslations('en');
 
-        // Stop any ongoing vibration
-        function stopVibration() {
-            if ("vibrate" in navigator) {
-                navigator.vibrate(0); // 0 = cancel
-            }
-        }
+/* ════════════════════════════════════════════════
+   SCROLL-DRIVEN ANIMATION ENGINE
+   (replaces IntersectionObserver, scroll-progress-mapped)
+   ════════════════════════════════════════════════ */
+function easeOutQuart(t) { return 1 - Math.pow(1 - t, 4); }
 
-        // Check support on load
-        function checkSupport() {
-            const statusDot = document.querySelector('.dot');
-            const statusText = document.getElementById('status-text');
-            
-            if ("vibrate" in navigator) {
-                statusDot.style.background = '#00ff88';
-                statusText.innerHTML = '✅ Vibration supported on this device!';
-                statusText.style.color = '#00ff88';
-            } else {
-                statusDot.style.background = '#ff3366';
-                statusText.innerHTML = '❌ No vibration support';
-                statusText.style.color = '#ff3366';
-            }
-        }
+const _sdRegistry = [];
+function _registerSD(el) {
+  const delayMap = { d1:60, d2:130, d3:200, d4:270, d5:340 };
+  let lagPx = 0;
+  for (const [cls, px] of Object.entries(delayMap)) {
+    if (el.classList.contains(cls)) { lagPx = px; break; }
+  }
+  if (el.classList.contains('footer-reveal')) {
+    const idx = [...el.parentElement.children].indexOf(el);
+    lagPx = idx * 80;
+  }
+  if (el.classList.contains('f-stat-item')) {
+    const idx = [...el.parentElement.children].indexOf(el);
+    lagPx = idx * 70;
+  }
+  const type = el.classList.contains('reveal-left')  ? 'left'  :
+               el.classList.contains('reveal-right') ? 'right' :
+               (el.classList.contains('footer-reveal') ||
+                el.classList.contains('f-stat-item') ||
+                el.classList.contains('f-cta-inner')) ? 'footer' :
+               el.classList.contains('footer-stripe-line') ? 'stripe' : 'up';
+  el.style.cssText += ';transition:none !important;';
+  _sdRegistry.push({ el, type, lagPx, _prev: -1 });
+}
+document.querySelectorAll(
+  '.reveal,.reveal-left,.reveal-right,' +
+  '.footer-reveal,.f-stat-item,.f-cta-inner,.footer-stripe-line'
+).forEach(_registerSD);
 
-        // Auto-check when page loads
-        window.onload = checkSupport;
+/* ── Parallax layers ── */
+const _paxLayers = [...document.querySelectorAll('[data-parallax]')];
 
-        // Bonus: Keyboard shortcuts for testing (press numbers 1-9)
-        document.addEventListener('keydown', function(e) {
-            if (e.key === '1') vibrate(50);
-            if (e.key === '2') vibrate(200);
-            if (e.key === '3') vibrate(500);
-            if (e.key === '4') vibrate([100, 50, 100]);
-            if (e.key === '5') vibrate([200, 100, 200, 100, 200]);
-            if (e.key === '6') vibrate([500, 100, 100]);
-            if (e.key === '7') vibrate([100, 50, 100, 300, 100, 50, 100]);
-            if (e.key === '8') vibrate([50, 30, 50, 30, 50, 30, 50, 30, 50]);
-            if (e.key === '9') vibrate([800, 200, 800]);
-        });
-    </script>
+function _updateScrollDriven() {
+  const vh = window.innerHeight;
+
+  /* 1. Reveals */
+  for (const item of _sdRegistry) {
+    const { el, type, lagPx } = item;
+    const rect = el.getBoundingClientRect();
+    const triggerY = vh * 0.93 - lagPx;
+    const fullY    = vh * 0.08;
+    let raw = (triggerY - rect.top) / (triggerY - fullY);
+    raw = Math.max(0, Math.min(1, raw));
+    if (Math.abs(raw - item._prev) < 0.002) continue;
+    item._prev = raw;
+    const e = easeOutQuart(raw);
+    if (type === 'stripe') {
+      el.style.transform = `scaleX(${e})`; el.style.opacity = '1';
+    } else {
+      el.style.opacity = e;
+      if      (type === 'left')   el.style.transform = `translateX(${(1-e)*-32}px)`;
+      else if (type === 'right')  el.style.transform = `translateX(${(1-e)*32}px)`;
+      else if (type === 'footer') el.style.transform = `translateY(${(1-e)*22}px)`;
+      else                        el.style.transform = `translateY(${(1-e)*28}px)`;
+    }
+    if (raw >= 0.98) el.classList.add('visible');
+    else             el.classList.remove('visible');
+  }
+
+  /* 2. Parallax backgrounds
+     FIX: negate centreDelta so background lags BEHIND (slower than content).
+     Original bug had yOffset = centreDelta * speed → background moved FASTER.
+     Correct:  yOffset = -centreDelta * speed → background lags behind, correct depth. */
+  for (const layer of _paxLayers) {
+    const speed = parseFloat(layer.dataset.parallax);
+    const section = layer.closest('section,.form-outer,.cta-block,.contact-section,.bottom-cta') || layer.parentElement;
+    const sr = section.getBoundingClientRect();
+    const centreDelta = (sr.top + sr.height * 0.5) - vh * 0.5;
+    // ← KEY FIX: negative sign → background drifts opposite to section centre displacement
+    const yOffset = -centreDelta * speed;
+
+    if (layer.classList.contains('hero-bg-letter')) {
+      layer.style.transform = `translate(-50%, calc(-50% + ${yOffset}px)) translateZ(0)`;
+    } else {
+      layer.style.transform = `translateY(${yOffset}px) translateZ(0)`;
+    }
+  }
+}
+
+let _sdRafPending = false;
+window.addEventListener('scroll', () => {
+  if (!_sdRafPending) {
+    _sdRafPending = true;
+    requestAnimationFrame(() => { _updateScrollDriven(); _sdRafPending = false; });
+  }
+}, { passive: true });
+_updateScrollDriven();
+window.addEventListener('load', _updateScrollDriven, { once: true });
+
+/* ════════════════════════════════════════════════
+   FOOTER STAT COUNTERS
+   ════════════════════════════════════════════════ */
+const _countEls = [...document.querySelectorAll('.f-stat-number,.fstat-n')];
+const _countDone = new Set();
+function _checkCounters() {
+  const vh = window.innerHeight;
+  for (const el of _countEls) {
+    if (_countDone.has(el)) continue;
+    const rect = el.getBoundingClientRect();
+    if (rect.top < vh * 0.88 && rect.bottom > 0) {
+      _countDone.add(el);
+      const m = el.textContent.match(/^(\d+)(.*)/);
+      if (!m) continue;
+      const end = parseInt(m[1],10); const suffix = m[2] || '';
+      let n = 0;
+      const iv = Math.max(Math.floor(1200/Math.max(end,1)),12);
+      const timer = setInterval(() => { n++; el.innerHTML = n + '<span>' + suffix + '</span>'; if (n >= end) clearInterval(timer); }, iv);
+    }
+  }
+}
+window.addEventListener('scroll', () => requestAnimationFrame(_checkCounters), { passive: true });
+_checkCounters();
+
+/* ════════════════════════════════════════════════
+   CALENDAR DATA
+   ════════════════════════════════════════════════ */
+const BOOKED_FULL    = ["2026-05-26","2026-05-27","2026-05-28"];
+const BOOKED_PARTIAL = ["2026-05-12","2026-05-13","2026-05-14","2026-05-19","2026-05-20"];
+const HARD = [
+  "2026-04-06","2026-04-07","2026-04-08","2026-04-09","2026-04-10",
+  "2026-04-13","2026-04-14","2026-04-15","2026-04-16","2026-04-17",
+  "2026-04-20","2026-04-21","2026-04-22","2026-04-23","2026-04-24",
+  "2026-04-27","2026-04-28","2026-04-29","2026-04-30","2026-05-01",
+  "2026-05-04","2026-05-05","2026-05-06","2026-05-07","2026-05-08",
+  "2026-05-11","2026-05-12","2026-05-18","2026-05-19","2026-05-22",
+  "2026-05-25","2026-05-26","2026-06-01","2026-06-02","2026-06-03",
+  "2026-06-04","2026-06-05","2026-06-08","2026-06-09","2026-06-10",
+  "2026-06-11","2026-06-12","2026-06-15","2026-06-16","2026-06-17",
+  "2026-06-18","2026-06-19","2026-06-22","2026-06-23","2026-06-24",
+  "2026-06-25","2026-06-26","2026-06-29","2026-06-30","2026-07-01",
+  "2026-07-02","2026-07-03","2026-07-06","2026-07-07","2026-07-08",
+  "2026-07-09","2026-07-10","2026-07-13","2026-07-14","2026-07-15",
+  "2026-07-16","2026-07-17"
+];
+const bookedDates = BOOKED_FULL;
+const MONTHS_CS = ['Leden','Únor','Březen','Duben','Květen','Červen','Červenec','Srpen','Září','Říjen','Listopad','Prosinec'];
+
+function buildCalendar(calDate, daysId, monthLabelId, statusId, dateInputId) {
+  document.getElementById(monthLabelId).textContent = MONTHS_CS[calDate.getMonth()] + ' ' + calDate.getFullYear();
+  const container = document.getElementById(daysId);
+  container.innerHTML = '';
+  const first = new Date(calDate.getFullYear(), calDate.getMonth(), 1);
+  const last  = new Date(calDate.getFullYear(), calDate.getMonth()+1, 0);
+  let startDay = first.getDay() === 0 ? 6 : first.getDay()-1;
+  const today = new Date(); today.setHours(0,0,0,0);
+  for (let i = 0; i < startDay; i++) {
+    const e = document.createElement('div'); e.className = 'cal-day empty'; container.appendChild(e);
+  }
+  for (let d = 1; d <= last.getDate(); d++) {
+    const el = document.createElement('div'); el.className = 'cal-day';
+    el.textContent = d;
+    const key = `${calDate.getFullYear()}-${String(calDate.getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const thisDate = new Date(calDate.getFullYear(), calDate.getMonth(), d);
+    if (thisDate < today) { el.classList.add('past'); container.appendChild(el); continue; }
+    if (thisDate.getTime() === today.getTime()) el.classList.add('today');
+    if      (BOOKED_FULL.includes(key))    el.classList.add('booked-full');
+    else if (BOOKED_PARTIAL.includes(key)) { el.classList.add('booked-partial','free'); }
+    else if (HARD.includes(key))           { el.classList.add('hard-to-book','free'); }
+    else                                    el.classList.add('free');
+    el.addEventListener('click', function() {
+      if (el.classList.contains('past') || el.classList.contains('booked-full')) return;
+      container.querySelectorAll('.selected').forEach(s => s.classList.remove('selected'));
+      el.classList.add('selected');
+      const dateInput = document.getElementById(dateInputId);
+      if (dateInput) dateInput.value = key;
+      playSound('universal'); haptic(15);
+      const statusEl = document.getElementById(statusId);
+      if (statusEl) {
+        statusEl.className = 'cal-status-msg show';
+        if      (BOOKED_PARTIAL.includes(key)) { statusEl.classList.add('partial'); statusEl.innerHTML = '⚠️ Tento den je <strong>částečně obsazený</strong> — rezervován pro prioritní projekty.'; }
+        else if (HARD.includes(key))           { statusEl.classList.add('hard');    statusEl.innerHTML = '🟡 Tento den je <strong>hůře dostupný</strong> — zkuste jiný termín nebo mě kontaktujte přímo.'; }
+        else                                   { statusEl.classList.add('free');    statusEl.innerHTML = '✅ Tento den je <strong>volný</strong> — termín lze rezervovat. Pokračujte níže.'; }
+      }
+      dateInput && dateInput.dispatchEvent(new Event('input'));
+    });
+    container.appendChild(el);
+  }
+}
+function addBookedClickHandlers(daysId, statusId) {
+  document.getElementById(daysId).addEventListener('click', function(e) {
+    const el = e.target.closest('.cal-day');
+    if (!el || !el.classList.contains('booked-full')) return;
+    const statusEl = document.getElementById(statusId);
+    if (statusEl) {
+      statusEl.className = 'cal-status-msg show booked';
+      statusEl.innerHTML = '🔴 Tento den je <strong>plně obsazený</strong>. Vyberte jiný termín nebo <a href="tel:+420777413600" style="color:inherit;font-weight:600">zavolejte mi</a>.';
+    }
+  });
+}
+
+let calDateDelivery = new Date(); calDateDelivery.setDate(1);
+function renderCalDelivery() { buildCalendar(calDateDelivery,'cal-days-delivery','cal-month-delivery','cal-status-delivery','orderDate'); }
+document.getElementById('cal-prev-delivery').addEventListener('click', () => { playSound('universal'); haptic(8); calDateDelivery.setMonth(calDateDelivery.getMonth()-1); renderCalDelivery(); });
+document.getElementById('cal-next-delivery').addEventListener('click', () => { playSound('universal'); haptic(8); calDateDelivery.setMonth(calDateDelivery.getMonth()+1); renderCalDelivery(); });
+addBookedClickHandlers('cal-days-delivery','cal-status-delivery');
+renderCalDelivery();
+
+let calDateShoot = new Date(); calDateShoot.setDate(1);
+function renderCalShoot() { buildCalendar(calDateShoot,'cal-days-shoot','cal-month-shoot','cal-status-shoot','shootDate'); }
+document.getElementById('cal-prev-shoot').addEventListener('click', () => { playSound('universal'); haptic(8); calDateShoot.setMonth(calDateShoot.getMonth()-1); renderCalShoot(); });
+document.getElementById('cal-next-shoot').addEventListener('click', () => { playSound('universal'); haptic(8); calDateShoot.setMonth(calDateShoot.getMonth()+1); renderCalShoot(); });
+addBookedClickHandlers('cal-days-shoot','cal-status-shoot');
+renderCalShoot();
+
+/* ════════════════════════════════════════════════
+   LEAFLET MAP
+   ════════════════════════════════════════════════ */
+let formTileLayer; let formMarkers = [];
+window.addEventListener('load', () => {
+  const isDark = root.getAttribute('data-theme') === 'dark';
+  const mapEl = document.getElementById('leaflet-map-form');
+  if (!mapEl) return;
+  const map = L.map('leaflet-map-form', { zoomControl:true, scrollWheelZoom:false }).setView([50.04,14.30],10);
+  const tileUrl = isDark ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png' : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+  formTileLayer = L.tileLayer(tileUrl, { attribution: isDark ? '© CartoDB, © OpenStreetMap contributors' : '© OpenStreetMap contributors' }).addTo(map);
+  const zones = [
+    { name:'Beroun',  lat:49.9644, lng:14.0718 },
+    { name:'Praha 5', lat:50.0580, lng:14.3800 },
+    { name:'Praha 6', lat:50.1050, lng:14.3700 },
+  ];
+  const mc = isDark ? '#FF8A00' : '#008080';
+  zones.forEach(z => {
+    const circle = L.circle([z.lat,z.lng],{ color:mc,fillColor:mc,fillOpacity:0.10,weight:1.5,radius:5000 }).addTo(map).bindPopup(`<strong>${z.name}</strong><br>Zóna A – bez příplatku`);
+    const marker = L.circleMarker([z.lat,z.lng],{ color:mc,fillColor:mc,fillOpacity:0.9,radius:6,weight:2 }).addTo(map).bindPopup(`<strong>${z.name}</strong>`);
+    formMarkers.push(circle,marker);
+  });
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    setTimeout(() => map.invalidateSize(),450);
+    const id = root.getAttribute('data-theme') === 'dark';
+    const nu = id ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png' : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    map.removeLayer(formTileLayer);
+    formTileLayer = L.tileLayer(nu, { attribution: id ? '© CartoDB, © OpenStreetMap contributors' : '© OpenStreetMap contributors' }).addTo(map);
+    const nc = id ? '#FF8A00' : '#008080';
+    formMarkers.forEach(m => m.setStyle({ color:nc, fillColor:nc }));
+  });
+});
+
+/* ════════════════════════════════════════════════
+   NATÁČENÍ TOGGLE
+   ════════════════════════════════════════════════ */
+const nataseniCb      = document.getElementById('nataseni');
+const noShootSection  = document.getElementById('noShootSection');
+const shootSection    = document.getElementById('shootSection');
+const orderDate       = document.getElementById('orderDate');
+const shootDate       = document.getElementById('shootDate');
+const locationInput   = document.getElementById('location');
+
+nataseniCb.addEventListener('change', function() {
+  playSound('toggle'); haptic(12);
+  if (this.checked) {
+    noShootSection.style.display = 'none';
+    shootSection.classList.add('show');
+    locationInput.required = true; shootDate.required = true;
+    orderDate.required = false; orderDate.value = '';
+  } else {
+    noShootSection.style.display = 'block';
+    shootSection.classList.remove('show');
+    locationInput.required = false; shootDate.required = false;
+    shootDate.value = ''; orderDate.required = true;
+  }
+});
+
+shootDate.addEventListener('change', function() {
+  if (bookedDates.includes(this.value)) {
+    document.getElementById('err-shootDate').textContent = 'Tento den je již obsazený. Vyberte jiný termín.';
+    document.getElementById('err-shootDate').classList.add('show');
+    document.getElementById('field-shootDate').classList.add('invalid');
+    this.value = '';
+  } else {
+    document.getElementById('err-shootDate').classList.remove('show');
+    document.getElementById('field-shootDate').classList.remove('invalid');
+  }
+});
+
+/* ── Phone formatting ── */
+document.getElementById('phone').addEventListener('input', function(e) {
+  let v = e.target.value.replace(/\D/g,'');
+  if (v.length > 9) v = v.slice(0,9);
+  const groups = [v.slice(0,3),v.slice(3,6),v.slice(6,9)].filter(Boolean);
+  e.target.value = groups.join(' ');
+});
+
+/* ════════════════════════════════════════════════
+   MULTI-STEP FORM
+   ════════════════════════════════════════════════ */
+let currentStep = 1;
+
+function showStep(n) {
+  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('step' + n).classList.add('active');
+  document.querySelectorAll('.form-step').forEach(s => {
+    const sn = parseInt(s.dataset.step);
+    s.classList.toggle('active', sn === n);
+  });
+  document.getElementById('progressFill').style.width = (n / 3 * 100) + '%';
+  currentStep = n;
+  window.scrollTo({ top: document.querySelector('.form-steps').offsetTop - 100, behavior: 'smooth' });
+}
+
+function validateStep(n) {
+  let valid = true;
+  const fields = [];
+  if (n === 1) {
+    fields.push({ id:'name',        errId:'err-name',        check: v => v.trim().length >= 2 });
+    fields.push({ id:'email',       errId:'err-email',       check: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) });
+    fields.push({ id:'phone',       errId:'err-phone',       check: v => v.replace(/\s/g,'').length >= 9 });
+  }
+  if (n === 2) {
+    fields.push({ id:'serviceType', errId:'err-serviceType', check: v => v !== '' });
+    fields.push({ id:'description', errId:'err-description', check: v => v.trim().length >= 10 });
+  }
+  if (n === 3) {
+    if (!nataseniCb.checked) {
+      fields.push({ id:'orderDate', errId:'err-orderDate', check: v => v !== '' });
+    } else {
+      fields.push({ id:'location',  errId:'err-location',  check: v => v.trim().length >= 3 });
+      fields.push({ id:'shootDate', errId:'err-shootDate', check: v => v !== '' });
+    }
+  }
+  fields.forEach(f => {
+    const el = document.getElementById(f.id);
+    const errEl = document.getElementById(f.errId);
+    const fieldEl = document.getElementById('field-' + f.id);
+    if (!f.check(el.value)) {
+      valid = false;
+      if (errEl) errEl.classList.add('show');
+      if (fieldEl) fieldEl.classList.add('invalid');
+    } else {
+      if (errEl) errEl.classList.remove('show');
+      if (fieldEl) fieldEl.classList.remove('invalid');
+    }
+  });
+  return valid;
+}
+
+function nextStep(from) {
+  if (!validateStep(from)) { haptic([30,20,30]); return; }
+  playSound('switch'); haptic([20,10,20]);
+  document.querySelector(`.form-step[data-step="${from}"]`).classList.add('done');
+  showStep(from + 1);
+}
+
+function prevStep(from) {
+  playSound('universal'); haptic(15);
+  showStep(from - 1);
+}
+
+/* Clear errors on input */
+document.querySelectorAll('.field input,.field textarea,.field select').forEach(el => {
+  el.addEventListener('input', function() {
+    const fieldEl = this.closest('.field');
+    if (fieldEl) fieldEl.classList.remove('invalid');
+    const errEl = fieldEl && fieldEl.querySelector('.field-error');
+    if (errEl) errEl.classList.remove('show');
+  });
+});
+
+/* ════════════════════════════════════════════════
+   FORM SUBMIT
+   ════════════════════════════════════════════════ */
+document.getElementById('orderForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  if (!validateStep(3)) return;
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="animation:spin 0.8s linear infinite"><path d="M21 12a9 9 0 11-18 0"/></svg> Odesílám…`;
+
+  const style = document.createElement('style');
+  style.textContent = '@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}';
+  document.head.appendChild(style);
+
+  playSound('email'); haptic([50,30,50]);
+
+  const data = {
+    name:            document.getElementById('name').value,
+    company:         document.getElementById('company').value,
+    email:           document.getElementById('email').value,
+    phone:           '+420 ' + document.getElementById('phone').value,
+    web:             document.getElementById('web').value,
+    serviceType:     document.getElementById('serviceType').value,
+    budget:          document.getElementById('budget').value,
+    description:     document.getElementById('description').value,
+    platform:        document.getElementById('platform').value,
+    howFound:        document.getElementById('howFound').value,
+    nataseni:        nataseniCb.checked,
+    orderDate:       document.getElementById('orderDate').value,
+    location:        document.getElementById('location').value,
+    shootDate:       document.getElementById('shootDate').value,
+    additionalNote:  document.getElementById('additionalNote').value,
+    theme:           document.documentElement.getAttribute('data-theme') || 'dark'
+  };
+
+  fetch("https://script.google.com/macros/s/AKfycbyc6tJjhikjrsNpD4Gf-LvFtFRYgXhqlI2wTC3QZXUZbR6ZwajfnPveuOPbjwHsUQvx_Q/exec", {
+    method: "POST", mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  })
+  .then(() => {
+    sessionStorage.setItem('mlx-theme', document.documentElement.getAttribute('data-theme') || 'dark');
+    window.location.href = "Děkuji.html";
+  })
+  .catch(() => {
+    btn.disabled = false;
+    btn.innerHTML = `<span data-i18n="btn-submit">Odeslat objednávku</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`;
+    const errEl = document.getElementById('formError');
+    if (errEl) errEl.classList.add('show');
+  });
+});
+</script>
 </body>
 </html>
