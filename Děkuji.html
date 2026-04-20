@@ -17,6 +17,20 @@
   <meta name="twitter:description" content="Děkujeme za vaši objednávku! MLX Media vás bude kontaktovat brzy s dalšími detaily." />
   <meta name="twitter:image" content="https://mlxmedia.cz/Obrázky/MLXLogo.png" />
   <title>Odesláno – MLX Media</title>
+  
+  <!-- ═══ INSTANT STATE SYNC ═══ Prevents toggle flicker on page load/switch -->
+  <script>
+    (function() {
+      const theme = localStorage.getItem('mlx-theme') || 'light';
+      const sound = localStorage.getItem('mlx-sound') !== 'off';
+      const lang = localStorage.getItem('mlx-lang') || 'cz';
+      
+      document.documentElement.setAttribute('data-theme', theme);
+      document.documentElement.setAttribute('data-sound', sound ? 'on' : 'off');
+      document.documentElement.setAttribute('data-lang', lang);
+    })();
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
@@ -25,6 +39,7 @@
   <script src="AI/ChatBotKnowledge.js"></script>
   <script src="AI/ChatBot.js"></script>
   <script src="AI/mlx_highlight.js"></script>
+  <script src="mlx-cursor.js" defer></script>
 
   <style>
     :root {
