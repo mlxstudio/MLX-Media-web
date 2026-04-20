@@ -65,7 +65,7 @@
     }
 
     if (found.length === 0) {
-      return "🤔 Tomu nerozumím, zkuste to napsat jinak nebo mi napište přímo na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a>.";
+      return "🤔 Tomu nerozumím, zkuste to napsat jinak nebo mi napište přímo na <a href='mailto:info@mlxmedia.cz'>info@mlxmedia.cz</a>.";
     }
     if (found.length === 1) return found[0];
     if (found.length === 2) return found[0] + "<br><br>A zároveň: " + found[1];
@@ -305,7 +305,7 @@
     const root = document.createElement("div");
     root.id = "mlx-chat-root";
     root.innerHTML = `
-      <button id="chat-toggle" aria-label="Otevřít chat">
+      <button id="chat-toggle" aria-label="Otevřít chat" data-cursor="ai">
         <i class="fas fa-brain"></i>
         <span id="cb-unread-badge" class="hidden" aria-label="nepřečtené zprávy"></span>
       </button>
