@@ -17,6 +17,20 @@
   <meta name="twitter:description" content="Objednejte profesionální video produkci a střih od MLX Media. Natáčení, color grading a postprodukce pro vaše projekty." />
   <meta name="twitter:image" content="https://mlxmedia.cz/Obrázky/MLXLogo.png" />
   <title>Objednávka – MLX Media</title>
+  
+  <!-- ═══ INSTANT STATE SYNC ═══ Prevents toggle flicker on page load/switch -->
+  <script>
+    (function() {
+      const theme = localStorage.getItem('mlx-theme') || 'light';
+      const sound = localStorage.getItem('mlx-sound') !== 'off';
+      const lang = localStorage.getItem('mlx-lang') || 'cz';
+      
+      document.documentElement.setAttribute('data-theme', theme);
+      document.documentElement.setAttribute('data-sound', sound ? 'on' : 'off');
+      document.documentElement.setAttribute('data-lang', lang);
+    })();
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
@@ -25,6 +39,7 @@
   <script src="AI/ChatBotKnowledge.js"></script>
   <script src="AI/ChatBot.js"></script>
   <script src="AI/mlx_highlight.js"></script>
+  <script src="mlx-cursor.js" defer></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
   <style>
@@ -36,42 +51,65 @@
       --trans:       0.45s var(--ease-out);
     }
     [data-theme="dark"] {
-      --bg:          #0d0d0d;
-      --bg-surface:  #111111;
-      --bg-card:     #161616;
-      --border:      rgba(255,255,255,0.07);
-      --accent:      #FF8A00;
-      --accent-soft: rgba(255,138,0,0.10);
-      --accent-glow: rgba(255,138,0,0.22);
-      --text:        #e8e4de;
-      --text-muted:  #5e5a56;
-      --text-dim:    #8a8580;
-      --noise-op:    0.028;
-      --hero-grad:   linear-gradient(160deg,#0d0d0d 0%,#141008 100%);
-      --stripe:      linear-gradient(90deg,transparent,#FF8A00,#ffb347,transparent);
-      --footer-desc: #888480;
+      --bg:#0d0d0d;--bg-surface:#111111;--bg-card:#161616;
+      --border:rgba(255,255,255,0.07);
+      --accent:#FF8A00;--accent-soft:rgba(255,138,0,0.10);--accent-glow:rgba(255,138,0,0.22);
+      --text:#e8e4de;--text-muted:#5e5a56;--text-dim:#8a8580;
+      --noise-op:0.028;--noise-op2:0.015;
+      --hero-grad:linear-gradient(160deg,#0d0d0d 0%,#141008 100%);
+      --stripe:linear-gradient(90deg,transparent,#FF8A00,#ffb347,transparent);
+      --footer-desc:#888480;
+      --grid-line:rgba(255,138,0,0.04);
+      --vignette:rgba(0,0,0,0.35);
+      --tape-color:rgba(255,200,100,0.22);
+      --tape-border:rgba(255,220,140,0.18);
+      --ruled-line:rgba(255,255,255,0.04);
+      --award-bg:#080808;
+      --trail-op:0.5;
     }
     [data-theme="light"] {
-      --bg:          #f6f5f2;
-      --bg-surface:  #ffffff;
-      --bg-card:     #fafaf8;
-      --border:      rgba(0,0,0,0.08);
-      --accent:      #00BFA6;
-      --accent-soft: rgba(0,191,166,0.08);
-      --accent-glow: rgba(0,191,166,0.20);
-      --text:        #0f1e1c;
-      --text-muted:  #a0a8a6;
-      --text-dim:    #6b7574;
-      --noise-op:    0.018;
-      --hero-grad:   linear-gradient(160deg,#f6f5f2 0%,#e8f7f5 100%);
-      --stripe:      linear-gradient(90deg,transparent,#00BFA6,#7dd7cc,transparent);
-      --footer-desc: #6b7574;
+      --bg:#f4f2ec;--bg-surface:#faf9f5;--bg-card:#fefefe;
+      --border:rgba(0,0,0,0.08);
+      --accent:#00BFA6;--accent-soft:rgba(0,191,166,0.08);--accent-glow:rgba(0,191,166,0.20);
+      --text:#0f1e1c;--text-muted:#a0a8a6;--text-dim:#6b7574;
+      --noise-op:0.050;--noise-op2:0.040;
+      --hero-grad:linear-gradient(160deg,#f4f2ec 0%,#e5f5f2 100%);
+      --stripe:linear-gradient(90deg,transparent,#00BFA6,#7dd7cc,transparent);
+      --footer-desc:#6b7574;
+      --grid-line:rgba(0,191,166,0.055);
+      --vignette:rgba(0,0,0,0.10);
+      --tape-color:rgba(210,185,120,0.40);
+      --tape-border:rgba(180,155,80,0.30);
+      --ruled-line:rgba(0,0,0,0.055);
+      --award-bg:var(--bg-surface);
+      --trail-op:0.40;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body { font-family: var(--font-body); background: var(--bg); color: var(--text); overflow-x: hidden; transition: background var(--trans), color var(--trans); position: relative; }
-    body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); opacity:var(--noise-op); pointer-events:none; z-index:9999; transition:opacity var(--trans); }
+    body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); opacity:var(--noise-op); pointer-events:none; z-index:9999; transition:opacity var(--trans); animation:grainDrift 8s steps(2) infinite; }
+
+    /* ── GRAIN LAYER 2 ── */
+    .page-grain{
+      position:fixed;inset:0;pointer-events:none;z-index:9998;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.35' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+      opacity:var(--noise-op2);mix-blend-mode:overlay;
+      transition:opacity var(--trans);animation:grainDrift2 12s steps(3) infinite;
+    }
+    /* ── VIGNETTE ── */
+    .page-vignette{
+      position:fixed;inset:0;pointer-events:none;z-index:9996;
+      background:radial-gradient(ellipse at 50% 40%,transparent 55%,var(--vignette) 100%);
+      transition:background var(--trans);
+    }
+    @keyframes grainDrift{
+      0%{transform:translate(0,0)}25%{transform:translate(-1%,.5%)}
+      50%{transform:translate(1%,-.5%)}75%{transform:translate(-.5%,1%)}
+    }
+    @keyframes grainDrift2{
+      0%{transform:translate(0,0)}33%{transform:translate(1.5%,-1%)}66%{transform:translate(-1%,1.5%)}
+    }
 
     /* ── NAV ── */
     .nav { position:fixed; top:0; left:0; right:0; height:var(--nav-h); z-index:1000; display:flex; align-items:center; justify-content:space-between; padding:0 clamp(20px,4vw,48px); transition:background var(--trans),border-color var(--trans); }
@@ -81,10 +119,40 @@
     .nav-links { display:flex; align-items:center; gap:clamp(12px,2vw,32px); list-style:none; }
     .nav-links a { font-size:0.78rem; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; text-decoration:none; color:var(--text-dim); transition:color 0.2s; white-space:nowrap; }
     .nav-links a:hover, .nav-links a.active { color:var(--accent); }
-    .theme-toggle { width:48px; height:26px; background:var(--bg-card); border:1px solid var(--border); border-radius:99px; cursor:pointer; position:relative; flex-shrink:0; transition:background var(--trans),border-color var(--trans); }
-    .theme-toggle::after { content:''; position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%; background:var(--accent); transition:transform 0.35s var(--ease-out),background var(--trans); }
+    /* ── Sound + Theme toggle ── */
+    .sound-toggle,
+    .theme-toggle { width:48px; height:26px; background:var(--bg-card); border:1px solid var(--border); border-radius:99px; cursor:pointer; position:relative; flex-shrink:0; transition:background var(--trans),border-color var(--trans),box-shadow var(--trans); box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 4px 10px rgba(0,0,0,.08); }
+    .sound-toggle:hover,.theme-toggle:hover { transform:translateY(-1px); }
+    .sound-toggle::after { content:''; position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%; background:var(--text-muted); box-shadow:0 1px 2px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.65); transition:transform .35s var(--ease-out),box-shadow .35s var(--ease-out),background .35s var(--ease-out); }
+    .theme-toggle::after { content:''; position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%; background:var(--accent); box-shadow:0 1px 2px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.65); transition:transform .35s var(--ease-out),box-shadow .35s var(--ease-out),background .35s var(--ease-out); }
+    .sound-toggle.active::after { transform:translateX(22px); background:var(--accent); }
+    .theme-toggle.active::after { transform:translateX(22px); }
     [data-theme="light"] .theme-toggle::after { transform:translateX(22px); }
-    .toggle-icons { position:absolute; inset:0; display:flex; align-items:center; justify-content:space-between; padding:0 5px; font-size:10px; pointer-events:none; }
+    .sound-icon,.toggle-icons { position:absolute; inset:0; display:flex; align-items:center; justify-content:space-between; padding:0 5px; font-size:10px; pointer-events:none; font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji","Segoe UI Symbol",sans-serif; }
+
+    /* ── LANGUAGE TOGGLE ── */
+    .lang-toggle{position:relative;display:flex;align-items:center;justify-content:space-between;width:82px;background:var(--bg-card);border:1px solid var(--border);border-radius:99px;cursor:pointer;overflow:hidden;height:28px;padding:3px;gap:1px;transition:transform .2s ease,border-color var(--trans),background var(--trans),box-shadow var(--trans);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 4px 10px rgba(0,0,0,.08);}
+    .lang-toggle:hover{transform:translateY(-1px);}
+    .lang-toggle::before{content:'';position:absolute;top:3px;left:3px;width:calc(50% - 3px);height:calc(100% - 6px);border-radius:99px;background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 90%,#fff 10%),color-mix(in srgb,var(--accent) 80%,#000 20%));box-shadow:0 8px 18px rgba(0,0,0,.14),inset 0 1px 0 rgba(255,255,255,.35);transition:transform .35s var(--ease-out),background .35s var(--ease-out);z-index:0;}
+    .lang-toggle[data-lang="en"]::before{transform:translateX(100%);}
+    .lang-option{position:relative;z-index:1;width:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:11px;letter-spacing:.12em;color:var(--text-muted);transition:color .35s var(--ease-out);line-height:1;user-select:none;}
+    .lang-option.active{color:var(--bg);font-weight:700;}
+
+    /* ── LANG WAVE CANVAS ── */
+    #langWaveCanvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:99998;display:none;}
+    #langWaveCanvas.active{pointer-events:all;}
+
+    /* ── TEXT LANG TRANSITION ── */
+    .lang-fading{opacity:0 !important;filter:blur(5px) !important;transition:opacity .22s ease,filter .22s ease !important;will-change:opacity,filter;}
+    .lang-fading-in{opacity:1 !important;filter:blur(0px) !important;transition:opacity .24s ease .04s,filter .24s ease .04s !important;will-change:opacity,filter;}
+
+    /* ── TAPE STRIPS ── */
+    .photo-tape{position:absolute;top:-12px;width:56px;height:22px;background:var(--tape-color);border:1px solid var(--tape-border);border-radius:2px;backdrop-filter:blur(2px);transition:background var(--trans),border-color var(--trans);z-index:10;}
+    .photo-tape-left{left:20px;transform:rotate(-4deg);}
+    .photo-tape-right{right:20px;transform:rotate(3deg);}
+    .card-tape{position:absolute;width:48px;height:20px;background:var(--tape-color);border:1px solid var(--tape-border);border-radius:2px;backdrop-filter:blur(2px);transition:background var(--trans),border-color var(--trans);z-index:1;}
+    .card-tape-tl{top:-10px;left:26px;transform:rotate(-3deg);}
+    .card-tape-br{bottom:-10px;right:26px;transform:rotate(3deg);}
     .nav-hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:4px; }
     .nav-hamburger span { display:block; width:22px; height:2px; background:var(--text); border-radius:2px; transition:transform 0.3s,opacity 0.3s,background var(--trans); }
     .nav-hamburger.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
@@ -104,8 +172,10 @@
     @media(max-width:768px){ .nav-links{display:none;} .nav-hamburger{display:flex;} }
 
     /* ── HERO ── */
-    .hero { min-height: 80svh; background:var(--hero-grad); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:calc(var(--nav-h)+40px) clamp(20px,5vw,80px) 80px; text-align:center; position:relative; overflow:hidden; transition:background var(--trans); }
-    .hero-bg-letter { position:absolute; font-family:var(--font-display); font-size:clamp(200px,38vw,520px); color:var(--accent); opacity:0.04; line-height:1; pointer-events:none; user-select:none; letter-spacing:-0.04em; top:50%; left:50%; transform:translate(-50%,-50%); transition:color var(--trans); }
+    .hero { min-height: 80svh; background:var(--hero-grad); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:calc(var(--nav-h)+40px) clamp(20px,5vw,80px) 80px; text-align:center; position:relative; z-index:0; overflow:hidden; transition:background var(--trans); }
+    /* ── hero grid squares → moved to .hero-grid-layer parallax div ── */
+    .hero::after{display:none;}
+    .hero-bg-letter { position:absolute; font-family:var(--font-display); font-size:clamp(200px,38vw,520px); color:var(--accent); opacity:0.04; line-height:1; pointer-events:none; user-select:none; letter-spacing:-0.04em; top:50%; left:50%; transform:translate(-50%,-50%); transition:color var(--trans); will-change:transform; }
     .hero-eyebrow { font-size:clamp(0.65rem,1.5vw,0.75rem); letter-spacing:0.35em; text-transform:uppercase; color:var(--accent); margin-bottom:20px; opacity:0; transform:translateY(16px); animation:fadeUp 0.8s var(--ease-out) 0.2s forwards; transition:color var(--trans); }
     .hero-title { font-family:var(--font-display); font-size:clamp(3.5rem,10vw,9rem); letter-spacing:0.06em; line-height:0.95; color:var(--text); margin-bottom:8px; opacity:0; transform:translateY(24px); animation:fadeUp 0.9s var(--ease-out) 0.35s forwards; transition:color var(--trans); }
     .hero-title em { font-style:normal; color:var(--accent); transition:color var(--trans); }
@@ -126,15 +196,56 @@
 
     /* ── COMMON ── */
     section { scroll-margin-top:var(--nav-h); }
-    .reveal { opacity:0; transform:translateY(28px); transition:opacity 0.75s var(--ease-out),transform 0.75s var(--ease-out); }
-    .reveal.visible { opacity:1; transform:translateY(0); }
-    .reveal-left { opacity:0; transform:translateX(-32px); transition:opacity 0.75s var(--ease-out),transform 0.75s var(--ease-out); }
-    .reveal-left.visible { opacity:1; transform:translateX(0); }
-    .reveal-right { opacity:0; transform:translateX(32px); transition:opacity 0.75s var(--ease-out),transform 0.75s var(--ease-out); }
-    .reveal-right.visible { opacity:1; transform:translateX(0); }
-    .d1{transition-delay:.05s}.d2{transition-delay:.15s}.d3{transition-delay:.25s}.d4{transition-delay:.35s}.d5{transition-delay:.45s}
 
-    .section-wrap { max-width:1200px; margin:0 auto; padding:clamp(72px,9vw,110px) clamp(20px,4vw,48px); }
+    /* Scroll-driven reveals — JS sets opacity/transform directly, no CSS transition */
+    .reveal, .reveal-left, .reveal-right { opacity:0; will-change:opacity,transform; }
+    .reveal         { transform:translateY(28px); }
+    .reveal-left    { transform:translateX(-32px); }
+    .reveal-right   { transform:translateX(32px); }
+    /* Fallback for users with prefers-reduced-motion */
+    @media(prefers-reduced-motion:reduce) {
+      .reveal,.reveal-left,.reveal-right { opacity:1 !important; transform:none !important; }
+    }
+    /* d1-d5: delay handled spatially by JS, no CSS transition-delay needed */
+    .d1,.d2,.d3,.d4,.d5 {}
+
+    /* ── PARALLAX BACKGROUND LAYERS ── */
+    .pax-bg {
+      position:absolute;
+      /* Oversized so edges never show during parallax shift */
+      inset:-35% 0;
+      pointer-events:none;
+      will-change:transform;
+      z-index:0;
+    }
+    /* Hero grid parallax layer */
+    .hero-grid-layer {
+      background-image:
+        linear-gradient(var(--grid-line) 1px,transparent 1px),
+        linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);
+      background-size:40px 40px;
+      transition:background-image var(--trans);
+    }
+    /* CTA block ruled-lines parallax layer */
+    .cta-lines-layer {
+      background-image:repeating-linear-gradient(transparent,transparent 31px,var(--ruled-line) 31px,var(--ruled-line) 32px);
+      transition:background-image var(--trans);
+    }
+    /* Contact section ruled-lines parallax layer */
+    .contact-lines-layer {
+      background-image:repeating-linear-gradient(transparent,transparent 31px,var(--ruled-line) 31px,var(--ruled-line) 32px);
+      transition:background-image var(--trans);
+    }
+    /* Map section grid parallax layer */
+    .map-grid-layer {
+      background-image:
+        linear-gradient(var(--grid-line) 1px,transparent 1px),
+        linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);
+      background-size:40px 40px;
+      transition:background-image var(--trans);
+    }
+
+    .section-wrap { max-width:1200px; margin:0 auto; padding:clamp(72px,9vw,110px) clamp(20px,4vw,48px); position:relative; z-index:1; }
     .section-tag { display:inline-flex; align-items:center; gap:7px; font-size:0.68rem; letter-spacing:0.28em; text-transform:uppercase; color:var(--accent); margin-bottom:18px; transition:color var(--trans); }
     .section-tag::before { content:''; display:block; width:24px; height:1px; background:var(--accent); transition:background var(--trans); }
     .section-title { font-family:var(--font-display); font-size:clamp(2.4rem,5.5vw,3.8rem); letter-spacing:0.05em; color:var(--text); margin-bottom:14px; line-height:1; transition:color var(--trans); }
@@ -143,8 +254,8 @@
 
     /* ── PROCESS STEPS ── */
     .process { border-top:1px solid var(--border); transition:border-color var(--trans); }
-    .process-header { margin-bottom:clamp(48px,6vw,72px); }
-    .steps-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:2px; }
+    .process-header { margin-bottom:clamp(48px,6vw,72px); position:relative; z-index:1; }
+    .steps-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:2px; position:relative; z-index:1; }
     @media(max-width:900px){ .steps-grid{ grid-template-columns:repeat(2,1fr); } }
     @media(max-width:480px){ .steps-grid{ grid-template-columns:1fr; } }
 
@@ -163,15 +274,16 @@
     @media(max-width:900px){ .step-connector{ display:none; } }
 
     /* ── BIG CTA BLOCK ── */
-    .cta-block { background:var(--bg-surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border); transition:background var(--trans),border-color var(--trans); }
-    .cta-block-inner { max-width:1200px; margin:0 auto; padding:clamp(64px,8vw,100px) clamp(20px,4vw,48px); display:grid; grid-template-columns:1fr 1fr; gap:clamp(40px,6vw,80px); align-items:center; }
+    .cta-block { position:relative; background:var(--bg-surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border); transition:background var(--trans),border-color var(--trans); overflow:hidden; }
+    .cta-block::before { content:''; position:absolute; left:clamp(60px,8vw,100px); top:0; bottom:0; width:1px; background:color-mix(in srgb,var(--accent) 18%,transparent); pointer-events:none; transition:background var(--trans); }
+    .cta-block-inner { max-width:1200px; margin:0 auto; padding:clamp(64px,8vw,100px) clamp(20px,4vw,48px); display:grid; grid-template-columns:1fr 1fr; gap:clamp(40px,6vw,80px); align-items:center; position:relative; z-index:1; }
     @media(max-width:760px){ .cta-block-inner{ grid-template-columns:1fr; } }
     .cta-left-eyebrow { font-size:0.68rem; letter-spacing:0.32em; text-transform:uppercase; color:var(--accent); margin-bottom:16px; display:flex; align-items:center; gap:10px; transition:color var(--trans); }
     .cta-left-eyebrow::before { content:''; display:block; width:24px; height:1px; background:var(--accent); }
     .cta-left-title { font-family:var(--font-display); font-size:clamp(2.4rem,5.5vw,4rem); letter-spacing:0.05em; line-height:0.96; color:var(--text); margin-bottom:20px; transition:color var(--trans); }
     .cta-left-title em { font-style:normal; color:var(--accent); transition:color var(--trans); }
     .cta-left-body { font-size:clamp(0.9rem,1.5vw,1rem); font-weight:300; line-height:1.82; color:var(--text-dim); margin-bottom:36px; transition:color var(--trans); }
-    .cta-right-card { background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:clamp(28px,4vw,44px); position:relative; overflow:hidden; transition:background var(--trans),border-color var(--trans); }
+    .cta-right-card { background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:clamp(28px,4vw,44px); position:relative; overflow:visible; transition:background var(--trans),border-color var(--trans); }
     .cta-right-card::before { content:''; position:absolute; top:-1px; left:10%; right:10%; height:2px; background:var(--stripe); transition:background var(--trans); }
     .cta-feature-list { list-style:none; display:flex; flex-direction:column; gap:14px; margin-bottom:32px; }
     .cta-feature-list li { display:flex; align-items:flex-start; gap:12px; font-size:0.88rem; color:var(--text-dim); line-height:1.55; transition:color var(--trans); }
@@ -184,7 +296,7 @@
 
     /* ── CALENDAR ── */
     .calendar-section { border-top:1px solid var(--border); transition:border-color var(--trans); }
-    .calendar-grid { display:grid; grid-template-columns:1fr auto; gap:clamp(40px,6vw,80px); align-items:start; margin-top:clamp(40px,5vw,56px); }
+    .calendar-grid { display:grid; grid-template-columns:1fr auto; gap:clamp(40px,6vw,80px); align-items:start; margin-top:clamp(40px,5vw,56px); position:relative; z-index:1; }
     @media(max-width:760px){ .calendar-grid{ grid-template-columns:1fr; } }
 
     .cal-wrap { background:var(--bg-card); border:1px solid var(--border); border-radius:6px; overflow:hidden; transition:background var(--trans),border-color var(--trans); }
@@ -216,8 +328,8 @@
     .cal-cta-link svg { width:14px; height:14px; }
 
     /* ── MAP ── */
-    .map-section { border-top:1px solid var(--border); transition:border-color var(--trans); }
-    #leaflet-map { height:380px; border-radius:6px; overflow:hidden; border:1px solid var(--border); margin-top:clamp(36px,4vw,52px); transition:border-color var(--trans); }
+    .map-section { border-top:1px solid var(--border); background:var(--bg); transition:border-color var(--trans),background var(--trans); position:relative; overflow:hidden; }
+    #leaflet-map { height:380px; border-radius:6px; overflow:hidden; border:1px solid var(--border); margin-top:clamp(36px,4vw,52px); transition:border-color var(--trans); position:relative; z-index:1; }
     .map-tiles-dark { filter:invert(1) hue-rotate(180deg) brightness(0.85) saturate(0.7); }
 
     .map-zones { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; margin-top:2px; }
@@ -243,7 +355,7 @@
 
     /* ── FAQ ── */
     .faq-section { border-top:1px solid var(--border); transition:border-color var(--trans); }
-    .faq-cols { display:grid; grid-template-columns:1fr 1fr; gap:2px; margin-top:clamp(40px,5vw,56px); }
+    .faq-cols { display:grid; grid-template-columns:1fr 1fr; gap:2px; margin-top:clamp(40px,5vw,56px); position:relative; z-index:1; }
     @media(max-width:760px){ .faq-cols{ grid-template-columns:1fr; } }
     .faq-col { display:flex; flex-direction:column; gap:0; }
     .faq-item { border-bottom:1px solid var(--border); transition:border-color var(--trans); }
@@ -257,8 +369,9 @@
     .faq-answer-inner { font-size:0.86rem; font-weight:300; line-height:1.78; color:var(--text-dim); padding:0 0 20px; transition:color var(--trans); }
 
     /* ── CONTACT CARDS ── */
-    .contact-section { background:var(--bg-surface); border-top:1px solid var(--border); transition:background var(--trans),border-color var(--trans); }
-    .contact-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:2px; margin-top:clamp(40px,5vw,56px); }
+    .contact-section { position:relative; background:var(--bg-surface); border-top:1px solid var(--border); transition:background var(--trans),border-color var(--trans); overflow:hidden; }
+    .contact-section::before { content:''; position:absolute; left:clamp(60px,8vw,100px); top:0; bottom:0; width:1px; background:color-mix(in srgb,var(--accent) 18%,transparent); pointer-events:none; transition:background var(--trans); }
+    .contact-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:2px; margin-top:clamp(40px,5vw,56px); position:relative; z-index:1; }
     @media(max-width:900px){ .contact-grid{ grid-template-columns:repeat(2,1fr); } }
     @media(max-width:500px){ .contact-grid{ grid-template-columns:1fr; } }
     .contact-card { background:var(--bg-card); border:1px solid var(--border); padding:clamp(22px,3vw,32px); display:flex; flex-direction:column; gap:12px; transition:border-color 0.3s,background var(--trans); }
@@ -283,15 +396,12 @@
     /* ── FOOTER ── */
     .mlx-footer { background:var(--bg); border-top:1px solid var(--border); position:relative; overflow:hidden; transition:background var(--trans),border-color var(--trans); }
     .mlx-footer::before { content:''; position:absolute; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E"); opacity:var(--noise-op); pointer-events:none; z-index:0; transition:opacity var(--trans); }
-    .footer-stripe-line { height:3px; background:var(--stripe); transform-origin:left; transform:scaleX(0); transition:transform 1s var(--ease-out) 0.2s,background var(--trans); }
-    .footer-stripe-line.visible { transform:scaleX(1); }
+    .footer-stripe-line { height:3px; background:var(--stripe); transform-origin:left; transform:scaleX(0); will-change:transform; transition:background var(--trans); }
     .footer-main-grid { position:relative; z-index:1; max-width:1200px; margin:0 auto; padding:72px 40px 48px; display:grid; grid-template-columns:2fr 1fr 1fr 1.4fr; gap:48px 40px; }
     @media(max-width:960px){ .footer-main-grid{ grid-template-columns:1fr 1fr; padding:56px 28px 40px; } }
     @media(max-width:600px){ .footer-main-grid{ grid-template-columns:1fr; padding:48px 24px 32px; gap:36px; } }
-    .footer-reveal { opacity:0; transform:translateY(22px); transition:opacity 0.7s var(--ease-out),transform 0.7s var(--ease-out); }
-    .footer-reveal.visible { opacity:1; transform:translateY(0); }
-    .footer-reveal:nth-child(1){transition-delay:0.05s} .footer-reveal:nth-child(2){transition-delay:0.15s}
-    .footer-reveal:nth-child(3){transition-delay:0.25s} .footer-reveal:nth-child(4){transition-delay:0.35s}
+    .footer-reveal { opacity:0; transform:translateY(22px); will-change:opacity,transform; }
+    /* nth-child delays handled spatially by JS */
     .f-brand-logo { font-family:var(--font-display); font-size:3rem; letter-spacing:0.12em; color:var(--text); line-height:1; margin-bottom:6px; display:inline-block; transition:color var(--trans); }
     .f-brand-logo span { color:var(--accent); transition:color var(--trans); }
     .f-brand-tagline { font-size:0.7rem; letter-spacing:0.32em; text-transform:uppercase; color:var(--text-muted); margin-bottom:20px; transition:color var(--trans); }
@@ -319,17 +429,14 @@
     .f-stats-band { position:relative; z-index:1; max-width:1200px; margin:0 auto; padding:0 40px 40px; display:grid; grid-template-columns:repeat(4,1fr); gap:1px; border-top:1px solid var(--border); transition:border-color var(--trans); }
     @media(max-width:960px){ .f-stats-band{ grid-template-columns:repeat(2,1fr); padding:0 28px 32px; } }
     @media(max-width:600px){ .f-stats-band{ padding:0 24px 28px; } }
-    .f-stat-item { padding:28px 20px; text-align:center; opacity:0; transform:translateY(14px); border-right:1px solid var(--border); transition:opacity 0.6s var(--ease-out),transform 0.6s var(--ease-out),border-color var(--trans); }
+    .f-stat-item { padding:28px 20px; text-align:center; opacity:0; transform:translateY(14px); will-change:opacity,transform; border-right:1px solid var(--border); transition:border-color var(--trans); }
     .f-stat-item:last-child { border-right:none; }
-    .f-stat-item.visible { opacity:1; transform:translateY(0); }
-    .f-stat-item:nth-child(1){transition-delay:0.1s} .f-stat-item:nth-child(2){transition-delay:0.2s}
-    .f-stat-item:nth-child(3){transition-delay:0.3s} .f-stat-item:nth-child(4){transition-delay:0.4s}
     .f-stat-number { font-family:var(--font-display); font-size:2.4rem; letter-spacing:0.05em; color:var(--text); line-height:1; margin-bottom:4px; transition:color var(--trans); }
     .f-stat-number span { color:var(--accent); transition:color var(--trans); }
     .f-stat-label { font-size:0.7rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--text-muted); transition:color var(--trans); }
     .f-cta-wrap { position:relative; z-index:1; max-width:1200px; margin:0 auto 40px; padding:0 40px; }
     @media(max-width:600px){ .f-cta-wrap{ padding:0 24px; } }
-    .f-cta-inner { border:1px solid var(--border); border-radius:6px; padding:32px 40px; display:flex; align-items:center; justify-content:space-between; gap:24px; background:var(--bg-surface); opacity:0; transform:translateY(16px); transition:opacity 0.7s var(--ease-out) 0.3s,transform 0.7s var(--ease-out) 0.3s,background var(--trans),border-color var(--trans); flex-wrap:wrap; }
+    .f-cta-inner { border:1px solid var(--border); border-radius:6px; padding:32px 40px; display:flex; align-items:center; justify-content:space-between; gap:24px; background:var(--bg-surface); opacity:0; transform:translateY(16px); will-change:opacity,transform; transition:background var(--trans),border-color var(--trans); flex-wrap:wrap; }
     .f-cta-inner.visible { opacity:1; transform:translateY(0); }
     .f-cta-eyebrow { font-size:0.68rem; letter-spacing:0.26em; text-transform:uppercase; color:var(--accent); margin-bottom:6px; transition:color var(--trans); }
     .f-cta-title { font-family:var(--font-display); font-size:1.7rem; letter-spacing:0.06em; color:var(--text); transition:color var(--trans); }
@@ -343,6 +450,10 @@
     .f-legal { display:flex; gap:20px; }
     .f-legal a { font-size:0.72rem; color:var(--text-muted); text-decoration:none; letter-spacing:0.08em; transition:color 0.2s; }
     .f-legal a:hover { color:var(--text); }
+
+    /* ── SCROLL PROGRESS BAR ── */
+    .scroll-progress { position:fixed; top:0; left:0; width:0%; height:2px; background:var(--accent); z-index:10001; transition:background var(--trans); pointer-events:none; }
+
     .back-top { position:fixed; bottom:100px; right:32px; width:44px; height:44px; background:var(--bg-surface); border:1px solid var(--border); border-radius:4px; display:flex; align-items:center; justify-content:center; color:var(--accent); cursor:pointer; opacity:0; transform:translateY(12px); transition:opacity 0.3s,transform 0.3s,border-color 0.2s,background var(--trans); z-index:9999; }
     .back-top.show { opacity:1; transform:translateY(0); }
     .back-top:hover { border-color:var(--accent); }
@@ -386,6 +497,13 @@
 </head>
 <body>
 
+<!-- texture layers -->
+<div class="page-grain" aria-hidden="true"></div>
+<div class="page-vignette" aria-hidden="true"></div>
+
+<!-- lang wave canvas -->
+<canvas id="langWaveCanvas" aria-hidden="true"></canvas>
+
 <button class="back-top" id="backToTop" aria-label="Zpět nahoru" onclick="window.scrollTo({top:0,behavior:'smooth'})">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
 </button>
@@ -406,20 +524,29 @@
 <nav class="nav" id="mainNav">
   <a href="index.html" class="nav-logo">ML<span>X</span> MEDIA</a>
   <ul class="nav-links">
-    <li><a href="index.html">Domů</a></li>
-    <li><a href="O-mně.html">O mně</a></li>
-    <li><a href="Portfolio.html">Portfolio</a></li>
-    <li><a href="Aspekty.html">Aspekty</a></li>
-    <li><a href="Ceník.html">Ceník</a></li>
-    <li><a href="Objednávkový-formulář.html" class="active">Objednávka</a></li>
+    <li><a href="index.html" data-i18n="nav-home">Domů</a></li>
+    <li><a href="O-mně.html" data-i18n="nav-about">O mně</a></li>
+    <li><a href="Portfolio.html" data-i18n="nav-portfolio">Portfolio</a></li>
+    <li><a href="Aspekty.html" data-i18n="nav-aspekty">Aspekty</a></li>
+    <li><a href="Ceník.html" data-i18n="nav-cenik">Ceník</a></li>
+    <li><a href="Objednávkový-formulář.html" class="active" data-i18n="nav-objednavka">Objednávka</a></li>
   </ul>
-  <div style="display:flex;align-items:center;gap:14px;">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <button class="lang-toggle" id="langToggle" aria-label="Switch language / Přepnout jazyk">
+      <span class="lang-option" id="langOptCZ">CZ</span>
+      <span class="lang-option" id="langOptEN">EN</span>
+    </button>
+    <button class="sound-toggle" id="soundToggle" aria-label="Zvuk">
+      <div class="sound-icon"><span>🔇</span><span>🔊</span></div>
+    </button>
     <button class="theme-toggle" id="themeToggle" aria-label="Přepnout téma">
       <div class="toggle-icons"><span>🌙</span><span>☀️</span></div>
     </button>
     <div class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></div>
   </div>
 </nav>
+
+<div class="scroll-progress" id="scrollProgress"></div>
 
 <div class="nav-mobile" id="mobileMenu">
   <a href="index.html">Domů</a>
@@ -432,17 +559,19 @@
 
 <!-- HERO -->
 <section class="hero" id="top">
-  <div class="hero-bg-letter" aria-hidden="true">O</div>
-  <div class="hero-eyebrow">MLX Media · Začněte spolupráci</div>
-  <h1 class="hero-title">Pojďme<br>to <em>natočit.</em></h1>
-  <p class="hero-subtitle">Řekněte mi o svém projektu — já se postarám o zbytek. Od první zprávy po finální video jsem tu pro vás osobně.</p>
+  <!-- Parallax background grid (now fixed with page scroll) -->
+  <div class="pax-bg hero-grid-layer" data-parallax="0" aria-hidden="true"></div>
+  <div class="hero-bg-letter" data-parallax="0" aria-hidden="true">O</div>
+  <div class="hero-eyebrow" data-i18n="hero-eyebrow">MLX Media · Začněte spolupráci</div>
+  <h1 class="hero-title" data-i18n-html="hero-title-html">Pojďme<br>to <em>natočit.</em></h1>
+  <p class="hero-subtitle" data-i18n="hero-subtitle">Řekněte mi o svém projektu — já se postarám o zbytek. Od první zprávy po finální video jsem tu pro vás osobně.</p>
   <div class="hero-actions">
     <a href="Objednávkový-formulář.html" class="btn-primary">
-      Vyplnit objednávku
+      <span data-i18n="cta-btn2">Vyplnit objednávku</span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
     </a>
     <a href="Ceník.html" class="btn-ghost">
-      Prohlédnout ceník
+      <span data-i18n="nav-cenik">Prohlédnout ceník</span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
     </a>
   </div>
@@ -453,55 +582,45 @@
 <section id="postup" class="process">
   <div class="section-wrap">
     <div class="process-header reveal">
-      <div class="section-tag">Jak to funguje</div>
-      <h2 class="section-title">Od nápadu<br><em>k hotovému videu</em></h2>
-      <p class="section-desc">Pět jasných kroků. Žádné překvapení, žádné zbytečné čekání.</p>
+      <div class="section-tag" data-i18n="process-tag">Jak to funguje</div>
+      <h2 class="section-title" data-i18n-html="process-title-html">Od nápadu<br><em>k hotovému videu</em></h2>
+      <p class="section-desc" data-i18n="process-desc">Pět jasných kroků. Žádné překvapení, žádné zbytečné čekání.</p>
     </div>
 
     <div class="steps-grid">
       <div class="step-card reveal d1">
         <div class="step-num" aria-hidden="true">01</div>
-        <div class="step-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-        </div>
-        <div class="step-name">Poptávka</div>
-        <p class="step-desc">Vyplníte objednávkový formulář — popíšete projekt, termín a představu. Odpovím do 24 hodin.</p>
+        <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+        <div class="step-name" data-i18n="step1-name">Poptávka</div>
+        <p class="step-desc" data-i18n="step1-desc">Vyplníte objednávkový formulář — popíšete projekt, termín a představu. Odpovím do 24 hodin.</p>
         <div class="step-connector"></div>
       </div>
       <div class="step-card reveal d2">
         <div class="step-num" aria-hidden="true">02</div>
-        <div class="step-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-        </div>
-        <div class="step-name">Konzultace</div>
-        <p class="step-desc">Zavolám vám nebo si napíšeme. Upřesním detaily, navrhnu řešení a domluvíme termín natáčení.</p>
+        <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+        <div class="step-name" data-i18n="step2-name">Konzultace</div>
+        <p class="step-desc" data-i18n="step2-desc">Zavolám vám nebo si napíšeme. Upřesním detaily, navrhnu řešení a domluvíme termín natáčení.</p>
         <div class="step-connector"></div>
       </div>
       <div class="step-card reveal d3">
         <div class="step-num" aria-hidden="true">03</div>
-        <div class="step-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M22 8l-5 4 5 4V8z"/></svg>
-        </div>
-        <div class="step-name">Natáčení</div>
-        <p class="step-desc">Přijedu na domluvené místo s celou technikou. Natáčíme dle scénáře nebo run-and-gun stylem.</p>
+        <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M22 8l-5 4 5 4V8z"/></svg></div>
+        <div class="step-name" data-i18n="step3-name">Natáčení</div>
+        <p class="step-desc" data-i18n="step3-desc">Přijedu na domluvené místo s celou technikou. Natáčíme dle scénáře nebo run-and-gun stylem.</p>
         <div class="step-connector"></div>
       </div>
       <div class="step-card reveal d4">
         <div class="step-num" aria-hidden="true">04</div>
-        <div class="step-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        </div>
-        <div class="step-name">Střih & post</div>
-        <p class="step-desc">Střih, color grading, zvuk a grafika. Pošlu vám náhled, zapracuji vaše připomínky (2× v ceně).</p>
+        <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <div class="step-name" data-i18n="step4-name">Střih & post</div>
+        <p class="step-desc" data-i18n="step4-desc">Střih, color grading, zvuk a grafika. Pošlu vám náhled, zapracuji vaše připomínky (2× v ceně).</p>
         <div class="step-connector"></div>
       </div>
       <div class="step-card reveal d5">
         <div class="step-num" aria-hidden="true">05</div>
-        <div class="step-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        </div>
-        <div class="step-name">Dodání</div>
-        <p class="step-desc">Do 4–10 dní od natáčení dostanete finální video ve všech domluvených formátech. Hotovo.</p>
+        <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+        <div class="step-name" data-i18n="step5-name">Dodání</div>
+        <p class="step-desc" data-i18n="step5-desc">Do 4–10 dní od natáčení dostanete finální video ve všech domluvených formátech. Hotovo.</p>
       </div>
     </div>
   </div>
@@ -509,34 +628,38 @@
 
 <!-- BIG CTA BLOCK -->
 <section id="objednat" class="cta-block">
+  <!-- Parallax ruled-lines background (now fixed with page scroll) -->
+  <div class="pax-bg cta-lines-layer" data-parallax="0" aria-hidden="true"></div>
   <div class="cta-block-inner">
     <div class="reveal-left">
-      <div class="cta-left-eyebrow">Objednávkový formulář</div>
-      <h2 class="cta-left-title">Řekněte mi<br>o svém<br><em>projektu.</em></h2>
-      <p class="cta-left-body">
+      <div class="cta-left-eyebrow" data-i18n="cta-eyebrow">Objednávkový formulář</div>
+      <h2 class="cta-left-title" data-i18n-html="cta-title-html">Řekněte mi<br>o svém<br><em>projektu.</em></h2>
+      <p class="cta-left-body" data-i18n="cta-body">
         Formulář vám zabere asi 3 minuty. Čím víc mi toho řeknete, tím přesnější nabídku dostanete. Nejste si jistí rozsahem nebo cenou? Vyplňte co víte — zbytek dořešíme přes telefon nebo email.
       </p>
       <a href="Objednávkový-formulář.html" class="btn-primary">
-        Přejít na formulář
+        <span data-i18n="cta-btn">Přejít na formulář</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </a>
     </div>
 
     <div class="reveal-right">
       <div class="cta-right-card">
+        <div class="card-tape card-tape-tl" aria-hidden="true"></div>
+        <div class="card-tape card-tape-br" aria-hidden="true"></div>
         <ul class="cta-feature-list">
-          <li><strong>Odpovím do 24 hodin</strong> — přes email nebo telefon, podle vašich preferencí</li>
-          <li><strong>Žádné závazky předem</strong> — formulář je nezávazná poptávka, ne smlouva</li>
-          <li><strong>2 revize zdarma</strong> — v ceně každého projektu, bez zbytečných diskuzí</li>
-          <li><strong>50 % záloha při potvrzení</strong> — zbytek po dodání finálního videa</li>
-          <li><strong>Dodání 4–10 pracovních dní</strong> — expresní možné, domluvíme se</li>
-          <li><strong>Celá ČR na požádání</strong> — Beroun, Praha 5 a Praha 6 bez příplatku</li>
+          <li data-i18n-html="cta-feat1"><strong>Odpovím do 24 hodin</strong> — přes email nebo telefon, podle vašich preferencí</li>
+          <li data-i18n-html="cta-feat2"><strong>Žádné závazky předem</strong> — formulář je nezávazná poptávka, ne smlouva</li>
+          <li data-i18n-html="cta-feat3"><strong>2 revize zdarma</strong> — v ceně každého projektu, bez zbytečných diskuzí</li>
+          <li data-i18n-html="cta-feat4"><strong>50 % záloha při potvrzení</strong> — zbytek po dodání finálního videa</li>
+          <li data-i18n-html="cta-feat5"><strong>Dodání 4–10 pracovních dní</strong> — expresní možné, domluvíme se</li>
+          <li data-i18n-html="cta-feat6"><strong>Celá ČR na požádání</strong> — Beroun, Praha 5 a Praha 6 bez příplatku</li>
         </ul>
         <a href="Objednávkový-formulář.html" class="cta-btn-large">
-          Vyplnit objednávku
+          <span data-i18n="cta-btn2">Vyplnit objednávku</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
-        <p class="cta-note">Nezávazná poptávka · Odpovím do 24 h</p>
+        <p class="cta-note" data-i18n="cta-note">Nezávazná poptávka · Odpovím do 24 h</p>
       </div>
     </div>
   </div>
@@ -546,9 +669,9 @@
 <section id="kalendar" class="calendar-section">
   <div class="section-wrap">
     <div class="reveal">
-      <div class="section-tag">Dostupnost</div>
-      <h2 class="section-title">Kdy jsem <em>volný</em></h2>
-      <p class="section-desc">Termíny se obsazují rychle, zvláště o víkendech. Plánujte dopředu — napište mi a domluvíme se.</p>
+      <div class="section-tag" data-i18n="cal-tag">Dostupnost</div>
+      <h2 class="section-title" data-i18n-html="cal-title-html">Kdy jsem <em>volný</em></h2>
+      <p class="section-desc" data-i18n="cal-desc">Termíny se obsazují rychle, zvláště o víkendech. Plánujte dopředu — napište mi a domluvíme se.</p>
     </div>
 
     <div class="calendar-grid reveal">
@@ -571,19 +694,19 @@
 
       <div class="cal-sidebar">
         <div>
-          <div class="section-tag" style="margin-bottom:16px;">Legenda</div>
+          <div class="section-tag" style="margin-bottom:16px;" data-i18n="cal-legend-tag">Legenda</div>
           <div class="cal-legend">
-            <div class="cal-legend-item"><div class="cal-dot dot-free"></div>Volno — lze rezervovat</div>
-            <div class="cal-legend-item"><div class="cal-dot dot-partial"></div>Pouze prioritní projekty</div>
-            <div class="cal-legend-item"><div class="cal-dot dot-hard"></div>Možné, ale hůře — domluvte se</div>
-            <div class="cal-legend-item"><div class="cal-dot dot-full"></div>Plně obsazeno</div>
+            <div class="cal-legend-item"><div class="cal-dot dot-free"></div><span data-i18n="cal-free">Volno — lze rezervovat</span></div>
+            <div class="cal-legend-item"><div class="cal-dot dot-partial"></div><span data-i18n="cal-partial">Pouze prioritní projekty</span></div>
+            <div class="cal-legend-item"><div class="cal-dot dot-hard"></div><span data-i18n="cal-hard">Možné, ale hůře — domluvte se</span></div>
+            <div class="cal-legend-item"><div class="cal-dot dot-full"></div><span data-i18n="cal-full">Plně obsazeno</span></div>
           </div>
         </div>
-        <div class="cal-note">
+        <div class="cal-note" data-i18n="cal-note">
           Volné dny nejsou označeny. Chcete konkrétní termín? Napište mi — odpovím do 24 hodin.
         </div>
         <a href="Objednávkový-formulář.html" class="cal-cta-link">
-          Zarezervovat termín
+          <span data-i18n="cal-cta">Zarezervovat termín</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
       </div>
@@ -593,11 +716,13 @@
 
 <!-- MAP + TRAVEL -->
 <section id="mapa" class="map-section">
+  <!-- Parallax background grid (now fixed with page scroll) -->
+  <div class="pax-bg map-grid-layer" data-parallax="0" aria-hidden="true"></div>
   <div class="section-wrap">
     <div class="reveal">
-      <div class="section-tag">Oblast pokrytí</div>
-      <h2 class="section-title">Kde a <em>jak točím</em></h2>
-      <p class="section-desc">Primárně Praha a okolí. Na vzdálenější lokace se domluvíme individuálně — nebojte se zeptat.</p>
+      <div class="section-tag" data-i18n="map-tag">Oblast pokrytí</div>
+      <h2 class="section-title" data-i18n-html="map-title-html">Kde a <em>jak točím</em></h2>
+      <p class="section-desc" data-i18n="map-desc">Primárně Praha a okolí. Na vzdálenější lokace se domluvíme individuálně — nebojte se zeptat.</p>
     </div>
 
     <div id="leaflet-map" class="reveal"></div>
@@ -657,8 +782,8 @@
 <section id="faq" class="faq-section">
   <div class="section-wrap">
     <div class="reveal">
-      <div class="section-tag">Časté otázky</div>
-      <h2 class="section-title">Co vás <em>zajímá</em></h2>
+      <div class="section-tag" data-i18n="faq-tag">Časté otázky</div>
+      <h2 class="section-title" data-i18n-html="faq-title-html">Co vás <em>zajímá</em></h2>
     </div>
 
     <div class="faq-cols">
@@ -729,11 +854,13 @@
 
 <!-- CONTACT CARDS -->
 <section id="kontakt" class="contact-section">
+  <!-- Parallax ruled-lines background (now fixed with page scroll) -->
+  <div class="pax-bg contact-lines-layer" data-parallax="0" aria-hidden="true"></div>
   <div class="section-wrap">
     <div class="reveal">
-      <div class="section-tag">Přímý kontakt</div>
-      <h2 class="section-title">Raději <em>zavoláte?</em></h2>
-      <p class="section-desc">Formulář není povinný. Pokud preferujete přímou komunikaci, tady mě najdete.</p>
+      <div class="section-tag" data-i18n="contact-tag">Přímý kontakt</div>
+      <h2 class="section-title" data-i18n-html="contact-title-html">Raději <em>zavoláte?</em></h2>
+      <p class="section-desc" data-i18n="contact-desc">Formulář není povinný. Pokud preferujete přímou komunikaci, tady mě najdete.</p>
     </div>
 
     <div class="contact-grid">
@@ -778,8 +905,8 @@
   <div class="bottom-cta-inner">
     <div class="bottom-cta-card reveal">
       <div>
-        <div class="bottom-cta-eyebrow">Připraveni začít?</div>
-        <div class="bottom-cta-title">Vyplňte formulář — zbytek nechte na mě.</div>
+        <div class="bottom-cta-eyebrow" data-i18n="bottom-cta-eyebrow">Připraveni začít?</div>
+        <div class="bottom-cta-title" data-i18n="bottom-cta-title">Vyplňte formulář — zbytek nechte na mě.</div>
       </div>
       <a href="Objednávkový-formulář.html" class="btn-primary">
         Objednávkový formulář
@@ -795,8 +922,8 @@
   <div class="footer-main-grid">
     <div class="footer-reveal">
       <a href="index.html" class="f-brand-logo">ML<span>X</span> MEDIA</a>
-      <div class="f-brand-tagline">Filmování · Střih · Postprodukce</div>
-      <p class="f-brand-desc">Věřím, že každý příběh si zaslouží být vyprávěn. Pomáhám firmám a jednotlivcům zachytit jejich vizi prostřednictvím profesionálního videa.</p>
+      <div class="f-brand-tagline" data-i18n="f-tagline">Filmování · Střih · Postprodukce</div>
+      <p class="f-brand-desc" data-i18n="f-desc">Věřím, že každý příběh si zaslouží být vyprávěn. Pomáhám firmám a jednotlivcům zachytit jejich vizi prostřednictvím profesionálního videa.</p>
       <div class="f-social-row">
         <a href="https://www.youtube.com/@MLX-Media" target="_blank" rel="noopener" class="f-social-btn">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 00.5 6.2 31.3 31.3 0 000 12a31.3 31.3 0 00.5 5.8 3 3 0 002.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 002.1-2.1A31.3 31.3 0 0024 12a31.3 31.3 0 00-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>YouTube
@@ -807,25 +934,25 @@
       </div>
     </div>
     <div class="footer-reveal">
-      <div class="f-col-title">Navigace</div>
+      <div class="f-col-title" data-i18n="f-nav-title">Navigace</div>
       <ul class="f-links">
-        <li><a href="index.html">Domovská stránka</a></li>
-        <li><a href="O-mně.html">O mně</a></li>
-        <li><a href="Portfolio.html">Portfolio</a></li>
-        <li><a href="Aspekty.html">Aspekty</a></li>
-        <li><a href="Ceník.html">Ceník</a></li>
-        <li><a href="Objednávka.html">Objednávka</a></li>
+        <li><a href="index.html" data-i18n="f-nav-1">Domovská stránka</a></li>
+        <li><a href="O-mně.html" data-i18n="f-nav-2">O mně</a></li>
+        <li><a href="Portfolio.html" data-i18n="f-nav-3">Portfolio</a></li>
+        <li><a href="Aspekty.html" data-i18n="f-nav-4">Aspekty</a></li>
+        <li><a href="Ceník.html" data-i18n="f-nav-5">Ceník</a></li>
+        <li><a href="Objednávka.html" data-i18n="f-nav-6">Objednávka</a></li>
       </ul>
     </div>
     <div class="footer-reveal">
-      <div class="f-col-title">Služby</div>
+      <div class="f-col-title" data-i18n="f-svc-title">Služby</div>
       <ul class="f-links">
-        <li><a href="Ceník.html">Firemní videa</a></li>
-        <li><a href="Ceník.html">Reklamní spot</a></li>
-        <li><a href="Ceník.html">Reels &amp; TikTok</a></li>
-        <li><a href="Ceník.html">Color grading</a></li>
-        <li><a href="Ceník.html">Zvukový design</a></li>
-        <li><a href="Ceník.html">Dronové záběry</a></li>
+        <li><a href="Ceník.html" data-i18n="f-svc-1">Firemní videa</a></li>
+        <li><a href="Ceník.html" data-i18n="f-svc-2">Reklamní spot</a></li>
+        <li><a href="Ceník.html" data-i18n="f-svc-3">Reels &amp; TikTok</a></li>
+        <li><a href="Ceník.html" data-i18n="f-svc-4">Color grading</a></li>
+        <li><a href="Ceník.html" data-i18n="f-svc-5">Zvukový design</a></li>
+        <li><a href="Ceník.html" data-i18n="f-svc-6">Dronové záběry</a></li>
       </ul>
     </div>
     <div class="footer-reveal">
@@ -859,8 +986,8 @@
   <div class="f-cta-wrap">
     <div class="f-cta-inner" id="fCta">
       <div>
-        <div class="f-cta-eyebrow">Hledám nové klienty</div>
-        <div class="f-cta-title">Máte projekt? Pojďme ho natočit.</div>
+        <div class="f-cta-eyebrow" data-i18n="f-cta-eyebrow">Hledám nové klienty</div>
+        <div class="f-cta-title" data-i18n="f-cta-title">Máte projekt? Pojďme ho natočit.</div>
       </div>
       <a href="Objednávka.html" class="f-cta-btn">
         Objednat video
@@ -870,66 +997,345 @@
   </div>
 
   <div class="f-bottom">
-    <div class="f-copy">© <span id="fyear"></span> <span>MLX Media</span> · Matouš Lexa · Všechna práva vyhrazena</div>
-    <div class="f-legal"><a href="#">Ochrana soukromí</a><a href="#">Cookies</a><a href="Objednávka.html">Kontakt</a></div>
+    <div class="f-copy">© <span id="fyear"></span> <span>MLX Media</span> · Matouš Lexa · <span data-i18n="f-rights">Všechna práva vyhrazena</span></div>
+    <div class="f-legal"><a href="#" data-i18n="f-legal-1">Ochrana soukromí</a><a href="#" data-i18n="f-legal-2">Cookies</a><a href="Objednávka.html" data-i18n="f-legal-3">Kontakt</a></div>
   </div>
 </footer>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-  // ── THEME ──
-  const root = document.documentElement;
-  root.setAttribute('data-theme', localStorage.getItem('mlx-theme') || 'dark');
-  document.getElementById('themeToggle').addEventListener('click', () => {
-    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    root.setAttribute('data-theme', next);
-    localStorage.setItem('mlx-theme', next);
+/* ── THEME ── */
+const root = document.documentElement;
+root.setAttribute('data-theme', localStorage.getItem('mlx-theme') || 'dark');
+
+/* ── AUDIO ── */
+function createAudio(src, volume = 0.16) {
+  const audio = new Audio(src);
+  audio.preload = 'auto';
+  audio.volume = volume;
+  return audio;
+}
+const soundLibrary = {
+  toggle:    createAudio('Audio/Togle.mp3', 0.16),
+  switch:    createAudio('Audio/Switch-page.mp3', 0.16),
+  language:  createAudio('Audio/Language-switch.mp3', 0.112),
+  language2: createAudio('Audio/Language-switch02.mp3', 0.067),
+  chat:      createAudio('Audio/Togle.mp3', 0.18),
+  up:        createAudio('Audio/Up-Button.mp3', 0.14),
+  universal: createAudio('Audio/Universal.mp3', 0.14),
+  email:     createAudio('Audio/Email.mp3', 0.16),
+};
+function playSound(key) {
+  if (!soundEnabled) return;
+  const sound = soundLibrary[key];
+  if (!sound) return;
+  const clone = sound.cloneNode(true);
+  clone.play().catch(() => {});
+}
+
+/* ── SOUND TOGGLE ── */
+const soundToggle = document.getElementById('soundToggle');
+let soundEnabled = localStorage.getItem('mlx-sound') !== 'off';
+function updateSoundToggle() {
+  if (!soundToggle) return;
+  soundToggle.classList.toggle('active', soundEnabled);
+  soundToggle.setAttribute('aria-label', soundEnabled ? 'Zvuk zapnutý' : 'Zvuk vypnutý');
+}
+if (soundToggle) {
+  soundToggle.addEventListener('click', () => {
+    soundEnabled = !soundEnabled;
+    localStorage.setItem('mlx-sound', soundEnabled ? 'on' : 'off');
+    updateSoundToggle();
+    if (soundEnabled) playSound('toggle');
   });
+}
+updateSoundToggle();
 
-  // ── NAV ──
-  const nav = document.getElementById('mainNav');
-  window.addEventListener('scroll', () => {
-    nav.classList.toggle('scrolled', window.scrollY > 20);
-    document.getElementById('backToTop').classList.toggle('show', window.scrollY > 400);
-  }, { passive: true });
+/* ── THEME TOGGLE ── */
+document.getElementById('themeToggle').addEventListener('click', () => {
+  playSound('toggle');
+  const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  root.setAttribute('data-theme', next);
+  localStorage.setItem('mlx-theme', next);
+});
 
-  // ── HAMBURGER ──
-  const ham = document.getElementById('hamburger');
-  const mob = document.getElementById('mobileMenu');
-  ham.addEventListener('click', () => { ham.classList.toggle('open'); mob.classList.toggle('open'); });
-  mob.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { ham.classList.remove('open'); mob.classList.remove('open'); }));
+function isPageNavigationLink(el) {
+  const link = el.closest('a[href]');
+  if (!link) return false;
+  const href = link.getAttribute('href')?.trim();
+  if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:')) return false;
+  return href.endsWith('.html') || href.startsWith('/') || href.startsWith('./') || href.startsWith('../');
+}
 
-  // ── YEAR ──
-  document.getElementById('fyear').textContent = new Date().getFullYear();
+function navigateLink(link) {
+  const href = link.getAttribute('href')?.trim();
+  if (!href) return;
+  if (href.startsWith('mailto:')) {
+    if (soundEnabled) playSound('email');
+    window.location.href = href;
+    return;
+  }
+  if (href.startsWith('tel:') || href.startsWith('javascript:')) {
+    window.location.href = href;
+    return;
+  }
+  if (soundEnabled) playSound('switch');
+  setTimeout(() => { window.location.href = href; }, 120);
+}
 
-  // ── REVEALS ──
-  const io = new IntersectionObserver(e => e.forEach(x => { if(x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.08 });
-  document.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(el => io.observe(el));
+function handleDestTarget(el) {
+  const dest = el.closest('[data-dest]')?.getAttribute('data-dest')?.trim();
+  if (!dest) return false;
+  if (dest.startsWith('#')) {
+    if (soundEnabled) playSound('universal');
+    const target = document.querySelector(dest);
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return true;
+  }
+  if (dest.startsWith('mailto:')) {
+    if (soundEnabled) playSound('email');
+    window.location.href = dest;
+    return true;
+  }
+  if (soundEnabled) playSound('switch');
+  setTimeout(() => { window.location.href = dest; }, 120);
+  return true;
+}
 
-  // ── FOOTER REVEALS ──
-  const fio = new IntersectionObserver(e => e.forEach(x => { if(x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.12 });
-  [document.getElementById('fStripe'), document.getElementById('fCta'), ...document.querySelectorAll('.footer-reveal,.f-stat-item')].filter(Boolean).forEach(el => fio.observe(el));
+document.addEventListener('keydown', event => {
+  if (!soundEnabled) return;
+  if (event.key !== 'Enter' || event.shiftKey) return;
+  if (event.target.closest && event.target.closest('#chat-input')) {
+    playSound('email');
+  }
+});
 
-  // ── FOOTER STAT COUNTERS ──
-  const fCountIO = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (!e.isIntersecting) return;
-      const el = e.target;
+document.addEventListener('click', event => {
+  const target = event.target.closest('#chat-toggle, .mlx-ai-btn, [data-dest], .pill, .section-link, .nav-links a, .f-links a, button, a[href]');
+  if (!target) return;
+  if (target.closest('#chat-toggle')) {
+    if (soundEnabled) playSound('chat');
+    return;
+  }
+  if (target.closest('[data-dest]')) {
+    event.preventDefault();
+    handleDestTarget(target);
+    return;
+  }
+  const pageLink = target.closest('a[href]');
+  if (pageLink && isPageNavigationLink(pageLink)) {
+    event.preventDefault();
+    navigateLink(pageLink);
+    return;
+  }
+  const mailLink = target.closest('a[href^="mailto:"]');
+  if (mailLink) {
+    if (soundEnabled) playSound('email');
+    return;
+  }
+  if (target.closest('#cb-send')) {
+    if (soundEnabled) playSound('email');
+    return;
+  }
+  if (target.closest('.pill') || target.closest('.section-link') || target.closest('.nav-links a') || target.closest('.f-links a')) {
+    if (soundEnabled) playSound('universal');
+    return;
+  }
+});
+
+/* ── NAV ── */
+const nav = document.getElementById('mainNav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 20);
+  document.getElementById('backToTop').classList.toggle('show', window.scrollY > 400);
+  /* scroll progress bar */
+  const doc = document.scrollingElement || document.documentElement;
+  const pct = doc.scrollHeight - window.innerHeight;
+  const bar = document.getElementById('scrollProgress');
+  if (bar) bar.style.width = (pct > 0 ? (window.scrollY / pct) * 100 : 0) + '%';
+}, { passive: true });
+
+const backToTopBtn = document.getElementById('backToTop');
+if (backToTopBtn) {
+  backToTopBtn.addEventListener('click', e => {
+    e.preventDefault();
+    if (soundEnabled) playSound('up');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
+
+/* ── HAMBURGER ── */
+const ham = document.getElementById('hamburger');
+const mob = document.getElementById('mobileMenu');
+ham.addEventListener('click', () => {
+  ham.classList.toggle('open');
+  mob.classList.toggle('open');
+  if (soundEnabled) playSound('toggle');
+});
+mob.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { ham.classList.remove('open'); mob.classList.remove('open'); }));
+
+/* ── YEAR ── */
+document.getElementById('fyear').textContent = new Date().getFullYear();
+
+/* ── SCROLL-DRIVEN ANIMATION ENGINE ── */
+/* Replaces IntersectionObserver reveals with direct scroll-position mapping.
+   Animation progress = f(scrollY) — stops exactly when scroll stops,
+   speeds up when scroll speeds up. Easing applied to progress curve,
+   not to time, so it feels responsive not laggy. */
+
+function easeOutQuart(t) { return 1 - Math.pow(1 - t, 4); }
+
+/* Registry of all animatable elements */
+const _sdRegistry = [];
+
+function _registerSDElement(el) {
+  /* Spatial delay: d1–d5 classes shift the trigger point downward
+     so elements stagger without time-based delays */
+  const delayMap = { d1:60, d2:130, d3:200, d4:270, d5:340 };
+  let lagPx = 0;
+  for (const [cls, px] of Object.entries(delayMap)) {
+    if (el.classList.contains(cls)) { lagPx = px; break; }
+  }
+
+  /* nth-child delay for footer columns */
+  if (el.classList.contains('footer-reveal')) {
+    const idx = [...el.parentElement.children].indexOf(el);
+    lagPx = idx * 80;
+  }
+  if (el.classList.contains('f-stat-item')) {
+    const idx = [...el.parentElement.children].indexOf(el);
+    lagPx = idx * 70;
+  }
+
+  const type = el.classList.contains('reveal-left')  ? 'left'   :
+               el.classList.contains('reveal-right') ? 'right'  :
+               (el.classList.contains('footer-reveal') ||
+                el.classList.contains('f-stat-item') ||
+                el.classList.contains('f-cta-inner')) ? 'footer' :
+               el.classList.contains('footer-stripe-line') ? 'stripe' : 'up';
+
+  /* Disable CSS transition so JS drives directly */
+  el.style.cssText += ';transition:none !important;';
+
+  _sdRegistry.push({ el, type, lagPx, _prev: -1 });
+}
+
+/* Register all reveal element families */
+document.querySelectorAll(
+  '.reveal, .reveal-left, .reveal-right, ' +
+  '.footer-reveal, .f-stat-item, .f-cta-inner, .footer-stripe-line'
+).forEach(_registerSDElement);
+
+/* Collect parallax background layers */
+const _paxLayers = [...document.querySelectorAll('[data-parallax]')];
+
+/* ── Main update function — called every rAF when scroll changes ── */
+function _updateScrollDriven() {
+  const vh  = window.innerHeight;
+
+  /* ── 1. REVEALS ── */
+  for (const item of _sdRegistry) {
+    const { el, type, lagPx } = item;
+    const rect = el.getBoundingClientRect();
+
+    /* Trigger window: element starts revealing when its top edge
+       is (vh * 0.93 - lagPx) px below viewport top.
+       Fully revealed when its top edge is at vh * 0.08. */
+    const triggerY = vh * 0.93 - lagPx;
+    const fullY    = vh * 0.08;
+
+    let raw = (triggerY - rect.top) / (triggerY - fullY);
+    raw = Math.max(0, Math.min(1, raw));
+
+    /* Skip DOM write if value hasn't changed meaningfully */
+    if (Math.abs(raw - item._prev) < 0.002) continue;
+    item._prev = raw;
+
+    const e = easeOutQuart(raw);
+
+    if (type === 'stripe') {
+      /* Footer stripe: animate scaleX instead of opacity+translate */
+      el.style.transform = `scaleX(${e})`;
+      el.style.opacity = '1';
+    } else {
+      el.style.opacity = e;
+      if      (type === 'left')   el.style.transform = `translateX(${(1-e)*-32}px)`;
+      else if (type === 'right')  el.style.transform = `translateX(${(1-e)*32}px)`;
+      else if (type === 'footer') el.style.transform = `translateY(${(1-e)*22}px)`;
+      else                        el.style.transform = `translateY(${(1-e)*28}px)`;
+    }
+
+    /* Keep .visible in sync (some JS may check it) */
+    if (raw >= 0.98) el.classList.add('visible');
+    else             el.classList.remove('visible');
+  }
+
+  /* ── 2. PARALLAX BACKGROUNDS ── */
+  for (const layer of _paxLayers) {
+    const speed = parseFloat(layer.dataset.parallax);
+    /* Find containing section — supports <section> and non-section wrappers */
+    const section = layer.closest('section, .cta-block, .contact-section, .bottom-cta') || layer.parentElement;
+    const sr = section.getBoundingClientRect();
+    /* Offset: distance of section centre from viewport centre, scaled by speed.
+       When section is centred → 0 offset (natural position).
+       As it scrolls away → bg lags behind, creating depth. */
+    const centreDelta = (sr.top + sr.height * 0.5) - vh * 0.5;
+    const yOffset = centreDelta * speed;
+
+    /* hero-bg-letter needs to preserve its -50%,-50% centering transform */
+    if (layer.classList.contains('hero-bg-letter')) {
+      layer.style.transform = `translate(-50%, calc(-50% + ${yOffset}px)) translateZ(0)`;
+    } else {
+      layer.style.transform = `translateY(${yOffset}px) translateZ(0)`;
+    }
+  }
+}
+
+/* ── Scroll listener — one rAF per frame max ── */
+let _sdRafPending = false;
+window.addEventListener('scroll', () => {
+  if (!_sdRafPending) {
+    _sdRafPending = true;
+    requestAnimationFrame(() => {
+      _updateScrollDriven();
+      _sdRafPending = false;
+    });
+  }
+}, { passive: true });
+
+/* Run once immediately so nothing is invisible on load */
+_updateScrollDriven();
+/* Run again after fonts/images settle */
+window.addEventListener('load', _updateScrollDriven, { once: true });
+
+/* ── FOOTER STAT COUNTERS — triggered once when element becomes ≥60% visible ── */
+const _countEls = [...document.querySelectorAll('.f-stat-number, .fstat-n')];
+const _countDone = new Set();
+
+function _checkCounters() {
+  const vh = window.innerHeight;
+  for (const el of _countEls) {
+    if (_countDone.has(el)) continue;
+    const rect = el.getBoundingClientRect();
+    if (rect.top < vh * 0.88 && rect.bottom > 0) {
+      _countDone.add(el);
       const m = el.textContent.match(/^(\d+)(.*)/);
-      if (!m) return;
+      if (!m) continue;
       const end = parseInt(m[1], 10);
       const suffix = m[2] || '';
       let n = 0;
-      const iv = Math.max(Math.floor(1200/Math.max(end,1)), 12);
+      const iv = Math.max(Math.floor(1200 / Math.max(end, 1)), 12);
       const timer = setInterval(() => {
         n++;
         el.innerHTML = n + '<span>' + suffix + '</span>';
         if (n >= end) clearInterval(timer);
       }, iv);
-      fCountIO.unobserve(el);
-    });
-  }, { threshold: 0.5 });
-  document.querySelectorAll('.f-stat-number, .fstat-n').forEach(el => fCountIO.observe(el));
+    }
+  }
+}
+/* Attach to the same scroll listener via a second rAF */
+window.addEventListener('scroll', () => requestAnimationFrame(_checkCounters), { passive: true });
+_checkCounters();
 
 const BOOKED_FULL = [
   "2026-05-26","2026-05-27","2026-05-28"
@@ -1064,6 +1470,285 @@ sectionLinks.forEach(link => {
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 });
+
+/* ── GENTLE WHEEL SCROLL SMOOTHING ── */
+(() => {
+  const damping = 0.2;
+  let targetY = window.scrollY;
+  let currentY = window.scrollY;
+  let frameRequested = false;
+
+  const doc = document.scrollingElement || document.documentElement;
+  const clampY = y => Math.min(Math.max(0, y), doc.scrollHeight - window.innerHeight);
+
+  function step() {
+    currentY += (targetY - currentY) * damping;
+    if (Math.abs(targetY - currentY) < 0.5) {
+      currentY = targetY;
+      window.scrollTo(0, Math.round(currentY));
+      frameRequested = false;
+      return;
+    }
+    window.scrollTo(0, Math.round(currentY));
+    requestAnimationFrame(step);
+  }
+
+  window.addEventListener('wheel', e => {
+    if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || !e.deltaY) return;
+    e.preventDefault();
+    targetY = clampY(targetY + e.deltaY);
+    if (!frameRequested) {
+      frameRequested = true;
+      requestAnimationFrame(step);
+    }
+  }, { passive: false });
+
+  window.addEventListener('scroll', () => {
+    if (!frameRequested) {
+      targetY = window.scrollY;
+      currentY = window.scrollY;
+    }
+  }, { passive: true });
+})();
+
+/* ══════════════════════════════════════════════════
+   LANGUAGE SYSTEM — CZ / EN
+   ══════════════════════════════════════════════════ */
+const translations = {
+  cz: {
+    'nav-home':'Domů','nav-about':'O mně','nav-portfolio':'Portfolio',
+    'nav-aspekty':'Aspekty','nav-cenik':'Ceník','nav-objednavka':'Objednávka',
+    'hero-eyebrow':'MLX Media · Začněte spolupráci',
+    'hero-title-html':'Pojďme<br>to <em>natočit.</em>',
+    'hero-subtitle':'Řekněte mi o svém projektu — já se postarám o zbytek. Od první zprávy po finální video jsem tu pro vás osobně.',
+    'process-tag':'Jak to funguje','process-title-html':'Od nápadu<br><em>k hotovému videu</em>',
+    'process-desc':'Pět jasných kroků. Žádné překvapení, žádné zbytečné čekání.',
+    'step1-name':'Poptávka','step1-desc':'Vyplníte objednávkový formulář — popíšete projekt, termín a představu. Odpovím do 24 hodin.',
+    'step2-name':'Konzultace','step2-desc':'Zavolám vám nebo si napíšeme. Upřesním detaily, navrhnu řešení a domluvíme termín natáčení.',
+    'step3-name':'Natáčení','step3-desc':'Přijedu na domluvené místo s celou technikou. Natáčíme dle scénáře nebo run-and-gun stylem.',
+    'step4-name':'Střih & post','step4-desc':'Střih, color grading, zvuk a grafika. Pošlu vám náhled, zapracuji vaše připomínky (2× v ceně).',
+    'step5-name':'Dodání','step5-desc':'Do 4–10 dní od natáčení dostanete finální video ve všech domluvených formátech. Hotovo.',
+    'cta-eyebrow':'Objednávkový formulář','cta-title-html':'Řekněte mi<br>o svém<br><em>projektu.</em>',
+    'cta-body':'Formulář vám zabere asi 3 minuty. Čím víc mi toho řeknete, tím přesnější nabídku dostanete. Nejste si jistí rozsahem nebo cenou? Vyplňte co víte — zbytek dořešíme přes telefon nebo email.',
+    'cta-btn':'Přejít na formulář',
+    'cta-feat1':'<strong>Odpovím do 24 hodin</strong> — přes email nebo telefon, podle vašich preferencí',
+    'cta-feat2':'<strong>Žádné závazky předem</strong> — formulář je nezávazná poptávka, ne smlouva',
+    'cta-feat3':'<strong>2 revize zdarma</strong> — v ceně každého projektu, bez zbytečných diskuzí',
+    'cta-feat4':'<strong>50 % záloha při potvrzení</strong> — zbytek po dodání finálního videa',
+    'cta-feat5':'<strong>Dodání 4–10 pracovních dní</strong> — expresní možné, domluvíme se',
+    'cta-feat6':'<strong>Celá ČR na požádání</strong> — Beroun, Praha 5 a Praha 6 bez příplatku',
+    'cta-btn2':'Vyplnit objednávku','cta-note':'Nezávazná poptávka · Odpovím do 24 h',
+    'cal-tag':'Dostupnost','cal-title-html':'Kdy jsem <em>volný</em>',
+    'cal-desc':'Termíny se obsazují rychle, zvláště o víkendech. Plánujte dopředu — napište mi a domluvíme se.',
+    'cal-legend-tag':'Legenda',
+    'cal-free':'Volno — lze rezervovat','cal-partial':'Pouze prioritní projekty',
+    'cal-hard':'Možné, ale hůře — domluvte se','cal-full':'Plně obsazeno',
+    'cal-note':'Volné dny nejsou označeny. Chcete konkrétní termín? Napište mi — odpovím do 24 hodin.',
+    'cal-cta':'Zarezervovat termín',
+    'map-tag':'Oblast pokrytí','map-title-html':'Kde a <em>jak točím</em>',
+    'map-desc':'Primárně Praha a okolí. Na vzdálenější lokace se domluvíme individuálně — nebojte se zeptat.',
+    'faq-tag':'Časté otázky','faq-title-html':'Co vás <em>zajímá</em>',
+    'contact-tag':'Přímý kontakt','contact-title-html':'Raději <em>zavoláte?</em>',
+    'contact-desc':'Formulář není povinný. Pokud preferujete přímou komunikaci, tady mě najdete.',
+    'bottom-cta-eyebrow':'Připraveni začít?','bottom-cta-title':'Vyplňte formulář — zbytek nechte na mě.',
+    'bottom-cta-btn':'Objednávkový formulář',
+    'f-tagline':'Filmování · Střih · Postprodukce',
+    'f-desc':'Věřím, že každý příběh si zaslouží být vyprávěn. Pomáhám firmám a jednotlivcům zachytit jejich vizi prostřednictvím profesionálního videa.',
+    'f-nav-title':'Navigace','f-nav-1':'Domovská stránka','f-nav-2':'O mně','f-nav-3':'Portfolio','f-nav-4':'Aspekty','f-nav-5':'Ceník','f-nav-6':'Objednávka',
+    'f-svc-title':'Služby','f-svc-1':'Firemní videa','f-svc-2':'Reklamní spot','f-svc-3':'Reels &amp; TikTok','f-svc-4':'Color grading','f-svc-5':'Zvukový design','f-svc-6':'Dronové záběry',
+    'f-contact-title':'Kontakt','f-email-label':'Email','f-phone-label':'Telefon','f-area-label':'Oblast','f-delivery-label':'Dodání','f-delivery-val':'4–10 dní od natáčení',
+    'f-cta-eyebrow':'Hledám nové klienty','f-cta-title':'Máte projekt? Pojďme ho natočit.','f-cta-btn':'Objednat video',
+    'f-rights':'Všechna práva vyhrazena','f-legal-1':'Ochrana soukromí','f-legal-2':'Cookies','f-legal-3':'Kontakt',
+  },
+  en: {
+    'nav-home':'Home','nav-about':'About','nav-portfolio':'Portfolio',
+    'nav-aspekty':'Aspects','nav-cenik':'Pricing','nav-objednavka':'Order',
+    'hero-eyebrow':'MLX Media · Start a collaboration',
+    'hero-title-html':"Let's<br>shoot <em>it.</em>",
+    'hero-subtitle':"Tell me about your project — I'll take care of the rest. From the first message to the final video, I'm here for you personally.",
+    'process-tag':'How it works','process-title-html':'From idea<br><em>to finished video</em>',
+    'process-desc':'Five clear steps. No surprises, no unnecessary waiting.',
+    'step1-name':'Inquiry','step1-desc':"Fill out the order form — describe your project, timeline, and vision. I'll respond within 24 hours.",
+    'step2-name':'Consultation','step2-desc':"I'll call you or we'll message. I'll clarify details, propose solutions, and we'll schedule the shoot.",
+    'step3-name':'Filming','step3-desc':"I'll arrive at the agreed location with all equipment. We film according to a script or run-and-gun style.",
+    'step4-name':'Edit & post','step4-desc':"Editing, color grading, sound and graphics. I'll send you a preview and incorporate your feedback (2× included).",
+    'step5-name':'Delivery','step5-desc':"Within 4–10 days of filming you'll receive the final video in all agreed formats. Done.",
+    'cta-eyebrow':'Order form','cta-title-html':'Tell me<br>about your<br><em>project.</em>',
+    'cta-body':"The form takes about 3 minutes. The more you tell me, the more precise the quote. Not sure about the scope or price? Fill in what you know — we'll sort the rest by phone or email.",
+    'cta-btn':'Go to form',
+    'cta-feat1':'<strong>Reply within 24 hours</strong> — by email or phone, based on your preference',
+    'cta-feat2':'<strong>No commitment upfront</strong> — the form is a non-binding inquiry, not a contract',
+    'cta-feat3':'<strong>2 revisions free</strong> — included in every project, no unnecessary disputes',
+    'cta-feat4':'<strong>50% deposit on confirmation</strong> — remainder after final video delivery',
+    'cta-feat5':'<strong>Delivery in 4–10 working days</strong> — express possible, we can arrange it',
+    'cta-feat6':'<strong>All of Czech Republic on request</strong> — Beroun, Praha 5 and Praha 6 without surcharge',
+    'cta-btn2':'Fill in order','cta-note':'Non-binding inquiry · Reply within 24 h',
+    'cal-tag':'Availability','cal-title-html':'When I am <em>free</em>',
+    'cal-desc':"Slots fill up fast, especially on weekends. Plan ahead — write to me and we'll sort it out.",
+    'cal-legend-tag':'Legend',
+    'cal-free':'Free — bookable','cal-partial':'Priority projects only',
+    'cal-hard':'Possible but tight — get in touch','cal-full':'Fully booked',
+    'cal-note':"Free days are not marked. Want a specific date? Write to me — I'll reply within 24 hours.",
+    'cal-cta':'Reserve a date',
+    'map-tag':'Coverage area','map-title-html':'Where and <em>how I film</em>',
+    'map-desc':"Primarily Prague and surroundings. For more distant locations we'll arrange individually — don't hesitate to ask.",
+    'faq-tag':'FAQ','faq-title-html':'What you <em>want to know</em>',
+    'contact-tag':'Direct contact','contact-title-html':'Prefer to <em>call?</em>',
+    'contact-desc':"The form isn't mandatory. If you prefer direct communication, here's where to find me.",
+    'bottom-cta-eyebrow':'Ready to start?','bottom-cta-title':'Fill in the form — leave the rest to me.',
+    'bottom-cta-btn':'Order form',
+    'f-tagline':'Filming · Editing · Post-production',
+    'f-desc':'I believe every story deserves to be told. I help businesses and individuals capture their vision through professional video.',
+    'f-nav-title':'Navigation','f-nav-1':'Home page','f-nav-2':'About me','f-nav-3':'Portfolio','f-nav-4':'Aspects','f-nav-5':'Pricing','f-nav-6':'Order',
+    'f-svc-title':'Services','f-svc-1':'Corporate videos','f-svc-2':'Commercial spot','f-svc-3':'Reels &amp; TikTok','f-svc-4':'Color grading','f-svc-5':'Audio design','f-svc-6':'Drone footage',
+    'f-contact-title':'Contact','f-email-label':'Email','f-phone-label':'Phone','f-area-label':'Area','f-delivery-label':'Delivery','f-delivery-val':'4–10 days after filming',
+    'f-cta-eyebrow':'Looking for new clients','f-cta-title':"Have a project? Let's shoot it.",'f-cta-btn':'Order video',
+    'f-rights':'All rights reserved','f-legal-1':'Privacy Policy','f-legal-2':'Cookies','f-legal-3':'Contact',
+  }
+};
+
+/* ── Apply all translations silently (no wave) ── */
+function applyTranslations(lang) {
+  const t = translations[lang];
+  if (!t) return;
+  document.querySelectorAll('[data-i18n],[data-i18n-html]').forEach(el => {
+    const kh = el.dataset.i18nHtml, kt = el.dataset.i18n;
+    if (kh && t[kh] !== undefined) el.innerHTML = t[kh];
+    else if (kt && t[kt] !== undefined) el.textContent = t[kt];
+  });
+  const yr = document.getElementById('fyear');
+  if (yr) yr.textContent = new Date().getFullYear();
+  document.documentElement.lang = lang === 'en' ? 'en' : 'cs';
+}
+
+/* ── Wave animation ── */
+let _waveRunning = false;
+
+function animateLangWave(targetLang) {
+  if (_waveRunning) return;
+  _waveRunning = true;
+  const canvas = document.getElementById('langWaveCanvas');
+  canvas.style.display = 'block';
+  canvas.classList.add('active');
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const ctx    = canvas.getContext('2d');
+  const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+  const elemData = [...document.querySelectorAll('[data-i18n],[data-i18n-html]')]
+    .map(el => { const r = el.getBoundingClientRect(); return { el, cx: r.left + r.width * 0.5, swapped: false }; })
+    .sort((a, b) => a.cx - b.cx);
+  const PHASE_DUR = 560, AMP = 60, FREQ = 0.009, BAND = 100;
+  function easeInOut(t) { return t < 0.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2; }
+  function leftFill(frontX, ph) {
+    const H = canvas.height; ctx.beginPath(); ctx.moveTo(0, 0);
+    for (let y = 0; y <= H; y += 3) ctx.lineTo(frontX + AMP * Math.sin(y * FREQ * Math.PI * 2 + ph), y);
+    ctx.lineTo(0, H); ctx.closePath();
+  }
+  function rightFill(frontX, ph) {
+    const W = canvas.width, H = canvas.height; ctx.beginPath(); ctx.moveTo(W, 0);
+    for (let y = 0; y <= H; y += 3) ctx.lineTo(frontX + AMP * Math.sin(y * FREQ * Math.PI * 2 + ph), y);
+    ctx.lineTo(W, H); ctx.closePath();
+  }
+  function drawGlowEdge(frontX, ph) {
+    ctx.save(); ctx.shadowBlur = 16; ctx.shadowColor = accent; ctx.strokeStyle = accent; ctx.lineWidth = 1.5; ctx.beginPath();
+    ctx.moveTo(frontX + AMP * Math.sin(0), 0);
+    for (let y = 3; y <= canvas.height; y += 3) ctx.lineTo(frontX + AMP * Math.sin(y * FREQ * Math.PI * 2 + ph), y);
+    ctx.stroke(); ctx.restore();
+  }
+  function drawFrame(frontX, phase, elapsed) {
+    const W = canvas.width; ctx.clearRect(0, 0, W, canvas.height);
+    const ph = elapsed * 0.003;
+    if (phase === 1) {
+      leftFill(frontX, ph);
+      const gx = Math.max(0, frontX - BAND);
+      const grad = ctx.createLinearGradient(gx, 0, frontX + AMP, 0);
+      grad.addColorStop(0, accent + 'ee'); grad.addColorStop(0.75, accent + 'ee'); grad.addColorStop(1, accent + 'c0');
+      ctx.fillStyle = grad; ctx.fill(); drawGlowEdge(frontX, ph);
+    } else {
+      rightFill(frontX, ph + Math.PI);
+      const gx = frontX - AMP;
+      const grad = ctx.createLinearGradient(gx, 0, gx + BAND, 0);
+      grad.addColorStop(0, accent + '00'); grad.addColorStop(0.25, accent + 'c0'); grad.addColorStop(1, accent + 'ee');
+      ctx.fillStyle = grad; ctx.fill(); drawGlowEdge(frontX, ph + Math.PI);
+    }
+  }
+  let startTime = null, phase = 1;
+  function tick(ts) {
+    if (!startTime) startTime = ts;
+    const elapsed = ts - startTime;
+    const raw  = Math.min(elapsed / PHASE_DUR, 1);
+    const prog = easeInOut(raw);
+    const W    = canvas.width;
+    const frontX = -AMP + prog * (W + AMP * 2);
+    drawFrame(frontX, phase, elapsed);
+    if (phase === 1) {
+      elemData.forEach(item => {
+        if (!item.swapped && item.cx < frontX - AMP * 0.4) {
+          item.swapped = true;
+          const el = item.el;
+          el.classList.add('lang-fading');
+          setTimeout(() => {
+            const t = translations[targetLang];
+            const kh = el.dataset.i18nHtml, kt = el.dataset.i18n;
+            if (kh && t[kh] !== undefined) el.innerHTML = t[kh];
+            else if (kt && t[kt] !== undefined) el.textContent = t[kt];
+            el.classList.remove('lang-fading');
+            el.classList.add('lang-fading-in');
+            setTimeout(() => el.classList.remove('lang-fading-in'), 300);
+          }, 80);
+        }
+      });
+      if (raw >= 1) {
+        const t = translations[targetLang];
+        elemData.forEach(item => {
+          if (!item.swapped) {
+            item.swapped = true;
+            const kh = item.el.dataset.i18nHtml, kt = item.el.dataset.i18n;
+            if (kh && t[kh] !== undefined) item.el.innerHTML = t[kh];
+            else if (kt && t[kt] !== undefined) item.el.textContent = t[kt];
+          }
+        });
+        const yr = document.getElementById('fyear');
+        if (yr) yr.textContent = new Date().getFullYear();
+        document.documentElement.lang = targetLang === 'en' ? 'en' : 'cs';
+        phase = 2; startTime = null;
+      }
+    } else {
+      if (raw >= 1) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        canvas.style.display = 'none'; canvas.classList.remove('active');
+        _waveRunning = false; return;
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+/* ── Toggle UI ── */
+let currentLang = localStorage.getItem('mlx-lang') || 'cz';
+function updateLangToggle() {
+  const toggle = document.getElementById('langToggle');
+  if (!toggle) return;
+  toggle.dataset.lang = currentLang;
+  document.getElementById('langOptCZ').classList.toggle('active', currentLang === 'cz');
+  document.getElementById('langOptEN').classList.toggle('active', currentLang === 'en');
+}
+document.getElementById('langToggle').addEventListener('click', () => {
+  if (_waveRunning) return;
+  const newLang = currentLang === 'cz' ? 'en' : 'cz';
+  if (soundEnabled) {
+    playSound('toggle');
+    playSound('language2');
+    setTimeout(() => playSound('language'), 300);
+  }
+  currentLang = newLang;
+  localStorage.setItem('mlx-lang', newLang);
+  updateLangToggle();
+  animateLangWave(newLang);
+});
+updateLangToggle();
+if (currentLang === 'en') applyTranslations('en');
 
 </script>
 </body>
