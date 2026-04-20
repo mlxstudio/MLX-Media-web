@@ -20,7 +20,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
-
+  <script src="mlx-cursor.js" defer></script>
   <style>
     /* ─── TOKENS ─── */
     :root {
@@ -724,8 +724,27 @@
         datum: document.getElementById('fdate').value,
         poznamka: document.getElementById('fnote').value,
       };
-      console.log('MLX Ztráta/Nález:', data);
-      // → here you can hook up your backend / email service / Firebase
+      const GAS_URL = "https://script.google.com/macros/s/AKfycbzWfQRKhV2jZD4AcVeyF6FqUdDW3JPRPQzsxrDfSaiuoKHsUZrxBIMFT75DoRQawQZL/exec";
+
+  const btn = document.querySelector('.submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Odesílám…';
+
+  fetch(GAS_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  })
+  .then(() => {
+    document.getElementById('formContent').style.display = 'none';
+    document.getElementById('successMsg').classList.add('show');
+  })
+  .catch(() => {
+    btn.disabled = false;
+    btn.textContent = 'ODESLAT FORMULÁŘ';
+    alert('Chyba při odesílání. Zkuste to prosím znovu.');
+  });
 
       document.getElementById('formContent').style.display = 'none';
       document.getElementById('successMsg').classList.add('show');
