@@ -17,6 +17,20 @@
   <meta name="twitter:description" content="Profesionální video produkce a střih od Matouše Lexy. Natáčení, color grading a postprodukce pro firmy a soukromníky v České republice." />
   <meta name="twitter:image" content="https://mlxmedia.cz/Obrázky/MLXLogo.png" />
   <title>MLX Media – Matouš Lexa</title>
+  
+  <!-- ═══ INSTANT STATE SYNC ═══ Prevents toggle flicker on page load/switch -->
+  <script>
+    (function() {
+      const theme = localStorage.getItem('mlx-theme') || 'light';
+      const sound = localStorage.getItem('mlx-sound') !== 'off';
+      const lang = localStorage.getItem('mlx-lang') || 'cz';
+      
+      document.documentElement.setAttribute('data-theme', theme);
+      document.documentElement.setAttribute('data-sound', sound ? 'on' : 'off');
+      document.documentElement.setAttribute('data-lang', lang);
+    })();
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
@@ -25,6 +39,7 @@
   <script src="AI/ChatBotKnowledge.js"></script>
   <script src="AI/ChatBot.js"></script>
   <script src="AI/mlx_highlight.js"></script>
+  <script src="mlx-cursor.js" defer></script>
 
   <style>
     :root {
@@ -47,15 +62,22 @@
       --text-muted:  #5e5a56;
       --text-dim:    #8a8580;
       --noise-op:    0.028;
+      --noise-op2:   0.015;
       --hero-grad:   linear-gradient(160deg,#0d0d0d 0%,#141008 100%);
       --stripe:      linear-gradient(90deg,transparent,#FF8A00,#ffb347,transparent);
       --footer-desc: #888480;
+      --grid-line:   rgba(255,138,0,0.04);
+      --vignette:    rgba(0,0,0,0.40);
+      --tape-color:  rgba(255,200,100,0.22);
+      --tape-border: rgba(255,220,140,0.18);
+      --ruled-line:  rgba(255,255,255,0.04);
+      --award-bg:    #080808;
     }
 
     [data-theme="light"] {
-      --bg:          #f6f5f2;
-      --bg-surface:  #ffffff;
-      --bg-card:     #fafaf8;
+      --bg:          #f4f2ec;
+      --bg-surface:  #faf9f5;
+      --bg-card:     #fefefe;
       --border:      rgba(0,0,0,0.08);
       --accent:      #00BFA6;
       --accent-soft: rgba(0,191,166,0.08);
@@ -63,10 +85,17 @@
       --text:        #0f1e1c;
       --text-muted:  #a0a8a6;
       --text-dim:    #6b7574;
-      --noise-op:    0.018;
-      --hero-grad:   linear-gradient(160deg,#f6f5f2 0%,#e8f7f5 100%);
+      --noise-op:    0.050;
+      --noise-op2:   0.040;
+      --hero-grad:   linear-gradient(160deg,#f4f2ec 0%,#e5f5f2 100%);
       --stripe:      linear-gradient(90deg,transparent,#00BFA6,#7dd7cc,transparent);
       --footer-desc: #6b7574;
+      --grid-line:   rgba(0,191,166,0.055);
+      --vignette:    rgba(0,0,0,0.10);
+      --tape-color:  rgba(210,185,120,0.40);
+      --tape-border: rgba(180,155,80,0.30);
+      --ruled-line:  rgba(0,0,0,0.055);
+      --award-bg:    var(--bg-surface);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -80,9 +109,33 @@
     }
     body::before {
       content: ''; position: fixed; inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
       opacity: var(--noise-op); pointer-events: none; z-index: 9999;
       transition: opacity var(--trans);
+      animation: grainDrift 8s steps(2) infinite;
+    }
+    .page-grain {
+      position: fixed; inset: 0; pointer-events: none; z-index: 9998;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.35' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+      opacity: var(--noise-op2); mix-blend-mode: overlay;
+      transition: opacity var(--trans);
+      animation: grainDrift2 12s steps(3) infinite;
+    }
+    .page-vignette {
+      position: fixed; inset: 0; pointer-events: none; z-index: 9996;
+      background: radial-gradient(ellipse at 50% 40%, transparent 55%, var(--vignette) 100%);
+      transition: background var(--trans);
+    }
+    @keyframes grainDrift {
+      0%  { transform: translate(0,0); }
+      25% { transform: translate(-1%,.5%); }
+      50% { transform: translate(1%,-.5%); }
+      75% { transform: translate(-.5%,1%); }
+    }
+    @keyframes grainDrift2 {
+      0%  { transform: translate(0,0); }
+      33% { transform: translate(1.5%,-1%); }
+      66% { transform: translate(-1%,1.5%); }
     }
 
     /* ── NAV ── */
@@ -102,6 +155,22 @@
     .nav-links { display: flex; align-items: center; gap: clamp(12px,2vw,32px); list-style: none; }
     .nav-links a { font-size: 0.78rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; color: var(--text-dim); transition: color 0.2s; white-space: nowrap; }
     .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .sound-toggle {
+      width: 48px; height: 26px; background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 99px; cursor: pointer; position: relative; flex-shrink: 0;
+      transition: background var(--trans), border-color var(--trans);
+    }
+    .sound-toggle::after {
+      content: ''; position: absolute; top: 3px; left: 3px;
+      width: 18px; height: 18px; border-radius: 50%; background: var(--text-muted);
+      transition: transform 0.35s var(--ease-out), background var(--trans);
+    }
+    .sound-toggle.active::after { transform: translateX(22px); background: var(--accent); }
+    .sound-icon {
+      position: absolute; inset: 0; display: flex; align-items: center;
+      justify-content: space-between; padding: 0 5px; font-size: 10px; pointer-events: none;
+      font-family: "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif;
+    }
     .theme-toggle {
       width: 48px; height: 26px; background: var(--bg-card); border: 1px solid var(--border);
       border-radius: 99px; cursor: pointer; position: relative; flex-shrink: 0;
@@ -149,6 +218,9 @@
     .nav-mobile.open a:nth-child(6) { opacity:1; transform:translateX(0); transition-delay:0.31s; }
     @media (max-width: 768px) { .nav-links { display: none; } .nav-hamburger { display: flex; } }
 
+    /* ── SCROLL PROGRESS BAR ── */
+    .scroll-progress { position: fixed; top: 0; left: 0; width: 0%; height: 2px; background: var(--accent); z-index: 10001; transition: background var(--trans); pointer-events: none; }
+
     /* ── HERO ── */
     .hero {
       min-height: 100svh; background: var(--hero-grad);
@@ -156,6 +228,13 @@
       padding-top: var(--nav-h);
       position: relative; overflow: hidden;
       transition: background var(--trans);
+    }
+    /* grid overlay — same as O-mně */
+    .hero::after {
+      content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+      background-image: linear-gradient(var(--grid-line) 1px, transparent 1px),
+                        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+      background-size: 40px 40px;
     }
     .hero-inner {
       display: flex; flex-direction: column;
@@ -299,24 +378,78 @@
     .about-body strong { color: var(--text); font-weight: 500; }
 
     .about-visual {
-      position: relative; border-radius: 6px; overflow: hidden;
+      position: relative; border-radius: 2px; overflow: visible;
       background: var(--bg-card); border: 1px solid var(--border);
       aspect-ratio: 4/5; display: flex; flex-direction: column;
       align-items: center; justify-content: center; gap: 16px;
+      transition: background var(--trans), border-color var(--trans), transform 0.35s var(--ease-out), box-shadow 0.35s;
+      padding: 10px 10px 36px;
+      box-shadow: 0 8px 40px rgba(0,0,0,.14), 0 2px 8px rgba(0,0,0,.08);
+      transform: rotate(-0.6deg);
+      overflow: visible;
+    }
+    .about-visual:hover { transform: rotate(0deg) translateY(-4px); box-shadow: 0 20px 64px rgba(0,0,0,.20); }
+    .about-visual::before { content:''; position:absolute; inset:0; background: var(--accent-soft); opacity:0; transition: opacity 0.4s; border-radius:2px; }
+    .about-visual:hover::before { opacity:1; }
+    /* tape strips */
+    .about-tape {
+      position: absolute; top: -10px; width: 52px; height: 22px;
+      background: var(--tape-color); border: 1px solid var(--tape-border);
+      border-radius: 2px; backdrop-filter: blur(2px);
       transition: background var(--trans), border-color var(--trans);
     }
-    .about-visual::before { content:''; position:absolute; inset:0; background: var(--accent-soft); opacity:0; transition: opacity 0.4s; }
-    .about-visual:hover::before { opacity:1; }
-    .about-visual::after { content:''; position:absolute; bottom:0; right:0; width:60px; height:60px; border-bottom:2px solid var(--accent); border-right:2px solid var(--accent); opacity:0.3; border-radius:0 0 6px 0; transition: opacity 0.4s, border-color var(--trans); }
-    .about-visual:hover::after { opacity:0.7; }
-    /* big letter inside visual */
-    .about-vis-letter { font-family: var(--font-display); font-size: clamp(5rem,16vw,12rem); color: var(--accent); opacity: 0.08; line-height: 1; user-select: none; transition: color var(--trans), opacity 0.4s; }
+    .about-tape-l { left: 18px; transform: rotate(-3deg); }
+    .about-tape-r { right: 18px; transform: rotate(2deg); }
+    /* film strip on left */
+    .about-film-strip {
+      position: absolute; left: -22px; top: 0; bottom: 0; width: 18px;
+      background: color-mix(in srgb, var(--bg-card) 90%, var(--accent));
+      border: 1px solid var(--border); border-radius: 2px 0 0 2px;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: space-evenly; padding: 8px 0;
+      transition: background var(--trans), border-color var(--trans);
+    }
+    .film-hole {
+      width: 9px; height: 6px; background: var(--bg);
+      border: 1px solid var(--border); border-radius: 1px;
+      transition: background var(--trans), border-color var(--trans);
+    }
+    @media(max-width:840px) { .about-film-strip { display: none; } }
+    .about-visual-inner {
+      width: 100%; flex: 1; overflow: hidden; background: var(--bg-surface);
+      position: relative; border: 1px solid var(--border);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+    }
+    .about-visual-inner::before { content: ''; position:absolute; inset:0; background: var(--accent-soft); opacity:0; transition: opacity 0.4s; }
+    .about-visual:hover .about-visual-inner::before { opacity:0; }
+    /* big letter + badges inside visual */
+    .about-vis-letter { font-family: var(--font-display); font-size: clamp(5rem,16vw,11rem); color: var(--accent); opacity: 0.08; line-height: 1; user-select: none; position:absolute; transition: color var(--trans), opacity 0.4s; }
     .about-visual:hover .about-vis-letter { opacity: 0.14; }
-    .about-vis-badge { position: absolute; top: 20px; left: 20px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 99px; padding: 7px 16px; font-size: 0.7rem; letter-spacing: 0.1em; font-weight: 500; color: var(--accent); transition: background var(--trans), border-color var(--trans), color var(--trans); }
-    .about-vis-cam { position: absolute; bottom: 20px; right: 20px; background: var(--accent); border-radius: 4px; padding: 8px 14px; font-size: 0.68rem; letter-spacing: 0.1em; font-weight: 600; color: var(--bg); text-transform: uppercase; transition: background var(--trans), color var(--trans); }
+    .about-vis-badge { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 99px; padding: 7px 16px; font-size: 0.7rem; letter-spacing: 0.1em; font-weight: 500; color: var(--accent); position:relative; z-index:1; transition: background var(--trans), border-color var(--trans), color var(--trans); }
+    .about-vis-cam { background: var(--accent); border-radius: 4px; padding: 8px 14px; font-size: 0.68rem; letter-spacing: 0.1em; font-weight: 600; color: var(--bg); text-transform: uppercase; position:relative; z-index:1; transition: background var(--trans), color var(--trans); }
+    /* photo label at bottom */
+    .about-photo-label {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 36px;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      font-size: .68rem; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .about-photo-label::before, .about-photo-label::after { content:''; width:16px; height:1px; background:var(--border); }
+    /* tape on the why-visual and sig-card */
+    .tape-strip {
+      position: absolute; width: 44px; height: 18px;
+      background: var(--tape-color); border: 1px solid var(--tape-border);
+      border-radius: 1px; pointer-events: none;
+      transition: background var(--trans), border-color var(--trans);
+    }
+    .tape-tl { top: -6px; left: 20px; transform: rotate(-4deg); }
+    .tape-br { bottom: -6px; right: 20px; transform: rotate(2deg); }
 
     /* ── SERVICES ── */
-    .services { background: var(--bg-surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); transition: background var(--trans), border-color var(--trans); }
+    .services { background: var(--bg-surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); transition: background var(--trans), border-color var(--trans);
+      background-image: linear-gradient(var(--ruled-line) 1px, transparent 1px);
+      background-size: 100% 32px;
+    }
     .services-inner { max-width: 1280px; margin: 0 auto; padding: clamp(72px,10vw,120px) clamp(24px,4vw,96px); }
 
     .section-header { margin-bottom: clamp(48px,6vw,72px); }
@@ -371,8 +504,20 @@
     .why-visual {
       position: sticky; top: calc(var(--nav-h) + 32px);
       background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: 6px; overflow: hidden;
+      border-radius: 6px; overflow: visible;
       transition: background var(--trans), border-color var(--trans);
+    }
+
+    /* ── PHILOSOPHY SIG CARD ── */
+    .philosophy-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 6px; padding: clamp(32px,4vw,56px) clamp(28px,3.5vw,48px);
+      position: relative; overflow: visible; margin-top: 0;
+      transition: background var(--trans), border-color var(--trans);
+    }
+    .philosophy-card::before {
+      content: ''; position: absolute; top: -1px; left: 10%; right: 10%;
+      height: 2px; background: var(--stripe); transition: background var(--trans);
     }
     .why-vis-top {
       padding: 28px 28px 0;
@@ -432,7 +577,7 @@
 
     /* ── PHILOSOPHY / QUOTE ── */
     .philosophy { border-top: 1px solid var(--border); transition: border-color var(--trans); }
-    .philosophy-inner { max-width: 900px; margin: 0 auto; padding: clamp(72px,10vw,120px) clamp(24px,4vw,48px); text-align: center; }
+    .philosophy-inner { max-width: 900px; margin: 0 auto; padding: clamp(72px,10vw,120px) clamp(24px,4vw,48px); text-align: center; position: relative; }
     .philosophy-eyebrow { font-size:0.68rem; letter-spacing:0.32em; text-transform:uppercase; color: var(--accent); margin-bottom:24px; transition: color var(--trans); }
     .philosophy-quote { font-family: var(--font-display); font-size: clamp(1.9rem,5vw,3.4rem); letter-spacing:0.04em; line-height:1.22; color: var(--text); margin-bottom:32px; transition: color var(--trans); }
     .philosophy-quote em { font-style:normal; color: var(--accent); transition: color var(--trans); }
@@ -521,6 +666,64 @@
     .back-top:hover { border-color: var(--accent); }
     .back-top svg { width:18px; height:18px; }
     @media(max-width:480px){ .back-top{ bottom:20px; right:20px; } }
+    /* ── LANG TOGGLE ── */
+    .lang-toggle {
+      position:relative; display:flex; align-items:center; justify-content:space-between;
+      width:82px; background:var(--bg-card); border:1px solid var(--border);
+      border-radius:99px; cursor:pointer; overflow:hidden; height:28px; padding:3px; gap:1px;
+      transition:transform .2s ease, border-color var(--trans), background var(--trans), box-shadow var(--trans);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.12), 0 4px 10px rgba(0,0,0,.08);
+      flex-shrink:0;
+    }
+    .lang-toggle:hover { transform:translateY(-1px); }
+    .lang-toggle::before {
+      content:''; position:absolute; top:3px; left:3px;
+      width:calc(50% - 3px); height:calc(100% - 6px); border-radius:99px;
+      background:linear-gradient(180deg,
+        color-mix(in srgb,var(--accent) 90%,#fff 10%),
+        color-mix(in srgb,var(--accent) 80%,#000 20%));
+      box-shadow:0 8px 18px rgba(0,0,0,.14), inset 0 1px 0 rgba(255,255,255,.35);
+      transition:transform .35s var(--ease-out), background .35s var(--ease-out); z-index:0;
+    }
+    .lang-toggle[data-lang="en"]::before { transform:translateX(100%); }
+    .lang-option {
+      position:relative; z-index:1; width:50%; display:flex; align-items:center; justify-content:center;
+      font-family:var(--font-display); font-size:11px; letter-spacing:.12em;
+      color:var(--text-muted); transition:color .35s var(--ease-out); line-height:1; user-select:none;
+    }
+    .lang-option.active { color:var(--bg); font-weight:700; }
+
+    /* ── LANG WAVE CANVAS ── */
+    #langWaveCanvas { position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:99998; display:none; }
+    #langWaveCanvas.active { pointer-events:all; }
+
+    /* ── TEXT LANG TRANSITION ── */
+    .lang-fading    { opacity:0 !important; filter:blur(5px) !important; transition:opacity .22s ease, filter .22s ease !important; will-change:opacity,filter; }
+    .lang-fading-in { opacity:1 !important; filter:blur(0px) !important; transition:opacity .24s ease .04s, filter .24s ease .04s !important; will-change:opacity,filter; }
+
+    /* ── PARALLAX BG LAYERS ── */
+    .pax-bg { position:absolute; inset:-35% 0; pointer-events:none; will-change:transform; z-index:0; }
+    .hero-grid-layer {
+      background-image: linear-gradient(var(--grid-line) 1px,transparent 1px),
+                        linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);
+      background-size:40px 40px; transition:background-image var(--trans);
+    }
+
+    /* ── SCROLL-DRIVEN REVEALS — JS drives these directly ── */
+    .reveal, .reveal-left, .reveal-right { opacity:0; will-change:opacity,transform; }
+    @media(prefers-reduced-motion:reduce) {
+      .reveal,.reveal-left,.reveal-right { opacity:1 !important; transform:none !important; }
+    }
+
+    /* ── UPGRADED TOGGLE HOVER ── */
+    .sound-toggle, .theme-toggle {
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.12), 0 4px 10px rgba(0,0,0,.08);
+    }
+    .sound-toggle:hover, .theme-toggle:hover { transform:translateY(-1px); }
+    .sound-toggle::after, .theme-toggle::after {
+      box-shadow:0 1px 2px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.65);
+    }
+
     /* ── SECTION SIDEBAR ── */
 .section-sidebar {
   position: fixed; right: 15px; top: 20%;
@@ -553,9 +756,14 @@
 .section-sidebar.show .section-link:nth-child(3) { transition-delay: 0.15s; }
 .section-sidebar.show .section-link:nth-child(4) { transition-delay: 0.2s; }
 .section-sidebar.show .section-link:nth-child(5) { transition-delay: 0.25s; }
+    /* hero::after grid overridden — parallax layer handles it */
+    .hero::after { display:none; }
 </style>
 </head>
 <body>
+<canvas id="langWaveCanvas" aria-hidden="true"></canvas>
+<div class="page-grain" aria-hidden="true"></div>
+<div class="page-vignette" aria-hidden="true"></div>
 
 <button class="back-top" id="backToTop" aria-label="Zpět nahoru" onclick="window.scrollTo({top:0,behavior:'smooth'})">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
@@ -576,69 +784,79 @@
 <nav class="nav" id="mainNav">
   <a href="Linktree.html" class="nav-logo">ML<span>X</span> MEDIA</a>
   <ul class="nav-links">
-    <li><a href="index.html" class="active">Domů</a></li>
-    <li><a href="O-mně.html">O mně</a></li>
-    <li><a href="Portfolio.html">Portfolio</a></li>
-    <li><a href="Aspekty.html">Aspekty</a></li>
-    <li><a href="Ceník.html">Ceník</a></li>
-    <li><a href="Objednávka.html">Objednávka</a></li>
+    <li><a href="index.html" class="active" data-i18n="nav-home">Domů</a></li>
+    <li><a href="O-mně.html" data-i18n="nav-about">O mně</a></li>
+    <li><a href="Portfolio.html" data-i18n="nav-portfolio">Portfolio</a></li>
+    <li><a href="Aspekty.html" data-i18n="nav-aspekty">Aspekty</a></li>
+    <li><a href="Ceník.html" data-i18n="nav-cenik">Ceník</a></li>
+    <li><a href="Objednávka.html" data-i18n="nav-objednavka">Objednávka</a></li>
   </ul>
   <div style="display:flex;align-items:center;gap:14px;">
-    <button class="theme-toggle" id="themeToggle" aria-label="Přepnout téma">
+    <button class="lang-toggle" id="langToggle" aria-label="Switch language / Přepnout jazyk">
+      <span class="lang-option active" id="langOptCZ">CZ</span>
+      <span class="lang-option" id="langOptEN">EN</span>
+    </button>
+    <button class="sound-toggle" id="soundToggle" aria-label="Přepnout zvuk">
+      <div class="sound-icon"><span>🔇</span><span>🔊</span></div>
+    </button>
+    <button class="theme-toggle" id="themeToggle" aria-label="Přepnout téma" data-cursor="theme">
       <div class="toggle-icons"><span>🌙</span><span>☀️</span></div>
     </button>
     <div class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></div>
   </div>
 </nav>
 
+<div class="scroll-progress" id="scrollProgress"></div>
+
 <div class="nav-mobile" id="mobileMenu">
-  <a href="index.html">Domů</a>
-  <a href="O-mně.html">O mně</a>
-  <a href="Portfolio.html">Portfolio</a>
-  <a href="Aspekty.html">Aspekty</a>
-  <a href="Ceník.html">Ceník</a>
-  <a href="Objednávka.html">Objednávka</a>
+  <a href="index.html" data-i18n="nav-home">Domů</a>
+  <a href="O-mně.html" data-i18n="nav-about">O mně</a>
+  <a href="Portfolio.html" data-i18n="nav-portfolio">Portfolio</a>
+  <a href="Aspekty.html" data-i18n="nav-aspekty">Aspekty</a>
+  <a href="Ceník.html" data-i18n="nav-cenik">Ceník</a>
+  <a href="Objednávka.html" data-i18n="nav-objednavka">Objednávka</a>
 </div>
 
 <!-- ══ HERO ══ -->
 <section class="hero" id="top">
-  <div class="hero-bg-word" aria-hidden="true">MLX</div>
+  <div class="pax-bg hero-grid-layer" data-parallax="0.18" aria-hidden="true"></div>
+  <div class="hero-bg-word" data-parallax="0.25" aria-hidden="true">MLX</div>
 
   <div class="hero-inner">
     <div class="hero-rule"></div>
-    <div class="hero-eyebrow">Beroun · Filmová produkce · Matouš Lexa</div>
+    <div class="hero-eyebrow" data-i18n="hero-eyebrow">Beroun · Filmová produkce · Matouš Lexa</div>
 
-    <h1 class="hero-title">
+    <h1 class="hero-title" data-i18n-html="hero-title-html">
       Váš příběh<br>
       <em>Naše produkce.</em>
     </h1>
 
-    <p class="hero-tagline">
+    <p class="hero-tagline" data-i18n="hero-tagline">
       Jsem Matouš Lexa — Režisér, Kameraman a Střihač za MLX Media. Natáčím reklamy, firemní videa a kreativní projekty s technikou, která mluví za sebe.
     </p>
 
     <div class="hero-actions">
       <a href="Objednávka.html" class="btn-primary">
-        Objednat video
+        <span data-i18n="hero-btn-order">Objednat video</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </a>
       <a href="Portfolio.html" class="btn-ghost">
-        Zobrazit portfolio
+        <span data-i18n="hero-btn-portfolio">Zobrazit portfolio</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
       </a>
     </div>
 
     <div class="hero-pills">
-      <a href="Aspekty.html" class="pill"><span class="pill-dot"></span>Blackmagic 6K</a>
-      <a href="Aspekty.html" class="pill"><span class="pill-dot"></span>Color Grading</a>
-      <a href="Aspekty.html" class="pill"><span class="pill-dot"></span>Profesionální zvuk</a>
-      <a href="Ceník.html" class="pill"><span class="pill-dot"></span>Férová cena</a>
+      <a href="Aspekty.html" class="pill"><span class="pill-dot"></span><span data-i18n="pill-bmpcc">Blackmagic 6K</span></a>
+      <a href="Aspekty.html" class="pill"><span class="pill-dot"></span><span data-i18n="pill-color">Color Grading</span></a>
+      <a href="Aspekty.html" class="pill"><span class="pill-dot"></span><span data-i18n="pill-sound">Profesionální zvuk</span></a>
+      <a href="Ceník.html" class="pill"><span class="pill-dot"></span><span data-i18n="pill-price">Férová cena</span></a>
     </div>
   </div>
 
   <div class="hero-scroll">
     <div class="scroll-line"></div>
-    <span>Scroll</span>
+    <span data-i18n="hero-scroll">Scroll</span>
   </div>
 </section>
 
@@ -647,19 +865,19 @@
   <div class="stats-inner">
     <div class="stat-block reveal d1">
       <div class="stat-num js-count" data-target="35">0<span>+</span></div>
-      <div class="stat-label">Projektů dokončeno</div>
+      <div class="stat-label" data-i18n="stat-projects">Projektů dokončeno</div>
     </div>
     <div class="stat-block reveal d2">
       <div class="stat-num js-count" data-target="6">0<span>K</span></div>
-      <div class="stat-label">RAW rozlišení</div>
+      <div class="stat-label" data-i18n="stat-raw">RAW rozlišení</div>
     </div>
     <div class="stat-block reveal d3">
       <div class="stat-num js-count" data-target="4">0<span>+</span></div>
-      <div class="stat-label">Roky zkušeností</div>
+      <div class="stat-label" data-i18n="stat-years">Roky zkušeností</div>
     </div>
     <div class="stat-block reveal d4">
       <div class="stat-num js-count" data-target="95">0<span>%</span></div>
-      <div class="stat-label">Klientů doporučí</div>
+      <div class="stat-label" data-i18n="stat-recommend">Klientů doporučí</div>
     </div>
   </div>
 </div>
@@ -669,23 +887,33 @@
   <div class="about-inner">
 
     <div class="reveal-left">
-      <div class="about-tag">O mně</div>
-      <h2 class="about-title">Jmenuji se<br>Matouš<br><em>Lexa.</em></h2>
-      <p class="about-body">
+      <div class="about-tag" data-i18n="about-tag">O mně</div>
+      <h2 class="about-title" data-i18n-html="about-title-html">Jmenuji se<br>Matouš<br><em>Lexa.</em></h2>
+      <p class="about-body" data-i18n-html="about-body-html">
         Stojím za značkou <strong>MLX Media</strong> — Specializuji se na tvorbu <strong>reklamních spotů, firemních videí</strong> a kreativních projektů, kde technická přesnost a vizuální originalita jdou ruku v ruce.
         <br><br>
         Věřím, že každý příběh si zaslouží být vyprávěn. Od první konzultace až po finální střih — jsem tu pro vás osobně, bez mezičlánků.
       </p>
       <a href="O-mně.html" class="btn-ghost">
-        Více o mně
+        <span data-i18n="about-btn">Více o mně</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
       </a>
     </div>
 
     <div class="about-visual reveal-right">
-      <div class="about-vis-letter" aria-hidden="true">M</div>
-      <span class="about-vis-badge">Praha 5 · Praha 6 · Beroun</span>
-      <span class="about-vis-cam">Blackmagic 6K</span>
+      <div class="about-film-strip" aria-hidden="true">
+        <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+        <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+        <div class="film-hole"></div><div class="film-hole"></div>
+      </div>
+      <div class="about-tape about-tape-l" aria-hidden="true"></div>
+      <div class="about-tape about-tape-r" aria-hidden="true"></div>
+      <div class="about-visual-inner">
+        <div class="about-vis-letter" aria-hidden="true">M</div>
+        <span class="about-vis-badge" data-i18n="about-badge">Praha 5 · Praha 6 · Beroun</span>
+        <span class="about-vis-cam" data-i18n="about-cam">Blackmagic 6K</span>
+      </div>
+      <div class="about-photo-label" data-i18n="about-label">MLX Media · Matouš Lexa</div>
     </div>
 
   </div>
@@ -695,8 +923,8 @@
 <section id="sluzby" class="services">
   <div class="services-inner">
     <div class="section-header reveal">
-      <div class="section-eyebrow">Co nabízím</div>
-      <h2 class="section-title">Služby pro<br><em>každý projekt</em></h2>
+      <div class="section-eyebrow" data-i18n="svc-eyebrow">Co nabízím</div>
+      <h2 class="section-title" data-i18n-html="svc-title-html">Služby pro<br><em>každý projekt</em></h2>
     </div>
 
     <div class="services-grid">
@@ -706,10 +934,10 @@
         <div class="service-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M22 8l-5 4 5 4V8z"/></svg>
         </div>
-        <div class="service-name">Firemní video</div>
-        <p class="service-desc">Od záběrů po výsledný spot — vše pod jednou střechou. Kamera Blackmagic 6K zaručí vizuál, který vaši firmu odliší.</p>
+        <div class="service-name" data-i18n="svc1-name">Firemní video</div>
+        <p class="service-desc" data-i18n="svc1-desc">Od záběrů po výsledný spot — vše pod jednou střechou. Kamera Blackmagic 6K zaručí vizuál, který vaši firmu odliší.</p>
         <a href="Ceník.html" class="service-link">
-          Zjistit cenu
+          <span data-i18n="svc-price-link">Zjistit cenu</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
       </div>
@@ -719,10 +947,10 @@
         <div class="service-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
         </div>
-        <div class="service-name">Reklamní spot</div>
-        <p class="service-desc">Rychlé, obsahově silné spoty pro social media, YouTube nebo TV. Storytelling s filmovým výrazem a přesným střihem.</p>
+        <div class="service-name" data-i18n="svc2-name">Reklamní spot</div>
+        <p class="service-desc" data-i18n="svc2-desc">Rychlé, obsahově silné spoty pro social media, YouTube nebo TV. Storytelling s filmovým výrazem a přesným střihem.</p>
         <a href="Ceník.html" class="service-link">
-          Zjistit cenu
+          <span data-i18n="svc-price-link">Zjistit cenu</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
       </div>
@@ -732,10 +960,10 @@
         <div class="service-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="8 12 12 16 16 12"/><line x1="12" y1="8" x2="12" y2="16"/></svg>
         </div>
-        <div class="service-name">Reels & TikTok</div>
-        <p class="service-desc">Vertikální formáty, které fungují. Pohyb, rytmus, střih přizpůsobený platformě — obsah, který lidi zastaví při scrollování.</p>
+        <div class="service-name" data-i18n="svc3-name">Reels & TikTok</div>
+        <p class="service-desc" data-i18n="svc3-desc">Vertikální formáty, které fungují. Pohyb, rytmus, střih přizpůsobený platformě — obsah, který lidi zastaví při scrollování.</p>
         <a href="Ceník.html" class="service-link">
-          Zjistit cenu
+          <span data-i18n="svc-price-link">Zjistit cenu</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
       </div>
@@ -745,10 +973,10 @@
         <div class="service-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
         </div>
-        <div class="service-name">Color Grading</div>
-        <p class="service-desc">Filmová barevnost v DaVinci Resolve. RAW log z Blackmagic 6K dává barvenosti prostor — výsledek mluví sám za sebe.</p>
+        <div class="service-name" data-i18n="svc4-name">Color Grading</div>
+        <p class="service-desc" data-i18n="svc4-desc">Filmová barevnost v DaVinci Resolve. RAW log z Blackmagic 6K dává barvenosti prostor — výsledek mluví sám za sebe.</p>
         <a href="Aspekty.html" class="service-link">
-          Více o technice
+          <span data-i18n="svc-tech-link">Více o technice</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
       </div>
@@ -758,10 +986,10 @@
         <div class="service-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 1 3 3v7a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
         </div>
-        <div class="service-name">Zvukový design</div>
-        <p class="service-desc">Lavalier mikrofony, shotgun, Zoom F1 a Tascam DR-70. Zvuk, který nevyrušuje, ale dotváří atmosféru každé scény.</p>
+        <div class="service-name" data-i18n="svc5-name">Zvukový design</div>
+        <p class="service-desc" data-i18n="svc5-desc">Lavalier mikrofony, shotgun, Zoom F1 a Tascam DR-70. Zvuk, který nevyrušuje, ale dotváří atmosféru každé scény.</p>
         <a href="Aspekty.html" class="service-link">
-          Více o technice
+          <span data-i18n="svc-tech-link">Více o technice</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
       </div>
@@ -771,10 +999,10 @@
         <div class="service-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
         </div>
-        <div class="service-name">Oblast natáčení</div>
-        <p class="service-desc">Praha 5, Praha 6, Beroun a okolí. Na zajímavé projekty jedu i dál — nebojte se zeptat, domluvíme se.</p>
+        <div class="service-name" data-i18n="svc6-name">Oblast natáčení</div>
+        <p class="service-desc" data-i18n="svc6-desc">Praha 5, Praha 6, Beroun a okolí. Na zajímavé projekty jedu i dál — nebojte se zeptat, domluvíme se.</p>
         <a href="Objednávka.html" class="service-link">
-          Domluvit se
+          <span data-i18n="svc-contact-link">Domluvit se</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
       </div>
@@ -787,8 +1015,8 @@
 <section id="proc-ja" class="why">
   <div class="why-inner">
     <div class="section-header reveal">
-      <div class="section-eyebrow">Proč MLX Media</div>
-      <h2 class="section-title">Co vás čeká,<br><em>když mi zavoláte</em></h2>
+      <div class="section-eyebrow" data-i18n="why-eyebrow">Proč MLX Media</div>
+      <h2 class="section-title" data-i18n-html="why-title-html">Co vás čeká,<br><em>když mi zavoláte</em></h2>
     </div>
 
     <div class="why-grid">
@@ -797,45 +1025,47 @@
         <div class="why-item">
           <span class="why-num">01</span>
           <div class="why-text-wrap">
-            <div class="why-heading">Filmová kvalita, přístupná cena</div>
-            <p class="why-desc">Pracuji s Blackmagic 6K — stejnou kamerou jako profesionální produkce. Výsledek vypadá velký, cena přitom odpovídá malé produkci. Nejsem nejdražší. Chci být nejlepší volba.</p>
+            <div class="why-heading" data-i18n="why1-heading">Filmová kvalita, přístupná cena</div>
+            <p class="why-desc" data-i18n="why1-desc">Pracuji s Blackmagic 6K — stejnou kamerou jako profesionální produkce. Výsledek vypadá velký, cena přitom odpovídá malé produkci. Nejsem nejdražší. Chci být nejlepší volba.</p>
           </div>
         </div>
         <div class="why-item">
           <span class="why-num">02</span>
           <div class="why-text-wrap">
-            <div class="why-heading">Osobní přístup bez prostředníků</div>
-            <p class="why-desc">Mluvíte přímo se mnou — tím, kdo bude stát za kamerou i u střihu. Žádné agentury, žádné přeposílání mailu. Vaše vize jde přímo do výsledku.</p>
+            <div class="why-heading" data-i18n="why2-heading">Osobní přístup bez prostředníků</div>
+            <p class="why-desc" data-i18n="why2-desc">Mluvíte přímo se mnou — tím, kdo bude stát za kamerou i u střihu. Žádné agentury, žádné přeposílání mailu. Vaše vize jde přímo do výsledku.</p>
           </div>
         </div>
         <div class="why-item">
           <span class="why-num">03</span>
           <div class="why-text-wrap">
-            <div class="why-heading">Kreativita jako standard</div>
-            <p class="why-desc">Nehledám nejjednodušší cestu. Každý záběr si promyslím, každá sekvence má záměr. Kreativní přístup není bonus — je součástí každého projektu.</p>
+            <div class="why-heading" data-i18n="why3-heading">Kreativita jako standard</div>
+            <p class="why-desc" data-i18n="why3-desc">Nehledám nejjednodušší cestu. Každý záběr si promyslím, každá sekvence má záměr. Kreativní přístup není bonus — je součástí každého projektu.</p>
           </div>
         </div>
         <div class="why-item">
           <span class="why-num">04</span>
           <div class="why-text-wrap">
-            <div class="why-heading">Celý workflow pod jednou střechou</div>
-            <p class="why-desc">Natáčení, zvuk, color grading, střih, postprodukce. Od natáčení k finálnímu souboru — 4 až 8 dní. Vše bez externích dodavatelů.</p>
+            <div class="why-heading" data-i18n="why4-heading">Celý workflow pod jednou střechou</div>
+            <p class="why-desc" data-i18n="why4-desc">Natáčení, zvuk, color grading, střih, postprodukce. Od natáčení k finálnímu souboru — 4 až 8 dní. Vše bez externích dodavatelů.</p>
           </div>
         </div>
         <div class="why-item">
           <span class="why-num">05</span>
           <div class="why-text-wrap">
-            <div class="why-heading">Mladý pohled, seriózní výsledky</div>
-            <p class="why-desc">Mladý věk přináší energii, chuť riskovat a rozumění tomu, co funguje na sociálních sítích. Seriózní technické zázemí přináší výsledky, které obstojí i jinde.</p>
+            <div class="why-heading" data-i18n="why5-heading">Mladý pohled, seriózní výsledky</div>
+            <p class="why-desc" data-i18n="why5-desc">Mladý věk přináší energii, chuť riskovat a rozumění tomu, co funguje na sociálních sítích. Seriózní technické zázemí přináší výsledky, které obstojí i jinde.</p>
           </div>
         </div>
       </div>
 
       <div class="reveal-right">
         <div class="why-visual">
+          <div class="tape-strip tape-tl" aria-hidden="true"></div>
+          <div class="tape-strip tape-br" aria-hidden="true"></div>
           <div class="why-vis-top">
-            <div class="why-vis-label">MLX Media — přístup</div>
-            <div class="why-vis-quote">
+            <div class="why-vis-label" data-i18n="why-vis-label">MLX Media — přístup</div>
+            <div class="why-vis-quote" data-i18n-html="why-vis-quote-html">
               „Nechci být nejdražší.<br>Chci být <em>nejlepší volba.</em>"
             </div>
           </div>
@@ -843,11 +1073,11 @@
           <div class="why-vis-stats">
             <div class="why-vis-stat">
               <div class="why-vis-stat-n js-count" data-target="35">0<span>+</span></div>
-              <div class="why-vis-stat-l">Projektů</div>
+              <div class="why-vis-stat-l" data-i18n="why-vis-stat1">Projektů</div>
             </div>
             <div class="why-vis-stat">
               <div class="why-vis-stat-n js-count" data-target="95">0<span>%</span></div>
-              <div class="why-vis-stat-l">Doporučení</div>
+              <div class="why-vis-stat-l" data-i18n="why-vis-stat2">Doporučení</div>
             </div>
           </div>
           <div class="why-vis-cam">
@@ -855,8 +1085,8 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M22 8l-5 4 5 4V8z"/></svg>
             </div>
             <div class="why-vis-cam-text">
-              <strong>Blackmagic Pocket Cinema 6K</strong>
-              Profesionální filmová kamera · RAW · 6K
+              <strong data-i18n="why-cam-name">Blackmagic Pocket Cinema 6K</strong>
+              <span data-i18n="why-cam-desc">Profesionální filmová kamera · RAW · 6K</span>
             </div>
           </div>
         </div>
@@ -871,11 +1101,11 @@
   <div class="featured-inner">
     <div class="featured-header reveal">
       <div>
-        <div class="section-eyebrow">Vybrané projekty</div>
-        <h2 class="section-title">Nejnovější<br><em>práce</em></h2>
+        <div class="section-eyebrow" data-i18n="feat-eyebrow">Vybrané projekty</div>
+        <h2 class="section-title" data-i18n-html="feat-title-html">Nejnovější<br><em>práce</em></h2>
       </div>
       <a href="Portfolio.html" class="featured-link">
-        Celé portfolio
+        <span data-i18n="feat-link">Celé portfolio</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </a>
     </div>
@@ -883,7 +1113,7 @@
     <div class="featured-grid reveal">
 
       <!-- large card -->
-      <a href="Portfolio.html" class="feat-card large" style="text-decoration:none;">
+      <a href="Portfolio.html" class="feat-card large" style="text-decoration:none;" data-cursor="video">
         <div class="feat-thumb">
           <img src="https://img.youtube.com/vi/aP4Cebk-60Q/maxresdefault.jpg" alt="Jak vnímá mladá generace demokracii" loading="lazy" onerror="this.style.background='var(--bg-card)'">
           <div class="feat-play">
@@ -901,7 +1131,7 @@
 
       <!-- right stack -->
       <div class="featured-stack">
-        <a href="Portfolio.html" class="feat-card" style="text-decoration:none;">
+        <a href="Portfolio.html" class="feat-card" style="text-decoration:none;" data-cursor="video">
           <div class="feat-thumb">
             <img src="https://img.youtube.com/vi/CgU8gh_i99s/maxresdefault.jpg" alt="IFHY" loading="lazy" onerror="this.style.background='var(--bg-card)'">
             <div class="feat-play">
@@ -916,7 +1146,7 @@
             </div>
           </div>
         </a>
-        <a href="Portfolio.html" class="feat-card" style="text-decoration:none;">
+        <a href="Portfolio.html" class="feat-card" style="text-decoration:none;" data-cursor="video">
           <div class="feat-thumb">
             <img src="https://img.youtube.com/vi/pfXmR3jXRCI/maxresdefault.jpg" alt="Dva z nás" loading="lazy" onerror="this.style.background='var(--bg-card)'">
             <div class="feat-play">
@@ -940,13 +1170,17 @@
 <!-- ══ PHILOSOPHY ══ -->
 <section class="philosophy" id="presvedceni">
   <div class="philosophy-inner reveal">
-    <div class="philosophy-eyebrow">Mé přesvědčení</div>
-    <div class="philosophy-quote">
-      „Zákazník nevědomky spojuje<br>kvalitu videa s kvalitou<br><em>vaší firmy.</em>"
+    <div class="philosophy-eyebrow" data-i18n="phil-eyebrow">Mé přesvědčení</div>
+    <div class="philosophy-card">
+      <div class="tape-strip tape-tl" aria-hidden="true"></div>
+      <div class="tape-strip tape-br" aria-hidden="true"></div>
+      <div class="philosophy-quote" data-i18n-html="phil-quote-html">
+        „Zákazník nevědomky spojuje<br>kvalitu videa s kvalitou<br><em>vaší firmy.</em>"
+      </div>
+      <p class="philosophy-body" data-i18n="phil-body">
+        Rozdíl mezi videem natočeným telefonem a filmovou kamerou poznáte do jedné vteřiny. Proto dbám na každý záběr, každou světelnou situaci, každý detail zvuku. Protože váš výsledek jsem já.
+      </p>
     </div>
-    <p class="philosophy-body">
-      Rozdíl mezi videem natočeným telefonem a filmovou kamerou poznáte do jedné vteřiny. Proto dbám na každý záběr, každou světelnou situaci, každý detail zvuku. Protože váš výsledek jsem já.
-    </p>
   </div>
 </section>
 
@@ -954,11 +1188,11 @@
 <div class="cta-section">
   <div class="cta-inner reveal">
     <div>
-      <div class="cta-eyebrow">Hledám nové klienty</div>
-      <div class="cta-title">Máte projekt? Pojďme ho natočit.</div>
+      <div class="cta-eyebrow" data-i18n="cta-eyebrow">Hledám nové klienty</div>
+      <div class="cta-title" data-i18n="cta-title">Máte projekt? Pojďme ho natočit.</div>
     </div>
     <a href="Objednávka.html" class="btn-primary">
-      Objednat video
+      <span data-i18n="cta-btn">Objednat video</span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
     </a>
   </div>
@@ -971,8 +1205,8 @@
   <div class="footer-main-grid">
     <div class="footer-reveal">
       <a href="index.html" class="f-brand-logo">ML<span>X</span> MEDIA</a>
-      <div class="f-brand-tagline">Filmování · Střih · Postprodukce</div>
-      <p class="f-brand-desc">Věřím, že každý příběh si zaslouží být vyprávěn. Pomáhám firmám a jednotlivcům zachytit jejich vizi prostřednictvím profesionálního videa.</p>
+      <div class="f-brand-tagline" data-i18n="f-tagline">Filmování · Střih · Postprodukce</div>
+      <p class="f-brand-desc" data-i18n="f-desc">Věřím, že každý příběh si zaslouží být vyprávěn. Pomáhám firmám a jednotlivcům zachytit jejich vizi prostřednictvím profesionálního videa.</p>
       <div class="f-social-row">
         <a href="https://www.youtube.com/@MLX-Media" target="_blank" rel="noopener" class="f-social-btn">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 00.5 6.2 31.3 31.3 0 000 12a31.3 31.3 0 00.5 5.8 3 3 0 002.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 002.1-2.1A31.3 31.3 0 0024 12a31.3 31.3 0 00-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
@@ -985,44 +1219,44 @@
       </div>
     </div>
     <div class="footer-reveal">
-      <div class="f-col-title">Navigace</div>
+      <div class="f-col-title" data-i18n="f-nav-title">Navigace</div>
       <ul class="f-links">
-        <li><a href="index.html">Domovská stránka</a></li>
-        <li><a href="O-mně.html">O mně</a></li>
-        <li><a href="Portfolio.html">Portfolio</a></li>
-        <li><a href="Aspekty.html">Aspekty</a></li>
-        <li><a href="Ceník.html">Ceník</a></li>
-        <li><a href="Objednávka.html">Objednávka</a></li>
+        <li><a href="index.html" data-i18n="f-nav-1">Domovská stránka</a></li>
+        <li><a href="O-mně.html" data-i18n="f-nav-2">O mně</a></li>
+        <li><a href="Portfolio.html" data-i18n="f-nav-3">Portfolio</a></li>
+        <li><a href="Aspekty.html" data-i18n="f-nav-4">Aspekty</a></li>
+        <li><a href="Ceník.html" data-i18n="f-nav-5">Ceník</a></li>
+        <li><a href="Objednávka.html" data-i18n="f-nav-6">Objednávka</a></li>
       </ul>
     </div>
     <div class="footer-reveal">
-      <div class="f-col-title">Služby</div>
+      <div class="f-col-title" data-i18n="f-svc-title">Služby</div>
       <ul class="f-links">
-        <li><a href="Ceník.html">Firemní videa</a></li>
-        <li><a href="Ceník.html">Reklamní spot</a></li>
-        <li><a href="Ceník.html">Reels &amp; TikTok</a></li>
-        <li><a href="Ceník.html">Color grading</a></li>
-        <li><a href="Ceník.html">Zvukový design</a></li>
-        <li><a href="Ceník.html">Dronové záběry</a></li>
+        <li><a href="Ceník.html" data-i18n="f-svc-1">Firemní videa</a></li>
+        <li><a href="Ceník.html" data-i18n="f-svc-2">Reklamní spot</a></li>
+        <li><a href="Ceník.html" data-i18n="f-svc-3">Reels &amp; TikTok</a></li>
+        <li><a href="Ceník.html" data-i18n="f-svc-4">Color grading</a></li>
+        <li><a href="Ceník.html" data-i18n="f-svc-5">Zvukový design</a></li>
+        <li><a href="Ceník.html" data-i18n="f-svc-6">Dronové záběry</a></li>
       </ul>
     </div>
     <div class="footer-reveal">
-      <div class="f-col-title">Kontakt</div>
+      <div class="f-col-title" data-i18n="f-contact-title">Kontakt</div>
       <div class="f-contact-item">
         <div class="f-contact-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
-        <div><div class="f-contact-label">Email</div><div class="f-contact-value"><a href="mailto:info@mlxmedia.cz">info@mlxmedia.cz</a></div></div>
+        <div><div class="f-contact-label" data-i18n="f-email-label">Email</div><div class="f-contact-value"><a href="mailto:info@mlxmedia.cz" data-cursor="email">info@mlxmedia.cz</a></div></div>
       </div>
       <div class="f-contact-item">
         <div class="f-contact-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.7 10.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012.6 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.55a16 16 0 006.29 6.29l.96-.96a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>
-        <div><div class="f-contact-label">Telefon</div><div class="f-contact-value"><a href="tel:+420777413600">+420 777 413 600</a></div></div>
+        <div><div class="f-contact-label" data-i18n="f-phone-label">Telefon</div><div class="f-contact-value"><a href="tel:+420777413600" data-cursor="call">+420 777 413 600</a></div></div>
       </div>
       <div class="f-contact-item">
         <div class="f-contact-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
-        <div><div class="f-contact-label">Oblast</div><div class="f-contact-value">Praha 5, Praha 6, Beroun</div></div>
+        <div><div class="f-contact-label" data-i18n="f-area-label">Oblast</div><div class="f-contact-value">Praha 5, Praha 6, Beroun</div></div>
       </div>
       <div class="f-contact-item">
         <div class="f-contact-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-        <div><div class="f-contact-label">Dodání</div><div class="f-contact-value">4–8 dní od natáčení</div></div>
+        <div><div class="f-contact-label" data-i18n="f-delivery-label">Dodání</div><div class="f-contact-value" data-i18n="f-delivery-val">4–8 dní od natáčení</div></div>
       </div>
     </div>
   </div>
@@ -1037,99 +1271,409 @@
   <div class="f-cta-wrap">
     <div class="f-cta-inner" id="fCta">
       <div>
-        <div class="f-cta-eyebrow">Hledám nové klienty</div>
-        <div class="f-cta-title">Máte projekt? Pojďme ho natočit.</div>
+        <div class="f-cta-eyebrow" data-i18n="f-cta-eyebrow">Hledám nové klienty</div>
+        <div class="f-cta-title" data-i18n="f-cta-title">Máte projekt? Pojďme ho natočit.</div>
       </div>
       <a href="Objednávka.html" class="f-cta-btn">
-        Objednat video
+        <span data-i18n="f-cta-btn">Objednat video</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </a>
     </div>
   </div>
 
   <div class="f-bottom">
-    <div class="f-copy">© <span id="fyear"></span> <span>MLX Media</span> · Matouš Lexa · Všechna práva vyhrazena</div>
-    <div class="f-legal"><a href="#">Ochrana soukromí</a><a href="#">Cookies</a><a href="order.html">Kontakt</a></div>
+    <div class="f-copy">© <span id="fyear"></span> <span>MLX Media</span> · Matouš Lexa · <span data-i18n="f-rights">Všechna práva vyhrazena</span></div>
+    <div class="f-legal"><a href="#" data-i18n="f-legal-1">Ochrana soukromí</a><a href="#" data-i18n="f-legal-2">Cookies</a><a href="order.html" data-i18n="f-legal-3">Kontakt</a></div>
   </div>
 </footer>
 
 <script>
-  // ── THEME ──
-  const root = document.documentElement;
-  root.setAttribute('data-theme', localStorage.getItem('mlx-theme') || 'light');
-  document.getElementById('themeToggle').addEventListener('click', () => {
+/* ══════════════════════════════════════════════════
+   MLX MEDIA — indexR enhanced
+   Features: theme · sound · haptic · smooth-scroll
+             scroll-driven animations · parallax
+             CZ/EN translate with wave transition
+   ══════════════════════════════════════════════════ */
+
+/* ── THEME ── */
+const root = document.documentElement;
+const themeToggle = document.getElementById('themeToggle');
+root.setAttribute('data-theme', localStorage.getItem('mlx-theme') || 'light');
+
+/* ── AUDIO ── */
+function createAudio(src, volume = 0.16) {
+  const audio = new Audio(src);
+  audio.preload = 'auto';
+  audio.volume = volume;
+  return audio;
+}
+const soundLibrary = {
+  toggle:    createAudio('Audio/Togle.mp3', 0.16),
+  switch:    createAudio('Audio/Switch-page.mp3', 0.16),
+  language:  createAudio('Audio/Language-switch.mp3', 0.112),
+  language2: createAudio('Audio/Language-switch02.mp3', 0.067),
+  chat:      createAudio('Audio/Togle.mp3', 0.18),
+  up:        createAudio('Audio/Up-Button.mp3', 0.14),
+  universal: createAudio('Audio/Universal.mp3', 0.14),
+  email:     createAudio('Audio/Email.mp3', 0.16),
+};
+function playSound(key) {
+  if (!soundEnabled) return;
+  const sound = soundLibrary[key];
+  if (!sound) return;
+  const clone = sound.cloneNode(true);
+  clone.play().catch(() => {});
+}
+
+/* ── HAPTIC VIBRATION (mobile) ── */
+function haptic(pattern) {
+  if (!navigator.vibrate) return;
+  navigator.vibrate(pattern);
+}
+
+/* ── SOUND TOGGLE ── */
+const soundBtn = document.getElementById('soundToggle');
+let soundEnabled = localStorage.getItem('mlx-sound') !== 'off';
+function updateSoundToggle() {
+  if (!soundBtn) return;
+  soundBtn.classList.toggle('active', soundEnabled);
+  soundBtn.setAttribute('aria-label', soundEnabled ? 'Zvuk zapnutý' : 'Zvuk vypnutý');
+}
+updateSoundToggle();
+if (soundBtn) {
+  soundBtn.addEventListener('click', () => {
+    soundEnabled = !soundEnabled;
+    localStorage.setItem('mlx-sound', soundEnabled ? 'on' : 'off');
+    updateSoundToggle();
+    haptic(10);
+    if (soundEnabled) playSound('toggle');
+  });
+}
+
+/* ── THEME TOGGLE ── */
+function updateThemeToggle() {
+  if (!themeToggle) return;
+  themeToggle.classList.toggle('active', root.getAttribute('data-theme') === 'light');
+}
+updateThemeToggle();
+if (themeToggle) {
+  themeToggle.addEventListener('click', () => {
+    playSound('toggle');
+    haptic(10);
     const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
     root.setAttribute('data-theme', next);
     localStorage.setItem('mlx-theme', next);
+    updateThemeToggle();
   });
+}
 
-  // ── NAV ──
-  const nav = document.getElementById('mainNav');
-  window.addEventListener('scroll', () => {
-    nav.classList.toggle('scrolled', window.scrollY > 20);
-    document.getElementById('backToTop').classList.toggle('show', window.scrollY > 400);
-  }, { passive: true });
+/* ── NAVIGATION HELPERS ── */
+function isPageNavigationLink(el) {
+  const link = el.closest('a[href]');
+  if (!link) return false;
+  const href = link.getAttribute('href')?.trim();
+  if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:')) return false;
+  return href.endsWith('.html') || href.startsWith('/') || href.startsWith('./') || href.startsWith('../');
+}
+function navigateLink(link) {
+  const href = link.getAttribute('href')?.trim();
+  if (!href) return;
+  if (href.startsWith('mailto:')) {
+    if (soundEnabled) playSound('email');
+    haptic(20);
+    window.location.href = href;
+    return;
+  }
+  if (href.startsWith('tel:') || href.startsWith('javascript:')) {
+    window.location.href = href;
+    return;
+  }
+  if (soundEnabled) playSound('switch');
+  haptic([20, 10, 20]);
+  setTimeout(() => { window.location.href = href; }, 120);
+}
+function handleDestTarget(el) {
+  const dest = el.closest('[data-dest]')?.getAttribute('data-dest')?.trim();
+  if (!dest) return false;
+  if (dest.startsWith('#')) {
+    if (soundEnabled) playSound('universal');
+    haptic(20);
+    const target = document.querySelector(dest);
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return true;
+  }
+  if (dest.startsWith('mailto:')) {
+    if (soundEnabled) playSound('email');
+    haptic(20);
+    window.location.href = dest;
+    return true;
+  }
+  if (soundEnabled) playSound('switch');
+  haptic([20, 10, 20]);
+  setTimeout(() => { window.location.href = dest; }, 120);
+  return true;
+}
 
-  // ── HAMBURGER ──
-  const ham = document.getElementById('hamburger');
-  const mob = document.getElementById('mobileMenu');
-  ham.addEventListener('click', () => { ham.classList.toggle('open'); mob.classList.toggle('open'); });
-  mob.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { ham.classList.remove('open'); mob.classList.remove('open'); }));
+document.addEventListener('keydown', event => {
+  if (!soundEnabled) return;
+  if (event.key !== 'Enter' || event.shiftKey) return;
+  if (event.target.closest && event.target.closest('#chat-input')) {
+    playSound('email');
+    haptic(20);
+  }
+});
 
-  // ── YEAR ──
-  document.getElementById('fyear').textContent = new Date().getFullYear();
+document.addEventListener('click', event => {
+  const target = event.target.closest('#chat-toggle, .mlx-ai-btn, [data-dest], .pill, .section-link, .nav-links a, .f-links a, button, a[href]');
+  if (!target) return;
+  if (target.closest('#chat-toggle')) {
+    if (soundEnabled) playSound('chat');
+    haptic(20);
+    return;
+  }
+  if (target.closest('[data-dest]')) {
+    event.preventDefault();
+    handleDestTarget(target);
+    return;
+  }
+  const pageLink = target.closest('a[href]');
+  if (pageLink && isPageNavigationLink(pageLink)) {
+    event.preventDefault();
+    navigateLink(pageLink);
+    return;
+  }
+  const mailLink = target.closest('a[href^="mailto:"]');
+  if (mailLink) {
+    if (soundEnabled) playSound('email');
+    haptic(20);
+    return;
+  }
+  if (target.closest('#cb-send')) {
+    if (soundEnabled) playSound('email');
+    haptic(20);
+    return;
+  }
+  if (target.closest('.pill') || target.closest('.section-link') || target.closest('.nav-links a') || target.closest('.f-links a')) {
+    if (soundEnabled) playSound('universal');
+    haptic(20);
+    return;
+  }
+});
 
-  // ── REVEALS ──
-  const io = new IntersectionObserver(e => e.forEach(x => { if(x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.1 });
-  document.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(el => io.observe(el));
+/* ── NAV SCROLL ── */
+const nav = document.getElementById('mainNav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 20);
+  document.getElementById('backToTop').classList.toggle('show', window.scrollY > 400);
+  /* scroll progress bar */
+  const doc = document.scrollingElement || document.documentElement;
+  const pct = doc.scrollHeight - window.innerHeight;
+  const bar = document.getElementById('scrollProgress');
+  if (bar) bar.style.width = (pct > 0 ? (window.scrollY / pct) * 100 : 0) + '%';
+}, { passive: true });
 
-  // ── FOOTER REVEALS ──
-  const fio = new IntersectionObserver(e => e.forEach(x => { if(x.isIntersecting) x.target.classList.add('visible'); }), { threshold: 0.12 });
-  [document.getElementById('fStripe'), document.getElementById('fCta'), ...document.querySelectorAll('.footer-reveal,.f-stat-item')].filter(Boolean).forEach(el => fio.observe(el));
+/* ── BACK TO TOP ── */
+const backToTopBtn = document.getElementById('backToTop');
+if (backToTopBtn) {
+  backToTopBtn.addEventListener('click', e => {
+    e.preventDefault();
+    if (soundEnabled) playSound('up');
+    haptic(20);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
 
-  // ── STAT COUNTERS ──
-  const cio = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (!e.isIntersecting) return;
-      const el = e.target, target = parseInt(el.dataset.target), suf = el.querySelector('span')?.textContent || '';
-      let n = 0; const iv = Math.max(Math.floor(1200/target), 12);
-      const t = setInterval(() => { n++; el.innerHTML = n+'<span>'+suf+'</span>'; if(n>=target) clearInterval(t); }, iv);
-      cio.unobserve(el);
+/* ── HAMBURGER ── */
+const ham = document.getElementById('hamburger');
+const mob = document.getElementById('mobileMenu');
+if (ham) {
+  ham.addEventListener('click', () => {
+    ham.classList.toggle('open');
+    if (mob) mob.classList.toggle('open');
+    if (soundEnabled) playSound('toggle');
+    haptic(10);
+  });
+}
+if (mob) {
+  mob.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    if (ham) ham.classList.remove('open');
+    mob.classList.remove('open');
+    if (soundEnabled) playSound('switch');
+  }));
+}
+
+/* ── YEAR ── */
+document.getElementById('fyear').textContent = new Date().getFullYear();
+
+/* ══════════════════════════════════════════════════
+   SCROLL-DRIVEN ANIMATION ENGINE
+   Replaces IntersectionObserver — animation progress
+   maps directly to scroll position so it stops when
+   scrolling stops and feels responsive, not laggy.
+   ══════════════════════════════════════════════════ */
+function easeOutQuart(t) { return 1 - Math.pow(1 - t, 4); }
+
+const _sdRegistry = [];
+
+function _registerSDElement(el) {
+  const delayMap = { d1:60, d2:130, d3:200, d4:270, d5:340 };
+  let lagPx = 0;
+  for (const [cls, px] of Object.entries(delayMap)) {
+    if (el.classList.contains(cls)) { lagPx = px; break; }
+  }
+  if (el.classList.contains('footer-reveal')) {
+    const idx = [...el.parentElement.children].indexOf(el);
+    lagPx = idx * 80;
+  }
+  if (el.classList.contains('f-stat-item')) {
+    const idx = [...el.parentElement.children].indexOf(el);
+    lagPx = idx * 70;
+  }
+
+  const type = el.classList.contains('reveal-left')  ? 'left'   :
+               el.classList.contains('reveal-right') ? 'right'  :
+               (el.classList.contains('footer-reveal') ||
+                el.classList.contains('f-stat-item') ||
+                el.classList.contains('f-cta-inner')) ? 'footer' :
+               el.classList.contains('footer-stripe-line') ? 'stripe' : 'up';
+
+  /* Strip CSS transitions — JS drives the values directly */
+  el.style.cssText += ';transition:none !important;';
+
+  _sdRegistry.push({ el, type, lagPx, _prev: -1 });
+}
+
+document.querySelectorAll(
+  '.reveal, .reveal-left, .reveal-right, ' +
+  '.footer-reveal, .f-stat-item, .f-cta-inner, .footer-stripe-line'
+).forEach(_registerSDElement);
+
+/* ── Parallax layers ── */
+const _paxLayers = [...document.querySelectorAll('[data-parallax]')];
+
+/* ── Main update — called every rAF on scroll ── */
+function _updateScrollDriven() {
+  const vh = window.innerHeight;
+
+  /* 1. REVEALS */
+  for (const item of _sdRegistry) {
+    const { el, type, lagPx } = item;
+    const rect = el.getBoundingClientRect();
+    const triggerY = vh * 0.93 - lagPx;
+    const fullY    = vh * 0.08;
+    let raw = (triggerY - rect.top) / (triggerY - fullY);
+    raw = Math.max(0, Math.min(1, raw));
+    if (Math.abs(raw - item._prev) < 0.002) continue;
+    item._prev = raw;
+    const e = easeOutQuart(raw);
+    if (type === 'stripe') {
+      el.style.transform = `scaleX(${e})`;
+      el.style.opacity = '1';
+    } else {
+      el.style.opacity = e;
+      if      (type === 'left')   el.style.transform = `translateX(${(1-e)*-32}px)`;
+      else if (type === 'right')  el.style.transform = `translateX(${(1-e)*32}px)`;
+      else if (type === 'footer') el.style.transform = `translateY(${(1-e)*22}px)`;
+      else                        el.style.transform = `translateY(${(1-e)*28}px)`;
+    }
+    if (raw >= 0.98) el.classList.add('visible');
+    else             el.classList.remove('visible');
+  }
+
+  /* 2. PARALLAX BACKGROUNDS */
+  for (const layer of _paxLayers) {
+    const speed = parseFloat(layer.dataset.parallax);
+    const section = layer.closest('section, .cta-section, .stats-band') || layer.parentElement;
+    const sr = section.getBoundingClientRect();
+    const centreDelta = (sr.top + sr.height * 0.5) - vh * 0.5;
+    const yOffset = centreDelta * speed;
+    /* hero-bg-word has its own transform origin */
+    if (layer.classList.contains('hero-bg-word')) {
+      layer.style.transform = `translateX(-35%) translateY(calc(-50% + ${yOffset}px)) translateZ(0)`;
+    } else {
+      layer.style.transform = `translateY(${yOffset}px) translateZ(0)`;
+    }
+  }
+}
+
+let _sdRafPending = false;
+window.addEventListener('scroll', () => {
+  if (!_sdRafPending) {
+    _sdRafPending = true;
+    requestAnimationFrame(() => {
+      _updateScrollDriven();
+      _sdRafPending = false;
     });
-  }, { threshold: 0.5 });
-  document.querySelectorAll('.js-count').forEach(el => cio.observe(el));
+  }
+}, { passive: true });
 
-  // ── FOOTER STAT COUNTERS ──
-  const fCountIO = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (!e.isIntersecting) return;
-      const el = e.target;
+_updateScrollDriven();
+window.addEventListener('load', _updateScrollDriven, { once: true });
+
+/* ── STAT COUNTERS (hero stats + why-vis stats) ── */
+const _countEls  = [...document.querySelectorAll('.js-count')];
+const _countDone = new Set();
+function _checkCounters() {
+  const vh = window.innerHeight;
+  for (const el of _countEls) {
+    if (_countDone.has(el)) continue;
+    const rect = el.getBoundingClientRect();
+    if (rect.top < vh * 0.88 && rect.bottom > 0) {
+      _countDone.add(el);
+      const target = parseInt(el.dataset.target);
+      const suf = el.querySelector('span')?.textContent || '';
+      let n = 0;
+      const iv = Math.max(Math.floor(1200 / target), 12);
+      const t = setInterval(() => {
+        n++;
+        el.innerHTML = n + '<span>' + suf + '</span>';
+        if (n >= target) clearInterval(t);
+      }, iv);
+    }
+  }
+}
+/* ── FOOTER STAT COUNTERS ── */
+const _fCountEls  = [...document.querySelectorAll('.f-stat-number, .fstat-n')];
+const _fCountDone = new Set();
+function _checkFooterCounters() {
+  const vh = window.innerHeight;
+  for (const el of _fCountEls) {
+    if (_fCountDone.has(el)) continue;
+    const rect = el.getBoundingClientRect();
+    if (rect.top < vh * 0.88 && rect.bottom > 0) {
+      _fCountDone.add(el);
       const m = el.textContent.match(/^(\d+)(.*)/);
-      if (!m) return;
+      if (!m) continue;
       const end = parseInt(m[1], 10);
       const suffix = m[2] || '';
       let n = 0;
-      const iv = Math.max(Math.floor(1200/Math.max(end,1)), 12);
+      const iv = Math.max(Math.floor(1200 / Math.max(end, 1)), 12);
       const timer = setInterval(() => {
         n++;
         el.innerHTML = n + '<span>' + suffix + '</span>';
         if (n >= end) clearInterval(timer);
       }, iv);
-      fCountIO.unobserve(el);
-    });
-  }, { threshold: 0.5 });
-  document.querySelectorAll('.f-stat-number, .fstat-n').forEach(el => fCountIO.observe(el));
-  // ── SECTION SIDEBAR ──
+    }
+  }
+}
+window.addEventListener('scroll', () => requestAnimationFrame(() => {
+  _checkCounters();
+  _checkFooterCounters();
+}), { passive: true });
+_checkCounters();
+_checkFooterCounters();
+
+/* ── SECTION SIDEBAR ── */
 const sectionSidebar = document.getElementById('sectionSidebar');
-const sectionLinks = document.querySelectorAll('.section-link');
-const sections = ['o-mne', 'sluzby', 'proc-ja', 'prace', 'presvedceni'];
-let sidebarVisible = false;
+const sectionLinks   = document.querySelectorAll('.section-link');
+const sections       = ['o-mne', 'sluzby', 'proc-ja', 'prace', 'presvedceni'];
+let sidebarVisible   = false;
 
 window.addEventListener('scroll', () => {
   const heroHeight = document.querySelector('.hero')?.offsetHeight || 0;
   const shouldShow = window.scrollY > heroHeight - 100;
-  if (shouldShow && !sidebarVisible) { sidebarVisible = true; sectionSidebar.classList.add('show'); }
-  else if (!shouldShow && sidebarVisible) { sidebarVisible = false; sectionSidebar.classList.remove('show'); }
+  if (shouldShow && !sidebarVisible)  { sidebarVisible = true;  sectionSidebar.classList.add('show'); }
+  if (!shouldShow && sidebarVisible)  { sidebarVisible = false; sectionSidebar.classList.remove('show'); }
 }, { passive: true });
 
 const sectionObserver = new IntersectionObserver(entries => {
@@ -1145,8 +1689,308 @@ sectionLinks.forEach(link => {
     e.preventDefault();
     const el = document.getElementById(link.dataset.section);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    haptic(20);
   });
 });
+
+/* ══════════════════════════════════════════════════
+   LANGUAGE SYSTEM — CZ / EN
+   Wave animation sweeps across the screen and swaps
+   text content as the wave front passes each element.
+   ══════════════════════════════════════════════════ */
+const translations = {
+  cz: {
+    /* nav */
+    'nav-home':'Domů','nav-about':'O mně','nav-portfolio':'Portfolio',
+    'nav-aspekty':'Aspekty','nav-cenik':'Ceník','nav-objednavka':'Objednávka',
+    /* hero */
+    'hero-eyebrow':'Beroun · Filmová produkce · Matouš Lexa',
+    'hero-title-html':'Váš příběh<br><em>Naše produkce.</em>',
+    'hero-tagline':'Jsem Matouš Lexa — Režisér, Kameraman a Střihač za MLX Media. Natáčím reklamy, firemní videa a kreativní projekty s technikou, která mluví za sebe.',
+    'hero-btn-order':'Objednat video','hero-btn-portfolio':'Zobrazit portfolio',
+    'pill-bmpcc':'Blackmagic 6K','pill-color':'Color Grading',
+    'pill-sound':'Profesionální zvuk','pill-price':'Férová cena',
+    'hero-scroll':'Scroll',
+    /* stats */
+    'stat-projects':'Projektů dokončeno','stat-raw':'RAW rozlišení',
+    'stat-years':'Roky zkušeností','stat-recommend':'Klientů doporučí',
+    /* about */
+    'about-tag':'O mně',
+    'about-title-html':'Jmenuji se<br>Matouš<br><em>Lexa.</em>',
+    'about-body-html':'Stojím za značkou <strong>MLX Media</strong> — Specializuji se na tvorbu <strong>reklamních spotů, firemních videí</strong> a kreativních projektů, kde technická přesnost a vizuální originalita jdou ruku v ruce.<br><br>Věřím, že každý příběh si zaslouží být vyprávěn. Od první konzultace až po finální střih — jsem tu pro vás osobně, bez mezičlánků.',
+    'about-btn':'Více o mně',
+    'about-badge':'Praha 5 · Praha 6 · Beroun','about-cam':'Blackmagic 6K',
+    'about-label':'MLX Media · Matouš Lexa',
+    /* services */
+    'svc-eyebrow':'Co nabízím','svc-title-html':'Služby pro<br><em>každý projekt</em>',
+    'svc1-name':'Firemní video','svc1-desc':'Od záběrů po výsledný spot — vše pod jednou střechou. Kamera Blackmagic 6K zaručí vizuál, který vaši firmu odliší.',
+    'svc2-name':'Reklamní spot','svc2-desc':'Rychlé, obsahově silné spoty pro social media, YouTube nebo TV. Storytelling s filmovým výrazem a přesným střihem.',
+    'svc3-name':'Reels & TikTok','svc3-desc':'Vertikální formáty, které fungují. Pohyb, rytmus, střih přizpůsobený platformě — obsah, který lidi zastaví při scrollování.',
+    'svc4-name':'Color Grading','svc4-desc':'Filmová barevnost v DaVinci Resolve. RAW log z Blackmagic 6K dává barvenosti prostor — výsledek mluví sám za sebe.',
+    'svc5-name':'Zvukový design','svc5-desc':'Lavalier mikrofony, shotgun, Zoom F1 a Tascam DR-70. Zvuk, který nevyrušuje, ale dotváří atmosféru každé scény.',
+    'svc6-name':'Oblast natáčení','svc6-desc':'Praha 5, Praha 6, Beroun a okolí. Na zajímavé projekty jedu i dál — nebojte se zeptat, domluvíme se.',
+    'svc-price-link':'Zjistit cenu','svc-tech-link':'Více o technice','svc-contact-link':'Domluvit se',
+    /* why me */
+    'why-eyebrow':'Proč MLX Media','why-title-html':'Co vás čeká,<br><em>když mi zavoláte</em>',
+    'why1-heading':'Filmová kvalita, přístupná cena',
+    'why1-desc':'Pracuji s Blackmagic 6K — stejnou kamerou jako profesionální produkce. Výsledek vypadá velký, cena přitom odpovídá malé produkci. Nejsem nejdražší. Chci být nejlepší volba.',
+    'why2-heading':'Osobní přístup bez prostředníků',
+    'why2-desc':'Mluvíte přímo se mnou — tím, kdo bude stát za kamerou i u střihu. Žádné agentury, žádné přeposílání mailu. Vaše vize jde přímo do výsledku.',
+    'why3-heading':'Kreativita jako standard',
+    'why3-desc':'Nehledám nejjednodušší cestu. Každý záběr si promyslím, každá sekvence má záměr. Kreativní přístup není bonus — je součástí každého projektu.',
+    'why4-heading':'Celý workflow pod jednou střechou',
+    'why4-desc':'Natáčení, zvuk, color grading, střih, postprodukce. Od natáčení k finálnímu souboru — 4 až 8 dní. Vše bez externích dodavatelů.',
+    'why5-heading':'Mladý pohled, seriózní výsledky',
+    'why5-desc':'Mladý věk přináší energii, chuť riskovat a rozumění tomu, co funguje na sociálních sítích. Seriózní technické zázemí přináší výsledky, které obstojí i jinde.',
+    'why-vis-label':'MLX Media — přístup',
+    'why-vis-quote-html':'„Nechci být nejdražší.<br>Chci být <em>nejlepší volba.</em>"',
+    'why-vis-stat1':'Projektů','why-vis-stat2':'Doporučení',
+    'why-cam-name':'Blackmagic Pocket Cinema 6K',
+    'why-cam-desc':'Profesionální filmová kamera · RAW · 6K',
+    /* featured */
+    'feat-eyebrow':'Vybrané projekty','feat-title-html':'Nejnovější<br><em>práce</em>',
+    'feat-link':'Celé portfolio',
+    /* philosophy */
+    'phil-eyebrow':'Mé přesvědčení',
+    'phil-quote-html':'„Zákazník nevědomky spojuje<br>kvalitu videa s kvalitou<br><em>vaší firmy.</em>"',
+    'phil-body':'Rozdíl mezi videem natočeným telefonem a filmovou kamerou poznáte do jedné vteřiny. Proto dbám na každý záběr, každou světelnou situaci, každý detail zvuku. Protože váš výsledek jsem já.',
+    /* cta */
+    'cta-eyebrow':'Hledám nové klienty',
+    'cta-title':'Máte projekt? Pojďme ho natočit.',
+    'cta-btn':'Objednat video',
+    /* footer */
+    'f-tagline':'Filmování · Střih · Postprodukce',
+    'f-desc':'Věřím, že každý příběh si zaslouží být vyprávěn. Pomáhám firmám a jednotlivcům zachytit jejich vizi prostřednictvím profesionálního videa.',
+    'f-nav-title':'Navigace','f-nav-1':'Domovská stránka','f-nav-2':'O mně',
+    'f-nav-3':'Portfolio','f-nav-4':'Aspekty','f-nav-5':'Ceník','f-nav-6':'Objednávka',
+    'f-svc-title':'Služby','f-svc-1':'Firemní videa','f-svc-2':'Reklamní spot',
+    'f-svc-3':'Reels &amp; TikTok','f-svc-4':'Color grading','f-svc-5':'Zvukový design','f-svc-6':'Dronové záběry',
+    'f-contact-title':'Kontakt','f-email-label':'Email','f-phone-label':'Telefon',
+    'f-area-label':'Oblast','f-delivery-label':'Dodání','f-delivery-val':'4–8 dní od natáčení',
+    'f-cta-eyebrow':'Hledám nové klienty','f-cta-title':'Máte projekt? Pojďme ho natočit.',
+    'f-cta-btn':'Objednat video',
+    'f-rights':'Všechna práva vyhrazena','f-legal-1':'Ochrana soukromí','f-legal-2':'Cookies','f-legal-3':'Kontakt',
+  },
+  en: {
+    /* nav */
+    'nav-home':'Home','nav-about':'About','nav-portfolio':'Portfolio',
+    'nav-aspekty':'Aspects','nav-cenik':'Pricing','nav-objednavka':'Order',
+    /* hero */
+    'hero-eyebrow':'Beroun · Film Production · Matouš Lexa',
+    'hero-title-html':'Your story,<br><em>our production.</em>',
+    'hero-tagline':"I'm Matouš Lexa — Director, Cinematographer and Editor at MLX Media. I shoot commercials, corporate videos and creative projects with gear that speaks for itself.",
+    'hero-btn-order':'Order a video','hero-btn-portfolio':'View portfolio',
+    'pill-bmpcc':'Blackmagic 6K','pill-color':'Color Grading',
+    'pill-sound':'Professional sound','pill-price':'Fair price',
+    'hero-scroll':'Scroll',
+    /* stats */
+    'stat-projects':'Projects completed','stat-raw':'RAW resolution',
+    'stat-years':'Years experience','stat-recommend':'Would recommend',
+    /* about */
+    'about-tag':'About me',
+    'about-title-html':'My name is<br>Matouš<br><em>Lexa.</em>',
+    'about-body-html':'I stand behind the brand <strong>MLX Media</strong> — I specialise in creating <strong>commercial spots, corporate videos</strong> and creative projects where technical precision and visual originality go hand in hand.<br><br>I believe every story deserves to be told. From the first consultation to the final cut — I am here for you personally, no middlemen.',
+    'about-btn':'More about me',
+    'about-badge':'Praha 5 · Praha 6 · Beroun','about-cam':'Blackmagic 6K',
+    'about-label':'MLX Media · Matouš Lexa',
+    /* services */
+    'svc-eyebrow':'What I offer','svc-title-html':'Services for<br><em>every project</em>',
+    'svc1-name':'Corporate video','svc1-desc':'From footage to the final spot — everything under one roof. The Blackmagic 6K guarantees a visual that sets your company apart.',
+    'svc2-name':'Commercial spot','svc2-desc':'Fast, content-strong spots for social media, YouTube or TV. Storytelling with a cinematic look and precise editing.',
+    'svc3-name':'Reels & TikTok','svc3-desc':'Vertical formats that work. Movement, rhythm, editing tailored to the platform — content that stops people while scrolling.',
+    'svc4-name':'Color Grading','svc4-desc':'Cinematic colour in DaVinci Resolve. RAW log from the Blackmagic 6K gives colour room to breathe — the result speaks for itself.',
+    'svc5-name':'Audio design','svc5-desc':'Lavalier mics, shotgun, Zoom F1 and Tascam DR-70. Sound that doesn\'t distract, but completes the atmosphere of every scene.',
+    'svc6-name':'Shooting area','svc6-desc':'Praha 5, Praha 6, Beroun and surroundings. For interesting projects I travel further — don\'t hesitate to ask.',
+    'svc-price-link':'See pricing','svc-tech-link':'About the gear','svc-contact-link':'Get in touch',
+    /* why me */
+    'why-eyebrow':'Why MLX Media','why-title-html':'What to expect<br><em>when you call</em>',
+    'why1-heading':'Cinematic quality, accessible price',
+    'why1-desc':'I work with the Blackmagic 6K — the same camera as professional productions. The result looks big, the price matches a small production. I\'m not the most expensive. I want to be the best choice.',
+    'why2-heading':'Personal approach, no middlemen',
+    'why2-desc':'You talk directly to me — the person who will be behind the camera and at the edit. No agencies, no forwarded emails. Your vision goes straight into the result.',
+    'why3-heading':'Creativity as standard',
+    'why3-desc':'I don\'t look for the easiest path. Every shot is thought through, every sequence has a purpose. Creative thinking isn\'t a bonus — it\'s part of every project.',
+    'why4-heading':'Full workflow under one roof',
+    'why4-desc':'Filming, sound, colour grading, editing, post-production. From shoot to final file — 4 to 8 days. All without external suppliers.',
+    'why5-heading':'Young perspective, serious results',
+    'why5-desc':'A young age brings energy, a desire to take risks and an understanding of what works on social media. A serious technical background delivers results that hold up anywhere.',
+    'why-vis-label':'MLX Media — approach',
+    'why-vis-quote-html':'"I don\'t want to be the most expensive.<br>I want to be <em>the best choice.</em>"',
+    'why-vis-stat1':'Projects','why-vis-stat2':'Recommendations',
+    'why-cam-name':'Blackmagic Pocket Cinema 6K',
+    'why-cam-desc':'Professional cinema camera · RAW · 6K',
+    /* featured */
+    'feat-eyebrow':'Selected projects','feat-title-html':'Latest<br><em>work</em>',
+    'feat-link':'Full portfolio',
+    /* philosophy */
+    'phil-eyebrow':'My belief',
+    'phil-quote-html':'"A customer unconsciously links<br>video quality with the quality<br><em>of your company.</em>"',
+    'phil-body':'You can tell the difference between a phone video and a cinema camera within one second. That\'s why I care about every shot, every lighting situation, every sound detail. Because your result is me.',
+    /* cta */
+    'cta-eyebrow':'Looking for new clients',
+    'cta-title':'Have a project? Let\'s shoot it.',
+    'cta-btn':'Order a video',
+    /* footer */
+    'f-tagline':'Filming · Editing · Post-production',
+    'f-desc':'I believe every story deserves to be told. I help businesses and individuals capture their vision through professional video.',
+    'f-nav-title':'Navigation','f-nav-1':'Home page','f-nav-2':'About me',
+    'f-nav-3':'Portfolio','f-nav-4':'Aspects','f-nav-5':'Pricing','f-nav-6':'Order',
+    'f-svc-title':'Services','f-svc-1':'Corporate videos','f-svc-2':'Commercial spot',
+    'f-svc-3':'Reels &amp; TikTok','f-svc-4':'Color grading','f-svc-5':'Audio design','f-svc-6':'Drone footage',
+    'f-contact-title':'Contact','f-email-label':'Email','f-phone-label':'Phone',
+    'f-area-label':'Area','f-delivery-label':'Delivery','f-delivery-val':'4–8 days after filming',
+    'f-cta-eyebrow':'Looking for new clients','f-cta-title':'Have a project? Let\'s shoot it.',
+    'f-cta-btn':'Order video',
+    'f-rights':'All rights reserved','f-legal-1':'Privacy Policy','f-legal-2':'Cookies','f-legal-3':'Contact',
+  }
+};
+
+/* ── Apply translations silently (no wave) ── */
+function applyTranslations(lang) {
+  const t = translations[lang];
+  if (!t) return;
+  document.querySelectorAll('[data-i18n],[data-i18n-html]').forEach(el => {
+    const kh = el.dataset.i18nHtml, kt = el.dataset.i18n;
+    if (kh && t[kh] !== undefined) el.innerHTML = t[kh];
+    else if (kt && t[kt] !== undefined) el.textContent = t[kt];
+  });
+  const yr = document.getElementById('fyear');
+  if (yr) yr.textContent = new Date().getFullYear();
+  document.documentElement.lang = lang === 'en' ? 'en' : 'cs';
+}
+
+/* ── Wave sweep animation ── */
+let _waveRunning = false;
+function animateLangWave(targetLang) {
+  if (_waveRunning) return;
+  _waveRunning = true;
+  const canvas = document.getElementById('langWaveCanvas');
+  canvas.style.display = 'block';
+  canvas.classList.add('active');
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const ctx    = canvas.getContext('2d');
+  const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+  const elemData = [...document.querySelectorAll('[data-i18n],[data-i18n-html]')]
+    .map(el => { const r = el.getBoundingClientRect(); return { el, cx: r.left + r.width * 0.5, swapped: false }; })
+    .sort((a, b) => a.cx - b.cx);
+  const PHASE_DUR = 560, AMP = 60, FREQ = 0.009, BAND = 100;
+  function easeInOut(t) { return t < 0.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2; }
+  function leftFill(frontX, ph) {
+    const H = canvas.height; ctx.beginPath(); ctx.moveTo(0, 0);
+    for (let y = 0; y <= H; y += 3) ctx.lineTo(frontX + AMP * Math.sin(y * FREQ * Math.PI * 2 + ph), y);
+    ctx.lineTo(0, H); ctx.closePath();
+  }
+  function rightFill(frontX, ph) {
+    const W = canvas.width, H = canvas.height; ctx.beginPath(); ctx.moveTo(W, 0);
+    for (let y = 0; y <= H; y += 3) ctx.lineTo(frontX + AMP * Math.sin(y * FREQ * Math.PI * 2 + ph), y);
+    ctx.lineTo(W, H); ctx.closePath();
+  }
+  function drawGlowEdge(frontX, ph) {
+    ctx.save(); ctx.shadowBlur = 16; ctx.shadowColor = accent;
+    ctx.strokeStyle = accent; ctx.lineWidth = 1.5; ctx.beginPath();
+    ctx.moveTo(frontX + AMP * Math.sin(0), 0);
+    for (let y = 3; y <= canvas.height; y += 3)
+      ctx.lineTo(frontX + AMP * Math.sin(y * FREQ * Math.PI * 2 + ph), y);
+    ctx.stroke(); ctx.restore();
+  }
+  function drawFrame(frontX, phase, elapsed) {
+    const W = canvas.width; ctx.clearRect(0, 0, W, canvas.height);
+    const ph = elapsed * 0.003;
+    if (phase === 1) {
+      leftFill(frontX, ph);
+      const gx = Math.max(0, frontX - BAND);
+      const grad = ctx.createLinearGradient(gx, 0, frontX + AMP, 0);
+      grad.addColorStop(0, accent + 'ee'); grad.addColorStop(0.75, accent + 'ee'); grad.addColorStop(1, accent + 'c0');
+      ctx.fillStyle = grad; ctx.fill(); drawGlowEdge(frontX, ph);
+    } else {
+      rightFill(frontX, ph + Math.PI);
+      const gx = frontX - AMP;
+      const grad = ctx.createLinearGradient(gx, 0, gx + BAND, 0);
+      grad.addColorStop(0, accent + '00'); grad.addColorStop(0.25, accent + 'c0'); grad.addColorStop(1, accent + 'ee');
+      ctx.fillStyle = grad; ctx.fill(); drawGlowEdge(frontX, ph + Math.PI);
+    }
+  }
+  let startTime = null, phase = 1;
+  function tick(ts) {
+    if (!startTime) startTime = ts;
+    const elapsed  = ts - startTime;
+    const raw      = Math.min(elapsed / PHASE_DUR, 1);
+    const prog     = easeInOut(raw);
+    const W        = canvas.width;
+    const frontX   = -AMP + prog * (W + AMP * 2);
+    drawFrame(frontX, phase, elapsed);
+    if (phase === 1) {
+      elemData.forEach(item => {
+        if (!item.swapped && item.cx < frontX - AMP * 0.4) {
+          item.swapped = true;
+          const el = item.el;
+          el.classList.add('lang-fading');
+          setTimeout(() => {
+            const t = translations[targetLang];
+            const kh = el.dataset.i18nHtml, kt = el.dataset.i18n;
+            if (kh && t[kh] !== undefined) el.innerHTML = t[kh];
+            else if (kt && t[kt] !== undefined) el.textContent = t[kt];
+            el.classList.remove('lang-fading');
+            el.classList.add('lang-fading-in');
+            setTimeout(() => el.classList.remove('lang-fading-in'), 300);
+          }, 80);
+        }
+      });
+      if (raw >= 1) {
+        const t = translations[targetLang];
+        elemData.forEach(item => {
+          if (!item.swapped) {
+            item.swapped = true;
+            const kh = item.el.dataset.i18nHtml, kt = item.el.dataset.i18n;
+            if (kh && t[kh] !== undefined) item.el.innerHTML = t[kh];
+            else if (kt && t[kt] !== undefined) item.el.textContent = t[kt];
+          }
+        });
+        const yr = document.getElementById('fyear');
+        if (yr) yr.textContent = new Date().getFullYear();
+        document.documentElement.lang = targetLang === 'en' ? 'en' : 'cs';
+        phase = 2; startTime = null;
+      }
+    } else {
+      if (raw >= 1) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        canvas.style.display = 'none';
+        canvas.classList.remove('active');
+        _waveRunning = false;
+        return;
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+/* ── Language toggle UI ── */
+let currentLang = localStorage.getItem('mlx-lang') || 'cz';
+function updateLangToggle() {
+  const toggle = document.getElementById('langToggle');
+  if (!toggle) return;
+  toggle.dataset.lang = currentLang;
+  document.getElementById('langOptCZ').classList.toggle('active', currentLang === 'cz');
+  document.getElementById('langOptEN').classList.toggle('active', currentLang === 'en');
+}
+document.getElementById('langToggle').addEventListener('click', () => {
+  if (_waveRunning) return;
+  const newLang = currentLang === 'cz' ? 'en' : 'cz';
+  if (soundEnabled) {
+    playSound('toggle');
+    playSound('language2');
+    setTimeout(() => playSound('language'), 300);
+  }
+  haptic([10, 30, 10]);
+  currentLang = newLang;
+  localStorage.setItem('mlx-lang', newLang);
+  updateLangToggle();
+  animateLangWave(newLang);
+});
+updateLangToggle();
+if (currentLang === 'en') applyTranslations('en');
 
 </script>
 </body>
