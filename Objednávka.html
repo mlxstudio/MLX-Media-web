@@ -55,34 +55,38 @@
       --border:rgba(255,255,255,0.07);
       --accent:#FF8A00;--accent-soft:rgba(255,138,0,0.10);--accent-glow:rgba(255,138,0,0.22);
       --text:#e8e4de;--text-muted:#5e5a56;--text-dim:#8a8580;
-      --noise-op:0.028;--noise-op2:0.015;
+      --noise-op:0.06;--noise-op2:0.04;
       --hero-grad:linear-gradient(160deg,#0d0d0d 0%,#141008 100%);
       --stripe:linear-gradient(90deg,transparent,#FF8A00,#ffb347,transparent);
       --footer-desc:#888480;
       --grid-line:rgba(255,138,0,0.04);
-      --vignette:rgba(0,0,0,0.35);
+      --vignette:rgba(0,0,0,0.60);
       --tape-color:rgba(255,200,100,0.22);
       --tape-border:rgba(255,220,140,0.18);
       --ruled-line:rgba(255,255,255,0.04);
       --award-bg:#080808;
       --trail-op:0.5;
+      --shadow-warm:rgba(255,138,0,0.15);
+      --glow-color:rgba(255,138,0,0.35);
     }
     [data-theme="light"] {
       --bg:#f4f2ec;--bg-surface:#faf9f5;--bg-card:#fefefe;
       --border:rgba(0,0,0,0.08);
       --accent:#00BFA6;--accent-soft:rgba(0,191,166,0.08);--accent-glow:rgba(0,191,166,0.20);
       --text:#0f1e1c;--text-muted:#a0a8a6;--text-dim:#6b7574;
-      --noise-op:0.050;--noise-op2:0.040;
+      --noise-op:0.10;--noise-op2:0.08;
       --hero-grad:linear-gradient(160deg,#f4f2ec 0%,#e5f5f2 100%);
       --stripe:linear-gradient(90deg,transparent,#00BFA6,#7dd7cc,transparent);
       --footer-desc:#6b7574;
       --grid-line:rgba(0,191,166,0.055);
-      --vignette:rgba(0,0,0,0.10);
+      --vignette:rgba(0,0,0,0.20);
       --tape-color:rgba(210,185,120,0.40);
       --tape-border:rgba(180,155,80,0.30);
       --ruled-line:rgba(0,0,0,0.055);
       --award-bg:var(--bg-surface);
       --trail-op:0.40;
+      --shadow-warm:rgba(0,191,166,0.12);
+      --glow-color:rgba(0,191,166,0.28);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -172,7 +176,7 @@
     @media(max-width:768px){ .nav-links{display:none;} .nav-hamburger{display:flex;} }
 
     /* ── HERO ── */
-    .hero { min-height: 80svh; background:var(--hero-grad); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:calc(var(--nav-h)+40px) clamp(20px,5vw,80px) 80px; text-align:center; position:relative; z-index:0; overflow:hidden; transition:background var(--trans); }
+    .hero { min-height:100svh; background:var(--hero-grad); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:calc(var(--nav-h)+40px) clamp(20px,5vw,80px) 80px; text-align:center; position:relative; z-index:0; overflow:hidden; transition:background var(--trans); }
     /* ── hero grid squares → moved to .hero-grid-layer parallax div ── */
     .hero::after{display:none;}
     .hero-bg-letter { position:absolute; font-family:var(--font-display); font-size:clamp(200px,38vw,520px); color:var(--accent); opacity:0.04; line-height:1; pointer-events:none; user-select:none; letter-spacing:-0.04em; top:50%; left:50%; transform:translate(-50%,-50%); transition:color var(--trans); will-change:transform; }
@@ -208,6 +212,79 @@
     }
     /* d1-d5: delay handled spatially by JS, no CSS transition-delay needed */
     .d1,.d2,.d3,.d4,.d5 {}
+
+    /* ── TEXTURE OVERLAYS ── */
+    .process::before,
+    .cta-block::before { content:''; position:absolute; inset:0; pointer-events:none; z-index:0;
+      background-image:url('Paper-Texture01.jpg'),url('Paper-Texture01.jpg');
+      background-size:640px 640px,640px 640px; background-repeat:repeat;
+      background-position:0 0,320px 320px; mix-blend-mode:multiply;
+      opacity:0.24; filter:blur(0.3px); }
+    /* cta-block already has position:relative via its own rule; process needs it */
+    .process { position:relative; }
+
+    /* ── 3D TEXT EFFECT ── */
+    .section-title,
+    .cta-left-title {
+      color: white;
+      transition:color var(--trans),text-shadow 0.45s var(--ease-out);
+      text-shadow:
+        1px 1px 0 #b5b2ab,2px 2px 0 #aeaba4,3px 3px 0 #a7a49d,4px 4px 0 #9f9c96,
+        4px 8px 12px rgba(20,18,14,0.35),4px 14px 24px rgba(20,18,14,0.22),4px 20px 40px rgba(20,18,14,0.14);
+    }
+    [data-theme="dark"] .section-title,
+    [data-theme="dark"] .cta-left-title {
+      text-shadow:
+        1px 1px 0 #8a8784,2px 2px 0 #7d7a76,3px 3px 0 #706d6a,4px 4px 0 #636059,
+        4px 8px 12px rgba(20,18,14,0.55),4px 14px 24px rgba(20,18,14,0.35),4px 20px 40px rgba(20,18,14,0.18);
+    }
+    .section-title em,
+    .cta-left-title em {
+      color: var(--accent);
+      transition:color var(--trans),text-shadow 0.45s var(--ease-out);
+      text-shadow:
+        1px 1px 0 color-mix(in srgb, var(--accent) 88%, #000 12%),
+        2px 2px 0 color-mix(in srgb, var(--accent) 72%, #000 28%),
+        3px 3px 0 color-mix(in srgb, var(--accent) 58%, #000 42%),
+        4px 4px 0 color-mix(in srgb, var(--accent) 44%, #000 56%),
+        4px 8px 12px color-mix(in srgb, var(--accent) 30%, rgba(0,0,0,0.75) 70%),
+        4px 14px 24px color-mix(in srgb, var(--accent) 24%, rgba(0,0,0,0.75) 76%),
+        4px 20px 40px color-mix(in srgb, var(--accent) 18%, rgba(0,0,0,0.75) 82%);
+    }
+    [data-theme="dark"] .section-title em,
+    [data-theme="dark"] .cta-left-title em {
+      color: var(--accent);
+      text-shadow:
+        1px 1px 0 color-mix(in srgb, var(--accent) 88%, #000 12%),
+        2px 2px 0 color-mix(in srgb, var(--accent) 72%, #000 28%),
+        3px 3px 0 color-mix(in srgb, var(--accent) 58%, #000 42%),
+        4px 4px 0 color-mix(in srgb, var(--accent) 44%, #000 56%),
+        4px 8px 12px color-mix(in srgb, var(--accent) 26%, rgba(10,10,10,0.7) 74%),
+        4px 14px 24px color-mix(in srgb, var(--accent) 20%, rgba(10,10,10,0.7) 80%),
+        4px 20px 40px color-mix(in srgb, var(--accent) 14%, rgba(10,10,10,0.72) 86%);
+    }
+
+    /* ── 3D FLY CARDS ── */
+    .step-card,.contact-card,.map-zone-card,.cta-right-card,.cal-wrap {
+      box-shadow:
+        0 1px 2px rgba(0,0,0,0.03),0 2px 4px rgba(0,0,0,0.05),
+        0 4px 8px rgba(0,0,0,0.07),
+        inset -1px -1px 3px rgba(0,0,0,0.03),inset 1px 1px 2px rgba(255,255,255,0.05);
+    }
+    .step-card:hover,.contact-card:hover,.map-zone-card:hover {
+      box-shadow:
+        0 2px 4px rgba(0,0,0,0.05),0 4px 8px rgba(0,0,0,0.08),
+        0 8px 20px rgba(0,0,0,0.12),0 16px 36px rgba(0,0,0,0.09),
+        inset -1px -1px 3px rgba(0,0,0,0.04),inset 1px 1px 2px rgba(255,255,255,0.07);
+    }
+    [data-theme="dark"] .step-card:hover,
+    [data-theme="dark"] .contact-card:hover,
+    [data-theme="dark"] .map-zone-card:hover {
+      box-shadow:
+        0 2px 4px rgba(255,138,0,0.05),0 4px 8px rgba(255,138,0,0.07),
+        0 8px 20px rgba(255,138,0,0.10),0 16px 36px rgba(255,138,0,0.07),
+        inset -1px -1px 3px rgba(0,0,0,0.06),inset 1px 1px 2px rgba(255,255,255,0.03);
+    }
 
     /* ── PARALLAX BACKGROUND LAYERS ── */
     .pax-bg {
@@ -248,7 +325,7 @@
     .section-wrap { max-width:1200px; margin:0 auto; padding:clamp(72px,9vw,110px) clamp(20px,4vw,48px); position:relative; z-index:1; }
     .section-tag { display:inline-flex; align-items:center; gap:7px; font-size:0.68rem; letter-spacing:0.28em; text-transform:uppercase; color:var(--accent); margin-bottom:18px; transition:color var(--trans); }
     .section-tag::before { content:''; display:block; width:24px; height:1px; background:var(--accent); transition:background var(--trans); }
-    .section-title { font-family:var(--font-display); font-size:clamp(2.4rem,5.5vw,3.8rem); letter-spacing:0.05em; color:var(--text); margin-bottom:14px; line-height:1; transition:color var(--trans); }
+    .section-title { font-family:var(--font-display); font-size:clamp(2.4rem,5.5vw,3.8rem); letter-spacing:0.05em; color:#f5f2ee; margin-bottom:14px; line-height:1; transition:color var(--trans); }
     .section-title em { font-style:normal; color:var(--accent); transition:color var(--trans); }
     .section-desc { font-size:clamp(0.9rem,1.5vw,1rem); font-weight:300; color:var(--text-dim); max-width:580px; line-height:1.8; transition:color var(--trans); }
 
@@ -280,7 +357,7 @@
     @media(max-width:760px){ .cta-block-inner{ grid-template-columns:1fr; } }
     .cta-left-eyebrow { font-size:0.68rem; letter-spacing:0.32em; text-transform:uppercase; color:var(--accent); margin-bottom:16px; display:flex; align-items:center; gap:10px; transition:color var(--trans); }
     .cta-left-eyebrow::before { content:''; display:block; width:24px; height:1px; background:var(--accent); }
-    .cta-left-title { font-family:var(--font-display); font-size:clamp(2.4rem,5.5vw,4rem); letter-spacing:0.05em; line-height:0.96; color:var(--text); margin-bottom:20px; transition:color var(--trans); }
+    .cta-left-title { font-family:var(--font-display); font-size:clamp(2.4rem,5.5vw,4rem); letter-spacing:0.05em; line-height:0.96; color:#f5f2ee; margin-bottom:20px; transition:color var(--trans); }
     .cta-left-title em { font-style:normal; color:var(--accent); transition:color var(--trans); }
     .cta-left-body { font-size:clamp(0.9rem,1.5vw,1rem); font-weight:300; line-height:1.82; color:var(--text-dim); margin-bottom:36px; transition:color var(--trans); }
     .cta-right-card { background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:clamp(28px,4vw,44px); position:relative; overflow:visible; transition:background var(--trans),border-color var(--trans); }
@@ -527,6 +604,7 @@
     <li><a href="index.html" data-i18n="nav-home">Domů</a></li>
     <li><a href="O-mně.html" data-i18n="nav-about">O mně</a></li>
     <li><a href="Portfolio.html" data-i18n="nav-portfolio">Portfolio</a></li>
+    <li><a href="Nabídka.html" data-i18n="nav-offers">Nabídka</a></li>
     <li><a href="Aspekty.html" data-i18n="nav-aspekty">Aspekty</a></li>
     <li><a href="Ceník.html" data-i18n="nav-cenik">Ceník</a></li>
     <li><a href="Objednávkový-formulář.html" class="active" data-i18n="nav-objednavka">Objednávka</a></li>
@@ -542,6 +620,12 @@
     <button class="theme-toggle" id="themeToggle" aria-label="Přepnout téma">
       <div class="toggle-icons"><span>🌙</span><span>☀️</span></div>
     </button>
+    <button class="settings-btn" id="mlx-settings-toggle" type="button" aria-label="Nastavení">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"></path>
+      </svg>
+    </button>
     <div class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></div>
   </div>
 </nav>
@@ -552,6 +636,7 @@
   <a href="index.html">Domů</a>
   <a href="O-mně.html">O mně</a>
   <a href="Portfolio.html">Portfolio</a>
+  <a href="Nabídka.html">Nabídka</a>
   <a href="Aspekty.html">Aspekty</a>
   <a href="Ceník.html">Ceník</a>
   <a href="Objednávkový-formulář.html">Objednávka</a>
@@ -928,7 +1013,7 @@
         <a href="https://www.youtube.com/@MLX-Media" target="_blank" rel="noopener" class="f-social-btn">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 00.5 6.2 31.3 31.3 0 000 12a31.3 31.3 0 00.5 5.8 3 3 0 002.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 002.1-2.1A31.3 31.3 0 0024 12a31.3 31.3 0 00-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>YouTube
         </a>
-        <a href="https://www.instagram.com/mlxmedia" target="_blank" rel="noopener" class="f-social-btn">
+        <a href="https://www.instagram.com/matos.lexa" target="_blank" rel="noopener" class="f-social-btn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>Instagram
         </a>
       </div>
@@ -940,6 +1025,7 @@
         <li><a href="O-mně.html" data-i18n="f-nav-2">O mně</a></li>
         <li><a href="Portfolio.html" data-i18n="f-nav-3">Portfolio</a></li>
         <li><a href="Aspekty.html" data-i18n="f-nav-4">Aspekty</a></li>
+        <li><a href="Nabídka.html" data-i18n="f-nav-offers">Nabídka</a></li>
         <li><a href="Ceník.html" data-i18n="f-nav-5">Ceník</a></li>
         <li><a href="Objednávka.html" data-i18n="f-nav-6">Objednávka</a></li>
       </ul>
@@ -977,8 +1063,8 @@
   </div>
 
   <div class="f-stats-band">
-    <div class="f-stat-item"><div class="f-stat-number">35<span>+</span></div><div class="f-stat-label">Projektů</div></div>
-    <div class="f-stat-item"><div class="f-stat-number">4<span>+</span></div><div class="f-stat-label">Roky zkušeností</div></div>
+    <div class="f-stat-item"><div class="f-stat-number">45<span>+</span></div><div class="f-stat-label">Projektů</div></div>
+    <div class="f-stat-item"><div class="f-stat-number">5<span>+</span></div><div class="f-stat-label">Roky zkušeností</div></div>
     <div class="f-stat-item"><div class="f-stat-number">95<span>%</span></div><div class="f-stat-label">Doporučení</div></div>
     <div class="f-stat-item"><div class="f-stat-number">6<span>K</span></div><div class="f-stat-label">RAW rozlišení</div></div>
   </div>
@@ -1003,10 +1089,11 @@
 </footer>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="mlx-settings.js"></script>
 <script>
 /* ── THEME ── */
 const root = document.documentElement;
-root.setAttribute('data-theme', localStorage.getItem('mlx-theme') || 'dark');
+root.setAttribute('data-theme', localStorage.getItem('mlx-theme') || 'light');
 
 /* ── AUDIO ── */
 function createAudio(src, volume = 0.16) {
@@ -1337,30 +1424,50 @@ function _checkCounters() {
 window.addEventListener('scroll', () => requestAnimationFrame(_checkCounters), { passive: true });
 _checkCounters();
 
-const BOOKED_FULL = [
-  "2026-05-26","2026-05-27","2026-05-28"
-];
+const FALLBACK_AVAILABILITY = {
+  green: [
+    "2026-07-06","2026-07-07","2026-07-15","2026-07-20","2026-07-21","2026-07-22","2026-07-25","2026-07-26",
+    "2026-08-02","2026-08-03","2026-08-04","2026-08-05","2026-08-06","2026-08-07","2026-09-07","2026-09-08",
+    "2026-09-09","2026-09-10","2026-09-13","2026-09-14","2026-09-15","2026-09-16","2026-09-17","2026-09-23",
+    "2026-09-24","2026-09-27","2026-09-28","2026-09-29"
+  ],
+  blue: [
+    "2026-07-11","2026-07-12","2026-07-13","2026-07-14","2026-07-28","2026-07-29","2026-07-30","2026-08-08",
+    "2026-08-09","2026-08-10","2026-08-11","2026-08-17","2026-08-18","2026-08-19","2026-09-02","2026-09-03",
+    "2026-09-04","2026-09-05","2026-09-06","2026-09-20"
+  ],
+  yellow: [
+    "2026-07-16","2026-07-24","2026-07-31","2026-08-01","2026-08-27","2026-08-28","2026-08-29","2026-08-30",
+    "2026-08-31","2026-09-01","2026-09-11","2026-09-12","2026-09-18"
+  ]
+};
 
-const BOOKED_PARTIAL = [
-  "2026-05-12","2026-05-13","2026-05-14","2026-05-19","2026-05-20"
-];
+let BOOKED_FULL = [];
+let BOOKED_PARTIAL = [];
+let HARD = [];
+let activeAvailability = { ...FALLBACK_AVAILABILITY };
 
-const HARD = [
-  "2026-04-06","2026-04-07","2026-04-08","2026-04-09","2026-04-10",
-  "2026-04-13","2026-04-14","2026-04-15","2026-04-16","2026-04-17",
-  "2026-04-20","2026-04-21","2026-04-22","2026-04-23","2026-04-24",
-  "2026-04-27","2026-04-28","2026-04-29","2026-04-30","2026-05-01",
-  "2026-05-04","2026-05-05","2026-05-06","2026-05-07","2026-05-08",
-  "2026-05-11","2026-05-12","2026-05-18","2026-05-19","2026-05-22",
-  "2026-05-25","2026-05-26","2026-06-01","2026-06-02","2026-06-03",
-  "2026-06-04","2026-06-05","2026-06-08","2026-06-09","2026-06-10",
-  "2026-06-11","2026-06-12","2026-06-15","2026-06-16","2026-06-17",
-  "2026-06-18","2026-06-19","2026-06-22","2026-06-23","2026-06-24",
-  "2026-06-25","2026-06-26","2026-06-29","2026-06-30","2026-07-01",
-  "2026-07-02","2026-07-03","2026-07-06","2026-07-07","2026-07-08",
-  "2026-07-09","2026-07-10","2026-07-13","2026-07-14","2026-07-15",
-  "2026-07-16","2026-07-17"
-];
+async function loadAvailability() {
+  try {
+    const response = await fetch('dates.json', { cache: 'no-store' });
+    if (!response.ok) throw new Error('Failed to load dates.json');
+    const data = await response.json();
+    if (data && typeof data === 'object') {
+      activeAvailability = {
+        green: Array.isArray(data.green) ? data.green : [],
+        blue: Array.isArray(data.blue) ? data.blue : [],
+        yellow: Array.isArray(data.yellow) ? data.yellow : []
+      };
+    }
+  } catch (error) {
+    activeAvailability = { ...FALLBACK_AVAILABILITY };
+  }
+
+  BOOKED_FULL = [...activeAvailability.yellow];
+  BOOKED_PARTIAL = [...activeAvailability.green];
+  HARD = [...activeAvailability.blue];
+}
+
   const MONTHS_CS = ['Leden','Únor','Březen','Duben','Květen','Červen','Červenec','Srpen','Září','Říjen','Listopad','Prosinec'];
   let calDate = new Date(); calDate.setDate(1);
 
@@ -1389,7 +1496,7 @@ const HARD = [
   }
   document.getElementById('cal-prev').addEventListener('click', () => { calDate.setMonth(calDate.getMonth()-1); renderCal(); });
   document.getElementById('cal-next').addEventListener('click', () => { calDate.setMonth(calDate.getMonth()+1); renderCal(); });
-  renderCal();
+  loadAvailability().then(() => renderCal());
 
   // ── MAP ──
   let tileLayer;
@@ -1472,44 +1579,7 @@ sectionLinks.forEach(link => {
 });
 
 /* ── GENTLE WHEEL SCROLL SMOOTHING ── */
-(() => {
-  const damping = 0.2;
-  let targetY = window.scrollY;
-  let currentY = window.scrollY;
-  let frameRequested = false;
-
-  const doc = document.scrollingElement || document.documentElement;
-  const clampY = y => Math.min(Math.max(0, y), doc.scrollHeight - window.innerHeight);
-
-  function step() {
-    currentY += (targetY - currentY) * damping;
-    if (Math.abs(targetY - currentY) < 0.5) {
-      currentY = targetY;
-      window.scrollTo(0, Math.round(currentY));
-      frameRequested = false;
-      return;
-    }
-    window.scrollTo(0, Math.round(currentY));
-    requestAnimationFrame(step);
-  }
-
-  window.addEventListener('wheel', e => {
-    if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || !e.deltaY) return;
-    e.preventDefault();
-    targetY = clampY(targetY + e.deltaY);
-    if (!frameRequested) {
-      frameRequested = true;
-      requestAnimationFrame(step);
-    }
-  }, { passive: false });
-
-  window.addEventListener('scroll', () => {
-    if (!frameRequested) {
-      targetY = window.scrollY;
-      currentY = window.scrollY;
-    }
-  }, { passive: true });
-})();
+/* REMOVED - smooth scrolling disabled */
 
 /* ══════════════════════════════════════════════════
    LANGUAGE SYSTEM — CZ / EN
