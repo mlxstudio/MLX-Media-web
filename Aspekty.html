@@ -32,6 +32,7 @@
   <script src="AI/ChatBot.js"></script>
   <script src="AI/mlx_highlight.js"></script>
   <script src="mlx-cursor.js" defer></script>
+  <script src="mlx-settings.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
@@ -51,17 +52,19 @@
   --border:rgba(255,255,255,0.07);
   --accent:#FF8A00;--accent-soft:rgba(255,138,0,0.10);--accent-glow:rgba(255,138,0,0.22);
   --text:#e8e4de;--text-muted:#5e5a56;--text-dim:#8a8580;
-  --noise-op:0.028;--noise-op2:0.015;
+  --noise-op:0.06;--noise-op2:0.04;
   --hero-grad:linear-gradient(160deg,#0d0d0d 0%,#141008 100%);
   --stripe:linear-gradient(90deg,transparent,#FF8A00,#ffb347,transparent);
   --footer-desc:#888480;
   --grid-line:rgba(255,138,0,0.04);
-  --vignette:rgba(0,0,0,0.35);
+  --vignette:rgba(0,0,0,0.60);
   --tape-color:rgba(255,200,100,0.22);
   --tape-border:rgba(255,220,140,0.18);
   --ruled-line:rgba(255,255,255,0.04);
   --award-bg:#080808;
   --trail-op:0.5;
+  --shadow-warm:rgba(255,138,0,0.15);
+  --glow-color:rgba(255,138,0,0.35);
 }
 
 [data-theme="light"]{
@@ -69,21 +72,23 @@
   --border:rgba(0,0,0,0.08);
   --accent:#00BFA6;--accent-soft:rgba(0,191,166,0.08);--accent-glow:rgba(0,191,166,0.20);
   --text:#0f1e1c;--text-muted:#a0a8a6;--text-dim:#6b7574;
-  --noise-op:0.050;--noise-op2:0.040;
+  --noise-op:0.10;--noise-op2:0.08;
   --hero-grad:linear-gradient(160deg,#f4f2ec 0%,#e5f5f2 100%);
   --stripe:linear-gradient(90deg,transparent,#00BFA6,#7dd7cc,transparent);
   --footer-desc:#6b7574;
   --grid-line:rgba(0,191,166,0.055);
-  --vignette:rgba(0,0,0,0.10);
+  --vignette:rgba(0,0,0,0.20);
   --tape-color:rgba(210,185,120,0.40);
   --tape-border:rgba(180,155,80,0.30);
   --ruled-line:rgba(0,0,0,0.055);
   --award-bg:var(--bg-surface);
   --trail-op:0.40;
+  --shadow-warm:rgba(0,191,166,0.12);
+  --glow-color:rgba(0,191,166,0.28);
 }
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
+html{scroll-behavior:auto}
 body{
   font-family:var(--font-body);background:var(--bg);color:var(--text);
   overflow-x:hidden;transition:background var(--trans),color var(--trans);position:relative;
@@ -274,7 +279,8 @@ section{scroll-margin-top:var(--nav-h);}
 .d1{transition-delay:.05s}.d2{transition-delay:.15s}.d3{transition-delay:.25s}.d4{transition-delay:.35s}
 
 /* ── STATS ── */
-.stats-band{border-top:1px solid var(--border);background:var(--bg-surface);background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);background-size:40px 40px;transition:background var(--trans),border-color var(--trans);}
+.stats-band{position:relative;border-top:1px solid var(--border);background:var(--bg-surface);transition:background var(--trans),border-color var(--trans);box-shadow:0 12px 48px var(--shadow-warm);}
+.stats-band::after{content:'';position:absolute;left:8%;right:8%;bottom:-26px;height:52px;background:radial-gradient(ellipse at center, color-mix(in srgb, var(--shadow-warm) 78%, transparent) 0%, transparent 72%);pointer-events:none;filter:blur(18px);opacity:.9;}
 .stats-inner{max-width:1200px;margin:0 auto;padding:0 clamp(20px,4vw,48px);display:grid;grid-template-columns:repeat(4,1fr);gap:1px;position:relative;z-index:1;}
 @media(max-width:640px){.stats-inner{grid-template-columns:repeat(2,1fr);}}
 .stat-block{padding:clamp(28px,4vw,48px) 24px;text-align:center;border-right:1px solid var(--border);transition:border-color var(--trans);}
@@ -299,7 +305,6 @@ section{scroll-margin-top:var(--nav-h);}
 }
 
 .discipline-number{font-family:var(--font-display);font-size:clamp(5rem,14vw,10rem);line-height:1;color:var(--accent);opacity:.12;position:absolute;top:-24px;left:-12px;pointer-events:none;letter-spacing:-.04em;transition:color var(--trans);}
-.discipline-text{position:relative;}
 .discipline-tag{display:inline-flex;align-items:center;gap:7px;font-size:.68rem;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);margin-bottom:18px;transition:color var(--trans);}
 .discipline-tag::before{content:'';display:block;width:24px;height:1px;background:var(--accent);transition:background var(--trans);}
 .discipline-title{font-family:var(--font-display);font-size:clamp(2.4rem,5.5vw,4rem);letter-spacing:.05em;line-height:1.05;color:var(--text);margin-bottom:14px;transition:color var(--trans);}
@@ -465,6 +470,188 @@ section{scroll-margin-top:var(--nav-h);}
 .img-before-pohyb{background:linear-gradient(135deg,#1c1c1c 0%,#282828 100%);}
 .img-after-pohyb{background:linear-gradient(135deg,#081a18 0%,#0a2820 100%);}
 
+/* ── DISCIPLINE NUMBER — behind text ── */
+.discipline-number{z-index:-1;}
+.discipline-text{position:relative;z-index:1;isolation:isolate;}
+
+/* ── 3D TEXT ── */
+.discipline-title,.philosophy-quote,.cta-title{
+  color: white;
+  transition:color var(--trans),text-shadow 0.45s var(--ease-out);
+  text-shadow:
+    1px 1px 0 #b5b2ab,2px 2px 0 #aeaba4,3px 3px 0 #a7a49d,4px 4px 0 #9f9c96,
+    4px 8px 12px rgba(20,18,14,0.35),4px 14px 24px rgba(20,18,14,0.20),4px 20px 40px rgba(20,18,14,0.12);
+}
+[data-theme="dark"] .discipline-title,[data-theme="dark"] .philosophy-quote,[data-theme="dark"] .cta-title{
+  text-shadow:
+    1px 1px 0 #8a8784,2px 2px 0 #7d7a76,3px 3px 0 #706d6a,4px 4px 0 #636059,
+    4px 8px 12px rgba(20,18,14,0.55),4px 14px 24px rgba(20,18,14,0.35),4px 20px 40px rgba(20,18,14,0.18);
+}
+.discipline-title em,.philosophy-quote em,.cta-title em{
+  color: var(--accent);
+  transition:color var(--trans),text-shadow 0.45s var(--ease-out);
+  text-shadow:
+    1px 1px 0 color-mix(in srgb, var(--accent) 88%, #000 12%),
+    2px 2px 0 color-mix(in srgb, var(--accent) 72%, #000 28%),
+    3px 3px 0 color-mix(in srgb, var(--accent) 58%, #000 42%),
+    4px 4px 0 color-mix(in srgb, var(--accent) 44%, #000 56%),
+    4px 8px 12px color-mix(in srgb, var(--accent) 30%, rgba(0,0,0,0.75) 70%),
+    4px 14px 24px color-mix(in srgb, var(--accent) 24%, rgba(0,0,0,0.75) 76%),
+    4px 20px 40px color-mix(in srgb, var(--accent) 18%, rgba(0,0,0,0.75) 82%);
+}
+[data-theme="dark"] .discipline-title em,[data-theme="dark"] .philosophy-quote em,[data-theme="dark"] .cta-title em{
+  color: var(--accent);
+  text-shadow:
+    1px 1px 0 color-mix(in srgb, var(--accent) 88%, #000 12%),
+    2px 2px 0 color-mix(in srgb, var(--accent) 72%, #000 28%),
+    3px 3px 0 color-mix(in srgb, var(--accent) 58%, #000 42%),
+    4px 4px 0 color-mix(in srgb, var(--accent) 44%, #000 56%),
+    4px 8px 12px color-mix(in srgb, var(--accent) 26%, rgba(10,10,10,0.7) 74%),
+    4px 14px 24px color-mix(in srgb, var(--accent) 20%, rgba(10,10,10,0.7) 80%),
+    4px 20px 40px color-mix(in srgb, var(--accent) 14%, rgba(10,10,10,0.72) 86%);
+}
+
+/* ── 3D FLY CARDS (photo-frame) ── */
+.photo-frame{
+  box-shadow:
+    0 2px 4px rgba(0,0,0,0.06),0 4px 8px rgba(0,0,0,0.08),
+    0 8px 24px rgba(0,0,0,0.12),0 20px 48px rgba(0,0,0,0.16),
+    inset -2px -2px 4px rgba(0,0,0,0.04),inset 1px 1px 2px rgba(255,255,255,0.07);
+}
+.photo-frame:hover{
+  box-shadow:
+    0 4px 8px rgba(0,0,0,0.08),0 8px 20px rgba(0,0,0,0.12),
+    0 18px 48px rgba(0,0,0,0.18),0 32px 72px rgba(0,0,0,0.14),
+    inset -2px -2px 4px rgba(0,0,0,0.04),inset 1px 1px 2px rgba(255,255,255,0.10);
+}
+[data-theme="dark"] .photo-frame:hover{
+  box-shadow:
+    0 4px 8px rgba(255,138,0,0.06),0 8px 20px rgba(255,138,0,0.09),
+    0 18px 48px rgba(255,138,0,0.12),0 32px 72px rgba(255,138,0,0.08),
+    inset -2px -2px 4px rgba(0,0,0,0.08),inset 1px 1px 2px rgba(255,255,255,0.03);
+}
+
+/* ── STAT BAND GLOW ── */
+
+/* ══ CAROUSEL SYSTEM ══ */
+.carousel-wrap{position:relative;width:100%;}
+.carousel-clip{overflow:hidden;border-radius:4px;width:100%;}
+
+.carousel-track{
+  display:flex;transition:transform 0.55s cubic-bezier(0.22,1,0.36,1);
+  will-change:transform;
+}
+.carousel-slide{min-width:100%;width:100%;}
+
+/* Carousel nav arrows */
+.carousel-arrow{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:36px;height:36px;border-radius:50%;
+  background:color-mix(in srgb,var(--bg-card) 90%,transparent);
+  border:1px solid var(--border);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  color:var(--text);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  z-index:20;transition:border-color .2s,background .2s,transform .2s,opacity .2s;
+  opacity:0.7;
+}
+.carousel-arrow:hover{border-color:var(--accent);color:var(--accent);opacity:1;transform:translateY(-50%) scale(1.08);}
+.carousel-arrow.prev{left:-18px;}
+.carousel-arrow.next{right:-18px;}
+.carousel-arrow svg{width:14px;height:14px;flex-shrink:0;}
+@media(max-width:760px){.carousel-arrow.prev{left:4px;}.carousel-arrow.next{right:4px;}}
+
+/* Carousel dots */
+.carousel-dots{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  margin-top:14px;
+}
+.carousel-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--border);border:1px solid var(--text-muted);
+  cursor:pointer;transition:background .25s,transform .25s,border-color .25s;
+}
+.carousel-dot.active{
+  background:var(--accent);border-color:var(--accent);
+  transform:scale(1.4);
+}
+
+/* Slide counter chip */
+.slide-counter{
+  position:absolute;bottom:58px;right:14px;z-index:20;
+  font-family:var(--font-display);font-size:.7rem;letter-spacing:.14em;
+  padding:4px 10px;border-radius:99px;
+  background:color-mix(in srgb,var(--bg-card) 85%,transparent);
+  border:1px solid var(--border);backdrop-filter:blur(6px);
+  color:var(--text-muted);pointer-events:none;
+  transition:background var(--trans),border-color var(--trans),color var(--trans);
+}
+.slide-counter span{color:var(--accent);}
+
+/* ══ MIC CARDS ══ */
+.mic-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:12px;
+  padding:16px 12px 12px;
+}
+@media(max-width:520px){.mic-grid{grid-template-columns:1fr;gap:10px;}}
+.mic-card{
+  border:1px solid var(--border);border-radius:6px;
+  background:var(--bg-card);
+  padding:16px 14px 14px;
+  cursor:pointer;
+  display:flex;flex-direction:column;gap:8px;
+  transition:border-color .22s,background .22s,transform .22s,box-shadow .22s;
+  position:relative;overflow:hidden;
+}
+.mic-card::before{
+  content:'';position:absolute;inset:0;
+  background:var(--accent);opacity:0;
+  transition:opacity .22s;z-index:0;
+}
+.mic-card:hover{border-color:var(--accent);transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(0,0,0,0.12);}
+.mic-card.active{border-color:var(--accent);
+  box-shadow:0 0 0 1px var(--accent),0 8px 28px var(--accent-glow);}
+.mic-card.active::before{opacity:0.04;}
+.mic-card>*{position:relative;z-index:1;}
+.mic-icon{
+  width:36px;height:36px;border-radius:6px;
+  background:var(--accent-soft);border:1px solid var(--accent-glow);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--accent);flex-shrink:0;
+  transition:background var(--trans),border-color var(--trans),color var(--trans);
+}
+.mic-icon svg{width:18px;height:18px;}
+.mic-card.active .mic-icon{background:var(--accent);color:var(--bg);}
+.mic-name{font-family:var(--font-display);font-size:.9rem;letter-spacing:.1em;color:var(--text);transition:color var(--trans);}
+.mic-desc{font-size:.72rem;color:var(--text-muted);line-height:1.5;transition:color var(--trans);}
+.mic-badge{
+  align-self:flex-start;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;
+  padding:3px 8px;border-radius:99px;
+  background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent-glow);
+  transition:background var(--trans),color var(--trans),border-color var(--trans);
+}
+.mic-card.active .mic-badge{background:var(--accent);color:var(--bg);border-color:var(--accent);}
+
+/* Active mic video area */
+.mic-video-wrap{
+  position:relative;aspect-ratio:16/9;
+  background:var(--bg);border-radius:4px;overflow:hidden;
+  border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  transition:background var(--trans),border-color var(--trans);
+}
+.mic-video-wrap video,.mic-video-wrap iframe{
+  width:100%;height:100%;object-fit:cover;display:block;border:none;
+}
+/* placeholder when no video */
+.mic-placeholder{
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  color:var(--text-muted);font-size:.78rem;letter-spacing:.1em;
+  text-transform:uppercase;
+}
+.mic-placeholder svg{width:28px;height:28px;color:var(--accent);opacity:.5;}
+
 /* ── PHILOSOPHY ── */
 .philosophy{
   background:var(--bg-card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);
@@ -491,6 +678,49 @@ section{scroll-margin-top:var(--nav-h);}
 .cta-tape-right{position:absolute;top:-8px;right:40px;width:40px;height:18px;background:var(--tape-color);border:1px solid var(--tape-border);border-radius:2px;transform:rotate(2deg);transition:background var(--trans),border-color var(--trans);}
 .cta-eyebrow{font-size:.68rem;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;transition:color var(--trans);}
 .cta-title{font-family:var(--font-display);font-size:clamp(1.6rem,4vw,2.8rem);letter-spacing:.06em;color:var(--text);transition:color var(--trans);}
+
+/* 3D treatment only for the main section headlines */
+.discipline-title,
+.philosophy-quote{
+  color: rgba(255,255,255,0.98) !important;
+  text-shadow:
+    1px 1px 0 rgba(174,169,164,0.95),
+    2px 2px 0 rgba(160,154,149,0.96),
+    3px 3px 0 rgba(146,140,134,0.97),
+    4px 4px 0 rgba(132,126,120,0.98),
+    5px 8px 12px rgba(20,18,14,0.38),
+    6px 15px 22px rgba(20,18,14,0.22),
+    8px 22px 34px rgba(20,18,14,0.14);
+  -webkit-text-stroke: 0.3px rgba(255,255,255,0.15);
+}
+
+.discipline-title em,
+.philosophy-quote em{
+  color: var(--accent) !important;
+  text-shadow:
+    1px 1px 0 color-mix(in srgb, var(--accent) 88%, #000 12%),
+    2px 2px 0 color-mix(in srgb, var(--accent) 72%, #000 28%),
+    3px 3px 0 color-mix(in srgb, var(--accent) 58%, #000 42%),
+    4px 4px 0 color-mix(in srgb, var(--accent) 44%, #000 56%),
+    5px 8px 12px color-mix(in srgb, var(--accent) 30%, rgba(0,0,0,0.75) 70%),
+    6px 14px 20px color-mix(in srgb, var(--accent) 24%, rgba(0,0,0,0.75) 76%),
+    8px 20px 30px color-mix(in srgb, var(--accent) 18%, rgba(0,0,0,0.75) 82%);
+}
+
+.cta-title,
+.f-cta-title{
+  color: var(--text) !important;
+  text-shadow: none !important;
+  -webkit-text-stroke: 0 !important;
+}
+
+.cta-title em,
+.f-cta-title em{
+  color: var(--accent) !important;
+  text-shadow: none !important;
+  -webkit-text-stroke: 0 !important;
+}
+
 .btn-primary{display:inline-flex;align-items:center;gap:10px;padding:15px 32px;background:var(--accent);color:var(--bg);font-family:var(--font-body);font-size:.8rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;border-radius:4px;white-space:nowrap;transition:transform .2s,box-shadow .2s,background var(--trans),color var(--trans);}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 32px var(--accent-glow);}
 .btn-primary svg{width:15px;height:15px;}
@@ -505,47 +735,54 @@ section{scroll-margin-top:var(--nav-h);}
 @media(max-width:600px){.footer-main-grid{grid-template-columns:1fr;padding:48px 24px 32px;gap:36px;}}
 .footer-reveal{opacity:0;transform:translateY(22px);transition:opacity .7s var(--ease-out),transform .7s var(--ease-out);}
 .footer-reveal.visible{opacity:1;transform:translateY(0);}
-.footer-reveal:nth-child(2){transition-delay:.1s;}.footer-reveal:nth-child(3){transition-delay:.18s;}.footer-reveal:nth-child(4){transition-delay:.26s;}
-.f-brand-logo{font-family:var(--font-display);font-size:1.4rem;letter-spacing:.12em;color:var(--text);margin-bottom:6px;transition:color var(--trans);}
-.f-brand-logo span{color:var(--accent);}
-.f-brand-tagline{font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--text-muted);margin-bottom:18px;transition:color var(--trans);}
-.f-brand-desc{font-size:.86rem;font-weight:300;line-height:1.8;color:var(--footer-desc);max-width:280px;margin-bottom:24px;transition:color var(--trans);}
-.f-social-row{display:flex;gap:10px;flex-wrap:wrap;}
-.f-social-btn{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;background:var(--bg-card);border:1px solid var(--border);border-radius:4px;font-size:.74rem;font-weight:500;letter-spacing:.08em;text-decoration:none;color:var(--text-dim);transition:border-color .2s,color .2s,background var(--trans);}
-.f-social-btn svg{width:14px;height:14px;flex-shrink:0;}
-.f-social-btn:hover{border-color:var(--accent);color:var(--accent);}
-.f-col-title{font-size:.68rem;letter-spacing:.28em;text-transform:uppercase;color:var(--text-muted);margin-bottom:18px;transition:color var(--trans);}
+.footer-reveal:nth-child(1){transition-delay:.05s;}.footer-reveal:nth-child(2){transition-delay:.15s;}.footer-reveal:nth-child(3){transition-delay:.25s;}.footer-reveal:nth-child(4){transition-delay:.35s;}
+.f-brand-logo{font-family:var(--font-display);font-size:3rem;letter-spacing:.12em;color:var(--text);line-height:1;margin-bottom:6px;display:inline-block;transition:color var(--trans);}
+.f-brand-logo span{color:var(--accent);transition:color var(--trans);}
+.f-brand-tagline{font-size:.7rem;letter-spacing:.32em;text-transform:uppercase;color:var(--text-muted);margin-bottom:20px;transition:color var(--trans);}
+.f-brand-desc{font-size:.88rem;line-height:1.75;color:var(--footer-desc);max-width:280px;margin-bottom:28px;transition:color var(--trans);}
+.f-social-row{display:flex;gap:12px;flex-wrap:wrap;}
+.f-social-btn{display:flex;align-items:center;gap:8px;padding:9px 16px;border:1px solid var(--border);border-radius:4px;text-decoration:none;color:var(--text-muted);font-size:.78rem;letter-spacing:.06em;font-weight:500;position:relative;overflow:hidden;transition:border-color .25s,color .25s,transform .2s,background var(--trans);}
+.f-social-btn::after{content:'';position:absolute;inset:0;background:var(--accent);opacity:0;transition:opacity .25s;z-index:-1;}
+.f-social-btn:hover{border-color:var(--accent);color:var(--bg);transform:translateY(-2px);}
+.f-social-btn:hover::after{opacity:1;}
+.f-social-btn svg{width:15px;height:15px;flex-shrink:0;}
+.f-col-title{font-family:var(--font-display);font-size:.95rem;letter-spacing:.22em;color:var(--accent);text-transform:uppercase;margin-bottom:22px;display:flex;align-items:center;gap:10px;transition:color var(--trans);}
+.f-col-title::after{content:'';flex:1;height:1px;background:var(--border);transition:background var(--trans);}
 .f-links{list-style:none;display:flex;flex-direction:column;gap:10px;}
-.f-links a{font-size:.86rem;color:var(--text-dim);text-decoration:none;transition:color .2s;}
-.f-links a:hover{color:var(--accent);}
-.f-contact-item{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;}
+.f-links a{color:var(--text-muted);text-decoration:none;font-size:.88rem;display:flex;align-items:center;gap:8px;transition:color .2s,gap .2s;}
+.f-links a::before{content:'';width:6px;height:1px;background:var(--accent);opacity:0;transition:opacity .2s,width .2s,background var(--trans);}
+.f-links a:hover{color:var(--text);gap:12px;}
+.f-links a:hover::before{opacity:1;width:10px;}
+.f-contact-item{display:flex;align-items:flex-start;gap:12px;margin-bottom:18px;}
 .f-contact-item:last-child{margin-bottom:0;}
-.f-contact-icon{width:30px;height:30px;background:var(--accent-soft);border:1px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background var(--trans),border-color var(--trans);}
-.f-contact-icon svg{color:var(--accent);}
-.f-contact-label{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);margin-bottom:1px;transition:color var(--trans);}
-.f-contact-value{font-size:.84rem;color:var(--text-dim);transition:color var(--trans);}
-.f-contact-value a{color:var(--text-dim);text-decoration:none;transition:color .2s;}
+.f-contact-icon{width:36px;height:36px;border:1px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--accent);transition:border-color .2s,background .2s,color var(--trans);}
+.f-contact-item:hover .f-contact-icon{border-color:var(--accent);background:var(--accent-soft);}
+.f-contact-label{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px;transition:color var(--trans);}
+.f-contact-value{font-size:.86rem;color:var(--text);transition:color var(--trans);}
+.f-contact-value a{color:inherit;text-decoration:none;transition:color .2s;}
 .f-contact-value a:hover{color:var(--accent);}
-.f-stats-band{border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(4,1fr);transition:border-color var(--trans);}
-@media(max-width:640px){.f-stats-band{grid-template-columns:repeat(2,1fr);}}
-.f-stat-item{padding:clamp(20px,3vw,32px) 24px;text-align:center;border-right:1px solid var(--border);opacity:0;transform:translateY(14px);transition:border-color var(--trans),opacity .6s var(--ease-out),transform .6s var(--ease-out);}
+.f-stats-band{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 40px 40px;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;border-top:1px solid var(--border);transition:border-color var(--trans);}
+@media(max-width:960px){.f-stats-band{grid-template-columns:repeat(2,1fr);padding:0 28px 32px;}}
+@media(max-width:600px){.f-stats-band{padding:0 24px 28px;}}
+.f-stat-item{padding:28px 20px;text-align:center;border-right:1px solid var(--border);opacity:0;transform:translateY(14px);transition:border-color var(--trans),opacity .6s var(--ease-out),transform .6s var(--ease-out);}
 .f-stat-item.visible{opacity:1;transform:translateY(0);}
-.f-stat-item:nth-child(2){transition-delay:.08s;}.f-stat-item:nth-child(3){transition-delay:.16s;}.f-stat-item:nth-child(4){border-right:none;transition-delay:.24s;}
-.f-stat-number{font-family:var(--font-display);font-size:clamp(1.8rem,4vw,2.6rem);letter-spacing:.04em;color:var(--text);line-height:1;margin-bottom:4px;transition:color var(--trans);}
-.f-stat-number span{color:var(--accent);}
-.f-stat-label{font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text-muted);transition:color var(--trans);}
-.f-cta-wrap{border-top:1px solid var(--border);padding:clamp(28px,4vw,48px) clamp(20px,4vw,48px);transition:border-color var(--trans);}
-.f-cta-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;opacity:0;transform:translateY(16px);transition:opacity .65s var(--ease-out),transform .65s var(--ease-out);}
+.f-stat-item:nth-child(1){transition-delay:.1s;}.f-stat-item:nth-child(2){transition-delay:.2s;}.f-stat-item:nth-child(3){transition-delay:.3s;}.f-stat-item:nth-child(4){border-right:none;transition-delay:.4s;}
+.f-stat-number{font-family:var(--font-display);font-size:2.4rem;letter-spacing:.05em;color:var(--text);line-height:1;margin-bottom:4px;transition:color var(--trans);}
+.f-stat-number span{color:var(--accent);transition:color var(--trans);}
+.f-stat-label{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text-muted);transition:color var(--trans);}
+.f-cta-wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto 40px;padding:0 40px;}
+@media(max-width:600px){.f-cta-wrap{padding:0 24px;}}
+.f-cta-inner{border:1px solid var(--border);border-radius:6px;padding:32px 40px;display:flex;align-items:center;justify-content:space-between;gap:24px;background:var(--bg-surface);opacity:0;transform:translateY(16px);transition:opacity .7s var(--ease-out) .3s,transform .7s var(--ease-out) .3s,background var(--trans),border-color var(--trans);flex-wrap:wrap;}
 .f-cta-inner.visible{opacity:1;transform:translateY(0);}
-.f-cta-eyebrow{font-size:.68rem;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);margin-bottom:4px;transition:color var(--trans);}
-.f-cta-title{font-family:var(--font-display);font-size:clamp(1.4rem,3vw,2rem);letter-spacing:.05em;color:var(--text);transition:color var(--trans);}
-.f-cta-btn{display:inline-flex;align-items:center;gap:10px;background:var(--accent);color:#0d0d0d;padding:13px 26px;border-radius:4px;font-size:.8rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:opacity .2s,transform .2s;}
-.f-cta-btn:hover{opacity:.88;transform:translateY(-2px);}
+.f-cta-eyebrow{font-size:.68rem;letter-spacing:.26em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;transition:color var(--trans);}
+.f-cta-title{font-family:var(--font-display);font-size:1.7rem;letter-spacing:.06em;color:var(--text);transition:color var(--trans);}
+.f-cta-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 30px;background:var(--accent);color:var(--bg);font-size:.82rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border-radius:4px;transition:transform .2s,box-shadow .2s,background var(--trans),color var(--trans);white-space:nowrap;}
+.f-cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px var(--accent-glow);}
 .f-cta-btn svg{width:16px;height:16px;}
-.f-bottom{max-width:1200px;margin:0 auto;padding:20px clamp(20px,4vw,48px);display:flex;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid var(--border);transition:border-color var(--trans);}
+.f-bottom{position:relative;z-index:1;border-top:1px solid var(--border);padding:18px 40px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;transition:border-color var(--trans);}
 @media(max-width:600px){.f-bottom{padding:18px 24px;flex-direction:column;text-align:center;}}
 .f-copy{font-size:.75rem;color:var(--text-muted);letter-spacing:.04em;transition:color var(--trans);}
-.f-copy span{color:var(--accent);}
+.f-copy span{color:var(--accent);transition:color var(--trans);}
 .f-legal{display:flex;gap:20px;}
 .f-legal a{font-size:.72rem;color:var(--text-muted);text-decoration:none;letter-spacing:.08em;transition:color .2s;}
 .f-legal a:hover{color:var(--text);}
@@ -683,8 +920,7 @@ section{scroll-margin-top:var(--nav-h);}
     <a href="#zvuk"   class="section-link" data-section="zvuk"   data-i18n="sidebar-zvuk">Zvuk</a>
     <a href="#svetlo" class="section-link" data-section="svetlo" data-i18n="sidebar-svetlo">Světlo</a>
     <a href="#color"  class="section-link" data-section="color">Color</a>
-    <a href="#strih"  class="section-link" data-section="strih"  data-i18n="sidebar-strih">Střih</a>
-    <a href="#pohyb"  class="section-link" data-section="pohyb"  data-i18n="sidebar-pohyb">Pohyb</a>
+    <a href="#pohyb"  class="section-link" data-section="pohyb"  data-i18n="sidebar-pohyb">Stabilizace</a>
   </div>
 </nav>
 
@@ -696,6 +932,7 @@ section{scroll-margin-top:var(--nav-h);}
     <li><a href="O-mně.html"      data-i18n="nav-about">O mně</a></li>
     <li><a href="Portfolio.html"  data-i18n="nav-portfolio">Portfolio</a></li>
     <li><a href="Aspekty.html" class="active" data-i18n="nav-aspekty">Aspekty</a></li>
+    <li><a href="Nabídka.html" data-i18n="nav-offers">Nabídka</a></li>
     <li><a href="Ceník.html"      data-i18n="nav-cenik">Ceník</a></li>
     <li><a href="Objednávka.html" data-i18n="nav-objednavka">Objednávka</a></li>
   </ul>
@@ -710,6 +947,12 @@ section{scroll-margin-top:var(--nav-h);}
     <button class="theme-toggle" id="themeToggle" aria-label="Přepnout téma">
       <div class="toggle-icons"><span>🌙</span><span>☀️</span></div>
     </button>
+    <button class="settings-btn" id="mlx-settings-toggle" type="button" aria-label="Nastavení">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"></path>
+      </svg>
+    </button>
     <div class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></div>
   </div>
 </nav>
@@ -721,6 +964,7 @@ section{scroll-margin-top:var(--nav-h);}
   <a href="O-mně.html"      data-i18n="nav-about">O mně</a>
   <a href="Portfolio.html"  data-i18n="nav-portfolio">Portfolio</a>
   <a href="Aspekty.html"    data-i18n="nav-aspekty">Aspekty</a>
+  <a href="Nabídka.html" data-i18n="nav-offers">Nabídka</a>
   <a href="Ceník.html"      data-i18n="nav-cenik">Ceník</a>
   <a href="Objednávka.html" data-i18n="nav-objednavka">Objednávka</a>
 </div>
@@ -745,9 +989,9 @@ section{scroll-margin-top:var(--nav-h);}
 <!-- STATS -->
 <div class="stats-band">
   <div class="stats-inner">
-    <div class="stat-block reveal d1"><div class="stat-num js-count" data-target="35">0<span>+</span></div><div class="stat-label" data-i18n="stat-projekty-label">Projektů dokončeno</div></div>
+    <div class="stat-block reveal d1"><div class="stat-num js-count" data-target="45">0<span>+</span></div><div class="stat-label" data-i18n="stat-projekty-label">Projektů dokončeno</div></div>
     <div class="stat-block reveal d2"><div class="stat-num js-count" data-target="6">0<span>K</span></div><div class="stat-label" data-i18n="stat-kamera-label">RAW rozlišení kamery</div></div>
-    <div class="stat-block reveal d3"><div class="stat-num js-count" data-target="4">0<span>+</span></div><div class="stat-label" data-i18n="stat-roky-label">Roky zkušeností</div></div>
+    <div class="stat-block reveal d3"><div class="stat-num js-count" data-target="5">0<span>+</span></div><div class="stat-label" data-i18n="stat-roky-label">Roky zkušeností</div></div>
     <div class="stat-block reveal d4"><div class="stat-num js-count" data-target="95">0<span>%</span></div><div class="stat-label" data-i18n="stat-klienti-label">Klientů doporučí</div></div>
   </div>
 </div>
@@ -755,7 +999,6 @@ section{scroll-margin-top:var(--nav-h);}
 <!-- ════════════════════════════════════════ 01 OBRAZ -->
 <section id="obraz" class="discipline">
   <div class="discipline-inner">
-
     <div class="discipline-text reveal-left">
       <div class="discipline-number" aria-hidden="true">01</div>
       <div class="discipline-tag" data-i18n="s01-tag">Základ každého videa</div>
@@ -768,303 +1011,300 @@ section{scroll-margin-top:var(--nav-h);}
         <li data-i18n="s01-li3">Zákazníci nevědomky spojují kvalitu videa s kvalitou vaší firmy</li>
       </ul>
     </div>
-
-    <!-- PHOTO FRAME with compare slider -->
     <div class="photo-frame reveal-right">
       <div class="photo-tape photo-tape-left"></div>
       <div class="photo-tape photo-tape-right"></div>
       <div class="visual-stat">6K RAW</div>
-
-      <div class="compare-widget" data-id="obraz">
-        <div class="compare-before">
-          <!-- REPLACE: <img src="Obrázky/obraz-bez.jpg" alt="Záběr telefonem"> -->
-          <div class="img-placeholder img-before-obraz"></div>
-        </div>
-        <div class="compare-after">
-          <!-- REPLACE: <img src="Obrázky/obraz-se.jpg" alt="Záběr Blackmagic 6K"> -->
-          <div class="img-placeholder img-after-obraz"></div>
-        </div>
-        <div class="compare-handle">
-          <div class="compare-grip">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="8 4 4 8 8 12"/><line x1="4" y1="8" x2="20" y2="8"/>
-              <line x1="4" y1="16" x2="20" y2="16"/><polyline points="16 12 20 16 16 20"/>
-            </svg>
+      <div class="carousel-wrap" id="carousel-obraz">
+        <div class="carousel-clip">
+        <div class="carousel-track">
+          <!-- Slide 1 -->
+          <div class="carousel-slide">
+            <div class="compare-widget" data-id="obraz-1">
+              <div class="compare-before"><div class="img-placeholder img-before-obraz"></div></div>
+              <div class="compare-after"><div class="img-placeholder img-after-obraz"></div></div>
+              <div class="compare-handle"><div class="compare-grip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 4 4 8 8 12"/><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="16" x2="20" y2="16"/><polyline points="16 12 20 16 16 20"/></svg></div></div>
+              <div class="compare-labels"><span class="compare-label compare-label-before" data-i18n="s01-before">Telefon</span><span class="compare-label compare-label-after">Blackmagic 6K</span></div>
+              <div class="compare-hint" data-i18n="s01-hint">← táhněte →</div>
+            </div>
+          </div>
+          <!-- Slide 2 -->
+          <div class="carousel-slide">
+            <div class="compare-widget" data-id="obraz-2">
+              <div class="compare-before"><div class="img-placeholder" style="background:linear-gradient(135deg,#1e1b18 0%,#2e2b26 100%);"></div></div>
+              <div class="compare-after"><div class="img-placeholder" style="background:linear-gradient(135deg,#0c1e1c 0%,#0f3230 100%);filter:contrast(1.12);"></div></div>
+              <div class="compare-handle"><div class="compare-grip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 4 4 8 8 12"/><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="16" x2="20" y2="16"/><polyline points="16 12 20 16 16 20"/></svg></div></div>
+              <div class="compare-labels"><span class="compare-label compare-label-before" data-i18n="s01-before2">Hloubka ostrosti — bez</span><span class="compare-label compare-label-after" data-i18n="s01-after2">S bokeh efektem</span></div>
+              <div class="compare-hint" data-i18n="s01-hint">← táhněte →</div>
+            </div>
+          </div>
+          <!-- Slide 3 -->
+          <div class="carousel-slide">
+            <div class="compare-widget" data-id="obraz-3">
+              <div class="compare-before"><div class="img-placeholder" style="background:linear-gradient(135deg,#1a1a1a 0%,#282420 100%);filter:brightness(0.7);"></div></div>
+              <div class="compare-after"><div class="img-placeholder" style="background:linear-gradient(135deg,#0f1e1a 0%,#1a3a2e 60%,#0d2820 100%);filter:contrast(1.08) saturate(1.15);"></div></div>
+              <div class="compare-handle"><div class="compare-grip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 4 4 8 8 12"/><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="16" x2="20" y2="16"/><polyline points="16 12 20 16 16 20"/></svg></div></div>
+              <div class="compare-labels"><span class="compare-label compare-label-before" data-i18n="s01-before3">Automatická expozice</span><span class="compare-label compare-label-after" data-i18n="s01-after3">Manuální expozice</span></div>
+              <div class="compare-hint" data-i18n="s01-hint">← táhněte →</div>
+            </div>
           </div>
         </div>
-        <div class="compare-labels">
-          <span class="compare-label compare-label-before" data-i18n="s01-before">Telefon</span>
-          <span class="compare-label compare-label-after" data-i18n="s01-after">Blackmagic 6K</span>
         </div>
-        <div class="compare-hint" data-i18n="s01-hint">← táhněte →</div>
+        <button class="carousel-arrow prev" aria-label="Předchozí"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <button class="carousel-arrow next" aria-label="Další"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></button>
+        <div class="slide-counter"><span class="cur">1</span> / <span class="tot">3</span></div>
       </div>
-
+      <div class="carousel-dots" id="dots-obraz">
+        <div class="carousel-dot active"></div><div class="carousel-dot"></div><div class="carousel-dot"></div>
+      </div>
       <div class="photo-caption" data-i18n="s01-caption">Blackmagic 6K Pro</div>
     </div>
-
   </div>
 </section>
 
 <!-- ════════════════════════════════════════ 02 ZVUK -->
 <section id="zvuk" class="discipline">
   <div class="discipline-inner flip">
-
     <div class="discipline-text reveal-right">
       <div class="discipline-number" aria-hidden="true">02</div>
       <div class="discipline-tag" data-i18n="s02-tag">Přidaná hodnota · Doporučujeme</div>
       <h2 class="discipline-title" data-i18n-html="s02-title-html">Čistý<br>zvuk</h2>
       <p class="discipline-lead" data-i18n="s02-lead">Diváci odpustí průměrný obraz. Špatný zvuk odpustit nedokážou.</p>
-      <p class="discipline-desc" data-i18n="s02-desc">Šum mikrofonu, ozvěna prázdné místnosti nebo hluk z venku — divák to nevnímá vědomě, ale okamžitě přestane sledovat. Čistý zvuk zajistí, že vaše poselství skutečně dolehne. Máme mikrofony na každou situaci — lavalier, shotgun boom, i rekordér Zoom F1 a Tascam DR-70.</p>
+      <p class="discipline-desc" data-i18n="s02-desc">Šum mikrofonu, ozvěna prázdné místnosti nebo hluk z venku — divák to nevnímá vědomě, ale okamžitě přestane sledovat. Máme mikrofon na každou situaci. Vyberte typ podle vaší scény a pusťte si ukázku.</p>
       <ul class="why-list">
         <li data-i18n="s02-li1">Čistý hlas = vaše zpráva se dostane k zákazníkovi bez rušivých prvků</li>
         <li data-i18n="s02-li2">Profesionální zvuk výrazně prodlužuje čas, po který divák sleduje vaše video</li>
         <li data-i18n="s02-li3">Ideální pro rozhovory, firemní prezentace a zákaznické reference</li>
       </ul>
     </div>
-
-    <div class="photo-frame reveal-left">
+    <div class="photo-frame reveal-left" style="padding-bottom:14px;">
       <div class="photo-tape photo-tape-left"></div>
       <div class="photo-tape photo-tape-right"></div>
-      <div class="visual-stat">Lavalier · Boom</div>
-
-      <div class="compare-widget" data-id="zvuk">
-        <div class="compare-before">
-          <!-- REPLACE: <img src="Obrázky/zvuk-bez.jpg" alt="Setup bez mikrofonu"> -->
-          <div class="img-placeholder img-before-zvuk"></div>
+      <!-- Active mic video -->
+      <div class="mic-video-wrap" id="micVideoWrap">
+        <div class="mic-placeholder" id="micPlaceholder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          <span data-i18n="s02-select">Vyberte mikrofon níže</span>
         </div>
-        <div class="compare-after">
-          <!-- REPLACE: <img src="Obrázky/zvuk-se.jpg" alt="Setup s mikrofonem"> -->
-          <div class="img-placeholder img-after-zvuk"></div>
-        </div>
-        <div class="compare-handle">
-          <div class="compare-grip">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="8 4 4 8 8 12"/><line x1="4" y1="8" x2="20" y2="8"/>
-              <line x1="4" y1="16" x2="20" y2="16"/><polyline points="16 12 20 16 16 20"/>
-            </svg>
-          </div>
-        </div>
-        <div class="compare-labels">
-          <span class="compare-label compare-label-before" data-i18n="s02-before">Bez mikrofonu</span>
-          <span class="compare-label compare-label-after" data-i18n="s02-after">S mikrofonem</span>
-        </div>
-        <div class="compare-hint" data-i18n="s02-hint">← táhněte →</div>
+        <!-- Replace src with real video paths -->
+        <video id="micVideo" style="display:none;" controls playsinline muted>
+          <source src="" type="video/mp4">
+        </video>
       </div>
-
+      <!-- Mic selector grid -->
+      <div class="mic-grid">
+        <div class="mic-card" data-mic="builtin" data-video="Audio/mic-builtin.mp4">
+          <div class="mic-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="16" rx="2"/><path d="M8 22h8M12 18v4"/></svg></div>
+          <div class="mic-name" data-i18n="mic-builtin-name">Vestavěný mikrofon</div>
+          <div class="mic-desc" data-i18n="mic-builtin-desc">Přímo v kameře. Zachytí vše — včetně šumu, větru a ozvěny.</div>
+          <div class="mic-badge" data-i18n="mic-builtin-badge">Bez příplatku</div>
+        </div>
+        <div class="mic-card" data-mic="boom" data-video="Audio/mic-boom.mp4">
+          <div class="mic-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="18"/><path d="M8 6l4-4 4 4"/><path d="M7 18h10M12 18v4"/></svg></div>
+          <div class="mic-name" data-i18n="mic-boom-name">Boom mikrofon</div>
+          <div class="mic-desc" data-i18n="mic-boom-desc">Tyčový shotgun. Drží asistent nebo stojí nad scénou — čistý zvuk, bez kontaktu s hercem.</div>
+          <div class="mic-badge" data-i18n="mic-boom-badge">Doporučeno</div>
+        </div>
+        <div class="mic-card" data-mic="lav" data-video="Audio/mic-lav.mp4">
+          <div class="mic-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3"/><path d="M12 11v11M9 19h6"/></svg></div>
+          <div class="mic-name" data-i18n="mic-lav-name">Lavalier mikrofon</div>
+          <div class="mic-desc" data-i18n="mic-lav-desc">Miniaturní klipsa na košili. Ideální pro rozhovory, reportáže a prezentace.</div>
+          <div class="mic-badge" data-i18n="mic-lav-badge">Populární volba</div>
+        </div>
+        <div class="mic-card" data-mic="desktop" data-video="Audio/mic-desktop.mp4">
+          <div class="mic-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div>
+          <div class="mic-name" data-i18n="mic-desktop-name">Stolní mikrofon</div>
+          <div class="mic-desc" data-i18n="mic-desktop-desc">Stojí na stole naproti mluvčímu. Skvělý pro podcasty, recenze, tutoriály a talking-head videa.</div>
+          <div class="mic-badge" data-i18n="mic-desktop-badge">Studio feel</div>
+        </div>
+      </div>
       <div class="photo-caption" data-i18n="s02-caption">Zvukový design</div>
     </div>
-
   </div>
 </section>
 
 <!-- ════════════════════════════════════════ 03 SVĚTLO -->
 <section id="svetlo" class="discipline">
   <div class="discipline-inner">
-
     <div class="discipline-text reveal-left">
       <div class="discipline-number" aria-hidden="true">03</div>
       <div class="discipline-tag" data-i18n="s03-tag">Přidaná hodnota · Populární volba</div>
       <h2 class="discipline-title" data-i18n-html="s03-title-html">Osvětlení<br>scény</h2>
       <p class="discipline-lead" data-i18n="s03-lead">Světlo rozhoduje, jestli váš produkt vypadá luxusně — nebo jako z e-shopu za 200 Kč.</p>
-      <p class="discipline-desc" data-i18n="s03-desc">Tmavá kancelář, špatně osvětlená provozovna nebo přeexponovaný venkov — to kamera sama nevyřeší. Přinášíme vlastní světla a nasvítíme scénu tak, aby váš prostor, produkt nebo tým vypadal přesně tak, jak chcete.</p>
+      <p class="discipline-desc" data-i18n="s03-desc">Tmavá kancelář, špatně osvětlená provozovna nebo přeexponovaný venkov — to kamera sama nevyřeší. Přinášíme vlastní světla a nasvítíme scénu tak, aby váš prostor, produkt nebo tým vypadal přesně jak chcete.</p>
       <ul class="why-list">
         <li data-i18n="s03-li1">Profesionální světlo promění průměrný prostor ve fotogenické místo</li>
         <li data-i18n="s03-li2">Barva a intenzita světla podporuje emoci, kterou chcete u zákazníka vyvolat</li>
         <li data-i18n="s03-li3">Výsledek je konzistentní — nezáleží na počasí, denní době ani prostoru</li>
       </ul>
     </div>
-
     <div class="photo-frame reveal-right">
       <div class="photo-tape photo-tape-left"></div>
       <div class="photo-tape photo-tape-right"></div>
-      <div class="visual-stat">RGB + Bi-Color COB</div>
-
-      <div class="compare-widget" data-id="svetlo">
-        <div class="compare-before">
-          <!-- REPLACE: <img src="Obrázky/svetlo-bez.jpg" alt="Scéna bez světel"> -->
-          <div class="img-placeholder img-before-svetlo"></div>
-        </div>
-        <div class="compare-after">
-          <!-- REPLACE: <img src="Obrázky/svetlo-se.jpg" alt="Scéna se světlem"> -->
-          <div class="img-placeholder img-after-svetlo"></div>
-        </div>
-        <div class="compare-handle">
-          <div class="compare-grip">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="8 4 4 8 8 12"/><line x1="4" y1="8" x2="20" y2="8"/>
-              <line x1="4" y1="16" x2="20" y2="16"/><polyline points="16 12 20 16 16 20"/>
-            </svg>
+      <div class="visual-stat">3-point light</div>
+      <div class="carousel-wrap" id="carousel-svetlo">
+        <div class="carousel-clip">
+        <div class="carousel-track">
+          <!-- Slide 1 — Interior no lights vs lit -->
+          <div class="carousel-slide">
+            <div class="compare-widget" data-id="svetlo-1">
+              <div class="compare-before"><div class="img-placeholder img-before-svetlo"></div></div>
+              <div class="compare-after"><div class="img-placeholder img-after-svetlo"></div></div>
+              <div class="compare-handle"><div class="compare-grip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 4 4 8 8 12"/><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="16" x2="20" y2="16"/><polyline points="16 12 20 16 16 20"/></svg></div></div>
+              <div class="compare-labels"><span class="compare-label compare-label-before" data-i18n="s03-before">Bez světel</span><span class="compare-label compare-label-after" data-i18n="s03-after">Se světlem</span></div>
+              <div class="compare-hint" data-i18n="s03-hint">← táhněte →</div>
+            </div>
+          </div>
+          <!-- Slide 2 — Product lighting -->
+          <div class="carousel-slide">
+            <div class="compare-widget" data-id="svetlo-2">
+              <div class="compare-before"><div class="img-placeholder" style="background:linear-gradient(135deg,#1a1a18 0%,#252320 100%);filter:brightness(0.65) saturate(0.5);"></div></div>
+              <div class="compare-after"><div class="img-placeholder" style="background:radial-gradient(ellipse at 45% 45%,rgba(255,220,120,0.4) 0%,rgba(200,140,0,0.18) 40%,#131210 80%),linear-gradient(135deg,#1a1008 0%,#0d0d0d 100%);"></div></div>
+              <div class="compare-handle"><div class="compare-grip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 4 4 8 8 12"/><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="16" x2="20" y2="16"/><polyline points="16 12 20 16 16 20"/></svg></div></div>
+              <div class="compare-labels"><span class="compare-label compare-label-before" data-i18n="s03-before2">Produkt bez osvětlení</span><span class="compare-label compare-label-after" data-i18n="s03-after2">Produktové světlo</span></div>
+              <div class="compare-hint" data-i18n="s03-hint">← táhněte →</div>
+            </div>
+          </div>
+          <!-- Slide 3 — Portrait / interview -->
+          <div class="carousel-slide">
+            <div class="compare-widget" data-id="svetlo-3">
+              <div class="compare-before"><div class="img-placeholder" style="background:linear-gradient(160deg,#141414 0%,#1e1c1a 100%);filter:brightness(0.6);"></div></div>
+              <div class="compare-after"><div class="img-placeholder" style="background:radial-gradient(ellipse at 38% 38%,rgba(240,200,140,0.32) 0%,rgba(180,120,40,0.12) 50%,#0d0d0d 85%),linear-gradient(155deg,#1a1208 0%,#0a0a0a 100%);"></div></div>
+              <div class="compare-handle"><div class="compare-grip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 4 4 8 8 12"/><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="16" x2="20" y2="16"/><polyline points="16 12 20 16 16 20"/></svg></div></div>
+              <div class="compare-labels"><span class="compare-label compare-label-before" data-i18n="s03-before3">Portrét — ambient</span><span class="compare-label compare-label-after" data-i18n="s03-after3">3-point setup</span></div>
+              <div class="compare-hint" data-i18n="s03-hint">← táhněte →</div>
+            </div>
           </div>
         </div>
-        <div class="compare-labels">
-          <span class="compare-label compare-label-before" data-i18n="s03-before">Bez světel</span>
-          <span class="compare-label compare-label-after" data-i18n="s03-after">Se světlem</span>
         </div>
-        <div class="compare-hint" data-i18n="s03-hint">← táhněte →</div>
+        <button class="carousel-arrow prev" aria-label="Předchozí"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <button class="carousel-arrow next" aria-label="Další"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></button>
+        <div class="slide-counter"><span class="cur">1</span> / <span class="tot">3</span></div>
       </div>
-
+      <div class="carousel-dots" id="dots-svetlo">
+        <div class="carousel-dot active"></div><div class="carousel-dot"></div><div class="carousel-dot"></div>
+      </div>
       <div class="photo-caption" data-i18n="s03-caption">Lighting Design</div>
     </div>
-
   </div>
 </section>
 
 <!-- ════════════════════════════════════════ 04 COLOR GRADING -->
 <section id="color" class="discipline">
   <div class="discipline-inner flip">
-
     <div class="discipline-text reveal-right">
       <div class="discipline-number" aria-hidden="true">04</div>
       <div class="discipline-tag" data-i18n="s04-tag">Přidaná hodnota · Vizuální identita</div>
       <h2 class="discipline-title" data-i18n-html="s04-title-html">Color<br>Grading</h2>
       <p class="discipline-lead" data-i18n="s04-lead">Správná barva vyvolá emoci dřív, než divák pochopí, co vidí.</p>
-      <p class="discipline-desc" data-i18n="s04-desc">Surový záběr je plochý a šedý. Color grading přidá hloubku, kontrast, náladu — a podtrhne vizuální identitu vaší značky. Pracujeme v DaVinci Resolve a nastavíme přesný look, který odpovídá vašemu brandingu.</p>
+      <p class="discipline-desc" data-i18n="s04-desc">Surový záběr je plochý a šedý. Color grading přidá hloubku, kontrast, náladu — a podtrhne vizuální identitu vaší značky. Pracujeme v DaVinci Resolve a nastavíme přesný look, který odpovídá vašemu brandingu. Pět různých stylů — vyberte, co sedí vám.</p>
       <ul class="why-list">
         <li data-i18n="s04-li1">Konzistentní barevný styl napříč celou produkcí = silná vizuální identita</li>
         <li data-i18n="s04-li2">Teplejší nebo chladnější tóny ovlivňují, jak zákazník vnímá vaši značku</li>
         <li data-i18n="s04-li3">Výsledek je profesionální kinematografický look, ne "vypadá jako YouTube tutorial"</li>
       </ul>
     </div>
-
     <div class="photo-frame reveal-left">
       <div class="photo-tape photo-tape-left"></div>
       <div class="photo-tape photo-tape-right"></div>
       <div class="visual-stat">DaVinci Resolve</div>
-
-      <div class="compare-widget" data-id="color">
-        <div class="compare-before">
-          <!-- REPLACE: <img src="Obrázky/color-bez.jpg" alt="Surový záběr bez gradingu"> -->
-          <div class="img-placeholder img-before-color"></div>
-        </div>
-        <div class="compare-after">
-          <!-- REPLACE: <img src="Obrázky/color-se.jpg" alt="Záběr po color gradingu"> -->
-          <div class="img-placeholder img-after-color"></div>
-        </div>
-        <div class="compare-handle">
-          <div class="compare-grip">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="8 4 4 8 8 12"/><line x1="4" y1="8" x2="20" y2="8"/>
-              <line x1="4" y1="16" x2="20" y2="16"/><polyline points="16 12 20 16 16 20"/>
-            </svg>
+      <div class="carousel-wrap" id="carousel-color">
+        <div class="carousel-clip">
+        <div class="carousel-track">
+          <!-- Slide 1 — Raw vs Standard grade -->
+          <div class="carousel-slide">
+            <div class="compare-widget" data-id="color-1">
+              <div class="compare-before"><div class="img-placeholder img-before-color"></div></div>
+              <div class="compare-after"><div class="img-placeholder img-after-color"></div></div>
+              <div class="compare-handle"><div class="compare-grip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 4 4 8 8 12"/><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="16" x2="20" y2="16"/><polyline points="16 12 20 16 16 20"/></svg></div></div>
+              <div class="compare-labels"><span class="compare-label compare-label-before" data-i18n="s04-before">Surový záběr</span><span class="compare-label compare-label-after" data-i18n="s04-after">Po gradingu</span></div>
+              <div class="compare-hint" data-i18n="s04-hint">← táhněte →</div>
+            </div>
+          </div>
+          <!-- Slide 2 — Warm cinematic -->
+          <div class="carousel-slide">
+            <div class="compare-widget" data-id="color-2">
+              <div class="compare-before"><div class="img-placeholder" style="background:linear-gradient(135deg,#1a1a1a 0%,#252525 100%);filter:saturate(0.3) brightness(0.9);"></div></div>
+              <div class="compare-after"><div class="img-placeholder" style="background:linear-gradient(135deg,#2a1a08 0%,#1a0e04 50%,#0f0804 100%);filter:saturate(1.3) contrast(1.12);"></div></div>
+              <div class="compare-handle"><div class="compare-grip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 4 4 8 8 12"/><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="16" x2="20" y2="16"/><polyline points="16 12 20 16 16 20"/></svg></div></div>
+              <div class="compare-labels"><span class="compare-label compare-label-before" data-i18n="s04-before">Surový záběr</span><span class="compare-label compare-label-after" data-i18n="color-warm">Warm Cinematic</span></div>
+              <div class="compare-hint" data-i18n="s04-hint">← táhněte →</div>
+            </div>
+          </div>
+          <!-- Slide 3 — Cold / desaturated -->
+          <div class="carousel-slide">
+            <div class="compare-widget" data-id="color-3">
+              <div class="compare-before"><div class="img-placeholder" style="background:linear-gradient(135deg,#1a1a1a 0%,#252525 100%);filter:saturate(0.3) brightness(0.9);"></div></div>
+              <div class="compare-after"><div class="img-placeholder" style="background:linear-gradient(135deg,#0a1020 0%,#0c1828 50%,#08101e 100%);filter:saturate(0.75) contrast(1.15) brightness(0.92);"></div></div>
+              <div class="compare-handle"><div class="compare-grip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 4 4 8 8 12"/><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="16" x2="20" y2="16"/><polyline points="16 12 20 16 16 20"/></svg></div></div>
+              <div class="compare-labels"><span class="compare-label compare-label-before" data-i18n="s04-before">Surový záběr</span><span class="compare-label compare-label-after" data-i18n="color-cold">Cold &amp; Clean</span></div>
+              <div class="compare-hint" data-i18n="s04-hint">← táhněte →</div>
+            </div>
+          </div>
+          <!-- Slide 4 — Teal & Orange -->
+          <div class="carousel-slide">
+            <div class="compare-widget" data-id="color-4">
+              <div class="compare-before"><div class="img-placeholder" style="background:linear-gradient(135deg,#1a1a1a 0%,#252525 100%);filter:saturate(0.3) brightness(0.9);"></div></div>
+              <div class="compare-after"><div class="img-placeholder" style="background:linear-gradient(135deg,#0a1a18 0%,#1a280e 50%,#2a1a08 100%);filter:saturate(1.5) contrast(1.1);"></div></div>
+              <div class="compare-handle"><div class="compare-grip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 4 4 8 8 12"/><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="16" x2="20" y2="16"/><polyline points="16 12 20 16 16 20"/></svg></div></div>
+              <div class="compare-labels"><span class="compare-label compare-label-before" data-i18n="s04-before">Surový záběr</span><span class="compare-label compare-label-after" data-i18n="color-teal">Teal &amp; Orange</span></div>
+              <div class="compare-hint" data-i18n="s04-hint">← táhněte →</div>
+            </div>
+          </div>
+          <!-- Slide 5 — High contrast B&W -->
+          <div class="carousel-slide">
+            <div class="compare-widget" data-id="color-5">
+              <div class="compare-before"><div class="img-placeholder" style="background:linear-gradient(135deg,#1a1a1a 0%,#252525 100%);filter:saturate(0.3) brightness(0.9);"></div></div>
+              <div class="compare-after"><div class="img-placeholder" style="background:linear-gradient(135deg,#0a0a0a 0%,#2a2a2a 50%,#111 100%);filter:saturate(0) contrast(1.5) brightness(0.88);"></div></div>
+              <div class="compare-handle"><div class="compare-grip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 4 4 8 8 12"/><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="16" x2="20" y2="16"/><polyline points="16 12 20 16 16 20"/></svg></div></div>
+              <div class="compare-labels"><span class="compare-label compare-label-before" data-i18n="s04-before">Surový záběr</span><span class="compare-label compare-label-after" data-i18n="color-bw">High-contrast B&amp;W</span></div>
+              <div class="compare-hint" data-i18n="s04-hint">← táhněte →</div>
+            </div>
           </div>
         </div>
-        <div class="compare-labels">
-          <span class="compare-label compare-label-before" data-i18n="s04-before">Surový záběr</span>
-          <span class="compare-label compare-label-after" data-i18n="s04-after">Po gradingu</span>
         </div>
-        <div class="compare-hint" data-i18n="s04-hint">← táhněte →</div>
+        <button class="carousel-arrow prev" aria-label="Předchozí"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <button class="carousel-arrow next" aria-label="Další"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></button>
+        <div class="slide-counter"><span class="cur">1</span> / <span class="tot">5</span></div>
       </div>
-
+      <div class="carousel-dots" id="dots-color">
+        <div class="carousel-dot active"></div><div class="carousel-dot"></div><div class="carousel-dot"></div><div class="carousel-dot"></div><div class="carousel-dot"></div>
+      </div>
       <div class="photo-caption" data-i18n="s04-caption">Color Grading</div>
     </div>
-
   </div>
 </section>
 
-<!-- ════════════════════════════════════════ 05 STŘIH -->
-<section id="strih" class="discipline">
+<!-- ════════════════════════════════════════ 05 STABILIZACE -->
+<section id="pohyb" class="discipline">
   <div class="discipline-inner">
-
     <div class="discipline-text reveal-left">
       <div class="discipline-number" aria-hidden="true">05</div>
-      <div class="discipline-tag" data-i18n="s05-tag">Základ · Vždy v ceně</div>
-      <h2 class="discipline-title" data-i18n-html="s05-title-html">Střih<br>&amp; tempo</h2>
-      <p class="discipline-lead" data-i18n="s05-lead">Prvních 5 sekund rozhoduje, jestli váš zákazník zůstane — nebo odejde.</p>
-      <p class="discipline-desc" data-i18n="s05-desc">Střih není jen "dání záběrů za sebou". Je to výběr nejlepšího momentu, správné tempo, hudba a přechody. Výsledek je video, které drží pozornost od začátku do konce a přiměje diváka udělat to, co chcete — zavolat, koupit nebo navštívit váš web.</p>
+      <div class="discipline-tag" data-i18n="s05-tag">Přidaná hodnota · Wow efekt</div>
+      <h2 class="discipline-title" data-i18n-html="s05-title-html">Pohyb<br>&amp; stabilizace</h2>
+      <p class="discipline-lead" data-i18n="s05-lead">Jedno drone video udělá pro váš prostor víc než desítka statických fotek.</p>
+      <p class="discipline-desc" data-i18n="s05-desc">Plynulý pohyb kamery přes gimbal nebo letecké záběry dronem jsou vizuální páka — okamžitě zvyšují vnímanou hodnotu toho, co ukazujete. Restaurace, výrobní hala, penzion nebo stavba. Z výšky nebo v pohybu to vypadá impozantně vždy. Máme letecký certifikát, žádná komplikace.</p>
       <ul class="why-list">
-        <li data-i18n="s05-li1">Rychlé tempo pro sociální sítě, klidnější pro prezentace — přizpůsobíme vždy</li>
-        <li data-i18n="s05-li2">Dobře sestříhané video zvyšuje dokoukatelnost, a tím i šanci na konverzi</li>
-        <li data-i18n="s05-li3">Součástí je výběr hudby, titulky a export do všech potřebných formátů</li>
+        <li data-i18n="s05-li1">Drone záběry zhodnotí váš prostor nebo lokalitu v očích zákazníka okamžitě</li>
+        <li data-i18n="s05-li2">Plynulý pohyb gimbalem dává videu filmový pocit, který statický záběr nedosáhne</li>
+        <li data-i18n="s05-li3">Ideální pro nemovitosti, eventy, gastronomii, průmysl a prezentace lokalit</li>
       </ul>
     </div>
-
     <div class="photo-frame reveal-right">
       <div class="photo-tape photo-tape-left"></div>
       <div class="photo-tape photo-tape-right"></div>
-      <div class="visual-stat">DaVinci Resolve</div>
-
-      <div class="compare-widget" data-id="strih">
-        <div class="compare-before">
-          <!-- REPLACE: <img src="Obrázky/strih-bez.jpg" alt="Surový záznam"> -->
-          <div class="img-placeholder img-before-strih"></div>
-        </div>
-        <div class="compare-after">
-          <!-- REPLACE: <img src="Obrázky/strih-se.jpg" alt="Po střihu"> -->
-          <div class="img-placeholder img-after-strih"></div>
-        </div>
-        <div class="compare-handle">
-          <div class="compare-grip">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="8 4 4 8 8 12"/><line x1="4" y1="8" x2="20" y2="8"/>
-              <line x1="4" y1="16" x2="20" y2="16"/><polyline points="16 12 20 16 16 20"/>
-            </svg>
-          </div>
-        </div>
-        <div class="compare-labels">
-          <span class="compare-label compare-label-before" data-i18n="s05-before">Surový materiál</span>
-          <span class="compare-label compare-label-after" data-i18n="s05-after">Po střihu</span>
-        </div>
+      <div class="visual-stat">Drone · Gimbal · Cert.</div>
+      <div class="compare-widget" data-id="pohyb">
+        <div class="compare-before"><div class="img-placeholder img-before-pohyb"></div></div>
+        <div class="compare-after"><div class="img-placeholder img-after-pohyb"></div></div>
+        <div class="compare-handle"><div class="compare-grip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 4 4 8 8 12"/><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="16" x2="20" y2="16"/><polyline points="16 12 20 16 16 20"/></svg></div></div>
+        <div class="compare-labels"><span class="compare-label compare-label-before" data-i18n="s05-before">Statický záběr</span><span class="compare-label compare-label-after" data-i18n="s05-after">Drone / Gimbal</span></div>
         <div class="compare-hint" data-i18n="s05-hint">← táhněte →</div>
       </div>
-
-      <div class="photo-caption" data-i18n="s05-caption">Editing &amp; Post</div>
+      <div class="photo-caption" data-i18n="s05-caption">Motion &amp; Aerial</div>
     </div>
-
   </div>
 </section>
-
-<!-- ════════════════════════════════════════ 06 POHYB -->
-<section id="pohyb" class="discipline">
-  <div class="discipline-inner flip">
-
-    <div class="discipline-text reveal-right">
-      <div class="discipline-number" aria-hidden="true">06</div>
-      <div class="discipline-tag" data-i18n="s06-tag">Přidaná hodnota · Wow efekt</div>
-      <h2 class="discipline-title" data-i18n-html="s06-title-html">Pohyb<br>&amp; gimbal</h2>
-      <p class="discipline-lead" data-i18n="s06-lead">Jedno drone video udělá pro váš prostor víc než desítka statických fotek.</p>
-      <p class="discipline-desc" data-i18n="s06-desc">Plynulý pohyb kamery přes gimbal nebo letecké záběry dronem jsou vizuální páka — okamžitě zvyšují vnímanou hodnotu toho, co ukazujete. Restaurace, výrobní hala, penzion nebo stavba. Z výšky nebo v pohybu to vypadá impozantně vždy. Máme letecký certifikát, žádná komplikace.</p>
-      <ul class="why-list">
-        <li data-i18n="s06-li1">Drone záběry zhodnotí váš prostor nebo lokalitu v očích zákazníka okamžitě</li>
-        <li data-i18n="s06-li2">Plynulý pohyb gimbalem dává videu filmový pocit, který statický záběr nedosáhne</li>
-        <li data-i18n="s06-li3">Ideální pro nemovitosti, eventy, gastronomii, průmysl a prezentace lokalit</li>
-      </ul>
-    </div>
-
-    <div class="photo-frame reveal-left">
-      <div class="photo-tape photo-tape-left"></div>
-      <div class="photo-tape photo-tape-right"></div>
-      <div class="visual-stat">Drone · Gimbal · Cert.</div>
-
-      <div class="compare-widget" data-id="pohyb">
-        <div class="compare-before">
-          <!-- REPLACE: <img src="Obrázky/pohyb-bez.jpg" alt="Statický záběr"> -->
-          <div class="img-placeholder img-before-pohyb"></div>
-        </div>
-        <div class="compare-after">
-          <!-- REPLACE: <img src="Obrázky/pohyb-se.jpg" alt="Záběr s gimbalem nebo dronem"> -->
-          <div class="img-placeholder img-after-pohyb"></div>
-        </div>
-        <div class="compare-handle">
-          <div class="compare-grip">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="8 4 4 8 8 12"/><line x1="4" y1="8" x2="20" y2="8"/>
-              <line x1="4" y1="16" x2="20" y2="16"/><polyline points="16 12 20 16 16 20"/>
-            </svg>
-          </div>
-        </div>
-        <div class="compare-labels">
-          <span class="compare-label compare-label-before" data-i18n="s06-before">Statický záběr</span>
-          <span class="compare-label compare-label-after" data-i18n="s06-after">Drone / Gimbal</span>
-        </div>
-        <div class="compare-hint" data-i18n="s06-hint">← táhněte →</div>
-      </div>
-
-      <div class="photo-caption" data-i18n="s06-caption">Motion &amp; Aerial</div>
-    </div>
-
-  </div>
-</section>
-
 <!-- PHILOSOPHY -->
 <div class="philosophy">
   <div class="philosophy-inner reveal">
@@ -1103,7 +1343,7 @@ section{scroll-margin-top:var(--nav-h);}
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 00.5 6.2 31.3 31.3 0 000 12a31.3 31.3 0 00.5 5.8 3 3 0 002.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 002.1-2.1A31.3 31.3 0 0024 12a31.3 31.3 0 00-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
           YouTube
         </a>
-        <a href="https://www.instagram.com/mlxmedia" target="_blank" rel="noopener" class="f-social-btn">
+        <a href="https://www.instagram.com/matos.lexa" target="_blank" rel="noopener" class="f-social-btn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
           Instagram
         </a>
@@ -1116,6 +1356,7 @@ section{scroll-margin-top:var(--nav-h);}
         <li><a href="O-mně.html"      data-i18n="f-nav-2">O mně</a></li>
         <li><a href="Portfolio.html"  data-i18n="f-nav-3">Portfolio</a></li>
         <li><a href="Aspekty.html"    data-i18n="f-nav-4">Aspekty</a></li>
+        <li><a href="Nabídka.html"   data-i18n="f-nav-offers">Nabídka</a></li>
         <li><a href="Ceník.html"      data-i18n="f-nav-5">Ceník</a></li>
         <li><a href="Objednávka.html" data-i18n="f-nav-6">Objednávka</a></li>
       </ul>
@@ -1153,8 +1394,8 @@ section{scroll-margin-top:var(--nav-h);}
   </div>
 
   <div class="f-stats-band">
-    <div class="f-stat-item"><div class="f-stat-number">35<span>+</span></div><div class="f-stat-label" data-i18n="f-stat-1">Projektů</div></div>
-    <div class="f-stat-item"><div class="f-stat-number">4<span>+</span></div><div class="f-stat-label" data-i18n="f-stat-2">Roky zkušeností</div></div>
+    <div class="f-stat-item"><div class="f-stat-number">45<span>+</span></div><div class="f-stat-label" data-i18n="f-stat-1">Projektů</div></div>
+    <div class="f-stat-item"><div class="f-stat-number">5<span>+</span></div><div class="f-stat-label" data-i18n="f-stat-2">Roky zkušeností</div></div>
     <div class="f-stat-item"><div class="f-stat-number">95<span>%</span></div><div class="f-stat-label" data-i18n="f-stat-3">Doporučení</div></div>
     <div class="f-stat-item"><div class="f-stat-number">6<span>K</span></div><div class="f-stat-label" data-i18n="f-stat-4">RAW rozlišení</div></div>
   </div>
@@ -1185,7 +1426,7 @@ section{scroll-margin-top:var(--nav-h);}
 <script>
 /* ── THEME ── */
 const root = document.documentElement;
-root.setAttribute('data-theme', localStorage.getItem('mlx-theme') || 'dark');
+root.setAttribute('data-theme', localStorage.getItem('mlx-theme') || 'light');
 const soundLibrary = {
   toggle: createAudio('Audio/Togle.mp3', 0.16),
   switch: createAudio('Audio/Switch-page.mp3', 0.16),
@@ -1405,7 +1646,7 @@ document.querySelectorAll('.f-stat-number').forEach(el => fcio.observe(el));
 /* ── SECTION SIDEBAR ── */
 const sectionSidebar = document.getElementById('sectionSidebar');
 const sectionLinks = document.querySelectorAll('.section-link');
-const sections = ['obraz','zvuk','svetlo','color','strih','pohyb'];
+const sections = ['obraz','zvuk','svetlo','color','pohyb'];
 let sidebarVisible = false;
 
 window.addEventListener('scroll', () => {
@@ -1499,137 +1740,206 @@ document.querySelectorAll('.compare-widget').forEach(widget => {
 
 const translations = {
   cz: {
+    /* NAV */
     'nav-home':'Domů','nav-about':'O mně','nav-portfolio':'Portfolio',
     'nav-aspekty':'Aspekty','nav-cenik':'Ceník','nav-objednavka':'Objednávka',
-    'hero-eyebrow':'MLX Media · Co je součástí vašeho videa',
-    'hero-title-html':'Co děláme<br><em>navíc</em>',
-    'hero-subtitle':'Základ je kamera. Ale výsledek tvoří detaily — zvuk, světlo, barva, pohyb. Každá složka přidává hodnotu vašemu videu. Táhněte šipkou a uvidíte rozdíl sami.',
-    'pill-obraz':'Obraz','pill-zvuk':'Zvuk','pill-svetlo':'Osvětlení','pill-strih':'Střih','pill-pohyb':'Pohyb',
-    'stat-projekty-label':'Projektů dokončeno','stat-kamera-label':'RAW rozlišení kamery',
-    'stat-roky-label':'Roky zkušeností','stat-klienti-label':'Klientů doporučí',
-    'sidebar-obraz':'Obraz','sidebar-zvuk':'Zvuk','sidebar-svetlo':'Světlo','sidebar-strih':'Střih','sidebar-pohyb':'Pohyb',
-    's01-tag':'Základ každého videa','s01-title-html':'Filmový<br>obraz',
+    /* HERO */
+    'hero-eyebrow':'Co dělá video profesionálním',
+    'hero-title-html':'Aspekty<br><em>kvalitní produkce</em>',
+    'hero-desc':'Šest složek, které rozhodují o tom, jestli vaše video prodává — nebo se ztrácí v šumu.',
+    /* SIDEBAR */
+    'sidebar-obraz':'Obraz','sidebar-zvuk':'Zvuk','sidebar-svetlo':'Světlo','sidebar-pohyb':'Stabilizace',
+    /* STATS */
+    'stat1-label':'Let zkušeností','stat2-label':'Projektů','stat3-label':'Klientů','stat4-label':'Dní dodání',
+    /* S01 OBRAZ */
+    's01-tag':'Základ každého videa',
+    's01-title-html':'Filmový<br>obraz',
     's01-lead':'Váš zákazník vidí váš brand dřív, než si přečte jediné slovo.',
-    's01-desc':'Rozdíl mezi videem natočeným telefonem a filmovou kamerou poznáte do jedné vteřiny. Pracujeme s Blackmagic 6K — stejnou kamerou, jakou používají profesionální produkce. Váš výsledek? Firma, která vypadá jako velký hráč, i když je malá a osobní.',
+    's01-desc':'Rozdíl mezi videem natočeným telefonem a filmovou kamerou poznáte do jedné vteřiny. Pracujeme s Blackmagic 6K — stejnou kamerou, jakou používají profesionální produkce.',
     's01-li1':'Vysoké rozlišení zajistí skvělý výsledek na webu, sociálních sítích i velké obrazovce',
     's01-li2':'Filmová hloubka ostrosti oddělí váš produkt od pozadí — přirozeně a elegantně',
     's01-li3':'Zákazníci nevědomky spojují kvalitu videa s kvalitou vaší firmy',
-    's01-before':'Telefon','s01-after':'Blackmagic 6K','s01-hint':'← táhněte →','s01-caption':'Blackmagic 6K Pro',
-    's02-tag':'Přidaná hodnota · Doporučujeme','s02-title-html':'Čistý<br>zvuk',
+    's01-before':'Telefon','s01-before2':'Hloubka ostrosti — bez','s01-after2':'S bokeh efektem',
+    's01-before3':'Automatická expozice','s01-after3':'Manuální expozice',
+    's01-hint':'← táhněte →','s01-caption':'Blackmagic 6K Pro',
+    /* S02 ZVUK */
+    's02-tag':'Přidaná hodnota · Doporučujeme',
+    's02-title-html':'Čistý<br>zvuk',
     's02-lead':'Diváci odpustí průměrný obraz. Špatný zvuk odpustit nedokážou.',
-    's02-desc':'Šum mikrofonu, ozvěna prázdné místnosti nebo hluk z venku — divák to nevnímá vědomě, ale okamžitě přestane sledovat. Čistý zvuk zajistí, že vaše poselství skutečně dolehne. Máme mikrofony na každou situaci — lavalier, shotgun boom, i rekordér Zoom F1 a Tascam DR-70.',
+    's02-desc':'Šum mikrofonu, ozvěna prázdné místnosti nebo hluk z venku — divák to nevnímá vědomě, ale okamžitě přestane sledovat.',
     's02-li1':'Čistý hlas = vaše zpráva se dostane k zákazníkovi bez rušivých prvků',
     's02-li2':'Profesionální zvuk výrazně prodlužuje čas, po který divák sleduje vaše video',
     's02-li3':'Ideální pro rozhovory, firemní prezentace a zákaznické reference',
-    's02-before':'Bez mikrofonu','s02-after':'S mikrofonem','s02-hint':'← táhněte →','s02-caption':'Zvukový design',
-    's03-tag':'Přidaná hodnota · Populární volba','s03-title-html':'Osvětlení<br>scény',
+    's02-select':'Vyberte mikrofon níže','s02-caption':'Zvukový design',
+    'mic-builtin-name':'Vestavěný mikrofon',
+    'mic-builtin-desc':'Přímo v kameře. Zachytí vše — včetně šumu, větru a ozvěny.',
+    'mic-builtin-badge':'Bez příplatku',
+    'mic-boom-name':'Boom mikrofon',
+    'mic-boom-desc':'Tyčový shotgun. Drží asistent nebo stojí nad scénou — čistý zvuk, bez kontaktu s hercem.',
+    'mic-boom-badge':'Doporučeno',
+    'mic-lav-name':'Lavalier mikrofon',
+    'mic-lav-desc':'Miniaturní klipsa na košili. Ideální pro rozhovory, reportáže a prezentace.',
+    'mic-lav-badge':'Populární volba',
+    'mic-desktop-name':'Stolní mikrofon',
+    'mic-desktop-desc':'Stojí na stole naproti mluvčímu. Skvělý pro podcasty, recenze a talking-head videa.',
+    'mic-desktop-badge':'Studio feel',
+    /* S03 SVĚTLO */
+    's03-tag':'Přidaná hodnota · Populární volba',
+    's03-title-html':'Osvětlení<br>scény',
     's03-lead':'Světlo rozhoduje, jestli váš produkt vypadá luxusně — nebo jako z e-shopu za 200 Kč.',
-    's03-desc':'Tmavá kancelář, špatně osvětlená provozovna nebo přeexponovaný venkov — to kamera sama nevyřeší. Přinášíme vlastní světla a nasvítíme scénu tak, aby váš prostor, produkt nebo tým vypadal přesně tak, jak chcete.',
+    's03-desc':'Tmavá kancelář, špatně osvětlená provozovna nebo přeexponovaný venkov — to kamera sama nevyřeší. Přinášíme vlastní světla a nasvítíme scénu přesně jak chcete.',
     's03-li1':'Profesionální světlo promění průměrný prostor ve fotogenické místo',
     's03-li2':'Barva a intenzita světla podporuje emoci, kterou chcete u zákazníka vyvolat',
     's03-li3':'Výsledek je konzistentní — nezáleží na počasí, denní době ani prostoru',
-    's03-before':'Bez světel','s03-after':'Se světlem','s03-hint':'← táhněte →','s03-caption':'Lighting Design',
-    's04-tag':'Přidaná hodnota · Vizuální identita','s04-title-html':'Color<br>Grading',
+    's03-before':'Bez světel','s03-after':'Se světlem',
+    's03-before2':'Produkt bez osvětlení','s03-after2':'Produktové světlo',
+    's03-before3':'Portrét — ambient','s03-after3':'3-point setup',
+    's03-hint':'← táhněte →','s03-caption':'Lighting Design',
+    /* S04 COLOR */
+    's04-tag':'Přidaná hodnota · Vizuální identita',
+    's04-title-html':'Color<br>Grading',
     's04-lead':'Správná barva vyvolá emoci dřív, než divák pochopí, co vidí.',
-    's04-desc':'Surový záběr je plochý a šedý. Color grading přidá hloubku, kontrast, náladu — a podtrhne vizuální identitu vaší značky. Pracujeme v DaVinci Resolve a nastavíme přesný look, který odpovídá vašemu brandingu.',
+    's04-desc':'Surový záběr je plochý a šedý. Color grading přidá hloubku, kontrast, náladu — a podtrhne vizuální identitu vaší značky. Pracujeme v DaVinci Resolve.',
     's04-li1':'Konzistentní barevný styl napříč celou produkcí = silná vizuální identita',
     's04-li2':'Teplejší nebo chladnější tóny ovlivňují, jak zákazník vnímá vaši značku',
     's04-li3':'Výsledek je profesionální kinematografický look, ne "vypadá jako YouTube tutorial"',
-    's04-before':'Surový záběr','s04-after':'Po gradingu','s04-hint':'← táhněte →','s04-caption':'Color Grading',
-    's05-tag':'Základ · Vždy v ceně','s05-title-html':'Střih<br>&amp; tempo',
-    's05-lead':'Prvních 5 sekund rozhoduje, jestli váš zákazník zůstane — nebo odejde.',
-    's05-desc':'Střih není jen "dání záběrů za sebou". Je to výběr nejlepšího momentu, správné tempo, hudba a přechody. Výsledek je video, které drží pozornost od začátku do konce a přiměje diváka udělat to, co chcete — zavolat, koupit nebo navštívit váš web.',
-    's05-li1':'Rychlé tempo pro sociální sítě, klidnější pro prezentace — přizpůsobíme vždy',
-    's05-li2':'Dobře sestříhané video zvyšuje dokoukatelnost, a tím i šanci na konverzi',
-    's05-li3':'Součástí je výběr hudby, titulky a export do všech potřebných formátů',
-    's05-before':'Surový materiál','s05-after':'Po střihu','s05-hint':'← táhněte →','s05-caption':'Editing &amp; Post',
-    's06-tag':'Přidaná hodnota · Wow efekt','s06-title-html':'Pohyb<br>&amp; gimbal',
-    's06-lead':'Jedno drone video udělá pro váš prostor víc než desítka statických fotek.',
-    's06-desc':'Plynulý pohyb kamery přes gimbal nebo letecké záběry dronem jsou vizuální páka — okamžitě zvyšují vnímanou hodnotu toho, co ukazujete. Restaurace, výrobní hala, penzion nebo stavba. Z výšky nebo v pohybu to vypadá impozantně vždy. Máme letecký certifikát, žádná komplikace.',
-    's06-li1':'Drone záběry zhodnotí váš prostor nebo lokalitu v očích zákazníka okamžitě',
-    's06-li2':'Plynulý pohyb gimbalem dává videu filmový pocit, který statický záběr nedosáhne',
-    's06-li3':'Ideální pro nemovitosti, eventy, gastronomii, průmysl a prezentace lokalit',
-    's06-before':'Statický záběr','s06-after':'Drone / Gimbal','s06-hint':'← táhněte →','s06-caption':'Motion &amp; Aerial',
+    's04-before':'Surový záběr','s04-after':'Po gradingu',
+    's04-hint':'← táhněte →','s04-caption':'Color Grading',
+    'color-warm':'Warm Cinematic','color-cold':'Cold & Clean',
+    'color-teal':'Teal & Orange','color-bw':'High-contrast B&W',
+    /* S05 STABILIZACE */
+    's05-tag':'Přidaná hodnota · Wow efekt',
+    's05-title-html':'Pohyb<br>&amp; stabilizace',
+    's05-lead':'Jedno drone video udělá pro váš prostor víc než desítka statických fotek.',
+    's05-desc':'Plynulý pohyb kamery přes gimbal nebo letecké záběry dronem jsou vizuální páka — okamžitě zvyšují vnímanou hodnotu toho, co ukazujete. Máme letecký certifikát.',
+    's05-li1':'Drone záběry zhodnotí váš prostor nebo lokalitu v očích zákazníka okamžitě',
+    's05-li2':'Plynulý pohyb gimbalem dává videu filmový pocit, který statický záběr nedosáhne',
+    's05-li3':'Ideální pro nemovitosti, eventy, gastronomii, průmysl a prezentace lokalit',
+    's05-before':'Statický záběr','s05-after':'Drone / Gimbal',
+    's05-hint':'← táhněte →','s05-caption':'Motion & Aerial',
+    /* PHILOSOPHY */
     'phil-eyebrow':'Přístup MLX Media',
     'phil-quote-html':'"Jedno video může změnit<br>pohled na váš <em>byznys navždy.</em>"',
     'phil-body':'Každá z těchto složek je volitelná přidaná hodnota k vašemu videu. Nemusíte rozumět technice — stačí vědět, jaký výsledek chcete. My víme, co k tomu potřebujeme.',
-    'cta-eyebrow':'Hledám nové klienty','cta-title':'Máte projekt? Pojďme ho natočit.','cta-btn':'Objednat video',
+    /* CTA */
+    'cta-eyebrow':'Připraveni začít?',
+    'cta-title-html':'Pojďme natočit<br>vaše <em>video.</em>',
+    'cta-btn':'Domluvit natáčení',
+    /* FOOTER */
     'f-tagline':'Filmování · Střih · Postprodukce',
     'f-desc':'Věřím, že každý příběh si zaslouží být vyprávěn. Pomáhám firmám a jednotlivcům zachytit jejich vizi prostřednictvím profesionálního videa.',
-    'f-nav-title':'Navigace','f-nav-1':'Domovská stránka','f-nav-2':'O mně','f-nav-3':'Portfolio','f-nav-4':'Aspekty','f-nav-5':'Ceník','f-nav-6':'Objednávka',
-    'f-svc-title':'Služby','f-svc-1':'Firemní videa','f-svc-2':'Reklamní spot','f-svc-3':'Reels &amp; TikTok','f-svc-4':'Color grading','f-svc-5':'Zvukový design','f-svc-6':'Dronové záběry',
-    'f-contact-title':'Kontakt','f-email-label':'Email','f-phone-label':'Telefon','f-area-label':'Oblast','f-delivery-label':'Dodání','f-delivery-val':'4–10 dní od natáčení',
-    'f-stat-1':'Projektů','f-stat-2':'Roky zkušeností','f-stat-3':'Doporučení','f-stat-4':'RAW rozlišení',
+    'f-nav-title':'Navigace','f-nav-1':'Domovská stránka','f-nav-2':'O mně',
+    'f-nav-3':'Portfolio','f-nav-4':'Aspekty','f-nav-5':'Ceník','f-nav-6':'Objednávka',
+    'f-svc-title':'Služby','f-svc-1':'Firemní videa','f-svc-2':'Reklamní spot',
+    'f-svc-3':'Reels & TikTok','f-svc-4':'Color grading','f-svc-5':'Zvukový design','f-svc-6':'Dronové záběry',
+    'f-contact-title':'Kontakt','f-email-label':'Email','f-phone-label':'Telefon',
+    'f-area-label':'Oblast','f-area-val':'Praha 5, Praha 6, Beroun',
+    'f-delivery-label':'Dodání','f-delivery-val':'4–10 dní od natáčení',
+    'fstat-projects':'Projektů','fstat-years':'Roky zkušeností','fstat-recommend':'Doporučení','fstat-raw':'RAW rozlišení',
     'f-cta-eyebrow':'Hledám nové klienty','f-cta-title':'Máte projekt? Pojďme ho natočit.','f-cta-btn':'Objednat video',
     'f-rights':'Všechna práva vyhrazena','f-legal-1':'Ochrana soukromí','f-legal-2':'Cookies','f-legal-3':'Kontakt',
   },
   en: {
+    /* NAV */
     'nav-home':'Home','nav-about':'About','nav-portfolio':'Portfolio',
     'nav-aspekty':'Aspects','nav-cenik':'Pricing','nav-objednavka':'Order',
-    'hero-eyebrow':'MLX Media · What makes your video',
-    'hero-title-html':'What we do<br><em>differently</em>',
-    'hero-subtitle':'The camera is just the start. The real result comes from details — sound, light, colour, movement. Every element adds value to your video. Drag the slider and see the difference for yourself.',
-    'pill-obraz':'Image','pill-zvuk':'Sound','pill-svetlo':'Lighting','pill-strih':'Editing','pill-pohyb':'Motion',
-    'stat-projekty-label':'Projects completed','stat-kamera-label':'Camera RAW resolution',
-    'stat-roky-label':'Years of experience','stat-klienti-label':'Clients recommend',
-    'sidebar-obraz':'Image','sidebar-zvuk':'Sound','sidebar-svetlo':'Light','sidebar-strih':'Editing','sidebar-pohyb':'Motion',
-    's01-tag':'Foundation of every video','s01-title-html':'Cinematic<br>image',
+    /* HERO */
+    'hero-eyebrow':'What makes video professional',
+    'hero-title-html':'Aspects of<br><em>quality production</em>',
+    'hero-desc':'Five elements that decide whether your video sells — or gets lost in the noise.',
+    /* SIDEBAR */
+    'sidebar-obraz':'Picture','sidebar-zvuk':'Sound','sidebar-svetlo':'Light','sidebar-pohyb':'Stabilization',
+    /* STATS */
+    'stat1-label':'Years of experience','stat2-label':'Projects','stat3-label':'Clients','stat4-label':'Days delivery',
+    /* S01 */
+    's01-tag':'Foundation of every video',
+    's01-title-html':'Cinematic<br>picture',
     's01-lead':'Your customer sees your brand before they read a single word.',
-    's01-desc':"The difference between a phone video and a film camera is obvious within one second. We work with a Blackmagic 6K — the same camera used by professional productions. Your result? A company that looks like a major player, even if it's small and personal.",
-    's01-li1':'High resolution delivers a great result on the web, social media, and the big screen',
-    's01-li2':'Cinematic depth of field separates your product from the background — naturally and elegantly',
-    's01-li3':'Customers unconsciously associate video quality with the quality of your business',
-    's01-before':'Phone','s01-after':'Blackmagic 6K','s01-hint':'← drag →','s01-caption':'Blackmagic 6K Pro',
-    's02-tag':'Added value · Recommended','s02-title-html':'Clean<br>audio',
-    's02-lead':"Viewers forgive average picture. They can't forgive bad sound.",
-    's02-desc':"Microphone noise, room echo, or outside traffic — the viewer doesn't consciously notice, but they immediately stop watching. Clean audio ensures your message actually lands. We have microphones for every situation — lavalier, shotgun boom, Zoom F1 and Tascam DR-70 recorders.",
-    's02-li1':'Clear voice = your message reaches the customer without distractions',
-    's02-li2':'Professional audio significantly increases how long viewers stay engaged with your video',
-    's02-li3':'Perfect for interviews, corporate presentations, and client testimonials',
-    's02-before':'No microphone','s02-after':'With microphone','s02-hint':'← drag →','s02-caption':'Audio Design',
-    's03-tag':'Added value · Popular choice','s03-title-html':'Scene<br>lighting',
-    's03-lead':'Light decides whether your product looks luxurious — or like a cheap online store.',
-    's03-desc':"A dark office, poorly lit workspace, or overexposed outdoor location — the camera can't fix that on its own. We bring our own lights and set the scene exactly how you want your space, product, or team to look.",
-    's03-li1':'Professional lighting transforms an average space into a photogenic location',
-    's03-li2':'Colour and intensity of light reinforce the emotion you want to trigger in the customer',
-    's03-li3':'The result is consistent — regardless of weather, time of day, or location',
-    's03-before':'No lights','s03-after':'With lighting','s03-hint':'← drag →','s03-caption':'Lighting Design',
-    's04-tag':'Added value · Visual identity','s04-title-html':'Color<br>Grading',
-    's04-lead':"The right colour triggers emotion before the viewer understands what they're seeing.",
-    's04-desc':"Raw footage is flat and grey. Color grading adds depth, contrast, mood — and reinforces the visual identity of your brand. We work in DaVinci Resolve and dial in the exact look that matches your branding.",
-    's04-li1':'Consistent colour style across the entire production = strong visual identity',
-    's04-li2':'Warmer or cooler tones influence how customers perceive your brand',
-    's04-li3':'The result is a professional cinematic look, not "looks like a YouTube tutorial"',
-    's04-before':'Raw footage','s04-after':'After grading','s04-hint':'← drag →','s04-caption':'Color Grading',
-    's05-tag':'Core · Always included','s05-title-html':'Editing<br>&amp; pacing',
-    's05-lead':'The first 5 seconds decide whether your customer stays — or leaves.',
-    's05-desc':"Editing isn't just \"putting shots together\". It's selecting the best moments, the right pacing, music, and transitions. The result is a video that holds attention from start to finish and compels the viewer to do what you want — call, buy, or visit your website.",
-    's05-li1':'Fast pacing for social media, calmer for presentations — we always adapt',
-    's05-li2':'A well-edited video increases view-through rate, and with it the chance of conversion',
-    's05-li3':'Included: music selection, subtitles and export to all required formats',
-    's05-before':'Raw material','s05-after':'After edit','s05-hint':'← drag →','s05-caption':'Editing &amp; Post',
-    's06-tag':'Added value · Wow factor','s06-title-html':'Motion<br>&amp; gimbal',
-    's06-lead':'One drone video does more for your space than a dozen static photos.',
-    's06-desc':'Smooth camera movement via gimbal or aerial shots from a drone are a visual lever — instantly raising the perceived value of what you\'re showing. A restaurant, factory floor, guesthouse, or construction site. From height or in motion, it always looks impressive. We hold a flight licence — no complications.',
-    's06-li1':'Drone shots instantly elevate the perceived value of your space or location',
-    's06-li2':'Smooth gimbal movement gives video a cinematic feel that static shots cannot achieve',
-    's06-li3':'Ideal for real estate, events, hospitality, industry, and location showcases',
-    's06-before':'Static shot','s06-after':'Drone / Gimbal','s06-hint':'← drag →','s06-caption':'Motion &amp; Aerial',
-    'phil-eyebrow':'The MLX Media Approach',
-    'phil-quote-html':'"One video can change<br>how the world sees <em>your business forever.</em>"',
-    'phil-body':"Each of these elements is an optional addition to your video. You don't need to understand the technical side — just know what result you want. We know what it takes to get there.",
-    'cta-eyebrow':'Looking for new clients','cta-title':"Have a project? Let's shoot it.",'cta-btn':'Order video',
+    's01-desc':'The difference between a phone-shot video and a cinema camera is visible in one second. We use the Blackmagic 6K — the same camera professional productions use.',
+    's01-li1':'High resolution delivers great results on web, social media and large screens',
+    's01-li2':'Cinematic depth of field separates your product from the background — naturally',
+    's01-li3':'Customers unconsciously link video quality to the quality of your company',
+    's01-before':'Phone','s01-before2':'Depth of field — without','s01-after2':'With bokeh',
+    's01-before3':'Auto exposure','s01-after3':'Manual exposure',
+    's01-hint':'← drag →','s01-caption':'Blackmagic 6K Pro',
+    /* S02 */
+    's02-tag':'Add-on · Recommended',
+    's02-title-html':'Clean<br>sound',
+    's02-lead':'Viewers forgive average picture. Bad sound they cannot.',
+    's02-desc':'Mic noise, empty room echo or outside noise — the viewer doesn\'t notice consciously, but immediately stops watching.',
+    's02-li1':'Clean voice = your message reaches the customer without distractions',
+    's02-li2':'Professional sound significantly extends how long viewers watch your video',
+    's02-li3':'Ideal for interviews, corporate presentations and customer testimonials',
+    's02-select':'Select a microphone below','s02-caption':'Sound Design',
+    'mic-builtin-name':'Built-in microphone',
+    'mic-builtin-desc':'In the camera itself. Picks up everything — including noise, wind and echo.',
+    'mic-builtin-badge':'No extra cost',
+    'mic-boom-name':'Boom microphone',
+    'mic-boom-desc':'Shotgun on a pole. Held by an assistant or rigged above the scene — clean sound without touching the talent.',
+    'mic-boom-badge':'Recommended',
+    'mic-lav-name':'Lavalier microphone',
+    'mic-lav-desc':'Tiny clip-on for the shirt. Perfect for interviews, reports and presentations.',
+    'mic-lav-badge':'Popular choice',
+    'mic-desktop-name':'Desktop microphone',
+    'mic-desktop-desc':'Sits on a table facing the speaker. Great for podcasts, reviews and talking-head videos.',
+    'mic-desktop-badge':'Studio feel',
+    /* S03 */
+    's03-tag':'Add-on · Popular choice',
+    's03-title-html':'Scene<br>lighting',
+    's03-lead':'Light decides whether your product looks premium — or like a €10 Amazon listing.',
+    's03-desc':'Dark office, badly lit workspace or overexposed outdoors — the camera alone won\'t fix that. We bring our own lights and set the scene exactly how you want it.',
+    's03-li1':'Professional light turns an average space into a photogenic location',
+    's03-li2':'Color and intensity of light supports the emotion you want to evoke',
+    's03-li3':'Result is consistent — regardless of weather, time of day or space',
+    's03-before':'No lights','s03-after':'With lighting',
+    's03-before2':'Product without light','s03-after2':'Product lighting',
+    's03-before3':'Portrait — ambient','s03-after3':'3-point setup',
+    's03-hint':'← drag →','s03-caption':'Lighting Design',
+    /* S04 */
+    's04-tag':'Add-on · Visual identity',
+    's04-title-html':'Color<br>Grading',
+    's04-lead':'The right color triggers emotion before the viewer understands what they\'re seeing.',
+    's04-desc':'Raw footage is flat and grey. Color grading adds depth, contrast, mood — and reinforces your brand\'s visual identity. We work in DaVinci Resolve.',
+    's04-li1':'Consistent color style across the whole production = strong visual identity',
+    's04-li2':'Warmer or cooler tones affect how customers perceive your brand',
+    's04-li3':'Result is a professional cinematic look, not "looks like a YouTube tutorial"',
+    's04-before':'Raw footage','s04-after':'After grade',
+    's04-hint':'← drag →','s04-caption':'Color Grading',
+    'color-warm':'Warm Cinematic','color-cold':'Cold & Clean',
+    'color-teal':'Teal & Orange','color-bw':'High-contrast B&W',
+    /* S05 */
+    's05-tag':'Add-on · Wow factor',
+    's05-title-html':'Motion<br>&amp; stabilization',
+    's05-lead':'One drone video does more for your space than ten static photos.',
+    's05-desc':'Smooth gimbal movement or aerial drone footage are a visual lever — instantly increasing perceived value of what you\'re showing. We hold a flight certificate.',
+    's05-li1':'Drone footage elevates your space or location in the customer\'s eyes immediately',
+    's05-li2':'Smooth gimbal movement gives video a cinematic feel no static shot achieves',
+    's05-li3':'Ideal for real estate, events, hospitality, industry and location presentations',
+    's05-before':'Static shot','s05-after':'Drone / Gimbal',
+    's05-hint':'← drag →','s05-caption':'Motion & Aerial',
+    /* PHILOSOPHY */
+    'phil-eyebrow':'The MLX Media approach',
+    'phil-quote-html':'"One video can change<br>how people see your <em>business forever.</em>"',
+    'phil-body':'Each of these elements is an optional add-on to your video. You don\'t need to understand the tech — just know what result you want. We know what it takes.',
+    /* CTA */
+    'cta-eyebrow':'Ready to start?',
+    'cta-title-html':'Let\'s shoot<br>your <em>video.</em>',
+    'cta-btn':'Book a shoot',
+    /* FOOTER */
     'f-tagline':'Filming · Editing · Post-production',
-    'f-desc':'I believe every story deserves to be told. I help businesses and individuals capture their vision through professional video.',
-    'f-nav-title':'Navigation','f-nav-1':'Home page','f-nav-2':'About me','f-nav-3':'Portfolio','f-nav-4':'Aspects','f-nav-5':'Pricing','f-nav-6':'Order',
-    'f-svc-title':'Services','f-svc-1':'Corporate videos','f-svc-2':'Commercial spot','f-svc-3':'Reels &amp; TikTok','f-svc-4':'Color grading','f-svc-5':'Audio design','f-svc-6':'Drone footage',
-    'f-contact-title':'Contact','f-email-label':'Email','f-phone-label':'Phone','f-area-label':'Area','f-delivery-label':'Delivery','f-delivery-val':'4–10 days after filming',
-    'f-stat-1':'Projects','f-stat-2':'Years of experience','f-stat-3':'Recommendations','f-stat-4':'RAW resolution',
-    'f-cta-eyebrow':'Looking for new clients','f-cta-title':"Have a project? Let's shoot it.",'f-cta-btn':'Order video',
-    'f-rights':'All rights reserved','f-legal-1':'Privacy Policy','f-legal-2':'Cookies','f-legal-3':'Contact',
+    'f-desc':'I believe every story deserves to be told. I help companies and individuals capture their vision through professional video.',
+    'f-nav-title':'Navigation','f-nav-1':'Home','f-nav-2':'About me',
+    'f-nav-3':'Portfolio','f-nav-4':'Aspects','f-nav-5':'Pricing','f-nav-6':'Order',
+    'f-svc-title':'Services','f-svc-1':'Corporate videos','f-svc-2':'Ad spot',
+    'f-svc-3':'Reels & TikTok','f-svc-4':'Color grading','f-svc-5':'Sound design','f-svc-6':'Drone footage',
+    'f-contact-title':'Contact','f-email-label':'Email','f-phone-label':'Phone',
+    'f-area-label':'Area','f-area-val':'Prague 5, Prague 6, Beroun',
+    'f-delivery-label':'Delivery','f-delivery-val':'4–10 days from shoot',
+    'fstat-projects':'Projects','fstat-years':'Years experience','fstat-recommend':'Recommendations','fstat-raw':'RAW resolution',
+    'f-cta-eyebrow':'Looking for new clients','f-cta-title':'Got a project? Let\'s shoot it.','f-cta-btn':'Order video',
+    'f-rights':'All rights reserved','f-legal-1':'Privacy policy','f-legal-2':'Cookies','f-legal-3':'Contact',
   }
 };
-
 /* ── Apply all translations silently (no wave) ── */
 function applyTranslations(lang) {
   const t = translations[lang];
@@ -1835,6 +2145,82 @@ document.getElementById('langToggle').addEventListener('click', () => {
 /* ── Init on load ── */
 updateLangToggle();
 if (currentLang === 'en') applyTranslations('en');
+
+/* ══ CAROUSEL ENGINE ══ */
+function initCarousel(id) {
+  const wrap  = document.getElementById('carousel-' + id);
+  const dots  = document.getElementById('dots-' + id);
+  if (!wrap) return;
+  const track = wrap.querySelector('.carousel-track');
+  const slides = wrap.querySelectorAll('.carousel-slide');
+  const dotEls = dots ? dots.querySelectorAll('.carousel-dot') : [];
+  const counter = wrap.querySelector('.slide-counter');
+  const prevBtn = wrap.querySelector('.carousel-arrow.prev');
+  const nextBtn = wrap.querySelector('.carousel-arrow.next');
+  let cur = 0;
+  const total = slides.length;
+
+  function goTo(n) {
+    cur = (n + total) % total;
+    track.style.transform = `translateX(-${cur * 100}%)`;
+    dotEls.forEach((d, i) => d.classList.toggle('active', i === cur));
+    if (counter) {
+      counter.querySelector('.cur').textContent = cur + 1;
+    }
+    // Re-init compare widget in visible slide
+    const activeWidget = slides[cur].querySelector('.compare-widget');
+    if (activeWidget) resetCompare(activeWidget);
+  }
+
+  if (prevBtn) prevBtn.addEventListener('click', () => { playSound('universal'); haptic(15); goTo(cur - 1); });
+  if (nextBtn) nextBtn.addEventListener('click', () => { playSound('universal'); haptic(15); goTo(cur + 1); });
+  dotEls.forEach((d, i) => d.addEventListener('click', () => { playSound('universal'); haptic(15); goTo(i); }));
+
+  // Swipe support
+  let touchStartX = 0;
+  wrap.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  wrap.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 40) { dx < 0 ? goTo(cur + 1) : goTo(cur - 1); }
+  }, { passive: true });
+}
+
+function resetCompare(widget) {
+  const after = widget.querySelector('.compare-after');
+  const handle = widget.querySelector('.compare-handle');
+  if (after) after.style.clipPath = 'inset(0 50% 0 0)';
+  if (handle) handle.style.left = '50%';
+  widget.classList.remove('dragged', 'dragging');
+}
+
+['obraz', 'svetlo', 'color'].forEach(initCarousel);
+
+/* ══ MIC CARD SYSTEM ══ */
+const micCards = document.querySelectorAll('.mic-card');
+const micVideo = document.getElementById('micVideo');
+const micPlaceholder = document.getElementById('micPlaceholder');
+
+micCards.forEach(card => {
+  card.addEventListener('click', () => {
+    micCards.forEach(c => c.classList.remove('active'));
+    card.classList.add('active');
+    playSound('universal'); haptic(20);
+
+    const videoSrc = card.dataset.video || '';
+    if (micVideo && micPlaceholder) {
+      micPlaceholder.style.display = 'none';
+      micVideo.style.display = 'block';
+      const src = micVideo.querySelector('source');
+      if (src) src.src = videoSrc;
+      micVideo.load();
+      micVideo.play().catch(() => {});
+    }
+  });
+});
+
+/* ── Update sidebar sections (5 now, no strih) ── */
+// Sidebar already covers obraz/zvuk/svetlo/color/pohyb — done in HTML
+
 </script>
 <!-- LANGUAGE WAVE CANVAS -->
 <canvas id="langWaveCanvas" aria-hidden="true"></canvas>
