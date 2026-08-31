@@ -1,4 +1,3 @@
-
 /**
  * MLX Media — Neon Diamond Cursor
  * Drop-in: add <script src="mlx-cursor.js" defer></script> to <head>
@@ -10,12 +9,16 @@
  *
  * Cursor states are triggered by data attributes on your elements:
  *   data-cursor="email"   → envelope cursor
- *   data-cursor="video"   → aperture ring cursor
+ *   data-cursor="video"   → play triangle (white ghost + accent)
+ *   data-cursor="photo"   → image icon (rectangle + sun + mountains)
  *   data-cursor="nav"     → underline bar cursor
  *   data-cursor="ai"      → AI/robot cursor
  *   data-cursor="calendar"→ calendar cursor
  *   data-cursor="call"    → phone cursor
- *   data-cursor="theme"   → theme toggle cursor
+ *   data-cursor="theme"   → half-moon / half-sun toggle cursor
+ *   data-cursor="award"   → trophy cup cursor
+ *   data-cursor="nextpage"→ chevron arrow cursor
+ *   data-cursor="message" → speech bubble cursor
  *   .nav-links a          → also triggers nav cursor automatically
  *   <a> (any plain link)  → 20° lean diamond
  *   <button>, cards       → hover glow
@@ -41,7 +44,7 @@
 
     #mlx-cursor {
       position: fixed; top: 0; left: 0;
-      z-index: 99999; pointer-events: none;
+      z-index: 100001; pointer-events: none;
       width: 7px; height: 7px;
       background: var(--accent, #FF8A00);
       box-shadow:
@@ -122,16 +125,80 @@
       opacity: 0.28;
     }
 
-    /* Video — aperture ring */
+    /* Video — play triangle only */
     body.mlx-video #mlx-cursor {
-      width: 42px; height: 42px;
+      width: 24px; height: 24px;
       background: transparent;
-      border: 1px solid var(--accent, #FF8A00);
-      border-radius: 50%;
+      border: none;
+      box-shadow: none;
+      overflow: visible;
+    }
+    /* White ghost triangle — slightly larger, behind */
+    body.mlx-video #mlx-cursor::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 52%;
+      transform: translate(-50%, -50%);
+      width: 0; height: 0;
+      border-style: solid;
+      border-width: 8px 0 8px 14px;
+      border-color: transparent transparent transparent rgba(255,255,255,0.55);
+      filter: blur(1px);
+    }
+    /* Accent triangle — sharp, in front */
+    body.mlx-video #mlx-cursor::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 52%;
+      transform: translate(-50%, -50%);
+      width: 0; height: 0;
+      border-style: solid;
+      border-width: 7px 0 7px 12px;
+      border-color: transparent transparent transparent var(--accent, #FF8A00);
+      filter: drop-shadow(0 0 4px var(--glow, rgb(from var(--accent) r g b / 0.6)));
+    }
+
+    /* Photo — image icon: rectangle frame + SVG scene (sun + mountains) */
+    body.mlx-photo #mlx-cursor {
+      width: 36px; height: 28px;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      overflow: visible;
+    }
+    /* White ghost frame behind */
+    body.mlx-photo #mlx-cursor::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border: 1.5px solid rgba(255,255,255,0.35);
+      border-radius: 3px;
       box-shadow:
-        0 0 0 1px rgba(255,255,255,0.3),
-        0 0 20px 5px var(--glow, rgb(from var(--accent) r g b / 0.55)),
-        inset 0 0 18px rgba(255,138,0,0.07);
+        0 0 10px 3px rgba(255,255,255,0.12),
+        0 0 20px 5px var(--glow, rgb(from var(--accent) r g b / 0.3));
+      filter: blur(0.8px);
+    }
+    /* Accent frame */
+    body.mlx-photo #mlx-cursor::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border: 1.5px solid var(--accent, #FF8A00);
+      border-radius: 3px;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.2),
+        0 0 14px 4px var(--glow, rgb(from var(--accent) r g b / 0.6));
+    }
+    /* SVG scene inside — sun dot top-right, mountain horizon bottom */
+    body.mlx-photo #mlx-cursor .photo-scene {
+      position: absolute;
+      inset: 4px;
+      overflow: hidden;
+      border-radius: 1px;
+    }
+    body.mlx-photo #mlx-cursor .photo-scene svg {
+      width: 100%; height: 100%;
+      overflow: visible;
     }
 
     /* Nav — horizontal underline bar */
@@ -142,7 +209,7 @@
         0 0 8px 2px var(--glow, rgb(from var(--accent) r g b / 0.55));
     }
 
-    /* AI — refined marker without costume icon */
+    /* AI — refined marker */
     body.mlx-ai #mlx-cursor {
       width: 13px; height: 13px; border-radius: 6px;
       background: transparent;
@@ -195,20 +262,93 @@
       border-radius: 1px;
     }
 
-    /* Theme — moon/sun toggle */
-    body.mlx-theme #mlx-cursor {
-      width: 13px; height: 13px;
+    /* Hide inner SVG children by default — only shown in their own state */
+    #mlx-cursor .photo-scene,
+    #mlx-cursor .award-icon,
+    #mlx-cursor .message-icon { display: none; }
+
+    body.mlx-photo   #mlx-cursor .photo-scene  { display: block; }
+    body.mlx-award   #mlx-cursor .award-icon   { display: block; }
+    body.mlx-message #mlx-cursor .message-icon { display: block; }
+
+    /* Award — trophy cup */
+    body.mlx-award #mlx-cursor {
+      width: 22px; height: 26px;
       background: transparent;
-      border: 1.5px solid var(--accent, #FF8A00);
-      border-radius: 50%;
-      box-shadow: 0 0 0 1px rgba(255,255,255,0.3), 0 0 10px 2px var(--glow, rgb(from var(--accent) r g b / 0.55));
+      border: none; box-shadow: none;
+      overflow: visible;
     }
-    body.mlx-theme #mlx-cursor::before {
+    body.mlx-award #mlx-cursor .award-icon {
+      position: absolute; inset: 0;
+    }
+    body.mlx-award #mlx-cursor .award-icon svg {
+      width: 22px; height: 26px; overflow: visible;
+      filter: drop-shadow(0 0 5px var(--glow, rgb(from var(--accent) r g b / 0.7)));
+    }
+
+    /* Next page — chevron › */
+    body.mlx-nextpage #mlx-cursor {
+      width: 20px; height: 28px;
+      background: transparent;
+      border: none; box-shadow: none;
+      overflow: visible;
+    }
+    body.mlx-nextpage #mlx-cursor::before {
       content: '';
       position: absolute;
-      top: 3px; left: 3px; width: 4px; height: 4px;
-      background: var(--accent, #FF8A00);
-      border-radius: 50%;
+      top: 50%; left: 50%;
+      width: 12px; height: 12px;
+      border-top: 2.5px solid rgba(255,255,255,0.65);
+      border-right: 2.5px solid rgba(255,255,255,0.65);
+      transform: translate(-65%, -50%) rotate(45deg) scale(1.18);
+      filter: blur(1.2px);
+      z-index: -1;
+    }
+    body.mlx-nextpage #mlx-cursor::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 10px; height: 10px;
+      border-top: 2.5px solid var(--accent, #FF8A00);
+      border-right: 2.5px solid var(--accent, #FF8A00);
+      transform: translate(-65%, -50%) rotate(45deg);
+      filter: drop-shadow(0 0 5px var(--glow, rgb(from var(--accent) r g b / 0.7)));
+      z-index: 1;
+    }
+
+    /* Message — speech bubble */
+    body.mlx-message #mlx-cursor {
+      width: 26px; height: 22px;
+      background: transparent;
+      border: none; box-shadow: none;
+      overflow: visible;
+    }
+    body.mlx-message #mlx-cursor::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 28px; height: 24px;
+      border: 1.5px solid rgba(255,255,255,0.65);
+      border-radius: 4px;
+      transform: translate(-50%, -50%) scale(1.15);
+      filter: blur(1.2px);
+      z-index: -1;
+    }
+    body.mlx-message #mlx-cursor::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border: 1.5px solid var(--accent, #FF8A00);
+      border-radius: 4px;
+      box-shadow: 0 0 6px 2px var(--glow, rgb(from var(--accent) r g b / 0.55));
+      z-index: 1;
+    }
+    body.mlx-message #mlx-cursor .message-icon {
+      position: absolute; inset: 0; z-index: 2;
+    }
+    body.mlx-message #mlx-cursor .message-icon svg {
+      width: 26px; height: 22px; overflow: visible;
+      filter: drop-shadow(0 0 5px var(--glow, rgb(from var(--accent) r g b / 0.7)));
     }
 
     /* Trail particles */
@@ -256,7 +396,77 @@
   /* ── Inject cursor element ── */
   const el = document.createElement('div');
   el.id = 'mlx-cursor';
+
+  // Photo scene SVG — sun dot + mountain silhouette
+  const photoScene = document.createElement('div');
+  photoScene.className = 'photo-scene';
+  photoScene.innerHTML = `<svg viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg" fill="none">
+    <!-- sun dot top-right -->
+    <circle cx="22" cy="5" r="2.5" fill="var(--accent,#FF8A00)" opacity="0.9"/>
+    <!-- white ghost sun -->
+    <circle cx="22" cy="5" r="3.5" fill="rgba(255,255,255,0.2)"/>
+    <!-- mountain left: larger -->
+    <polygon points="1,20 10,7 19,20" fill="var(--accent,#FF8A00)" opacity="0.55"/>
+    <!-- mountain right: smaller, overlapping -->
+    <polygon points="10,20 18,10 26,20" fill="var(--accent,#FF8A00)" opacity="0.85"/>
+    <!-- white ghost mountains -->
+    <polygon points="1,20 10,7 19,20" fill="rgba(255,255,255,0.12)"/>
+    <polygon points="10,20 18,10 26,20" fill="rgba(255,255,255,0.18)"/>
+  </svg>`;
+  el.appendChild(photoScene);
+
+  // Award icon SVG — trophy cup: bowl, handles, stem, base, star
+  const awardIcon = document.createElement('div');
+  awardIcon.className = 'award-icon';
+  awardIcon.innerHTML = `<svg viewBox="0 0 22 26" xmlns="http://www.w3.org/2000/svg" fill="none">
+    <!-- ghost glow layer -->
+    <path d="M6,2 H16 Q16,12 11,15 Q6,12 6,2 Z" fill="rgba(255,255,255,0.15)" transform="scale(1.08) translate(-0.8,-0.5)"/>
+    <!-- left handle -->
+    <path d="M6,4 Q2,4 2,8 Q2,11 6,11" stroke="rgba(255,255,255,0.35)" stroke-width="1.2" stroke-linecap="round" fill="none" filter="blur(0.5px)"/>
+    <path d="M6,4 Q2,4 2,8 Q2,11 6,11" stroke="var(--accent,#FF8A00)" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+    <!-- right handle -->
+    <path d="M16,4 Q20,4 20,8 Q20,11 16,11" stroke="rgba(255,255,255,0.35)" stroke-width="1.2" stroke-linecap="round" fill="none" filter="blur(0.5px)"/>
+    <path d="M16,4 Q20,4 20,8 Q20,11 16,11" stroke="var(--accent,#FF8A00)" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+    <!-- cup body -->
+    <path d="M6,2 H16 Q16,12 11,15 Q6,12 6,2 Z" stroke="var(--accent,#FF8A00)" stroke-width="1.4" stroke-linejoin="round" fill="rgba(255,138,0,0.08)"/>
+    <!-- stem -->
+    <line x1="11" y1="15" x2="11" y2="20" stroke="var(--accent,#FF8A00)" stroke-width="1.4" stroke-linecap="round"/>
+    <!-- base -->
+    <line x1="7.5" y1="20" x2="14.5" y2="20" stroke="var(--accent,#FF8A00)" stroke-width="1.8" stroke-linecap="round"/>
+    <!-- star inside cup -->
+    <polygon points="11,5 11.6,7 13.5,7 12,8.2 12.6,10 11,9 9.4,10 10,8.2 8.5,7 10.4,7"
+      fill="var(--accent,#FF8A00)" opacity="0.9"/>
+  </svg>`;
+  el.appendChild(awardIcon);
+
+  // Message icon SVG — rounded speech bubble with tail + three dots
+  const messageIcon = document.createElement('div');
+  messageIcon.className = 'message-icon';
+  messageIcon.innerHTML = `<svg viewBox="0 0 26 22" xmlns="http://www.w3.org/2000/svg" fill="none">
+    <!-- ghost glow bubble -->
+    <rect x="0.5" y="0.5" width="23" height="16" rx="4" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.3)" stroke-width="1" filter="blur(0.8px)"/>
+    <!-- tail ghost -->
+    <path d="M5,16 L3,21 L10,16" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.3)" stroke-width="1" stroke-linejoin="round" filter="blur(0.5px)"/>
+    <!-- bubble body -->
+    <rect x="0.5" y="0.5" width="23" height="16" rx="4"
+      stroke="var(--accent,#FF8A00)" stroke-width="1.4"
+      fill="rgba(255,138,0,0.06)"
+      style="filter:drop-shadow(0 0 3px var(--glow,rgb(from var(--accent) r g b / 0.5)))"/>
+    <!-- tail -->
+    <path d="M5,16 L3,21 L10,16" fill="rgba(255,138,0,0.06)" stroke="var(--accent,#FF8A00)" stroke-width="1.4" stroke-linejoin="round"/>
+    <!-- three dots -->
+    <circle cx="8"  cy="8.5" r="1.4" fill="var(--accent,#FF8A00)" opacity="0.9"/>
+    <circle cx="12" cy="8.5" r="1.4" fill="var(--accent,#FF8A00)" opacity="0.9"/>
+    <circle cx="16" cy="8.5" r="1.4" fill="var(--accent,#FF8A00)" opacity="0.9"/>
+  </svg>`;
+  el.appendChild(messageIcon);
+
   document.body.appendChild(el);
+
+  /* ── Apply play cursor to every film and short card ── */
+  document.querySelectorAll('.project-card, .short-card').forEach(card => {
+    card.dataset.cursor = 'video';
+  });
 
   /* ── State ── */
   const body = document.body;
@@ -279,17 +489,20 @@
         body.classList.contains('mlx-email') ||
         body.classList.contains('mlx-nav')   ||
         body.classList.contains('mlx-video') ||
+        body.classList.contains('mlx-photo') ||
         body.classList.contains('mlx-ai')    ||
         body.classList.contains('mlx-calendar') ||
         body.classList.contains('mlx-call')  ||
-        body.classList.contains('mlx-theme')) rot=0;
+        body.classList.contains('mlx-award') ||
+        body.classList.contains('mlx-nextpage') ||
+        body.classList.contains('mlx-message')) rot=0;
 
     el.style.transform=`translate(calc(${mx}px - 50%), calc(${my}px - 50%)) rotate(${rot}deg)`;
 
-    // Trail — pauses during text state
+    // Trail — pauses during text and photo states
     frameCount++;
     const interval=Math.max(1,Math.round(11-TRAIL_SPEED));
-    if (frameCount%interval===0 && !body.classList.contains('mlx-text')) spawnTrail(mx,my);
+    if (frameCount%interval===0 && !body.classList.contains('mlx-text') && !body.classList.contains('mlx-photo')) spawnTrail(mx,my);
 
     // Glitch at high speed
     const speed=Math.sqrt(vx*vx+vy*vy);
@@ -345,19 +558,22 @@
   document.addEventListener('mouseover', e => {
     const t=e.target;
     // Remove only mlx- cursor classes, not other body classes
-    body.classList.remove('mlx-email','mlx-video','mlx-nav','mlx-link','mlx-hovering','mlx-text','mlx-ai','mlx-calendar','mlx-call','mlx-theme');
+    body.classList.remove('mlx-email','mlx-video','mlx-photo','mlx-nav','mlx-link','mlx-hovering','mlx-text','mlx-ai','mlx-calendar','mlx-call','mlx-award','mlx-nextpage','mlx-message');
 
-    if (t.dataset.cursor==='email'||t.closest('[data-cursor="email"]')) { body.classList.add('mlx-email');    return; }
-    if (t.dataset.cursor==='video'||t.closest('[data-cursor="video"]')) { body.classList.add('mlx-video');    return; }
-    if (t.dataset.cursor==='nav'  ||t.closest('[data-cursor="nav"]'))   { body.classList.add('mlx-nav');      return; }
-    if (t.dataset.cursor==='ai'||t.closest('[data-cursor="ai"]')) { body.classList.add('mlx-hovering');    return; }
-    if (t.dataset.cursor==='calendar'||t.closest('[data-cursor="calendar"]')) { body.classList.add('mlx-calendar');    return; }
-    if (t.dataset.cursor==='call'||t.closest('[data-cursor="call"]')) { body.classList.add('mlx-call');    return; }
-    if (t.dataset.cursor==='theme'||t.closest('[data-cursor="theme"]')) { body.classList.add('mlx-theme');    return; }
-    if (t.closest('.nav-links a'))                                       { body.classList.add('mlx-nav');      return; }
-    if (t.closest('a:not([data-cursor])'))                               { body.classList.add('mlx-link');     return; }
-    if (t.closest('button:not([disabled]),[role="button"],[tabindex]'))  { body.classList.add('mlx-hovering'); return; }
-    if (t.closest('p,h1,h2,h3,h4,h5,h6,li,blockquote,label,span'))     { body.classList.add('mlx-text');     return; }
+    if (t.dataset.cursor==='email'||t.closest('[data-cursor="email"]'))         { body.classList.add('mlx-email');    return; }
+    if (t.dataset.cursor==='video'||t.closest('[data-cursor="video"]'))         { body.classList.add('mlx-video');    return; }
+    if (t.dataset.cursor==='photo'||t.closest('[data-cursor="photo"]'))         { body.classList.add('mlx-photo');    return; }
+    if (t.dataset.cursor==='nav'  ||t.closest('[data-cursor="nav"]'))           { body.classList.add('mlx-nav');      return; }
+    if (t.dataset.cursor==='ai'   ||t.closest('[data-cursor="ai"]'))            { body.classList.add('mlx-hovering'); return; }
+    if (t.dataset.cursor==='calendar'||t.closest('[data-cursor="calendar"]'))   { body.classList.add('mlx-calendar'); return; }
+    if (t.dataset.cursor==='call' ||t.closest('[data-cursor="call"]'))          { body.classList.add('mlx-call');     return; }
+    if (t.dataset.cursor==='award'||t.closest('[data-cursor="award"]'))         { body.classList.add('mlx-award');    return; }
+    if (t.dataset.cursor==='nextpage'||t.closest('[data-cursor="nextpage"]'))   { body.classList.add('mlx-nextpage'); return; }
+    if (t.dataset.cursor==='message'||t.closest('[data-cursor="message"]'))     { body.classList.add('mlx-message');  return; }
+    if (t.closest('.nav-links a'))                                             { body.classList.add('mlx-nav');      return; }
+    if (t.closest('a:not([data-cursor])'))                                     { body.classList.add('mlx-link');     return; }
+    if (t.closest('button:not([disabled]),[role="button"],[tabindex]'))        { body.classList.add('mlx-hovering'); return; }
+    if (t.closest('p,h1,h2,h3,h4,h5,h6,li,blockquote,label,span'))           { body.classList.add('mlx-text');     return; }
   });
 
 })();
