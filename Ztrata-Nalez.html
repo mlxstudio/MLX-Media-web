@@ -51,11 +51,11 @@
       --text:         #e8e4de;
       --text-muted:   #5e5a56;
       --text-dim:     #8a8580;
-      --noise-op:     0.028;
-      --noise-op2:    0.015;
+      --noise-op:     0.06;
+      --noise-op2:    0.04;
       --stripe:       linear-gradient(90deg,transparent,#FF8A00,#ffb347,transparent);
       --grid-line:    rgba(255,138,0,0.04);
-      --vignette:     rgba(0,0,0,0.40);
+      --vignette:     rgba(0,0,0,0.60);
       --badge-lost:   rgba(255,80,80,0.12);
       --badge-lost-t: #ff6b6b;
       --badge-found:  rgba(80,200,120,0.12);
@@ -77,11 +77,11 @@
       --text:         #0f1e1c;
       --text-muted:   #a0a8a6;
       --text-dim:     #6b7574;
-      --noise-op:     0.050;
-      --noise-op2:    0.040;
+      --noise-op:     0.10;
+      --noise-op2:    0.08;
       --stripe:       linear-gradient(90deg,transparent,#00BFA6,#7dd7cc,transparent);
       --grid-line:    rgba(0,191,166,0.055);
-      --vignette:     rgba(0,0,0,0.10);
+      --vignette:     rgba(0,0,0,0.20);
       --badge-lost:   rgba(220,60,60,0.08);
       --badge-lost-t: #cc3c3c;
       --badge-found:  rgba(30,150,80,0.10);
@@ -123,6 +123,25 @@
       position: fixed; inset: 0; pointer-events: none; z-index: 9996;
       background: radial-gradient(ellipse at 50% 40%, transparent 55%, var(--vignette) 100%);
       transition: background var(--trans);
+    }
+    /* Paper texture overlay for select sections with seamless tiling (matches index.html) */
+    .records::before,
+    .form-wrap::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 1;
+      background-image: url('Paper-Texture01.jpg'), url('Paper-Texture01.jpg');
+      background-size: 640px 640px, 640px 640px;
+      background-repeat: repeat;
+      background-position: 0 0, 320px 320px;
+      mix-blend-mode: multiply;
+      opacity: 0.24;
+      top: 0; left: 0;
+      filter: blur(0.3px);
+    }
+    .records, .form-wrap {
+      position: relative;
+    }
+    .records > *, .form-wrap > * {
+      position: relative; z-index: 2;
     }
     @keyframes grainDrift {
       0%  { transform: translate(0,0); }
@@ -646,68 +665,79 @@
     .success-msg p { font-size: 0.84rem; color: var(--text-dim); max-width: 320px; line-height: 1.6; }
     .success-msg .submit-btn { max-width: 200px; font-size: 0.95rem; }
 
-    /* ── FOOTER ── */
-    footer.site-footer {
-      margin-top: 80px;
-      background: var(--bg-surface); border-top: 1px solid var(--border);
-      transition: background var(--trans), border-color var(--trans);
-      position: relative; z-index: 1;
-    }
-    .f-main {
-      max-width: 960px; margin: 0 auto;
-      display: grid; grid-template-columns: 2fr 1fr 1fr;
-      gap: 48px; padding: 56px clamp(16px,4vw,40px) 40px;
-    }
-    @media(max-width:720px){ .f-main { grid-template-columns: 1fr 1fr; } }
-    @media(max-width:460px){ .f-main { grid-template-columns: 1fr; gap: 32px; } }
+    /* ── FOOTER (ported from index.html V2) ── */
+    .mlx-footer { margin-top: 80px; background: var(--bg); border-top:1px solid var(--border); position:relative; overflow:hidden; z-index:1; transition: background var(--trans), border-color var(--trans); }
+    .mlx-footer::before { content:''; position:absolute; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E"); opacity: var(--noise-op); pointer-events:none; z-index:0; transition: opacity var(--trans); }
 
-    .f-brand .f-logo {
-      font-family: var(--font-display); font-size: 1.4rem; letter-spacing: 0.12em;
-      color: var(--text); text-decoration: none; display: block; margin-bottom: 12px;
-      transition: color var(--trans);
-    }
-    .f-brand .f-logo span { color: var(--accent); }
-    .f-brand .f-tagline {
-      font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase;
-      color: var(--text-muted); margin-bottom: 20px; transition: color var(--trans);
-    }
-    .f-brand .f-desc {
-      font-size: 0.82rem; color: var(--footer-desc); line-height: 1.7;
-      max-width: 260px; transition: color var(--trans);
-    }
+    .footer-stripe-line { height:3px; background: var(--stripe); transform-origin:left; transform:scaleX(0); transition: transform 1s var(--ease-out) 0.2s, background var(--trans); }
+    .footer-stripe-line.visible { transform:scaleX(1); }
 
-    .f-col-title {
-      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--text-muted); margin-bottom: 16px; transition: color var(--trans);
-    }
-    .f-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-    .f-links a {
-      font-size: 0.82rem; color: var(--text-dim); text-decoration: none;
-      transition: color 0.2s;
-    }
-    .f-links a:hover { color: var(--accent); }
+    .footer-main-grid { position:relative; z-index:1; max-width:1200px; margin:0 auto; padding:72px 40px 48px; display:grid; grid-template-columns:2fr 1fr 1fr 1.4fr; gap:48px 40px; }
+    @media(max-width:960px){ .footer-main-grid{ grid-template-columns:1fr 1fr; padding:56px 28px 40px; } }
+    @media(max-width:600px){ .footer-main-grid{ grid-template-columns:1fr; padding:48px 24px 32px; gap:36px; } }
 
-    .f-contact-list { display: flex; flex-direction: column; gap: 10px; }
-    .f-contact-link {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 0.8rem; color: var(--text-dim); text-decoration: none;
-      transition: color 0.2s;
-    }
-    .f-contact-link svg { color: var(--accent); flex-shrink: 0; opacity: 0.8; }
-    .f-contact-link:hover { color: var(--accent); }
+    .footer-reveal { opacity:0; transform:translateY(22px); transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out); }
+    .footer-reveal.visible { opacity:1; transform:translateY(0); }
+    .footer-reveal:nth-child(1){ transition-delay:0.05s; }
+    .footer-reveal:nth-child(2){ transition-delay:0.15s; }
+    .footer-reveal:nth-child(3){ transition-delay:0.25s; }
+    .footer-reveal:nth-child(4){ transition-delay:0.35s; }
 
-    .f-stripe {
-      height: 1px; background: var(--stripe); margin: 0; opacity: 0.6;
-    }
-    .f-bottom {
-      max-width: 960px; margin: 0 auto;
-      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
-      padding: 18px clamp(16px,4vw,40px);
-    }
-    .f-copy { font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.04em; transition: color var(--trans); }
-    .f-copy span { color: var(--accent); }
-    .f-legal { display: flex; gap: 18px; }
-    .f-legal a { font-size: 0.72rem; color: var(--text-muted); text-decoration: none; letter-spacing: 0.06em; transition: color 0.2s; }
+    .f-brand-logo { font-family: var(--font-display); font-size:3rem; letter-spacing:0.12em; color: var(--text); line-height:1; margin-bottom:6px; display:inline-block; transition: color var(--trans); }
+    .f-brand-logo span { color: var(--accent); transition: color var(--trans); }
+    .f-brand-tagline { font-size:0.7rem; letter-spacing:0.32em; text-transform:uppercase; color: var(--text-muted); margin-bottom:20px; transition: color var(--trans); }
+    .f-brand-desc { font-size:0.88rem; line-height:1.75; color: var(--footer-desc); max-width:280px; margin-bottom:28px; transition: color var(--trans); }
+    .f-social-row { display:flex; gap:12px; flex-wrap:wrap; }
+    .f-social-btn { display:flex; align-items:center; gap:8px; padding:9px 16px; border:1px solid var(--border); border-radius:4px; text-decoration:none; color: var(--text-muted); font-size:0.78rem; letter-spacing:0.06em; font-weight:500; position:relative; overflow:hidden; transition: border-color 0.25s, color 0.25s, transform 0.2s, background var(--trans); }
+    .f-social-btn::after { content:''; position:absolute; inset:0; background: var(--accent); opacity:0; transition: opacity 0.25s; z-index:-1; }
+    .f-social-btn:hover { border-color: var(--accent); color: var(--bg); transform:translateY(-2px); }
+    .f-social-btn:hover::after { opacity:1; }
+    .f-social-btn svg { width:15px; height:15px; flex-shrink:0; }
+
+    .f-col-title { font-family: var(--font-display); font-size:0.95rem; letter-spacing:0.22em; color: var(--accent); text-transform:uppercase; margin-bottom:22px; display:flex; align-items:center; gap:10px; transition: color var(--trans); }
+    .f-col-title::after { content:''; flex:1; height:1px; background: var(--border); transition: background var(--trans); }
+    .f-links { list-style:none; display:flex; flex-direction:column; gap:10px; }
+    .f-links a { color: var(--text-muted); text-decoration:none; font-size:0.88rem; display:flex; align-items:center; gap:8px; transition: color 0.2s, gap 0.2s; }
+    .f-links a::before { content:''; width:6px; height:1px; background: var(--accent); opacity:0; transition: opacity 0.2s, width 0.2s, background var(--trans); }
+    .f-links a:hover { color: var(--text); gap:12px; }
+    .f-links a:hover::before { opacity:1; width:10px; }
+
+    .f-contact-item { display:flex; align-items:flex-start; gap:12px; margin-bottom:18px; }
+    .f-contact-icon { width:36px; height:36px; border:1px solid var(--border); border-radius:4px; display:flex; align-items:center; justify-content:center; flex-shrink:0; color: var(--accent); transition: border-color 0.2s, background 0.2s, color var(--trans); }
+    .f-contact-item:hover .f-contact-icon { border-color: var(--accent); background: var(--accent-soft); }
+    .f-contact-label { font-size:0.7rem; letter-spacing:0.14em; text-transform:uppercase; color: var(--text-muted); margin-bottom:3px; transition: color var(--trans); }
+    .f-contact-value { font-size:0.86rem; color: var(--text); transition: color var(--trans); }
+    .f-contact-value a { color:inherit; text-decoration:none; transition:color 0.2s; }
+    .f-contact-value a:hover { color: var(--accent); }
+
+    .f-stats-band { position:relative; z-index:1; max-width:1200px; margin:0 auto; padding:0 40px 40px; display:grid; grid-template-columns:repeat(4,1fr); gap:1px; border-top:1px solid var(--border); transition: border-color var(--trans); }
+    @media(max-width:960px){ .f-stats-band{ grid-template-columns:repeat(2,1fr); padding:0 28px 32px; } }
+    @media(max-width:600px){ .f-stats-band{ padding:0 24px 28px; } }
+    .f-stat-item { padding:28px 20px; text-align:center; opacity:0; transform:translateY(14px); border-right:1px solid var(--border); transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out), border-color var(--trans); }
+    .f-stat-item:last-child { border-right:none; }
+    .f-stat-item.visible { opacity:1; transform:translateY(0); }
+    .f-stat-item:nth-child(1){ transition-delay:0.1s; } .f-stat-item:nth-child(2){ transition-delay:0.2s; }
+    .f-stat-item:nth-child(3){ transition-delay:0.3s; } .f-stat-item:nth-child(4){ transition-delay:0.4s; }
+    .f-stat-number { font-family: var(--font-display); font-size:2.4rem; letter-spacing:0.05em; color: var(--text); line-height:1; margin-bottom:4px; transition: color var(--trans); }
+    .f-stat-number span { color: var(--accent); transition: color var(--trans); }
+    .f-stat-label { font-size:0.7rem; letter-spacing:0.18em; text-transform:uppercase; color: var(--text-muted); transition: color var(--trans); }
+
+    .f-cta-wrap { position:relative; z-index:1; max-width:1200px; margin:0 auto 40px; padding:0 40px; }
+    @media(max-width:600px){ .f-cta-wrap{ padding:0 24px; } }
+    .f-cta-inner { border:1px solid var(--border); border-radius:6px; padding:32px 40px; display:flex; align-items:center; justify-content:space-between; gap:24px; background: var(--bg-surface); opacity:0; transform:translateY(16px); transition: opacity 0.7s var(--ease-out) 0.3s, transform 0.7s var(--ease-out) 0.3s, background var(--trans), border-color var(--trans); flex-wrap:wrap; }
+    .f-cta-inner.visible { opacity:1; transform:translateY(0); }
+    .f-cta-eyebrow { font-size:0.68rem; letter-spacing:0.26em; text-transform:uppercase; color: var(--accent); margin-bottom:6px; transition: color var(--trans); }
+    .f-cta-title { font-family: var(--font-display); font-size:1.7rem; letter-spacing:0.06em; color: var(--text); transition: color var(--trans); }
+    .f-cta-btn { display:inline-flex; align-items:center; gap:10px; padding:14px 30px; background: var(--accent); color: var(--bg); font-size:0.82rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; text-decoration:none; border-radius:4px; transition: transform 0.2s, box-shadow 0.2s, background var(--trans), color var(--trans); white-space:nowrap; }
+    .f-cta-btn:hover { transform:translateY(-2px); box-shadow:0 8px 28px var(--accent-glow); }
+    .f-cta-btn svg { width:16px; height:16px; }
+
+    .f-bottom { position:relative; z-index:1; border-top:1px solid var(--border); padding:18px 40px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; transition: border-color var(--trans); }
+    @media(max-width:600px){ .f-bottom{ padding:18px 24px; flex-direction:column; text-align:center; } }
+    .f-copy { font-size:0.75rem; color: var(--text-muted); letter-spacing:0.04em; transition: color var(--trans); }
+    .f-copy span { color: var(--accent); transition: color var(--trans); }
+    .f-legal { display:flex; gap:20px; }
+    .f-legal a { font-size:0.72rem; color: var(--text-muted); text-decoration:none; letter-spacing:0.08em; transition:color 0.2s; }
     .f-legal a:hover { color: var(--text); }
 
     /* ── SCROLL REVEALS ── */
@@ -749,6 +779,7 @@
     <li><a href="O-mně.html"      data-i18n="nav-about">O mně</a></li>
     <li><a href="Portfolio.html"  data-i18n="nav-portfolio">Portfolio</a></li>
     <li><a href="Aspekty.html"    data-i18n="nav-aspekty">Aspekty</a></li>
+    <li><a href="Nabídka.html" data-i18n="nav-offers">Nabídka</a></li>
     <li><a href="Ceník.html"      data-i18n="nav-cenik">Ceník</a></li>
     <li><a href="Objednávka.html" data-i18n="nav-objednavka">Objednávka</a></li>
   </ul>
@@ -764,6 +795,12 @@
     <button class="theme-toggle" id="themeToggle" aria-label="Přepnout téma">
       <div class="toggle-icons"><span>🌙</span><span>☀️</span></div>
     </button>
+    <button class="settings-btn" id="mlx-settings-toggle" type="button" aria-label="Nastavení">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"></path>
+      </svg>
+    </button>
     <div class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></div>
   </div>
 </nav>
@@ -774,6 +811,7 @@
   <a href="O-mně.html"      data-i18n="nav-about">O mně</a>
   <a href="Portfolio.html"  data-i18n="nav-portfolio">Portfolio</a>
   <a href="Aspekty.html"    data-i18n="nav-aspekty">Aspekty</a>
+  <a href="Nabídka.html" data-i18n="nav-offers">Nabídka</a>
   <a href="Ceník.html"      data-i18n="nav-cenik">Ceník</a>
   <a href="Objednávka.html" data-i18n="nav-objednavka">Objednávka</a>
   <a href="Ztrata-Nalez.html" class="active" data-i18n="nav-zn">Ztráta / Nález</a>
@@ -808,7 +846,7 @@
     </div>
 
     <!-- ── ITEMS BOARD ── -->
-    <section>
+    <section class="records">
       <div class="section-head reveal">
         <h2 class="section-title" data-i18n-html="zn-records-title-html">Aktuální <span>záznamy</span></h2>
         <span class="section-count" id="countLabel"></span>
@@ -876,38 +914,38 @@
 
             <div class="row-2">
               <div class="field">
-                <label for="fname">Jméno <span class="req">*</span></label>
-                <input type="text" id="fname" placeholder="Vaše jméno" autocomplete="name" />
+                <label for="fname" data-i18n-html="zn-f-name">Jméno <span class="req">*</span></label>
+                <input type="text" id="fname" placeholder="Vaše jméno" autocomplete="name" data-i18n-placeholder="zn-ph-name" />
               </div>
               <div class="field">
-                <label for="fdate">Datum <span class="req">*</span></label>
+                <label for="fdate" data-i18n-html="zn-f-date">Datum <span class="req">*</span></label>
                 <input type="date" id="fdate" />
               </div>
             </div>
 
             <div class="field">
-              <label for="femail">Email <span class="req">*</span></label>
-              <input type="email" id="femail" placeholder="vas@email.cz" autocomplete="email" />
+              <label for="femail" data-i18n-html="zn-f-email">Email <span class="req">*</span></label>
+              <input type="email" id="femail" placeholder="vas@email.cz" autocomplete="email" data-i18n-placeholder="zn-ph-email" />
             </div>
 
             <div class="field">
-              <label for="fphone">Telefon <span class="opt">(nepovinné)</span></label>
+              <label for="fphone" data-i18n-html="zn-f-phone">Telefon <span class="opt">(nepovinné)</span></label>
               <input type="tel" id="fphone" placeholder="+420 …" autocomplete="tel" />
             </div>
 
             <div class="field">
-              <label for="fitem">Popis předmětu <span class="req">*</span></label>
+              <label for="fitem" data-i18n-html="zn-f-item">Popis předmětu <span class="req">*</span></label>
               <input type="text" id="fitem" placeholder="Co jste ztratil(a) / našel(a)?" />
             </div>
 
             <div class="field">
-              <label for="flocation">Místo <span class="req">*</span></label>
-              <input type="text" id="flocation" placeholder="Kde? (ulice, park, zastávka…)" />
+              <label for="flocation" data-i18n-html="zn-f-location">Místo <span class="req">*</span></label>
+              <input type="text" id="flocation" placeholder="Kde? (ulice, park, zastávka…)" data-i18n-placeholder="zn-ph-location" />
             </div>
 
             <div class="field">
-              <label for="fnote">Podrobnosti <span class="opt">(nepovinné)</span></label>
-              <textarea id="fnote" placeholder="Barva, značka, okolnosti, nebo cokoli dalšího co by pomohlo…"></textarea>
+              <label for="fnote" data-i18n-html="zn-f-note">Podrobnosti <span class="opt">(nepovinné)</span></label>
+              <textarea id="fnote" placeholder="Barva, značka, okolnosti, nebo cokoli dalšího co by pomohlo…" data-i18n-placeholder="zn-ph-note"></textarea>
             </div>
 
             <button class="submit-btn" id="submitBtn" onclick="submitForm()" data-i18n="zn-submit">ODESLAT FORMULÁŘ</button>
@@ -918,8 +956,8 @@
             <div class="success-icon">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             </div>
-            <strong id="successTitle">Formulář odeslán!</strong>
-            <p id="successText">Děkujeme za nahlášení. Ozveme se vám co nejdříve.</p>
+            <strong id="successTitle" data-i18n="zn-success-title">Formulář odeslán!</strong>
+            <p id="successText" data-i18n="zn-success-text">Děkujeme za nahlášení. Ozveme se vám co nejdříve.</p>
             <button class="submit-btn" onclick="resetForm()" style="max-width:200px;font-size:.95rem;" data-i18n="zn-send-another">Odeslat další</button>
           </div>
         </div>
@@ -930,47 +968,88 @@
 </main>
 
 <!-- ── FOOTER ── -->
-<footer class="site-footer">
-  <div class="f-main">
-    <!-- Brand -->
-    <div class="f-brand">
-      <a href="Linktree.html" class="f-logo">ML<span>X</span> MEDIA</a>
-      <div class="f-tagline" data-i18n="f-tagline">Natáčení · Střih · Postprodukce</div>
-      <p class="f-desc" data-i18n="f-desc">Profesionální video produkce pro firmy a soukromníky. Každý příběh si zaslouží být vyprávěn.</p>
+<footer class="mlx-footer">
+  <div class="footer-stripe-line" id="fStripe"></div>
+
+  <div class="footer-main-grid">
+    <div class="footer-reveal">
+      <a href="index.html" class="f-brand-logo">ML<span>X</span> MEDIA</a>
+      <div class="f-brand-tagline" data-i18n="f-tagline">Natáčení · Střih · Postprodukce</div>
+      <p class="f-brand-desc" data-i18n="f-desc">Profesionální video produkce pro firmy a soukromníky. Každý příběh si zaslouží být vyprávěn.</p>
+      <div class="f-social-row">
+        <a href="https://www.youtube.com/@MLX-Media" target="_blank" rel="noopener" class="f-social-btn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 00.5 6.2 31.3 31.3 0 000 12a31.3 31.3 0 00.5 5.8 3 3 0 002.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 002.1-2.1A31.3 31.3 0 0024 12a31.3 31.3 0 00-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+          YouTube
+        </a>
+        <a href="https://www.instagram.com/matos.lexa" target="_blank" rel="noopener" class="f-social-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          Instagram
+        </a>
+      </div>
     </div>
-    <!-- Navigation -->
-    <div>
+    <div class="footer-reveal">
       <div class="f-col-title" data-i18n="f-nav-title">Navigace</div>
       <ul class="f-links">
-        <li><a href="index.html"      data-i18n="f-nav-1">Domovská stránka</a></li>
-        <li><a href="O-mně.html"      data-i18n="f-nav-2">O mně</a></li>
-        <li><a href="Portfolio.html"  data-i18n="f-nav-3">Portfolio</a></li>
-        <li><a href="Aspekty.html"    data-i18n="f-nav-4">Aspekty</a></li>
-        <li><a href="Ceník.html"      data-i18n="f-nav-5">Ceník</a></li>
+        <li><a href="index.html" data-i18n="f-nav-1">Domovská stránka</a></li>
+        <li><a href="O-mně.html" data-i18n="f-nav-2">O mně</a></li>
+        <li><a href="Portfolio.html" data-i18n="f-nav-3">Portfolio</a></li>
+        <li><a href="Aspekty.html" data-i18n="f-nav-4">Aspekty</a></li>
+        <li><a href="Nabídka.html" data-i18n="f-nav-offers">Nabídka</a></li>
+        <li><a href="Ceník.html" data-i18n="f-nav-5">Ceník</a></li>
         <li><a href="Objednávka.html" data-i18n="f-nav-6">Objednávka</a></li>
       </ul>
     </div>
-    <!-- Contact -->
-    <div>
+    <div class="footer-reveal">
+      <div class="f-col-title" data-i18n="f-svc-title">Služby</div>
+      <ul class="f-links">
+        <li><a href="Ceník.html" data-i18n="f-svc-1">Firemní videa</a></li>
+        <li><a href="Ceník.html" data-i18n="f-svc-2">Reklamní spot</a></li>
+        <li><a href="Ceník.html" data-i18n="f-svc-3">Reels &amp; TikTok</a></li>
+        <li><a href="Ceník.html" data-i18n="f-svc-4">Color grading</a></li>
+        <li><a href="Ceník.html" data-i18n="f-svc-5">Zvukový design</a></li>
+        <li><a href="Ceník.html" data-i18n="f-svc-6">Dronové záběry</a></li>
+      </ul>
+    </div>
+    <div class="footer-reveal">
       <div class="f-col-title" data-i18n="f-contact-title">Kontakt</div>
-      <div class="f-contact-list">
-        <a href="mailto:info@mlxmedia.cz" class="f-contact-link">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          info@mlxmedia.cz
-        </a>
-        <a href="tel:+420777413600" class="f-contact-link">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.7 10.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012.6 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.55a16 16 0 006.29 6.29l.96-.96a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-          +420 777 413 600
-        </a>
-        <span class="f-contact-link" style="cursor:default;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          Praha · Beroun · Nižbor
-        </span>
+      <div class="f-contact-item">
+        <div class="f-contact-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+        <div><div class="f-contact-label" data-i18n="f-email-label">Email</div><div class="f-contact-value"><a href="mailto:info@mlxmedia.cz">info@mlxmedia.cz</a></div></div>
+      </div>
+      <div class="f-contact-item">
+        <div class="f-contact-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.7 10.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012.6 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.55a16 16 0 006.29 6.29l.96-.96a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>
+        <div><div class="f-contact-label" data-i18n="f-phone-label">Telefon</div><div class="f-contact-value"><a href="tel:+420777413600">+420 777 413 600</a></div></div>
+      </div>
+      <div class="f-contact-item">
+        <div class="f-contact-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+        <div><div class="f-contact-label" data-i18n="f-area-label">Oblast</div><div class="f-contact-value">Praha 5, Praha 6, Beroun</div></div>
+      </div>
+      <div class="f-contact-item">
+        <div class="f-contact-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <div><div class="f-contact-label" data-i18n="f-delivery-label">Dodání</div><div class="f-contact-value" data-i18n="f-delivery-val">4–8 dní od natáčení</div></div>
       </div>
     </div>
   </div>
 
-  <div class="f-stripe"></div>
+  <div class="f-stats-band">
+    <div class="f-stat-item"><div class="f-stat-number">45<span>+</span></div><div class="f-stat-label">Projektů</div></div>
+    <div class="f-stat-item"><div class="f-stat-number">5<span>+</span></div><div class="f-stat-label">Roky zkušeností</div></div>
+    <div class="f-stat-item"><div class="f-stat-number">95<span>%</span></div><div class="f-stat-label">Doporučení</div></div>
+    <div class="f-stat-item"><div class="f-stat-number">6<span>K</span></div><div class="f-stat-label">RAW rozlišení</div></div>
+  </div>
+
+  <div class="f-cta-wrap">
+    <div class="f-cta-inner" id="fCta">
+      <div>
+        <div class="f-cta-eyebrow" data-i18n="f-cta-eyebrow">Hledám nové klienty</div>
+        <div class="f-cta-title" data-i18n="f-cta-title">Máte projekt? Pojďme ho natočit.</div>
+      </div>
+      <a href="Objednávka.html" class="f-cta-btn">
+        <span data-i18n="f-cta-btn">Objednat video</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </div>
 
   <div class="f-bottom">
     <div class="f-copy">© <span id="fyear"></span> <span>MLX Media</span> · Matouš Lexa · <span data-i18n="f-rights">Všechna práva vyhrazena</span></div>
@@ -983,7 +1062,11 @@
 </footer>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+<script src="mlx-settings.js"></script>
 <script>
+// ── LANG STATE (must be declared before any INIT code that reads it) ──
+let currentLang = localStorage.getItem('mlx-lang') || 'cz';
+
 // ═══════════════════════════════════════════════════════
 //  📋 ZÁZNAMY — upravujte toto pole dle potřeby
 //  Každý záznam má tyto klíče:
@@ -1366,11 +1449,38 @@ const io = new IntersectionObserver(
   entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
   { threshold: 0.07 }
 );
-document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+document.querySelectorAll('.reveal, .footer-reveal, .f-stat-item, .footer-stripe-line').forEach(el => io.observe(el));
 
 /* ── FOOTER CTA REVEAL ── */
 const fCtaEl = document.getElementById('fCta');
 if (fCtaEl) new IntersectionObserver(([e]) => { if (e.isIntersecting) e.target.classList.add('visible'); }, { threshold: 0.2 }).observe(fCtaEl);
+
+/* ── FOOTER STAT COUNTERS ── */
+const _fCountEls  = [...document.querySelectorAll('.f-stat-number')];
+const _fCountDone = new Set();
+function _checkFooterCounters() {
+  const vh = window.innerHeight;
+  for (const el of _fCountEls) {
+    if (_fCountDone.has(el)) continue;
+    const rect = el.getBoundingClientRect();
+    if (rect.top < vh * 0.88 && rect.bottom > 0) {
+      _fCountDone.add(el);
+      const m = el.textContent.match(/^(\d+)(.*)/);
+      if (!m) continue;
+      const end = parseInt(m[1], 10);
+      const suffix = m[2] || '';
+      let n = 0;
+      const iv = Math.max(Math.floor(1200 / Math.max(end, 1)), 12);
+      const timer = setInterval(() => {
+        n++;
+        el.innerHTML = n + '<span>' + suffix + '</span>';
+        if (n >= end) clearInterval(timer);
+      }, iv);
+    }
+  }
+}
+window.addEventListener('scroll', () => requestAnimationFrame(_checkFooterCounters), { passive: true });
+_checkFooterCounters();
 
 /* ── INIT ── */
 updateStats();
@@ -1400,11 +1510,30 @@ const translations = {
     'zn-tab-desc-lost':'Ztratili jste něco? Popište předmět a místo, kde jste ho naposledy viděli.',
     'zn-submit':'ODESLAT FORMULÁŘ',
     'zn-send-another':'Odeslat další',
+    'zn-f-name':'Jméno <span class="req">*</span>',
+    'zn-f-date':'Datum <span class="req">*</span>',
+    'zn-f-email':'Email <span class="req">*</span>',
+    'zn-f-phone':'Telefon <span class="opt">(nepovinné)</span>',
+    'zn-f-item':'Popis předmětu <span class="req">*</span>',
+    'zn-f-location':'Místo <span class="req">*</span>',
+    'zn-f-note':'Podrobnosti <span class="opt">(nepovinné)</span>',
+    'zn-ph-name':'Vaše jméno',
+    'zn-ph-email':'vas@email.cz',
+    'zn-ph-item-lost':'Co jste ztratil(a) / našel(a)?',
+    'zn-ph-location':'Kde? (ulice, park, zastávka…)',
+    'zn-ph-note':'Barva, značka, okolnosti, nebo cokoli dalšího co by pomohlo…',
+    'zn-success-title':'Formulář odeslán!',
+    'zn-success-text':'Děkujeme za nahlášení. Ozveme se vám co nejdříve.',
     'f-tagline':'Natáčení · Střih · Postprodukce',
     'f-desc':'Profesionální video produkce pro firmy a soukromníky. Každý příběh si zaslouží být vyprávěn.',
     'f-nav-title':'Navigace','f-nav-1':'Domovská stránka','f-nav-2':'O mně',
     'f-nav-3':'Portfolio','f-nav-4':'Aspekty','f-nav-5':'Ceník','f-nav-6':'Objednávka',
-    'f-contact-title':'Kontakt',
+    'f-svc-title':'Služby','f-svc-1':'Firemní videa','f-svc-2':'Reklamní spot',
+    'f-svc-3':'Reels &amp; TikTok','f-svc-4':'Color grading','f-svc-5':'Zvukový design','f-svc-6':'Dronové záběry',
+    'f-contact-title':'Kontakt','f-email-label':'Email','f-phone-label':'Telefon',
+    'f-area-label':'Oblast','f-delivery-label':'Dodání','f-delivery-val':'4–8 dní od natáčení',
+    'f-cta-eyebrow':'Hledám nové klienty','f-cta-title':'Máte projekt? Pojďme ho natočit.',
+    'f-cta-btn':'Objednat video',
     'f-rights':'Všechna práva vyhrazena',
     'f-legal-1':'Ochrana soukromí','f-legal-2':'Cookies','f-legal-3':'Kontakt',
   },
@@ -1428,11 +1557,30 @@ const translations = {
     'zn-tab-desc-lost':'Lost something? Describe the item and where you last had it.',
     'zn-submit':'SUBMIT FORM',
     'zn-send-another':'Submit another',
+    'zn-f-name':'Name <span class="req">*</span>',
+    'zn-f-date':'Date <span class="req">*</span>',
+    'zn-f-email':'Email <span class="req">*</span>',
+    'zn-f-phone':'Phone <span class="opt">(optional)</span>',
+    'zn-f-item':'Item description <span class="req">*</span>',
+    'zn-f-location':'Location <span class="req">*</span>',
+    'zn-f-note':'Details <span class="opt">(optional)</span>',
+    'zn-ph-name':'Your name',
+    'zn-ph-email':'you@email.com',
+    'zn-ph-item-lost':'What did you lose / find?',
+    'zn-ph-location':'Where? (street, park, stop…)',
+    'zn-ph-note':'Color, brand, circumstances, or anything else that would help…',
+    'zn-success-title':'Form submitted!',
+    'zn-success-text':'Thanks for your report. We\'ll get back to you as soon as possible.',
     'f-tagline':'Filming · Editing · Post-production',
     'f-desc':'Professional video production for businesses and individuals. Every story deserves to be told.',
     'f-nav-title':'Navigation','f-nav-1':'Home page','f-nav-2':'About me',
     'f-nav-3':'Portfolio','f-nav-4':'Aspects','f-nav-5':'Pricing','f-nav-6':'Order',
-    'f-contact-title':'Contact',
+    'f-svc-title':'Services','f-svc-1':'Corporate videos','f-svc-2':'Commercial spot',
+    'f-svc-3':'Reels &amp; TikTok','f-svc-4':'Color grading','f-svc-5':'Audio design','f-svc-6':'Drone footage',
+    'f-contact-title':'Contact','f-email-label':'Email','f-phone-label':'Phone',
+    'f-area-label':'Area','f-delivery-label':'Delivery','f-delivery-val':'4–8 days after filming',
+    'f-cta-eyebrow':'Looking for new clients','f-cta-title':'Have a project? Let\'s shoot it.',
+    'f-cta-btn':'Order video',
     'f-rights':'All rights reserved',
     'f-legal-1':'Privacy Policy','f-legal-2':'Cookies','f-legal-3':'Contact',
   }
@@ -1457,6 +1605,10 @@ function applyTranslations(lang) {
   renderItems(currentFilter, currentQuery);
   // update tab desc
   document.getElementById('typeDesc').textContent = tabDescs[currentTab][lang === 'en' ? 'en' : 'cz'];
+  // update item-description placeholder to match current tab + lang
+  document.getElementById('fitem').placeholder = currentTab === 'lost'
+    ? (lang === 'en' ? 'What did you lose?' : 'Co jste ztratil(a)?')
+    : (lang === 'en' ? 'What did you find?' : 'Co jste našel(a)?');
   // update toggle btn text if form is open
   const formOpen = document.getElementById('formCollapse').classList.contains('open');
   if (document.getElementById('toggleBtnText')) {
@@ -1555,7 +1707,6 @@ function animateLangWave(targetLang) {
 }
 
 /* ── LANG TOGGLE ── */
-let currentLang = localStorage.getItem('mlx-lang') || 'cz';
 function updateLangToggle() {
   const toggle = document.getElementById('langToggle');
   if (!toggle) return;
