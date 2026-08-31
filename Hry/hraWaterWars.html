@@ -1,0 +1,3372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Island Commander II — Remastered</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap');
+body{background:#050c18;color:#d8e8f4;font-family:'Rajdhani',sans-serif;overflow:hidden;width:100vw;height:100vh;user-select:none;}
+canvas{display:block;cursor:default;}
+#ui{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;}
+.panel{background:rgba(3,8,20,0.97);border:1px solid #1a3a54;border-radius:6px;padding:9px;pointer-events:all;box-shadow:0 2px 18px rgba(0,20,50,0.6);}
+
+/* TOP BAR */
+#topbar{position:absolute;top:8px;left:50%;transform:translateX(-50%);display:flex;gap:4px;align-items:center;pointer-events:all;flex-wrap:wrap;justify-content:center;z-index:5;}
+.res{display:flex;align-items:center;gap:5px;background:rgba(3,8,20,0.97);border:1px solid #1a3a54;border-top:1px solid #254a6a;border-radius:5px;padding:4px 10px;font-size:12px;cursor:default;box-shadow:0 2px 10px rgba(0,15,40,0.5);}
+.res .icon{font-size:14px;}
+.res .val{font-weight:700;color:#7dd4f8;min-width:32px;font-family:'Share Tech Mono',monospace;letter-spacing:0.5px;}
+.res .rate{font-size:9px;color:#2a5a7a;font-family:'Share Tech Mono',monospace;}
+#topBtns{display:flex;gap:5px;}
+
+/* TIME / WEATHER */
+#timeBar{position:absolute;top:60px;right:10px;background:rgba(3,8,20,0.97);border:1px solid #1a3a54;border-radius:6px;padding:7px 12px;font-size:11px;pointer-events:none;min-width:148px;box-shadow:0 2px 12px rgba(0,15,40,0.5);}
+#timeBar .tname{color:#9ee0ff;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+#timeBar .wname{color:#7dcfff;font-size:11px;margin-top:3px;}
+#timeBar .weffect{color:#3a6a8a;font-size:9px;margin-top:2px;font-style:italic;}
+#dayProgress{height:3px;background:#0a1828;border-radius:2px;margin-top:6px;}
+#dayFill{height:100%;border-radius:2px;transition:width 0.5s;}
+
+/* CAPTURE HUD */
+#captureHUD{position:absolute;top:60px;left:10px;pointer-events:none;min-width:165px;}
+.capture-item{background:rgba(3,8,20,0.95);border:1px solid #1a3a54;border-radius:5px;padding:5px 9px;margin-bottom:3px;font-size:11px;box-shadow:0 2px 8px rgba(0,10,30,0.5);}
+.capture-item .cn{color:#6acfef;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;font-size:10px;}
+.capture-item .cs{font-size:9px;color:#2a5a7a;margin-bottom:3px;}
+.cbar{height:4px;background:#060e1a;border-radius:2px;}
+.cfp{height:100%;border-radius:2px;background:linear-gradient(90deg,#1a5adf,#3a9aff);transition:width 0.5s;}
+.cfe{height:100%;border-radius:2px;background:linear-gradient(90deg,#8a1a1a,#df3a3a);transition:width 0.5s;}
+
+/* FLEET PANEL */
+#fleetPanel{position:absolute;bottom:8px;left:8px;width:240px;max-height:46vh;overflow-y:auto;pointer-events:all;}
+.fleet-boat{display:flex;align-items:center;gap:6px;padding:5px 7px;background:rgba(4,12,24,0.95);border:1px solid #18324a;border-radius:5px;margin-bottom:3px;cursor:pointer;transition:all 0.15s;}
+.fleet-boat:hover,.fleet-boat.selected{border-color:#2a7adf;background:rgba(8,22,44,0.98);}
+.fleet-boat .btype{font-size:9px;color:#2a5a7a;width:32px;flex-shrink:0;}
+.fleet-boat .bname{font-size:11px;color:#8ecfff;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;letter-spacing:0.3px;}
+.fleet-boat .bhp{font-size:10px;color:#3a8a3a;flex-shrink:0;font-family:'Share Tech Mono',monospace;}
+.fleet-boat .bstat{font-size:8px;padding:1px 4px;border-radius:2px;flex-shrink:0;font-weight:700;letter-spacing:0.5px;}
+.si{background:#0a1c0e;color:#3a8a3a;} .sp{background:#0a1828;color:#3a7adf;}
+.sa{background:#280a0a;color:#df5a3a;} .sr{background:#1e1a08;color:#df9a2a;}
+.ss{background:#080e1e;color:#2acfef;} .sg{background:#0e0e28;color:#7a7adf;}
+.sfuel{background:#1a1208;color:#f0900a;}
+
+/* ORDERS */
+#ordersPanel{position:absolute;bottom:8px;right:8px;width:205px;pointer-events:all;}
+#ordersPanel h3{font-size:11px;color:#7acfef;margin-bottom:6px;letter-spacing:1px;text-transform:uppercase;}
+.order-btn{display:block;width:100%;margin-bottom:3px;text-align:left;padding:5px 8px;font-size:11px;letter-spacing:0.3px;}
+.cd-bar{height:2px;background:#060e1a;border-radius:1px;margin-top:2px;}
+.cd-fill{height:100%;background:#f0900a;border-radius:1px;transition:width 0.3s;}
+
+/* BOAT DETAIL */
+#boatDetail{position:absolute;bottom:8px;right:220px;width:195px;pointer-events:none;display:none;}
+.ds{display:flex;justify-content:space-between;font-size:10px;margin:2px 0;}
+.dl{color:#2a5a7a;font-weight:600;letter-spacing:0.5px;}.dv{color:#8ecfff;font-weight:700;font-family:'Share Tech Mono',monospace;}
+.dbar{height:3px;background:#060e1a;border-radius:1px;margin-bottom:3px;}
+.dbf{height:100%;border-radius:1px;}
+.hardpt-slots{display:flex;gap:3px;margin-top:4px;}
+.slot-filled{width:14px;height:14px;border-radius:3px;background:#1a4a7a;border:1px solid #2a6aaf;display:inline-flex;align-items:center;justify-content:center;font-size:8px;}
+.slot-empty{width:14px;height:14px;border-radius:3px;background:#0a1828;border:1px solid #1a2a3a;display:inline-flex;}
+
+/* SUB DEPTH GAUGE */
+#subDepthGauge{position:absolute;bottom:8px;right:430px;width:130px;pointer-events:none;display:none;}
+.depth-outer{background:rgba(3,8,20,0.97);border:1px solid #0e3a5a;border-radius:6px;padding:8px 10px;}
+.depth-label{font-size:9px;color:#2acfef;margin-bottom:4px;text-transform:uppercase;letter-spacing:1px;font-weight:700;}
+.depth-track{height:60px;background:#061018;border-radius:4px;position:relative;overflow:hidden;border:1px solid #0a2a3a;}
+.depth-fill{position:absolute;bottom:0;left:0;width:100%;border-radius:0 0 4px 4px;transition:height 0.5s;background:linear-gradient(0deg,#0a5a7a,#1a8aaf);}
+.depth-marker{position:absolute;top:50%;left:0;right:0;height:1px;background:rgba(42,207,239,0.3);}
+.depth-val{font-size:11px;color:#2acfef;font-family:'Share Tech Mono',monospace;font-weight:700;text-align:center;margin-top:4px;}
+.depth-status{font-size:9px;color:#1a6a8a;text-align:center;text-transform:uppercase;letter-spacing:0.5px;}
+
+/* ALERTS */
+#alertBar{position:absolute;top:58px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:3px;pointer-events:none;z-index:20;}
+.alert{background:rgba(50,8,8,0.98);border:1px solid #7a2020;border-left:3px solid #df3030;border-radius:4px;padding:5px 16px;font-size:11px;color:#f88;animation:fa 4s forwards;letter-spacing:0.3px;}
+@keyframes fa{0%{opacity:0;transform:translateY(-5px)}8%{opacity:1;transform:translateY(0)}75%{opacity:1}100%{opacity:0}}
+#msgbox{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:rgba(3,8,20,0.98);border:1px solid #1a4a2a;border-left:3px solid #2a8a4a;border-radius:5px;padding:5px 18px;font-size:11px;color:#6adfa0;pointer-events:none;opacity:0;transition:opacity 0.35s;z-index:15;letter-spacing:0.3px;}
+#hoverInfo{position:absolute;background:rgba(3,7,18,0.99);border:1px solid #1a5a8a;border-left:2px solid #3a9adf;border-radius:5px;padding:7px 12px;font-size:11px;pointer-events:none;display:none;z-index:25;min-width:145px;}
+#hoverInfo h4{color:#3acfff;margin-bottom:4px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;}
+#hoverInfo p{color:#5a8aaa;margin:1px 0;font-size:10px;}
+
+/* ISLAND CONTEXT MENU */
+#islandMenu{position:absolute;background:rgba(3,7,18,0.99);border:1px solid #1a5a8a;border-top:2px solid #3a9adf;border-radius:6px;padding:9px;min-width:165px;z-index:80;display:none;pointer-events:all;box-shadow:0 4px 20px rgba(0,20,60,0.7);}
+#islandMenu h4{color:#3acfff;font-size:12px;margin-bottom:9px;border-bottom:1px solid #0e2030;padding-bottom:5px;text-transform:uppercase;letter-spacing:1px;font-weight:700;}
+#islandMenu .im-btn{display:block;width:100%;text-align:left;padding:5px 8px;font-size:11px;margin-bottom:3px;}
+
+/* OVERLAY */
+#overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(2,5,14,0.99);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;pointer-events:all;}
+#overlay h1{font-size:54px;color:#3acfff;margin-bottom:2px;letter-spacing:8px;text-shadow:0 0 80px rgba(30,150,255,0.6);font-family:'Rajdhani',sans-serif;font-weight:700;text-transform:uppercase;}
+#overlay .sub{color:#2a6a8a;margin-bottom:8px;font-size:13px;letter-spacing:3px;text-transform:uppercase;}
+#overlay .desc{color:#2a4a6a;margin-bottom:24px;font-size:12px;text-align:center;max-width:520px;line-height:1.9;}
+.diff-row{display:flex;gap:10px;margin-bottom:22px;}
+.diff-btn{padding:10px 24px;border-radius:5px;cursor:pointer;font-size:12px;border:1px solid #1a3550;background:#060e20;color:#4a7a9a;transition:all 0.15s;letter-spacing:0.5px;font-family:'Rajdhani',sans-serif;font-weight:600;}
+.diff-btn.active{border-color:#3acfff;color:#3acfff;background:#071828;box-shadow:0 0 12px rgba(30,150,255,0.3);}
+.diff-btn:hover{background:#0e2040;}
+
+/* BUTTONS */
+.btn{background:#0c2640;border:1px solid #1a5a8a;color:#8ecfff;padding:7px 20px;border-radius:5px;cursor:pointer;font-size:12px;transition:all 0.15s;font-family:'Rajdhani',sans-serif;font-weight:600;letter-spacing:0.5px;}
+.btn:hover{background:#163a62;border-color:#3a8acf;box-shadow:0 0 8px rgba(42,120,220,0.25);}
+.btn:disabled{opacity:0.3;cursor:not-allowed;}
+.btn.red{background:#35080a;border-color:#6a1a1a;color:#f88;}
+.btn.red:hover{background:#500e10;}
+.btn.green{background:#0c3818;border-color:#1a6a2a;color:#8fdf8f;}
+.btn.green:hover{background:#164820;}
+.btn.small{padding:3px 9px;font-size:10px;}
+.btn.orange{background:#361e06;border-color:#6a4c0e;color:#fcb06a;}
+.btn.orange:hover{background:#462a0e;}
+.btn.purple{background:#190c36;border-color:#381868;color:#c8b8ff;}
+.btn.purple:hover{background:#221050;}
+.btn.teal{background:#062630;border-color:#0a4e5e;color:#5af0df;}
+.btn.teal:hover{background:#0a3840;}
+.btn.amber{background:#281802;border-color:#624600;color:#ffc860;}
+.btn.amber:hover{background:#382006;}
+
+/* MODALS */
+#baseModal,#shipyardModal{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(1,4,12,0.99);z-index:50;display:none;overflow-y:auto;pointer-events:all;}
+#baseModal.open,#shipyardModal.open{display:block;}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid #1a3550;background:rgba(3,8,22,0.99);position:sticky;top:0;z-index:2;box-shadow:0 2px 10px rgba(0,10,30,0.8);}
+.modal-header h2{color:#3acfff;font-size:18px;font-weight:700;letter-spacing:2px;text-transform:uppercase;}
+.modal-tabs{display:flex;gap:3px;padding:8px 20px;border-bottom:1px solid #0e1e30;flex-wrap:wrap;background:rgba(3,8,20,0.97);}
+.tab{padding:5px 14px;border-radius:4px;cursor:pointer;font-size:11px;color:#3a6a8a;border:1px solid transparent;transition:all 0.15s;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;}
+.tab.active,.tab:hover{background:#0c2040;border-color:#1a5a8a;color:#8ecfff;}
+.modal-content{padding:16px 20px;}
+
+/* BUILDING GRID */
+.bldg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(192px,1fr));gap:10px;margin-top:10px;}
+.bldg-card{background:rgba(4,14,30,0.92);border:1px solid #1a3550;border-radius:6px;padding:12px;position:relative;transition:all 0.15s;}
+.bldg-card:hover{border-color:#1a4a6a;box-shadow:0 2px 12px rgba(0,30,60,0.5);}
+.bldg-card.locked{opacity:0.32;border-color:#0a1828;}
+.bldg-card h3{font-size:12px;color:#7acfef;margin-bottom:4px;font-weight:700;letter-spacing:0.5px;}
+.bldg-card .bdesc{font-size:9px;color:#2a5a7a;margin-bottom:6px;line-height:1.6;}
+.bldg-card .bcost{font-size:9px;color:#f0900a;margin-bottom:5px;}
+.bldg-card .blvl{position:absolute;top:8px;right:8px;background:#0a1e0a;border:1px solid #1a4a1a;border-radius:9px;padding:2px 7px;font-size:10px;color:#6fdf6f;font-weight:700;font-family:'Share Tech Mono',monospace;}
+.bldg-card .bgive{font-size:9px;color:#3acfff;margin-top:5px;}
+
+/* RESEARCH TREE */
+#researchContainer{position:relative;overflow:auto;min-height:600px;}
+#researchSvg{position:absolute;top:0;left:0;pointer-events:none;}
+.rnode{position:absolute;background:rgba(4,14,30,0.96);border:1px solid #1a3550;border-radius:6px;padding:11px 13px;width:188px;cursor:pointer;transition:all 0.2s;z-index:2;box-shadow:0 2px 10px rgba(0,10,30,0.5);}
+.rnode:hover{border-color:#2a6aaf;background:rgba(8,22,50,0.98);transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,20,60,0.5);}
+.rnode.done{border-color:#1a5a2a;background:rgba(5,16,11,0.95);border-left:2px solid #2a9a4a;}
+.rnode.act{border-color:#1a6adf;animation:rpulse 1.8s infinite;border-left:2px solid #4a9aff;}
+.rnode.locked{opacity:0.28;cursor:not-allowed;}
+@keyframes rpulse{0%,100%{box-shadow:0 2px 10px rgba(0,10,30,0.5)}50%{box-shadow:0 0 18px rgba(30,100,220,0.5)}}
+.rnode h4{font-size:11px;color:#7acfef;margin-bottom:3px;font-weight:700;letter-spacing:0.3px;}
+.rnode .rdesc{font-size:9px;color:#2a5a7a;margin-bottom:5px;line-height:1.5;}
+.rnode .rcost{font-size:9px;color:#f0900a;}
+.rnode .rpbar{height:3px;background:#060e1a;border-radius:2px;margin-top:7px;}
+.rnode .rpfill{height:100%;background:linear-gradient(90deg,#1a6adf,#4a9aff);border-radius:2px;}
+.rnode .rtier{position:absolute;top:5px;right:5px;font-size:8px;font-weight:700;padding:1px 5px;border-radius:3px;letter-spacing:0.5px;}
+
+/* BOAT DESIGNER */
+.designer{display:flex;gap:12px;flex-wrap:wrap;}
+.mod-sect{flex:1;min-width:155px;}
+.mod-sect h3{font-size:10px;color:#5acfef;margin-bottom:6px;border-bottom:1px solid #0e2030;padding-bottom:4px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;}
+.mrow{display:flex;align-items:center;gap:5px;margin-bottom:3px;padding:5px 7px;background:rgba(4,14,30,0.7);border-radius:4px;border:1px solid #0e1e30;cursor:pointer;transition:all 0.15s;}
+.mrow:hover,.mrow.sel{border-color:#1a5a8a;background:rgba(10,28,54,0.9);}
+.mrow.sel{border-left:2px solid #3a8adf;}
+.mrow.lk{opacity:0.26;cursor:not-allowed;}
+.mrow .mn{font-size:10px;color:#8ecfff;flex:1;font-weight:600;}
+.mrow .ms{font-size:8px;color:#3a6a8a;font-family:'Share Tech Mono',monospace;}
+
+/* STATS PREVIEW */
+.stat-preview{background:rgba(3,10,22,0.95);border:1px solid #1a3550;border-radius:6px;padding:13px;text-align:center;}
+.stat-row{display:flex;justify-content:space-between;font-size:10px;margin:3px 0;}
+.stat-label{color:#2a6a8a;font-weight:600;}.stat-val{color:#8ecfff;font-weight:700;font-family:'Share Tech Mono',monospace;}
+.weight-bar{height:5px;background:#060e1a;border-radius:2px;margin:5px 0;}
+.weight-fill{height:100%;border-radius:2px;transition:width 0.3s;}
+.slots-display{display:flex;gap:4px;margin:5px 0;justify-content:center;}
+.slot{width:16px;height:16px;border-radius:3px;border:1px solid #1a3550;display:inline-flex;align-items:center;justify-content:center;font-size:9px;}
+.slot.used{background:#0e2a4a;border-color:#2a5a8a;color:#5aacdc;}
+.slot.empty{background:#060e1a;color:#1a3550;}
+.slot.over{background:#3a0e0e;border-color:#6a1a1a;}
+
+/* PROGRESS BARS */
+.progress-bar{height:4px;background:#060e1a;border-radius:2px;margin-top:4px;}
+.progress-bar .fill{height:100%;background:linear-gradient(90deg,#1a6adf,#3a9aff);border-radius:2px;transition:width 0.3s;}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:#060e1a;}
+::-webkit-scrollbar-thumb{background:#1a3a54;border-radius:2px;}
+
+/* MINIMAP */
+#minimapCanvas{position:absolute;top:130px;right:10px;border:1px solid #1a3550;border-radius:5px;cursor:pointer;z-index:10;pointer-events:all;box-shadow:0 2px 10px rgba(0,10,30,0.6);}
+
+/* CRIT TEXT */
+.crit-text{position:absolute;pointer-events:none;font-size:13px;font-weight:700;color:#ff8800;text-shadow:0 0 8px rgba(255,100,0,0.8);animation:cfloat 1.5s forwards;z-index:30;font-family:'Share Tech Mono',monospace;}
+@keyframes cfloat{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-40px)}}
+
+/* RESEARCH TIER LABELS */
+.tier-label{position:absolute;left:0;width:20px;display:flex;align-items:center;justify-content:center;font-size:9px;color:#2a5a7a;font-weight:700;letter-spacing:1px;text-transform:uppercase;writing-mode:vertical-rl;}
+
+/* SUB CONTROLS BADGE */
+.sub-badge{background:rgba(0,20,30,0.95);border:1px solid #0a4a6a;border-radius:4px;padding:2px 6px;font-size:9px;color:#2acfef;letter-spacing:0.5px;font-weight:700;}
+
+/* AIRCRAFT STATUS BAR */
+.air-status{display:flex;gap:5px;align-items:center;padding:4px 7px;background:rgba(4,14,28,0.9);border-radius:4px;border:1px solid #1a3550;margin-bottom:3px;font-size:10px;}
+.air-fuel-bar{flex:1;height:4px;background:#060e1a;border-radius:2px;}
+.air-fuel-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,#f06a0a,#ffd060);transition:width 0.3s;}
+</style>
+</head>
+<body>
+<canvas id="worldCanvas"></canvas>
+<canvas id="minimapCanvas" width="180" height="110" title="Click to center view"></canvas>
+<div id="ui">
+  <div id="topbar">
+    <div class="res"><span class="icon">💰</span><div><div class="val" id="rGold">0</div><div class="rate" id="rGoldRate">0/s</div></div></div>
+    <div class="res"><span class="icon">🪵</span><div><div class="val" id="rWood">0</div><div class="rate" id="rWoodRate">0/s</div></div></div>
+    <div class="res"><span class="icon">⚙️</span><div><div class="val" id="rSteel">0</div><div class="rate" id="rSteelRate">0/s</div></div></div>
+    <div class="res"><span class="icon">⛡️</span><div><div class="val" id="rPower">0</div><div class="rate" id="rPowerRate">0</div></div></div>
+    <div class="res"><span class="icon">⛽</span><div><div class="val" id="rFuel">0</div><div class="rate" id="rFuelRate">0/s</div></div></div>
+    <div class="res"><span class="icon">🍞</span><div><div class="val" id="rFood">0</div><div class="rate" id="rFoodRate">0/s</div></div></div>
+    <div class="res"><span class="icon">👷</span><div><div class="val" id="rPop">0</div><div class="rate" id="rPopCap">/0</div></div></div>
+    <div id="topBtns">
+      <button class="btn small" onclick="openBase()">🏗 Base</button>
+      <button class="btn small orange" onclick="openShipyard()">⚓ Shipyard</button>
+    </div>
+  </div>
+
+  <div id="timeBar">
+    <div class="tname" id="tname">🌅 Dawn</div>
+    <div class="wname" id="wname">☀️ Clear</div>
+    <div class="weffect" id="weffect">No effects</div>
+    <div id="dayProgress"><div id="dayFill" style="width:15%;background:#f0900a;"></div></div>
+  </div>
+
+  <div id="captureHUD"></div>
+
+  <div class="panel" id="fleetPanel">
+    <div style="font-size:11px;color:#5acfef;margin-bottom:5px;display:flex;justify-content:space-between;align-items:center;">
+      <span>YOUR FLEET</span><span id="fleetCount" style="color:#2a7adf;font-size:10px;"></span>
+    </div>
+    <div id="fleetList"></div>
+  </div>
+
+  <div class="panel" id="ordersPanel" style="display:none;">
+    <h3>⚡ <span id="selBoatName" style="color:#f0900a;"></span></h3>
+    <button class="btn small green order-btn ship-only" onclick="orderAttack()">⚔ Attack</button>
+    <button class="btn small order-btn ship-only" onclick="orderPatrol()">🔄 Patrol Route</button>
+    <button class="btn small order-btn ship-only" onclick="orderGuard()">🛡 Guard</button>
+    <button class="btn small orange order-btn ship-only" onclick="orderRetreat()">↩ Retreat</button>
+    <button class="btn small purple order-btn ship-only" id="subBtn" onclick="toggleSubmerge()" style="display:none;">🌊 Dive/Surface</button>
+    <div id="subTorpCooldownDiv" style="display:none;margin-bottom:4px;">
+      <div style="font-size:9px;color:#2acfef;margin-bottom:2px;">🎯 TORPEDO READY <span id="torpCdLabel" style="color:#2a5a7a;"></span></div>
+      <div class="cd-bar"><div class="cd-fill" id="torpCdBar" style="width:0%;background:#2acfef;"></div></div>
+    </div>
+    <button class="btn small teal order-btn ship-only" id="smokeBtn" onclick="deploySmoke()" style="display:none;">
+      💨 Smoke <span id="smokeCd" style="font-size:9px;color:#2a5a7a;"></span>
+      <div class="cd-bar"><div class="cd-fill" id="smokeCdBar" style="width:0%"></div></div>
+    </button>
+    <button class="btn small amber order-btn ship-only" id="mineBtn" onclick="deployMine()" style="display:none;">
+      💣 Deploy Mine <span id="mineCd" style="font-size:9px;color:#2a5a7a;"></span>
+      <div class="cd-bar"><div class="cd-fill" id="mineCdBar" style="width:0%"></div></div>
+    </button>
+    <button class="btn small blue order-btn air-only" id="planeAttackBtn" onclick="orderAirAttack()" style="display:none;">✈ Attack</button>
+    <button class="btn small orange order-btn air-only" id="planeRetreatBtn" onclick="orderAirRetreat()" style="display:none;">↩ Return</button>
+    <button class="btn small teal order-btn air-only" id="planeLandBtn" onclick="orderAirLand()" style="display:none;">🛬 Land</button>
+    <button class="btn small purple order-btn air-only" id="planeTakeoffBtn" onclick="orderAirTakeoff()" style="display:none;">🛫 Take Off</button>
+    <button class="btn small gray order-btn air-only" id="planeHoldBtn" onclick="orderAirHold()" style="display:none;">✋ Hold</button>
+    <div id="boatOrderExtras" style="margin-top:6px;font-size:9px;color:#2a5a7a;">
+      <div style="margin-bottom:3px;">Auto-retreat: <input type="range" min="5" max="90" value="25" id="retreatHP" style="width:60px;vertical-align:middle;" oninput="setRHP(this.value)"> <span id="retHPVal" style="font-family:'Share Tech Mono',monospace;color:#7dd4f8;">25</span>%</div>
+      <div><label><input type="checkbox" id="autoSmokeChk" onchange="toggleAutoSmoke()"> Auto-smoke when hit</label></div>
+    </div>
+  </div>
+
+  <div class="panel" id="boatDetail">
+    <div style="font-size:10px;color:#3acfff;margin-bottom:5px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;" id="bdTitle">Ship Details</div>
+    <div id="bdContent"></div>
+  </div>
+
+  <!-- SUB DEPTH GAUGE -->
+  <div id="subDepthGauge">
+    <div class="depth-outer">
+      <div class="depth-label">🤿 DEPTH</div>
+      <div class="depth-track">
+        <div class="depth-fill" id="depthFill" style="height:0%"></div>
+        <div class="depth-marker"></div>
+      </div>
+      <div class="depth-val" id="depthVal">Surface</div>
+      <div class="depth-status" id="depthStatus">Surfaced</div>
+    </div>
+  </div>
+
+  <div id="alertBar"></div>
+  <div id="msgbox"></div>
+  <div id="hoverInfo"><h4 id="hiTitle"></h4><p id="hiBody"></p></div>
+</div>
+
+<!-- ISLAND CONTEXT MENU -->
+<div id="islandMenu">
+  <h4 id="imTitle">Island</h4>
+  <button class="btn small im-btn" onclick="renameIsland()">✏️ Rename Island</button>
+  <button class="btn small im-btn" onclick="buildIslandTurret()">🏰 Build Turret (300💰200⚙️)</button>
+  <button class="btn small im-btn" onclick="buildIslandDock()">⚓ Build Dock (400💰150🪵)</button>
+  <button class="btn small red im-btn" onclick="closeIslandMenu()">✕ Close</button>
+</div>
+
+<!-- START OVERLAY -->
+<div id="overlay">
+  <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at 50% 40%,rgba(10,40,80,0.5) 0%,transparent 70%);pointer-events:none;"></div>
+  <h1>ISLAND COMMANDER</h1>
+  <div class="sub">II — THE ARCHIPELAGO WAR · REMASTERED</div>
+  <div style="width:260px;height:1px;background:linear-gradient(90deg,transparent,#1a5a8a,transparent);margin:10px auto;"></div>
+  <div class="desc">
+    Build your base · Capture neutral islands for resources<br>
+    Command surface ships, submarines &amp; aircraft<br>
+    Multi-weapon warships · Day/night cycle · Critical hits · Smart AI
+  </div>
+  <div style="font-size:11px;color:#2a5a7a;margin-bottom:10px;letter-spacing:2px;text-transform:uppercase;">— Select Difficulty —</div>
+  <div class="diff-row">
+    <div class="diff-btn" id="d0" onclick="setDiff(0)">🟢 Easy<br><span style="font-size:9px;color:#3a6a8a">Slow AI · Occupies islands</span></div>
+    <div class="diff-btn active" id="d1" onclick="setDiff(1)">🟡 Medium<br><span style="font-size:9px;color:#3a6a8a">Balanced AI · Moderate aggression</span></div>
+    <div class="diff-btn" id="d2" onclick="setDiff(2)">🔴 Hard<br><span style="font-size:9px;color:#3a6a8a">Reactive AI · Counter research</span></div>
+  </div>
+  <button class="btn" style="font-size:15px;padding:13px 44px;border-color:#2a8acf;letter-spacing:2px;" onclick="startGame()">⚓ START CAMPAIGN</button>
+  <div style="margin-top:16px;font-size:10px;color:#1a3a5a;letter-spacing:0.5px;">Right-click drag or Middle-drag to pan · Scroll to zoom · Right-click islands to manage</div>
+</div>
+
+<!-- BASE MODAL -->
+<div id="baseModal">
+  <div class="modal-header">
+    <h2>🏗 Island Base</h2>
+    <button class="btn small red" onclick="closeBase()">✕ Close</button>
+  </div>
+  <div class="modal-tabs">
+    <div class="tab active" onclick="switchTab(event,'economy')">💰 Economy</div>
+    <div class="tab" onclick="switchTab(event,'production')">🏭 Production</div>
+    <div class="tab" onclick="switchTab(event,'military')">⚔ Military</div>
+    <div class="tab" onclick="switchTab(event,'research')">🔬 Research</div>
+    <div class="tab" onclick="switchTab(event,'population')">👷 Population</div>
+  </div>
+  <div class="modal-content" id="modalContent"></div>
+</div>
+
+<!-- SHIPYARD MODAL -->
+<div id="shipyardModal">
+  <div class="modal-header">
+    <h2>⚓ Shipyard &amp; Air Command</h2>
+    <button class="btn small red" onclick="closeShipyard()">✕ Close</button>
+  </div>
+  <div class="modal-tabs">
+    <div class="tab active" onclick="switchShipTab(event,'designer')">Designer</div>
+    <div class="tab" onclick="switchShipTab(event,'queue')">Build Queue</div>
+    <div class="tab" onclick="switchShipTab(event,'modules')">Modules</div>
+    <div class="tab" onclick="switchShipTab(event,'aircraft')">Aircraft</div>
+    <div class="tab" onclick="switchShipTab(event,'subdock')">🤿 Sub Dock</div>
+  </div>
+  <div class="modal-content" id="shipContent"></div>
+</div>
+
+<script>
+const SMULT = 0.30;
+const DAY_DURATION = 200;
+const CRIT_CHANCE = 0.12;
+const CRIT_MULT = 2.0;
+
+// ═══════════════════════════ CAMERA ══════════════════════
+const CAM = { cx: 0, cy: 0, zoom: 1, drag: false, lx: 0, ly: 0, moved: false };
+function initCam() { CAM.cx = W*WORLD_SCALE/2; CAM.cy = H*WORLD_SCALE/2; }
+function stw(sx, sy) { return { x: (sx - W/2) / CAM.zoom + CAM.cx, y: (sy - H/2) / CAM.zoom + CAM.cy }; }
+function wts(wx, wy) { return { x: (wx - CAM.cx) * CAM.zoom + W/2, y: (wy - CAM.cy) * CAM.zoom + H/2 }; }
+function clampCam() {
+  const worldW = W * WORLD_SCALE;
+  const worldH = H * WORLD_SCALE;
+  const halfViewW = (W / 2) / CAM.zoom;
+  const halfViewH = (H / 2) / CAM.zoom;
+  const minX = Math.max(halfViewW, W * 0.05);
+  const maxX = Math.min(worldW - halfViewW, worldW - W * 0.05);
+  const minY = Math.max(halfViewH, H * 0.05);
+  const maxY = Math.min(worldH - halfViewH, worldH - H * 0.05);
+  CAM.cx = minX > maxX ? worldW / 2 : Math.min(maxX, Math.max(minX, CAM.cx));
+  CAM.cy = minY > maxY ? worldH / 2 : Math.min(maxY, Math.max(minY, CAM.cy));
+}
+
+// ═══════════════════════════ GAME STATE ═══════════════════
+const G = {
+  started: false, tick: 0, gameOver: false,
+  res: {gold:280,wood:210,steel:110,fuel:180,food:160,pop:10,popCap:20},
+  rates: {gold:0,wood:0,steel:0,fuel:0,food:0},
+  buildings: {}, researchDone: new Set(),
+  fleetTactics: false, advancedRepair: false, advancedAir: false,
+  fleet: [], enemyFleet: [],
+  projectiles: [], mines: [], smokeClouds: [], aircraft: [],
+  particles: [], wakes: [], rainDrops: [],
+  selectedBoat: null, selectedAircraft: null,
+  patrolMode: false, guardMode: false, patrolPoints: [],
+  enemyAttackTimer: 0, enemyBuildTimer: 0, enemyAircraftTimer: 0,
+  coastalTimer: 0, popGrowthTimer: 0,
+  enemyRes: {gold:500,wood:400,steel:300,fuel:250},
+  wave: 0,
+  playerBaseHP: 1200, playerBaseMaxHP: 1200,
+  enemyBaseHP: 1000, enemyBaseMaxHP: 1000,
+  enemyBaseRegenCooldown: 0,
+  weather: 'clear', weatherTimer: 0,
+  fogOpacity: 0, rainIntensity: 0, lightning: 0,
+  dayTime: 0.12, // 0=dawn 0.25=noon 0.5=dusk 0.75=midnight
+  difficulty: 1,
+  enemyHasAntiAir: false, enemyHasSubs: false,
+  critTexts: [],
+  islandMenuTarget: null,
+  repairTimer: 0,
+};
+
+// ═══════════════════════════ WORLD ═══════════════════════
+const WORLD_SCALE = 2.5;
+const PLAYER_ISLAND = {x:0.11,y:0.50};
+const ENEMY_ISLAND  = {x:0.89,y:0.50};
+const BASE_R = 54;
+
+const NEUTRAL_ISLANDS = [
+  {id:'n1', x:0.15, y:0.20, name:'Coal Isle',    res:'steel',rate:3, r:42, cap:0, owner:null, col:'#7a6a56', turret:0, dock:0},
+  {id:'n2', x:0.30, y:0.12, name:'Fuel Atoll',   res:'fuel', rate:4, r:48, cap:0, owner:null, col:'#3a6050', turret:0, dock:0},
+  {id:'n3', x:0.68, y:0.18, name:'Timber Key',   res:'wood', rate:4, r:30, cap:0, owner:null, col:'#5a6e3a', turret:0, dock:0},
+  {id:'n4', x:0.22, y:0.46, name:'Gold Shoal',   res:'gold', rate:5, r:50, cap:0, owner:null, col:'#8a7230', turret:0, dock:0},
+  {id:'n5', x:0.44, y:0.67, name:'Iron Rock',    res:'steel',rate:4, r:27, cap:0, owner:null, col:'#5a5a6e', turret:0, dock:0},
+  {id:'n6', x:0.57, y:0.81, name:'Crown Reef',   res:'gold', rate:3, r:36, cap:0, owner:null, col:'#7a6a40', turret:0, dock:0},
+  {id:'n7', x:0.85, y:0.35, name:'Deep Well',    res:'fuel', rate:3, r:54, cap:0, owner:null, col:'#2a5048', turret:0, dock:0},
+  {id:'n8', x:0.12, y:0.55, name:'Harbor Point', res:'wood', rate:4, r:22, cap:0, owner:null, col:'#4f6e3a', turret:0, dock:0},
+  {id:'n9', x:0.28, y:0.78, name:'Pearl Cay',    res:'gold', rate:4, r:44, cap:0, owner:null, col:'#8f6f40', turret:0, dock:0},
+  {id:'n10',x:0.50, y:0.32, name:'Spruce Isle', res:'wood', rate:4, r:29, cap:0, owner:null, col:'#5b7a3f', turret:0, dock:0},
+  {id:'n11',x:0.73, y:0.60, name:'Reef Bastion',res:'steel',rate:4, r:56, cap:0, owner:null, col:'#5c5d70', turret:0, dock:0},
+  {id:'n12',x:0.88, y:0.18, name:'Sunken Shoal',res:'fuel', rate:3, r:24, cap:0, owner:null, col:'#2a5052', turret:0, dock:0},
+];
+
+// Add some visual randomness to islands on init
+function randomizeIslands() {
+  NEUTRAL_ISLANDS.forEach(ni => {
+    ni.r += Math.floor(Math.random()*16 - 8);
+    ni.r = Math.max(20, Math.min(58, ni.r));
+    ni.x = Math.min(0.92, Math.max(0.08, ni.x + (Math.random()-0.5)*0.08));
+    ni.y = Math.min(0.92, Math.max(0.08, ni.y + (Math.random()-0.5)*0.08));
+    ni._vege = [];
+    for (let i=0;i<8;i++) ni._vege.push([Math.random()*ni.r*1.4-ni.r*0.7, -Math.random()*ni.r*0.45-4, 5+Math.random()*6]);
+  });
+}
+
+function initClouds(){
+  const worldW = W * WORLD_SCALE;
+  const worldH = H * WORLD_SCALE;
+  G.clouds = [];
+  for (let i = 0; i < 10; i++) {
+    const x = Math.random() * worldW;
+    const y = Math.random() * worldH * 0.78 + worldH * 0.08;
+    const radius = 40 + Math.random() * 90;
+    const speed = 4 + Math.random() * 12;
+    const opacity = 0.08 + Math.random() * 0.16;
+    const petalCount = 3 + Math.floor(Math.random() * 3);
+    const petals = Array.from({length: petalCount}, () => ({
+      ox: (Math.random() * 1.3 - 0.65) * radius,
+      oy: (Math.random() * 0.5 - 0.25) * radius,
+      rx: radius * (0.26 + Math.random() * 0.32),
+      ry: radius * (0.16 + Math.random() * 0.22),
+      rot: (Math.random() - 0.5) * 0.35,
+    }));
+    G.clouds.push({x,y,r:radius,vx:speed,opacity,petals});
+  }
+}
+
+function tickClouds(dt){
+  const worldW = W * WORLD_SCALE;
+  const worldH = H * WORLD_SCALE;
+  for (const cl of G.clouds) {
+    cl.x += cl.vx * dt;
+    if (cl.x - cl.r > worldW) cl.x = -cl.r;
+    cl.y += Math.sin((G.tick + cl.x) * 0.003 + cl.vx * 0.04) * dt * 6;
+    cl.y = Math.max(worldH * 0.05, Math.min(worldH * 0.88, cl.y));
+  }
+}
+
+// ═══════════════════════════ BUILDINGS ═══════════════════
+const BUILDINGS = {
+  market:     {name:'Market',         tab:'economy',   icon:'🏪',desc:'+5 gold/s per level. Sell surplus goods.',         costBase:{wood:80,steel:20},  gives:{gold:5},   pop:0,maxLv:15, powerRate:1.125, unlocks:null},
+  woodmill:   {name:'Wood Mill',      tab:'economy',   icon:'🪚',desc:'+4 wood/s per level. Essential for ships.',         costBase:{gold:60,steel:10},  gives:{wood:4},   pop:1,maxLv:15, powerRate:1.0, unlocks:null},
+  farm:       {name:'Farm',           tab:'economy',   icon:'🌾',desc:'+5 food/s per level. Feeds the population.',        costBase:{gold:40,wood:40},   gives:{food:5},   pop:1,maxLv:15, powerRate:0.95, unlocks:null},
+  steelworks: {name:'Steelworks',     tab:'production',icon:'🏭',desc:'+3 steel/s per level. Needed for all ships.',       costBase:{gold:120,wood:80},  gives:{steel:3},  pop:2,maxLv:15, powerRate:1.0, unlocks:null},
+  oilrefinery:{name:'Oil Refinery',   tab:'production',icon:'🛢',desc:'+5 fuel/s per level. Powers engines.',              costBase:{gold:150,steel:60}, gives:{fuel:5},   pop:2,maxLv:15, powerRate:1.05, unlocks:'research_fuel'},
+  powerplant: {name:'Power Plant',    tab:'production',icon:'⚡',desc:'Enables advanced tech. +11 electricity/sec per level.',costBase:{gold:200,steel:100},gives:{},         pop:2,maxLv:4,unlocks:'research_power'},
+  barracks:   {name:'Barracks',       tab:'military',  icon:'🪖',desc:'+5 pop cap per level. Required for large fleet.',   costBase:{gold:80,wood:60},   gives:{},         pop:0,maxLv:5,unlocks:null},
+  radar:      {name:'Radar Station',  tab:'military',  icon:'📡',desc:'Detects submerged subs! +range per level.',         costBase:{gold:180,steel:80}, gives:{},         pop:1,maxLv:3,unlocks:null},
+  shipyard:   {name:'Shipyard',       tab:'military',  icon:'⚓',desc:'Build surface ships. Level = max queue size.',      costBase:{gold:200,wood:150,steel:80},gives:{}, pop:3,maxLv:5,unlocks:null},
+  subdock:    {name:'Submarine Dock', tab:'military',  icon:'🤿',desc:'Construct submarines. Requires Sub Tech research.',  costBase:{gold:320,steel:200},gives:{},         pop:2,maxLv:4,unlocks:'research_sub'},
+  airport:    {name:'Airport',        tab:'military',  icon:'🛫',desc:'Launch fighters and bombers. Requires Aviation.',   costBase:{gold:420,wood:200,steel:160},gives:{}, pop:4,maxLv:4,unlocks:'research_aircraft'},
+  drydock:    {name:'Dry Dock',       tab:'military',  icon:'🔧',desc:'Repairs idle ships. +7 HP/s per level.',            costBase:{gold:150,steel:100},gives:{},         pop:2,maxLv:4,unlocks:'research_repair'},
+  coastalbat: {name:'Coastal Battery',tab:'military',  icon:'🏰',desc:'Auto-fires on nearby enemies. +60 dmg per level.', costBase:{gold:260,steel:160},gives:{},         pop:2,maxLv:4,unlocks:'research_coastal'},
+  fueldepot:  {name:'Fuel Depot',     tab:'military',  icon:'⛽',desc:'Faster refueling for returning ships. Level matters.',costBase:{gold:120,steel:60},gives:{fuel:1},  pop:1,maxLv:3,unlocks:null},
+  housing:    {name:'Housing',        tab:'population', icon:'🏠',desc:'+8 pop cap per level. Build early!',               costBase:{gold:50,wood:60},   gives:{},         pop:0,maxLv:8,unlocks:null},
+  hospital:   {name:'Hospital',       tab:'population', icon:'🏥',desc:'Population grows +1 per 15s per level.',           costBase:{gold:120,steel:40}, gives:{},         pop:2,maxLv:4,unlocks:'research_medicine'},
+  school:     {name:'School',         tab:'population', icon:'🏫',desc:'Unlocks Tier 2 & 3 research branches.',            costBase:{gold:100,wood:80},  gives:{},         pop:1,maxLv:3,unlocks:null},
+};
+
+// ═══════════════════════════ MODULES ═════════════════════
+const MOD = {
+  engines:{
+    eng_basic:  {name:'Basic Engine',    spd:55,  fm:0.12,wt:50,  cost:{steel:20,gold:30},   req:null,              desc:'Reliable, economical'},
+    eng_diesel: {name:'Diesel Engine',   spd:72,  fm:0.09,wt:55,  cost:{steel:40,gold:60},   req:null,              desc:'Fuel-efficient, steady'},
+    eng_fast:   {name:'Fast Engine',     spd:105, fm:0.18,wt:80,  cost:{steel:55,gold:85},   req:'research_eng',    desc:'Fast, higher fuel burn'},
+    eng_turbo:  {name:'Turbo Engine',    spd:148, fm:0.28,wt:130, cost:{steel:110,gold:160},  req:'research_turbo',  desc:'Extremely fast, fuel-hungry'},
+    eng_sub:    {name:'Sub Engine',      spd:42,  fm:0.06,wt:40,  cost:{steel:65,gold:85},   req:'research_sub',    desc:'Silent, sub-only propulsion'},
+  },
+  hulls:{
+    hull_small:  {name:'Small Hull',    hp:110,cargo:22,wt:35,slots:1,cost:{wood:28,steel:16},  req:null,              desc:'Fast, cheap, fragile. 1 weapon slot.', specialSlots:0},
+    hull_patrol: {name:'Patrol Hull',   hp:210,cargo:42,wt:78,slots:2,cost:{wood:58,steel:40},  req:null,              desc:'Balanced combat vessel. 2 slots.', specialSlots:0},
+    hull_heavy:  {name:'Heavy Hull',    hp:440,cargo:82,wt:210,slots:3,cost:{wood:125,steel:115},req:'research_heavy', desc:'Tough warship, slow. 3 slots.', specialSlots:2},
+    hull_supply: {name:'Supply Hull',   hp:145,cargo:230,wt:90,slots:1,cost:{wood:78,steel:28},  req:null,              desc:'Huge cargo, limited combat. 1 slot.', specialSlots:2},
+    hull_sub:    {name:'Submarine Hull',hp:170,cargo:32,wt:100,slots:1,cost:{wood:82,steel:130}, req:'research_sub',    desc:'Can submerge — stealthy. 1 slot.', specialSlots:1},
+    hull_sub_raid:{name:'Raider Sub Hull',hp:235,cargo:36,wt:140,slots:2,cost:{wood:118,steel:175}, req:'research_sub',    desc:'Fast attack sub with 2 weapon slots.', specialSlots:1},
+    hull_sub_brawler:{name:'Brawler Sub Hull',hp:310,cargo:44,wt:190,slots:3,cost:{wood:150,steel:225}, req:'research_sub_advanced',desc:'Hard-hitting sub with 3 weapons.', specialSlots:2},
+    hull_sub_dread:{name:'Dreadnought Sub Hull',hp:420,cargo:54,wt:270,slots:4,cost:{wood:210,steel:310}, req:'research_sub_advanced',desc:'Elite submarine with 4 weapons and 3 specialty bays.', specialSlots:3},
+    hull_cruiser:{name:'Cruiser Hull',  hp:700,cargo:65,wt:290,slots:4,cost:{wood:210,steel:220},req:'research_cruiser',desc:'Massive warship. 4 weapon slots.', specialSlots:2},
+  },
+  weapons:{
+    gun_none:    {name:'Unarmed',         dmg:0,  rng:0,  fr:0,   wt:0,  fc:0,  cost:{},                   req:null,              desc:'No weapon — supply role'},
+    gun_light:   {name:'Light Cannon',    dmg:15, rng:155,fr:1.2, wt:30, fc:0,  cost:{steel:28,gold:38},   req:null,              desc:'Fast fire, low damage'},
+    gun_medium:  {name:'Medium Cannon',   dmg:30, rng:185,fr:0.8, wt:60, fc:0,  cost:{steel:58,gold:80},   req:'research_arty',   desc:'Reliable all-rounder'},
+    gun_heavy:   {name:'Heavy Cannon',    dmg:62, rng:195,fr:0.4, wt:125,fc:0,  cost:{steel:125,gold:190}, req:'research_heavygun',desc:'Massive damage, slow'},
+    gun_torpedo: {name:'Torpedo Tube',    dmg:110,rng:250,fr:0.18,wt:82, fc:14, cost:{steel:105,gold:210,fuel:55},req:'research_torpedo',desc:'Devastating — uses fuel'},
+    gun_rocket:  {name:'Rocket Launcher', dmg:80, rng:320,fr:0.12,wt:90, fc:9,  cost:{steel:140,gold:230}, req:'research_rockets', desc:'Long range, heavy damage'},
+    gun_antiair: {name:'Anti-Air Guns',   dmg:32, rng:210,fr:2.0, wt:42, fc:0,  cost:{steel:82,gold:105},  req:'research_antiair', desc:'Shoots down aircraft'},
+    gun_subtorp: {name:'Sub Torpedoes',   dmg:125,rng:230,fr:0.14,wt:62, fc:16, cost:{steel:125,gold:190,fuel:65},req:'research_sub',desc:'Sub-mounted, fires submerged'},
+    gun_subgun:  {name:'Deck Gun',        dmg:65,  rng:165,fr:0.9, wt:45, fc:0,  cost:{steel:90,gold:120},  req:'research_sub',desc:'Surface-only gun for surfaced submarines.'},
+    gun_nuke:    {name:'Nuclear Torpedo', dmg:450, rng:380,fr:0.02,wt:180, fc:50, cost:{steel:260,gold:380,fuel:95}, req:'research_nuke',desc:'Surface-launch nuke torpedo. Hits heavy targets or the base.',slotCost:1},
+    gun_nuke_icbm:{name:'ICBM Missile',    dmg:450, rng:9999,fr:0.01,wt:190, fc:80, cost:{steel:320,gold:450,fuel:120}, req:'research_nuke',desc:'Surface-launched ICBM that travels anywhere and strikes the strongest enemy or the base.',slotCost:1},
+    gun_mine:    {name:'Mine Layer',      dmg:90, rng:0,  fr:0,   wt:55, fc:0,  cost:{steel:72,gold:95},   req:'research_mines',   desc:'Deploys contact mines'},
+  },
+  armor:{
+    armor_none:    {name:'No Armor',      def:0,  wt:0,   cost:{},                    req:null,                desc:'Unarmored — fastest'},
+    armor_light:   {name:'Light Armor',   def:15, wt:40,  cost:{steel:40,gold:30},    req:null,                desc:'Basic protection'},
+    armor_heavy:   {name:'Heavy Armor',   def:40, wt:125, cost:{steel:125,gold:80},   req:'research_armor',    desc:'Solid protection, heavy'},
+    armor_reactive:{name:'Reactive Armor',def:58, wt:165, cost:{steel:210,gold:160},  req:'research_reactive', desc:'Best protection, heaviest'},
+  },
+  specials:{
+    spec_none:   {name:'None',            wt:0,  cost:{},               req:null,             desc:'No special module'},
+    spec_sonar:  {name:'Sonar Array',     wt:22, cost:{steel:65,gold:85},req:'research_sonar', desc:'Detects submerged submarines'},
+    spec_repair: {name:'Repair Module',   wt:32, cost:{steel:85,gold:105},req:'research_repair',desc:'+3 HP/s self-repair while moving'},
+    spec_fuel_tank:{name:'Fuel Tanks',      wt:38, cost:{steel:95,gold:135},req:'research_sub_advanced', desc:'Extra fuel capacity for longer patrols and weapon use.'},
+    spec_smoke:  {name:'Smoke Launcher',  wt:26, cost:{steel:52,gold:65}, req:'research_smoke', desc:'Deploy smoke screen — auto or manual'},
+    spec_lights: {name:'Searchlights',    wt:18, cost:{steel:45,gold:70}, req:'research_lights', desc:'Searchlights improve night visibility and detection range.'},
+    spec_stealth:{name:'Stealth Coating', wt:20, cost:{steel:95,gold:120},req:'research_sub',   desc:'Stealth for subs — harder to detect'},
+  }
+};
+
+const unlockedMods = new Set([
+  'eng_basic','eng_diesel',
+  'hull_small','hull_patrol','hull_supply',
+  'gun_none','gun_light',
+  'armor_none','armor_light',
+  'spec_none'
+]);
+
+// ═══════════════════════════ BOAT TEMPLATE ════════════════
+function makeTemplate(name, hull, engine, weapons, armor, special='spec_none') {
+  const h=MOD.hulls[hull]    ||MOD.hulls.hull_small;
+  const e=MOD.engines[engine]||MOD.engines.eng_basic;
+  const weaponIds = Array.isArray(weapons) ? weapons.filter(Boolean) : [weapons];
+  const weaponList = weaponIds.length ? weaponIds : ['gun_none'];
+  const ws = weaponList.map(id=>MOD.weapons[id]||MOD.weapons.gun_none);
+  const a=MOD.armor[armor]   ||MOD.armor.armor_none;
+  const specialIds = Array.isArray(special) ? special.filter(Boolean) : [special];
+  const specialList = specialIds.length ? specialIds : ['spec_none'];
+  const ss = specialList.map(id=>MOD.specials[id]||MOD.specials.spec_none);
+  const s = MOD.specials[specialList[0]]||MOD.specials.spec_none;
+  const totalGunWt = ws.reduce((sum,w)=>sum+w.wt,0);
+  const totalSpecWt = ss.reduce((sum,s)=>sum+s.wt,0);
+  const totalWt = h.wt + e.wt + totalGunWt + a.wt + totalSpecWt;
+  const spdFactor = Math.max(0.25, 1-(totalWt-h.wt)/700);
+  const spd = e.spd * spdFactor;
+  const hp  = h.hp + a.def*3;
+  const totalDmg = ws.reduce((sum,w)=>sum+w.dmg,0);
+  const maxRange = Math.max(0, ...ws.map(w=>w.rng));
+  const totalRate = ws.reduce((sum,w)=>sum+(w.fr||0),0);
+  const fuelFactor = 1 + ws.reduce((sum,w)=>sum+(w.fc?0.18:0),0);
+  const fps = e.fm * fuelFactor;
+  const cost = mergeCosts(h.cost,e.cost,...ws.map(w=>w.cost),a.cost,...ss.map(s=>s.cost));
+  const weaponNames = weaponList.filter(id=>id&&id!=='gun_none').map(id=>MOD.weapons[id]?.name||id).join(' + ') || 'Unarmed';
+  const hasTorpedo = weaponList.some(id=>id==='gun_torpedo'||id==='gun_subtorp');
+  const hasRocket = weaponList.some(id=>id==='gun_rocket');
+  const hasNuke = weaponList.some(id=>id==='gun_nuke'||id==='gun_nuke_icbm');
+  const hasICBM = weaponList.some(id=>id==='gun_nuke_icbm');
+  return {
+    name, hull, engine, weapons: weaponList, weapon: weaponList[0]||'gun_none', armor, special: specialList.length===1?specialList[0]:specialList, specials: specialList,
+    speed: spd, hp, maxHp: hp,
+    dmg: totalDmg, range: maxRange, firerate: totalRate,
+    fuelPerSec: fps, buildCost: cost, cargo: h.cargo,
+    slots: h.slots, totalWeight: totalWt, maxWeight: h.wt*3.5, weightPct: Math.min(1, totalWt / (h.wt * 3.5)),
+    isSub: hull==='hull_sub' || hull.startsWith('hull_sub_'),
+    hasSonar: specialList.includes('spec_sonar'),
+    hasRepair: specialList.includes('spec_repair'),
+    hasSmoke: specialList.includes('spec_smoke'),
+    hasLights: specialList.includes('spec_lights'),
+    hasMines: weaponList.some(id=>id==='gun_mine'),
+    isAntiAir: weaponList.some(id=>id==='gun_antiair'),
+    hasNuke, hasICBM, hasTorpedo, hasRocket, weaponNames,
+  };
+}
+function mergeCosts(...cc){const r={};for(const c of cc)if(c)for(const k in c)r[k]=(r[k]||0)+c[k];return r;}
+
+function makePlaneTemplate(name, hull, weapon, special='spec_plane_none'){
+  const h = PLANE_HULLS[hull] || PLANE_HULLS.plane_scout;
+  const w = PLANE_WEAPONS[weapon] || PLANE_WEAPONS.gun_plane_none;
+  const s = PLANE_SPECIALS[special] || PLANE_SPECIALS.spec_plane_none;
+  const totalWt = h.wt + w.wt + s.wt;
+  const speed = Math.max(110, h.speed - (totalWt - h.wt) * 2.5);
+  const hp = h.hp + (special==='spec_armor'?18:0);
+  const range = h.range + (special==='spec_fuelcell'?40:0);
+  const fuelPerSec = 1.3 + totalWt * 0.035 + (special==='spec_fuelcell'?0.18:0);
+  const cost = mergeCosts(h.cost,w.cost,s.cost);
+  return {
+    name, hull, weapon, special,
+    speed, hp, maxHp:hp, dmg:w.dmg, range, firerate:w.fr,
+    fuelPerSec, buildCost:cost,
+    slots:h.slots, totalWeight:totalWt, maxWeight:h.wt*3.2, weightPct:Math.min(1,totalWt/(h.wt*3.2)),
+    weaponName:w.name, specialName:s.name,
+  };
+}
+
+let curDesign={name:'Corsair',hull:'hull_patrol',engine:'eng_basic',weapons:['gun_light'],armor:'armor_light',special:'spec_none'};
+let curSubDesign={name:'Barracuda',hull:'hull_sub',weapons:['gun_subtorp'],specials:['spec_none'],armor:'armor_none'};
+let curPlaneDesign={name:'Skyhawk',hull:'plane_scout',weapon:'gun_machinegun',special:'spec_plane_none'};
+let buildQueue=[], savedDesigns=[];
+
+// ═══════════════════════════ RESEARCH ═══════════════════
+// row = tier (0-4), col = branch (0-4)
+const RESEARCH = {
+  research_fuel:    {name:'Advanced Refining',  cost:{gold:200,steel:80},  time:22,row:0,col:0,prereq:null,             desc:'Unlocks Oil Refinery'},
+  research_power:   {name:'Grid Technology',    cost:{gold:280,steel:120}, time:32,row:0,col:1,prereq:null,             desc:'Unlocks Power Plant'},
+  research_lights:  {name:'Searchlight Systems',cost:{gold:220,steel:90}, time:30,row:2,col:2,prereq:'research_power', desc:'Unlocks ship lights — boats ignore night visibility penalties.'},
+  research_eng:     {name:'Improved Engines',   cost:{gold:240,steel:110}, time:30,row:0,col:2,prereq:null,             desc:'Unlocks Fast Engine'},
+  research_arty:    {name:'Artillery',           cost:{gold:195,steel:88},  time:26,row:0,col:3,prereq:null,            desc:'Unlocks Medium Cannon'},
+  research_smoke:   {name:'Smoke Screens',       cost:{gold:190,steel:78},  time:26,row:0,col:4,prereq:null,            desc:'Unlocks Smoke Launcher'},
+
+  research_turbo:   {name:'Turbo Propulsion',   cost:{gold:380,steel:190}, time:48,row:1,col:2,prereq:'research_eng',   desc:'Unlocks Turbo Engine'},
+  research_repair:  {name:'Dry Dock Tech',       cost:{gold:215,steel:88},  time:28,row:1,col:1,prereq:null,            desc:'Unlocks Dry Dock + Repair Module'},
+  research_coastal: {name:'Coastal Defense',     cost:{gold:295,steel:138}, time:38,row:1,col:3,prereq:null,            desc:'Unlocks Coastal Battery'},
+  research_heavy:   {name:'Heavy Shipbuilding',  cost:{gold:295,steel:175}, time:44,row:1,col:4,prereq:null,            desc:'Unlocks Heavy Hull'},
+
+  research_mines:   {name:'Mine Warfare',        cost:{gold:285,steel:145}, time:38,row:2,col:0,prereq:'research_arty', desc:'Unlocks Mine Layer'},
+  research_antiair: {name:'Anti-Air Defense',    cost:{gold:300,steel:155}, time:40,row:2,col:3,prereq:'research_arty', desc:'Unlocks Anti-Air Guns'},
+  research_sub:     {name:'Submarine Tech',      cost:{gold:490,steel:275}, time:68,row:2,col:4,prereq:'research_heavy',desc:'Unlocks Submarines & Sub Dock'},
+  research_sub_advanced:{name:'Advanced Submersibles', cost:{gold:520,steel:310}, time:70,row:5,col:2,prereq:'research_sub',desc:'Unlocks advanced submarine hulls and deck guns.'},
+  research_nuke:    {name:'Nuclear Warheads',    cost:{gold:680,steel:420,fuel:95}, time:94,row:5,col:3,prereq:'research_sub_advanced',desc:'Unlocks nuclear torpedoes that can strike bases and strong targets.'},
+  research_armor:   {name:'Heavy Armor Plating', cost:{gold:245,steel:155}, time:38,row:2,col:1,prereq:'research_heavy',desc:'Unlocks Heavy Armor'},
+
+  research_heavygun:{name:'Heavy Artillery',     cost:{gold:340,steel:175}, time:44,row:3,col:0,prereq:'research_arty', desc:'Unlocks Heavy Cannon'},
+  research_advrepair:{name:'Enhanced Repair',    cost:{gold:260,steel:110}, time:36,row:3,col:1,prereq:'research_repair',desc:'Boosts Dry Dock & self-repair speed'},
+  research_cruiser: {name:'Cruiser Design',      cost:{gold:490,steel:295}, time:64,row:3,col:2,prereq:'research_heavy',desc:'Unlocks Cruiser Hull'},
+  research_sub_stealth:{name:'Sub Stealth',      cost:{gold:340,steel:155}, time:46,row:3,col:4,prereq:'research_sub',  desc:'Stealth coating for submarines'},
+  research_medicine:{name:'Medicine',            cost:{gold:195,wood:48},   time:26,row:3,col:3,prereq:null,            desc:'Unlocks Hospital'},
+
+  research_rockets: {name:'Rocket Systems',      cost:{gold:350,steel:150}, time:46,row:4,col:0,prereq:'research_heavygun',desc:'Unlocks Rocket Launcher'},
+  research_fleet_tactics:{name:'Fleet Tactics',  cost:{gold:320,steel:160}, time:44,row:4,col:1,prereq:'research_power', desc:'Ships gain attack coordination'},
+  research_aircraft:{name:'Aviation',            cost:{gold:590,steel:345}, time:78,row:4,col:2,prereq:'research_power', desc:'Unlocks Airport + Aircraft'},
+  research_advair:  {name:'Advanced Aviation',   cost:{gold:520,steel:280}, time:84,row:4,col:3,prereq:'research_aircraft',desc:'Improved aircraft capabilities'},
+  research_sonar:   {name:'Sonar Systems',       cost:{gold:260,steel:120}, time:36,row:4,col:4,prereq:'research_sub',   desc:'Unlocks Sonar Array'},
+  research_torpedo: {name:'Torpedo Systems',     cost:{gold:300,steel:145}, time:42,row:3,col:2,prereq:'research_sub',   desc:'Unlocks Torpedo Tubes'},
+  research_reactive:{name:'Reactive Armor',      cost:{gold:380,steel:220}, time:52,row:4,col:1,prereq:'research_armor', desc:'Unlocks Reactive Armor'},
+};
+let activeRes = null;
+
+// ═══════════════════════════ AIRCRAFT ══════════════════
+const ACRAFT = {
+  fighter:{name:'Fighter', hp:65,maxHp:65, dmg:22,range:190,firerate:1.5,speed:220,cost:{gold:210,steel:105,fuel:85}, time:18,icon:'✈️',desc:'Fast — targets boats & aircraft'},
+  bomber: {name:'Bomber',  hp:85,maxHp:85, dmg:65,range:125,firerate:0.4,speed:148,cost:{gold:310,steel:155,fuel:125},time:34,icon:'🛩️',desc:'Heavy — bombs bases and slow ships'},
+};
+
+const PLANE_HULLS = {
+  plane_scout:   {name:'Scout Frame',      hp:50,  range:210, speed:260, wt:18, slots:1, cost:{gold:180,steel:95,fuel:65},  req:null,              desc:'Light, fast frame for recon and dogfights.'},
+  plane_interceptor:{name:'Interceptor Frame',hp:75,range:180, speed:230, wt:26, slots:2, cost:{gold:260,steel:145,fuel:95}, req:'research_aircraft', desc:'Balanced fighter frame with two weapon mounts.'},
+  plane_attacker:{name:'Attack Frame',      hp:92,  range:160, speed:200, wt:34, slots:2, cost:{gold:330,steel:185,fuel:120},req:'research_advair', desc:'Rugged attack plane for ground strikes and escorts.'},
+  plane_bomber:  {name:'Bomber Frame',      hp:120, range:130, speed:170, wt:46, slots:1, cost:{gold:420,steel:240,fuel:165},req:'research_advair', desc:'Heavy bomber frame with one powerful ordinance slot.'},
+};
+const PLANE_WEAPONS = {
+  gun_plane_none:{name:'Unarmed',          dmg:0,  rng:0,   fr:0,   wt:0,  fc:0, cost:{}, req:null,            desc:'Empty weapon mount.'},
+  gun_machinegun:{name:'Machine Guns',     dmg:14, rng:175, fr:3.2, wt:10, fc:0, cost:{steel:45,gold:35}, req:'research_aircraft', desc:'Fast-firing guns for dogfights.'},
+  gun_rocketpod:{name:'Rocket Pods',      dmg:42, rng:190, fr:0.8, wt:18, fc:0, cost:{steel:72,gold:78}, req:'research_rockets', desc:'High-damage rockets against ships and bases.'},
+  gun_bombbay:  {name:'Bomb Bay',         dmg:88, rng:115, fr:0.12,wt:28, fc:0, cost:{steel:110,gold:130}, req:'research_aircraft', desc:'Heavy bomb for campaign strikes.'},
+};
+const PLANE_SPECIALS = {
+  spec_plane_none:{name:'None',           wt:0,  cost:{},               req:null,            desc:'No extra module.'},
+  spec_fuelcell: {name:'Fuel Tank',       wt:14, cost:{steel:60,gold:55}, req:'research_aircraft', desc:'Improves flight range at a fuel cost.'},
+  spec_armor:    {name:'Armor Plating',   wt:20, cost:{steel:80,gold:72}, req:'research_advair', desc:'Extra plating boosts survivability.'},
+  spec_dogfight: {name:'Dogfight Rig',    wt:12, cost:{steel:50,gold:85}, req:'research_aircraft', desc:'Better guns and handling in air combat.'},
+};
+
+// ═══════════════════════════ CANVAS ══════════════════════
+const canvas = document.getElementById('worldCanvas');
+const ctx = canvas.getContext('2d');
+const mcv = document.getElementById('minimapCanvas');
+const mctx = mcv.getContext('2d');
+let W=0, H=0;
+function resize() { W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+resize();
+window.addEventListener('resize', resize);
+function ix(f){return f*W*WORLD_SCALE;} function iy(f){return f*H*WORLD_SCALE;}
+
+// ═══════════════════════════ HELPERS ═════════════════════
+function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y);}
+function ang(a,b){return Math.atan2(b.y-a.y,b.x-a.x);}
+function lerp(a,b,t){return a+(b-a)*t;}
+function clamp(v,mn,mx){return Math.min(mx,Math.max(mn,v));}
+function getWeatherRangeMult(){
+  const RM={clear:1,cloudy:0.92,fog:0.55,rain:0.72,storm:0.48};
+  return RM[G.weather]||1;
+}
+function getNightRangeMult(hasLights){
+  const nightFactor=0.5 - 0.5*Math.cos((G.dayTime-0.25)*Math.PI*2);
+  return hasLights?1:(1 - nightFactor*0.28);
+}
+function getBoatEffectiveRange(b){
+  return (b.range||140) * getWeatherRangeMult() * getNightRangeMult(b.hasLights);
+}
+function getAircraftEffectiveRange(a){
+  return (a.range||140) * getWeatherRangeMult() * getNightRangeMult(false);
+}
+
+// ═══════════════════════════ DRAWING ═════════════════════
+const BSHAPES = {
+  hull_small:  {l:17,w:5.5,col:'#3a8abf'},
+  hull_patrol: {l:23,w:8,  col:'#2a6a9f'},
+  hull_heavy:  {l:32,w:12, col:'#1a4a7f'},
+  hull_supply: {l:25,w:9.5,col:'#4a7a9f'},
+  hull_sub:    {l:21,w:6.5,col:'#1a4050'},
+  hull_cruiser:{l:40,w:15, col:'#102050'},
+};
+
+function drawWorld() {
+  const t = G.tick*0.011;
+
+  // ── Ocean background (in world space, inside camera transform) ──
+  ctx.save();
+  ctx.translate(W/2, H/2);
+  ctx.scale(CAM.zoom, CAM.zoom);
+  ctx.translate(-CAM.cx, -CAM.cy);
+
+  // Sky/ocean gradient
+  const worldW = W * WORLD_SCALE;
+  const worldH = H * WORLD_SCALE;
+  const og = ctx.createLinearGradient(-worldW*0.1, -worldH*0.1, -worldW*0.1, worldH*1.1);
+  og.addColorStop(0,'#041835'); og.addColorStop(0.35,'#05162a'); og.addColorStop(1,'#021018');
+  ctx.fillStyle = og;
+  ctx.fillRect(-worldW*0.1, -worldH*0.1, worldW*1.2, worldH*1.2);
+
+  // Clouds
+  for (const cl of G.clouds) {
+    const cx = cl.x;
+    const cy = cl.y;
+    const cr = cl.r;
+    const g = ctx.createRadialGradient(cx, cy, cr*0.12, cx, cy, cr);
+    g.addColorStop(0, `rgba(255,255,255,${cl.opacity})`);
+    g.addColorStop(0.42, `rgba(255,255,255,${cl.opacity * 0.44})`);
+    g.addColorStop(0.78, `rgba(255,255,255,${cl.opacity * 0.22})`);
+    g.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    for (const p of cl.petals) {
+      ctx.ellipse(cx + p.ox, cy + p.oy, p.rx, p.ry, p.rot, 0, Math.PI * 2);
+    }
+    ctx.fill();
+  }
+
+  // Ocean sheen & layers
+  const wavePhase = G.tick * 0.048;
+  const bandCount = 12;
+  for (let band = 0; band < bandCount; band++) {
+    const bandY = worldH * 0.05 + band * (worldH * 0.08);
+    const amp = 2 + band * 0.35;
+    const freq = 0.018 + band * 0.0008;
+    const alpha = 0.03 + band * 0.016;
+    ctx.strokeStyle = `rgba(170,220,255,${Math.min(0.23, alpha)})`;
+    ctx.lineWidth = 0.5 + band * 0.05;
+    ctx.beginPath();
+    const startX = -worldW*0.06;
+    const endX = worldW*1.06;
+    for (let x = startX; x <= endX; x += 12) {
+      const y = bandY + Math.sin(x * freq + wavePhase + band * 1.4) * amp + Math.sin(x * 0.008 + band * 0.5 + wavePhase * 0.72) * 0.9;
+      if (x === startX) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+
+  // Small foam ripples across the whole sea
+  ctx.globalCompositeOperation = 'lighter';
+  for (let yOff = 0; yOff < worldH * 0.95; yOff += worldH * 0.06) {
+    for (let i = 0; i < 35; i++) {
+      const x = -worldW*0.06 + (worldW * 1.12) * (i / 34);
+      const y = yOff + Math.sin(i * 0.6 + wavePhase * 1.8 + yOff * 0.003) * 3.5 + Math.sin(i * 0.18 + wavePhase) * 1.2;
+      const fade = 0.08 + (Math.sin(i * 0.9 + yOff * 0.4 + wavePhase) + 1) * 0.02;
+      ctx.strokeStyle = `rgba(234,248,255,${Math.max(0.04, fade)})`;
+      ctx.lineWidth = 0.8;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + worldW * 0.007, y + 1.5 + Math.sin(i * 0.9 + wavePhase * 0.9) * 1.2);
+      ctx.stroke();
+    }
+  }
+
+  // Foam cluster highlights
+  ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+  ctx.lineWidth = 1.1;
+  for (let i = 0; i < 36; i++) {
+    const x = -worldW*0.08 + (worldW*1.16) * (i / 35);
+    const y = worldH * 0.15 + Math.sin(i * 0.42 + wavePhase*1.5) * 7 + Math.sin(i * 0.22 + wavePhase*0.8) * 1.8;
+    if (Math.random() > 0.7) continue;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + worldW * 0.004 + (Math.random()*6-3), y + 2 + Math.random()*2);
+    ctx.stroke();
+  }
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.globalCompositeOperation = 'source-over';
+
+  // Wakes
+  for(const wk of G.wakes){
+    if(wk.life<=0)continue;
+    ctx.save();ctx.globalAlpha=wk.life*0.3;
+    ctx.translate(wk.x,wk.y);ctx.rotate(wk.angle+Math.PI/2);
+    ctx.strokeStyle='rgba(110,185,255,0.9)';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(-8,0);ctx.lineTo(-13,20);ctx.moveTo(8,0);ctx.lineTo(13,20);ctx.stroke();
+    ctx.restore();
+  }
+
+  // Mines
+  for(const m of G.mines){
+    ctx.save();
+    ctx.shadowColor=m.friendly?'rgba(50,120,220,0.7)':'rgba(220,50,50,0.7)';ctx.shadowBlur=8;
+    ctx.strokeStyle=m.friendly?'#3a9aff':'#ff4a4a';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.arc(m.x,m.y,7,0,Math.PI*2);ctx.stroke();
+    ctx.fillStyle=m.friendly?'rgba(30,80,180,0.4)':'rgba(180,30,30,0.4)';ctx.fill();
+    for(let i=0;i<6;i++){const a=i/6*Math.PI*2;ctx.beginPath();ctx.moveTo(m.x+Math.cos(a)*7,m.y+Math.sin(a)*7);ctx.lineTo(m.x+Math.cos(a)*11,m.y+Math.sin(a)*11);ctx.stroke();}
+    ctx.restore();
+  }
+
+  // Smoke clouds
+  for(const sc of G.smokeClouds){
+    ctx.save();ctx.globalAlpha=sc.opacity*0.5;
+    const sg=ctx.createRadialGradient(sc.x,sc.y,0,sc.x,sc.y,sc.r);
+    sg.addColorStop(0,'rgba(195,210,220,0.8)');sg.addColorStop(1,'rgba(140,160,170,0)');
+    ctx.fillStyle=sg;ctx.beginPath();ctx.arc(sc.x,sc.y,sc.r,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+  }
+
+  // Neutral islands
+  for(const ni of NEUTRAL_ISLANDS) drawNeutralIsland(ni);
+
+  // Main bases
+  drawMainIsland(ix(PLAYER_ISLAND.x),iy(PLAYER_ISLAND.y),true);
+  drawMainIsland(ix(ENEMY_ISLAND.x), iy(ENEMY_ISLAND.y), false);
+
+  // Projectiles
+  for(const p of G.projectiles){
+    if(p.trail&&p.trail.length>1){
+      ctx.save();
+      ctx.strokeStyle=p.friendly?'rgba(255,240,64,0.22)':'rgba(255,85,48,0.22)';ctx.lineWidth=2;
+      ctx.beginPath();
+      for(let i=p.trail.length-1;i>=0;i--){const pt=p.trail[i];i===p.trail.length-1?ctx.moveTo(pt.x,pt.y):ctx.lineTo(pt.x,pt.y);}
+      ctx.stroke();ctx.restore();
+    }
+    ctx.save();
+    if(p.isTorp){
+      ctx.translate(p.x,p.y);ctx.rotate(p.ang);
+      ctx.fillStyle=p.friendly?'#5adfff':'#ffaa5a';ctx.shadowColor=ctx.fillStyle;ctx.shadowBlur=8;
+      ctx.fillRect(-10,-2.5,20,5);
+    } else if(p.isRocket){
+      ctx.fillStyle=p.friendly?'#ffee44':'#ff7722';ctx.shadowColor=ctx.fillStyle;ctx.shadowBlur=14;
+      ctx.beginPath();ctx.arc(p.x,p.y,4.5,0,Math.PI*2);ctx.fill();
+    } else {
+      ctx.fillStyle=p.friendly?'#ffe040':'#ff5530';ctx.shadowColor=ctx.fillStyle;ctx.shadowBlur=7;
+      ctx.beginPath();ctx.arc(p.x,p.y,3,0,Math.PI*2);ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  // Surface boats
+  for(const b of G.fleet)      if(!b.submerged) drawBoat(b,true);
+  for(const b of G.enemyFleet) if(!b.submerged) drawBoat(b,false);
+
+  // Submerged boats
+  for(const b of G.fleet)      if(b.submerged) drawSub(b,true);
+  for(const b of G.enemyFleet) if(b.submerged){
+    const canSee=(G.buildings['radar']||0)>0||G.fleet.some(f=>f.hasSonar&&dist(f,b)<320);
+    if(canSee) drawSub(b,false);
+  }
+
+  // Aircraft
+  for(const a of G.aircraft) drawAircraft(a);
+
+  // Particles
+  for(const p of G.particles){
+    ctx.save();ctx.globalAlpha=Math.max(0,p.life/p.maxLife);
+    ctx.fillStyle=p.col;ctx.beginPath();ctx.arc(p.x,p.y,p.sz,0,Math.PI*2);ctx.fill();ctx.restore();
+  }
+
+  // Patrol markers
+  if(G.patrolMode){
+    ctx.strokeStyle='#3acfff';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+    for(const pt of G.patrolPoints){ctx.beginPath();ctx.arc(pt.x,pt.y,6,0,Math.PI*2);ctx.stroke();}
+    ctx.setLineDash([]);
+  }
+
+  drawRain();
+  drawFog();
+  ctx.restore(); // end camera transform
+
+  // ── Screen-space overlays ──
+  drawDayNight();
+  drawMinimap();
+}
+
+function drawBoat(b, friendly) {
+  const sh = BSHAPES[b.hull]||BSHAPES.hull_small;
+  const selected = G.selectedBoat===b;
+  const nightFactor = 0.5 - 0.5*Math.cos((G.dayTime-0.25)*Math.PI*2);
+  const visibleRange = getBoatEffectiveRange(b);
+
+  if(selected && !b.submerged){
+    ctx.save();
+    ctx.strokeStyle='rgba(120,200,255,0.22)';
+    ctx.lineWidth=1.5;
+    ctx.setLineDash([10,6]);
+    ctx.beginPath();
+    ctx.arc(b.x,b.y,visibleRange,0,Math.PI*2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+  }
+
+  ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(b.angle);
+
+  // Selection ring
+  if(selected){
+    ctx.strokeStyle='#3acfff';ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(0,0,sh.l+10,0,Math.PI*2);ctx.stroke();
+  }
+
+  // Hull shadow
+  ctx.shadowColor=friendly?'rgba(28,95,200,0.3)':'rgba(200,55,35,0.3)';ctx.shadowBlur=9;
+  ctx.fillStyle=friendly?sh.col:'#8a3830';
+  ctx.beginPath();ctx.ellipse(0,0,sh.l,sh.w,0,0,Math.PI*2);ctx.fill();
+
+  // Bow
+  ctx.shadowBlur=0;
+  ctx.beginPath();ctx.moveTo(sh.l,0);ctx.lineTo(sh.l+10,0);
+  ctx.lineTo(sh.l,sh.w*0.6);ctx.lineTo(sh.l,-sh.w*0.6);ctx.closePath();
+  ctx.fillStyle=friendly?'#5aaad8':'#c0624a';ctx.fill();
+
+  // Superstructure
+  ctx.fillStyle=friendly?'rgba(78,162,238,0.45)':'rgba(242,108,74,0.45)';
+  ctx.fillRect(-sh.l*0.3,-sh.w*0.52,sh.l*0.52,sh.w*1.04);
+  ctx.fillStyle='rgba(18,28,44,0.82)';
+  ctx.fillRect(-sh.l*0.11,-sh.w*0.48,sh.l*0.22,sh.w*0.5);
+  ctx.fillStyle='rgba(255,255,255,0.12)';
+  ctx.fillRect(-sh.l*0.18,-sh.w*0.18,sh.l*0.36,sh.w*0.14);
+
+  if(b.hull==='hull_heavy'){
+    ctx.fillStyle='#384d6f';
+    ctx.fillRect(-sh.l*0.75,-sh.w*0.25,sh.l*0.25,sh.w*0.2);
+    ctx.fillRect(sh.l*0.35,-sh.w*0.25,sh.l*0.25,sh.w*0.2);
+  }
+  if(b.hull==='hull_cruiser'){
+    ctx.fillStyle='#4a6a92';
+    ctx.beginPath();ctx.moveTo(-sh.l*0.08,-sh.w*0.52);ctx.lineTo(sh.l*0.08,-sh.w*0.52);ctx.lineTo(sh.l*0.18,sh.w*0.16);ctx.lineTo(-sh.l*0.18,sh.w*0.16);ctx.closePath();ctx.fill();
+    ctx.fillStyle='#d8e8f4';ctx.beginPath();ctx.arc(sh.l*0.02,-sh.w*0.45,2.4,0,Math.PI*2);ctx.fill();
+  }
+  if(b.hull==='hull_supply'){
+    ctx.fillStyle='#758ca8';
+    for(let i=0;i<3;i++) ctx.fillRect(-sh.l*0.5 + i*sh.l*0.28,-sh.w*0.25,sh.l*0.18,sh.w*0.18);
+  }
+  if(b.hull==='hull_sub'){
+    ctx.fillStyle='#203450';
+    ctx.fillRect(-sh.l*0.1,-sh.w*0.65,sh.l*0.2,sh.w*0.4);
+    ctx.strokeStyle='#8fc6ff';ctx.lineWidth=1.2;
+    ctx.beginPath();ctx.moveTo(-sh.l*0.03,-sh.w*0.65);ctx.lineTo(-sh.l*0.03,-sh.w*0.95);ctx.lineTo(sh.l*0.03,-sh.w*0.95);ctx.stroke();
+  }
+
+  if(b.hasSmoke){
+    ctx.fillStyle='rgba(38,38,38,0.9)';
+    ctx.fillRect(-sh.l*0.05,-sh.w*0.6,sh.l*0.08,sh.w*0.3);
+    ctx.fillStyle='rgba(190,190,190,0.35)';
+    ctx.beginPath();ctx.arc(-sh.l*0.02,-sh.w*0.7,4,0,Math.PI*2);ctx.arc(sh.l*0.04,-sh.w*0.78,3.2,0,Math.PI*2);ctx.fill();
+  }
+  if(b.hasSonar){
+    ctx.fillStyle='#94d4ff';
+    ctx.beginPath();ctx.arc(sh.l*0.1,sh.w*0.08,3.2,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='rgba(148,212,255,0.75)';ctx.lineWidth=1;ctx.beginPath();ctx.arc(sh.l*0.1,sh.w*0.08,6,0,Math.PI*2);ctx.stroke();
+  }
+  if(b.hasRepair){
+    ctx.fillStyle='#8ef0a1';
+    ctx.fillRect(-4,-2,8,4);
+    ctx.fillRect(-2,-4,4,8);
+  }
+
+  // Searchlights
+  if(b.hasLights && nightFactor > 0.2){
+    const lightAlpha = Math.min(0.35, nightFactor * 0.45);
+    ctx.save();
+    ctx.rotate(0);
+    const cone = ctx.createRadialGradient(sh.l+18,0,0,sh.l+18,0,sh.l*1.8);
+    cone.addColorStop(0,`rgba(255,255,220,${lightAlpha})`);
+    cone.addColorStop(0.6,`rgba(255,255,220,${lightAlpha*0.08})`);
+    cone.addColorStop(1,'rgba(255,255,220,0)');
+    ctx.fillStyle = cone;
+    ctx.beginPath();
+    ctx.moveTo(sh.l, -sh.w*0.38);
+    ctx.lineTo(sh.l*2.2, -sh.w*0.8);
+    ctx.lineTo(sh.l*2.2, sh.w*0.8);
+    ctx.lineTo(sh.l, sh.w*0.38);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // Weapon indicator
+  if(b.hasTorpedo){
+    ctx.fillStyle='rgba(100,255,160,0.7)';ctx.fillRect(sh.l*0.05,-1,sh.l*0.42,2);
+  } else if(b.hasRocket){
+    ctx.fillStyle='rgba(255,185,50,0.8)';ctx.fillRect(-sh.l*0.1,-1.8,sh.l*0.5,3.5);
+  } else if(b.isAntiAir){
+    ctx.strokeStyle='rgba(255,255,80,0.9)';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.arc(0,-sh.w,4,0,Math.PI*2);ctx.stroke();
+  }
+
+  // Smoke / sonar
+  if(b.hasSonar){
+    const pingR=280*((G.tick*0.007)%1);
+    ctx.globalAlpha=0.11*(1-pingR/280);
+    ctx.strokeStyle='#3acfff';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.arc(0,0,pingR,0,Math.PI*2);ctx.stroke();
+    ctx.globalAlpha=1;
+  }
+  if(b.onFire){
+    for(let fi=0;fi<3;fi++){
+      ctx.globalAlpha=0.6+Math.random()*0.3;
+      ctx.fillStyle=Math.random()<0.5?'#ff8800':'#ffcc00';
+      ctx.beginPath();ctx.arc((Math.random()-0.5)*sh.l*0.8,(Math.random()-0.5)*sh.w,2+Math.random()*2,0,Math.PI*2);ctx.fill();
+    }
+    ctx.globalAlpha=1;
+  }
+  ctx.restore();
+
+  // HP bar
+  const pct=b.hp/b.maxHp;
+  ctx.fillStyle='#030810';ctx.fillRect(b.x-18,b.y-sh.w-17,36,4);
+  ctx.fillStyle=pct>0.6?'#1a8a1a':pct>0.3?'#8a7010':'#8a1a10';
+  ctx.fillRect(b.x-18,b.y-sh.w-17,36*pct,4);
+
+  // Fuel bar (all boats)
+  const fpct = (b.fuel||0)/100;
+  ctx.fillStyle='#030810';ctx.fillRect(b.x-18,b.y-sh.w-22,36,3);
+  ctx.fillStyle='#1a5a9a';ctx.fillRect(b.x-18,b.y-sh.w-22,36*fpct,3);
+
+  // Name
+  ctx.fillStyle=friendly?'#5aacdc':'#dc7a5a';
+  ctx.font='9px Segoe UI';ctx.textAlign='center';
+  ctx.fillText(b.name,b.x,b.y-sh.w-26);
+}
+
+function drawShipPreview(tmpl) {
+  const canvas = document.getElementById('shipPreview');
+  if(!canvas) return;
+  const pctx = canvas.getContext('2d');
+  pctx.clearRect(0,0,canvas.width,canvas.height);
+  pctx.fillStyle='#04101e';pctx.fillRect(0,0,canvas.width,canvas.height);
+  pctx.save();
+  pctx.translate(canvas.width*0.5, canvas.height*0.7);
+  pctx.scale(1.1,1.1);
+  const sh = BSHAPES[tmpl.hull] || BSHAPES.hull_small;
+  pctx.save();
+  pctx.rotate(-0.18);
+  pctx.shadowColor='rgba(0,0,0,0.3)';pctx.shadowBlur=8;
+  pctx.fillStyle=tmpl.hull==='hull_sub'?'#1c3a52':sh.col;
+  pctx.beginPath();pctx.ellipse(0,0,sh.l,sh.w,0,0,Math.PI*2);pctx.fill();
+  pctx.shadowBlur=0;
+  pctx.fillStyle=tmpl.hull==='hull_sub'?'#2d5d74':(tmpl.hull==='hull_heavy'?'#3a6a8d':'#6aa5d9');
+  pctx.beginPath();pctx.moveTo(sh.l,0);pctx.lineTo(sh.l+10,0);pctx.lineTo(sh.l,sh.w*0.6);pctx.lineTo(sh.l,-sh.w*0.6);pctx.closePath();pctx.fill();
+  pctx.fillStyle='rgba(78,162,238,0.45)';pctx.fillRect(-sh.l*0.3,-sh.w*0.52,sh.l*0.52,sh.w*1.04);
+  if(tmpl.hasLights) {
+    pctx.save();
+    pctx.translate(sh.l*0.6,0);
+    const cone=pctx.createLinearGradient(0,0,sh.l*1.4,0);
+    cone.addColorStop(0,'rgba(255,255,200,0.45)');
+    cone.addColorStop(1,'rgba(255,255,200,0)');
+    pctx.fillStyle=cone;
+    pctx.beginPath();
+    pctx.moveTo(0,-sh.w*0.18);
+    pctx.lineTo(sh.l*1.4,-sh.w*0.7);
+    pctx.lineTo(sh.l*1.4,sh.w*0.7);
+    pctx.closePath();
+    pctx.fill();
+    pctx.restore();
+  }
+  if(tmpl.hasTorpedo){pctx.fillStyle='rgba(100,255,160,0.7)';pctx.fillRect(sh.l*0.05,-1,sh.l*0.42,2);} else if(tmpl.hasRocket){pctx.fillStyle='rgba(255,185,50,0.8)';pctx.fillRect(-sh.l*0.1,-1.8,sh.l*0.5,3.5);} else if(tmpl.isAntiAir){pctx.strokeStyle='rgba(255,255,80,0.9)';pctx.lineWidth=1.5;pctx.beginPath();pctx.arc(0,-sh.w,4,0,Math.PI*2);pctx.stroke();}
+  pctx.restore();
+  pctx.restore();
+  pctx.fillStyle='#8ecfff';pctx.font='11px Segoe UI';pctx.textAlign='center';
+  pctx.fillText(tmpl.name||'Preview Ship',canvas.width*0.5,canvas.height-16);
+  const specialLabel = Array.isArray(tmpl.special)
+    ? tmpl.special.filter(s=>s&&s!=='spec_none').map(id=>MOD.specials[id]?.name||id).join(' + ')
+    : (tmpl.special && tmpl.special!=='spec_none' ? MOD.specials[tmpl.special]?.name||tmpl.special : '');
+  if(specialLabel){
+    pctx.fillStyle='#d4c76a';pctx.font='10px Segoe UI';
+    pctx.fillText(specialLabel,canvas.width*0.5,canvas.height-4);
+  }
+}
+
+function drawSub(b, friendly) {
+  ctx.save();ctx.globalAlpha=friendly?0.55:0.35;
+  ctx.translate(b.x,b.y);ctx.rotate(b.angle);
+  ctx.strokeStyle=friendly?'rgba(80,220,255,0.8)':'rgba(255,100,100,0.5)';
+  ctx.lineWidth=2;ctx.setLineDash([5,4]);
+  ctx.beginPath();ctx.ellipse(0,0,21,6.5,0,0,Math.PI*2);ctx.stroke();
+  ctx.setLineDash([]);ctx.restore();
+  ctx.globalAlpha=friendly?0.75:0.5;
+  ctx.fillStyle=friendly?'#4acfff':'#ff5a5a';
+  ctx.font='8px Segoe UI';ctx.textAlign='center';
+  ctx.fillText((friendly?'🤿':'⚠️')+' '+b.name,b.x,b.y-22);
+  ctx.globalAlpha=1;
+}
+
+function drawAircraft(a) {
+  const selected = G.selectedAircraft===a;
+  if(selected){
+    const visibleRange = getAircraftEffectiveRange(a);
+    ctx.save();
+    ctx.strokeStyle='rgba(180,220,255,0.24)';
+    ctx.lineWidth=1.2;
+    ctx.setLineDash([8,6]);
+    ctx.beginPath();
+    ctx.arc(a.x,a.y,visibleRange,0,Math.PI*2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+  }
+  ctx.save();
+  ctx.translate(a.x,a.y);
+  const ang = Math.atan2(a.ty-a.y,a.tx-a.x);
+  ctx.rotate(ang);
+  const hullColor = {'plane_scout':'#8ad4ff','plane_interceptor':'#7ad4ff','plane_attacker':'#ffda8a','plane_bomber':'#d28570'}[a.type]||'#aaccee';
+  const accent = a.friendly?'#4ec0ff':'#ff9a6e';
+  ctx.fillStyle=hullColor;
+  ctx.strokeStyle=accent;
+  ctx.lineWidth=1.5;
+  if(a.type==='plane_scout'){
+    ctx.beginPath();
+    ctx.moveTo(-8,0);
+    ctx.lineTo(6,-5);
+    ctx.lineTo(10,-3);
+    ctx.lineTo(10,3);
+    ctx.lineTo(6,5);
+    ctx.closePath();
+    ctx.fill();ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,-3);ctx.lineTo(4,-9);ctx.lineTo(6,-8);ctx.lineTo(2,-2);ctx.closePath();ctx.fill();
+    ctx.beginPath();ctx.moveTo(0,3);ctx.lineTo(4,9);ctx.lineTo(6,8);ctx.lineTo(2,2);ctx.closePath();ctx.fill();
+  } else if(a.type==='plane_interceptor'){
+    ctx.beginPath();
+    ctx.moveTo(-10,0);
+    ctx.lineTo(8,-4);
+    ctx.lineTo(12,-2);
+    ctx.lineTo(12,2);
+    ctx.lineTo(8,4);
+    ctx.closePath();
+    ctx.fill();ctx.stroke();
+    ctx.beginPath();ctx.moveTo(-2,-4);ctx.lineTo(4,-12);ctx.lineTo(10,-10);ctx.lineTo(2,-3);ctx.closePath();ctx.fill();
+    ctx.beginPath();ctx.moveTo(-2,4);ctx.lineTo(4,12);ctx.lineTo(10,10);ctx.lineTo(2,3);ctx.closePath();ctx.fill();
+  } else if(a.type==='plane_attacker'){
+    ctx.beginPath();
+    ctx.moveTo(-10,0);
+    ctx.lineTo(8,-5);
+    ctx.lineTo(8,-2);
+    ctx.lineTo(14,-2);
+    ctx.lineTo(14,2);
+    ctx.lineTo(8,2);
+    ctx.lineTo(8,5);
+    ctx.closePath();
+    ctx.fill();ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,-5);ctx.lineTo(6,-12);ctx.lineTo(10,-11);ctx.lineTo(4,-4);ctx.closePath();ctx.fill();
+    ctx.beginPath();ctx.moveTo(0,5);ctx.lineTo(6,12);ctx.lineTo(10,11);ctx.lineTo(4,4);ctx.closePath();ctx.fill();
+  } else {
+    ctx.beginPath();
+    ctx.moveTo(-12,0);
+    ctx.lineTo(8,-6);
+    ctx.lineTo(14,-2);
+    ctx.lineTo(16,-2);
+    ctx.lineTo(16,2);
+    ctx.lineTo(14,2);
+    ctx.lineTo(8,6);
+    ctx.closePath();
+    ctx.fill();ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,-6);ctx.lineTo(5,-14);ctx.lineTo(10,-12);ctx.lineTo(4,-4);ctx.closePath();ctx.fill();
+    ctx.beginPath();ctx.moveTo(0,6);ctx.lineTo(5,14);ctx.lineTo(10,12);ctx.lineTo(4,4);ctx.closePath();ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,0.6)';
+    ctx.beginPath();ctx.arc(4,0,3,0,Math.PI*2);ctx.fill();
+  }
+  if(a.weapon==='gun_machinegun'){
+    ctx.strokeStyle=accent;ctx.lineWidth=1.4;
+    ctx.beginPath();ctx.moveTo(10,-2);ctx.lineTo(14,-3);ctx.moveTo(10,2);ctx.lineTo(14,3);ctx.stroke();
+  } else if(a.weapon==='gun_rocketpod'){
+    ctx.fillStyle='#ff6d6d';
+    ctx.fillRect(2,-8,3,4);
+    ctx.fillRect(2,4,3,4);
+  } else if(a.weapon==='gun_bombbay'){
+    ctx.fillStyle='#b87f4e';
+    ctx.beginPath();ctx.arc(2,0,3,0,Math.PI*2);ctx.fill();
+  }
+  if(a.special==='spec_fuelcell'){
+    ctx.fillStyle='rgba(240,230,140,0.7)';
+    ctx.fillRect(-4,-12,8,5);
+  }
+  if(a.flightMode==='water'){
+    ctx.strokeStyle='rgba(255,255,255,0.7)';ctx.lineWidth=1.2;
+    ctx.beginPath();ctx.arc(0,0,10,0,Math.PI*2);ctx.stroke();
+    ctx.fillStyle='rgba(0,120,180,0.35)';
+    ctx.fillRect(-12,8,24,4);
+  }
+  if(a.special==='spec_armor'){
+    ctx.strokeStyle='rgba(255,235,170,0.7)';ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(0,0,14,0,Math.PI*2);ctx.stroke();
+  }
+  if(a.special==='spec_dogfight'){
+    ctx.strokeStyle='rgba(255,220,160,0.8)';ctx.lineWidth=1.2;
+    ctx.beginPath();ctx.moveTo(-2,-8);ctx.lineTo(2,-14);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(-2,8);ctx.lineTo(2,14);ctx.stroke();
+  }
+  ctx.restore();
+  const pct=a.hp/a.maxHp;
+  ctx.fillStyle='#060e18';ctx.fillRect(a.x-13,a.y-22,26,3);
+  ctx.fillStyle=pct>0.5?'#2a8a2a':'#8a2a2a';
+  ctx.fillRect(a.x-13,a.y-22,26*pct,3);
+  if(a.fuel!==undefined){
+    const fp=(a.fuel/100);
+    ctx.fillStyle='#0d3a56';ctx.fillRect(a.x-13,a.y-18,26,2);
+    ctx.fillStyle='#f0d66e';ctx.fillRect(a.x-13,a.y-18,26*fp,2);
+  }
+}
+
+function drawNeutralIsland(ni) {
+  const x=ix(ni.x), y=iy(ni.y);
+  ctx.save();
+  // Shadow
+  ctx.beginPath();ctx.ellipse(x,y+8,ni.r+10,12,0,0,Math.PI*2);
+  ctx.fillStyle='rgba(0,0,0,0.25)';ctx.fill();
+  // Sandy shore
+  ctx.beginPath();ctx.ellipse(x,y,ni.r+14,ni.r*0.46,0,0,Math.PI*2);
+  ctx.fillStyle='#c8b060';ctx.fill();
+  // Island body
+  ctx.beginPath();ctx.ellipse(x,y,ni.r+9,ni.r*0.4,0,0,Math.PI*2);
+  ctx.fillStyle=ni.col;ctx.fill();
+  // Shore edge
+  ctx.beginPath();ctx.ellipse(x,y,ni.r+15,ni.r*0.48,0,0,Math.PI*2);
+  ctx.strokeStyle='rgba(200,190,140,0.3)';ctx.lineWidth=3;ctx.stroke();
+
+  // Vegetation (randomized per island)
+  if(ni._vege) for(const [dx,dy,r] of ni._vege){
+    ctx.beginPath();ctx.arc(x+dx,y+dy,r,0,Math.PI*2);
+    ctx.fillStyle='#2a5a28';ctx.fill();
+    ctx.beginPath();ctx.arc(x+dx+1,y+dy+1,r*0.75,0,Math.PI*2);
+    ctx.fillStyle='#347034';ctx.fill();
+  }
+
+  // Turret
+  if(ni.turret>0&&ni.owner==='player'){
+    ctx.fillStyle='#8a8a8a';ctx.strokeStyle='#5acfff';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.arc(x,y-ni.r*0.38,7,0,Math.PI*2);ctx.fill();ctx.stroke();
+    ctx.fillStyle='#aaaaaa';ctx.fillRect(x,y-ni.r*0.38-10,2,10);
+  }
+
+  // Dock
+  if(ni.dock>0&&ni.owner==='player'){
+    ctx.fillStyle='rgba(50,120,180,0.5)';
+    ctx.fillRect(x+ni.r*0.4,y-3,ni.r*0.4,6);
+    ctx.strokeStyle='#2a6aaf';ctx.lineWidth=1;ctx.stroke();
+  }
+
+  // Flag
+  ctx.fillStyle=ni.owner==='player'?'#3acfff':ni.owner==='enemy'?'#ff4a4a':'#aaaaaa';
+  ctx.fillRect(x-1,y-ni.r*0.4-22,2,14);
+  ctx.beginPath();
+  ctx.moveTo(x+1,y-ni.r*0.4-22);ctx.lineTo(x+11,y-ni.r*0.4-16);ctx.lineTo(x+1,y-ni.r*0.4-11);
+  ctx.fill();
+
+  // Name + resource
+  ctx.fillStyle=ni.owner==='player'?'#5adfff':ni.owner==='enemy'?'#ff8a6a':'#8aacbe';
+  ctx.font='9px Segoe UI';ctx.textAlign='center';
+  ctx.fillText(ni.name,x,y+ni.r*0.4+15);
+  ctx.fillStyle='#2a4a5a';
+  ctx.fillText(`+${ni.rate} ${({steel:'⚙️',fuel:'⛽',wood:'🪵',gold:'💰'}[ni.res]||ni.res)}`,x,y+ni.r*0.4+25);
+
+  // Capture bar
+  if(ni.cap>0||ni.owner){
+    const bw=58,bx2=x-29,by2=y+ni.r*0.4+29;
+    ctx.fillStyle='#030810';ctx.fillRect(bx2,by2,bw,5);
+    ctx.fillStyle=ni.owner==='enemy'?'#df2a2a':'#2a7adf';
+    ctx.fillRect(bx2,by2,bw*(ni.cap/100),5);
+  }
+  ctx.restore();
+}
+
+function drawMainIsland(x, y, player) {
+  ctx.save();
+  ctx.beginPath();ctx.ellipse(x,y+10,BASE_R+14,18,0,0,Math.PI*2);
+  ctx.fillStyle='rgba(0,0,0,0.3)';ctx.fill();
+
+  ctx.beginPath();ctx.ellipse(x,y,BASE_R+20,BASE_R*0.54,0,0,Math.PI*2);
+  ctx.fillStyle=player?'#d4a840':'#b06040';ctx.fill();
+
+  ctx.beginPath();ctx.ellipse(x,y,BASE_R+22,BASE_R*0.56,0,0,Math.PI*2);
+  ctx.strokeStyle=player?'rgba(195,180,110,0.4)':'rgba(195,110,80,0.35)';ctx.lineWidth=4;ctx.stroke();
+
+  const blobs=player?[[-25,-24],[10,-28],[32,-15],[-7,-13],[20,-25],[0,-8],[-32,-10]]:
+                     [[-22,-22],[16,-24],[26,-12],[-26,-10],[4,-22],[12,-6],[-10,-20]];
+  for(const[dx,dy]of blobs){
+    ctx.beginPath();ctx.arc(x+dx,y+dy,11,0,Math.PI*2);
+    ctx.fillStyle=player?'#266020':'#4a2020';ctx.fill();
+    ctx.beginPath();ctx.arc(x+dx+1,y+dy+2,9,0,Math.PI*2);
+    ctx.fillStyle=player?'#307030':'#5a2828';ctx.fill();
+  }
+
+  // Flag
+  ctx.fillStyle=player?'#3acfff':'#ff4a4a';
+  ctx.fillRect(x-1,y-BASE_R*0.52-28,2,20);
+  ctx.beginPath();
+  ctx.moveTo(x+1,y-BASE_R*0.52-28);ctx.lineTo(x+16,y-BASE_R*0.52-20);ctx.lineTo(x+1,y-BASE_R*0.52-13);
+  ctx.fill();
+
+  ctx.fillStyle=player?'#8ecfff':'#ff9980';
+  ctx.font='bold 11px Segoe UI';ctx.textAlign='center';
+  ctx.fillText(player?'YOUR BASE':'ENEMY BASE',x,y+BASE_R*0.52+18);
+
+  const hp=player?G.playerBaseHP:G.enemyBaseHP;
+  const mxhp=player?G.playerBaseMaxHP:G.enemyBaseMaxHP;
+  const pct=Math.max(0,hp/mxhp);
+  ctx.fillStyle='#030810';ctx.fillRect(x-50,y+BASE_R*0.52+24,100,8);
+  ctx.fillStyle=pct>0.5?'#1a8a1a':pct>0.25?'#8a7010':'#8a1a10';
+  ctx.fillRect(x-50,y+BASE_R*0.52+24,100*pct,8);
+  ctx.fillStyle='rgba(200,220,240,0.55)';ctx.font='8px Segoe UI';
+  ctx.fillText(`${Math.ceil(hp)}/${mxhp}`,x,y+BASE_R*0.52+37);
+  if(player){
+    ctx.fillStyle='rgba(80,160,255,0.35)';ctx.font='9px Segoe UI';
+    ctx.fillText('click to manage',x,y+BASE_R*0.52+50);
+  }
+  ctx.restore();
+}
+
+function drawDayNight() {
+  const t = G.dayTime; // 0=dawn 0.25=noon 0.5=dusk 0.75=midnight
+  // Night: peaks at t=0.75, day: t=0.25
+  const nightFactor = 0.5 - 0.5*Math.cos((t-0.25)*Math.PI*2);
+  const alpha = nightFactor * 0.62;
+  if(alpha < 0.02) return;
+  ctx.fillStyle = `rgba(3,5,18,${alpha})`;
+  ctx.fillRect(0,0,W,H);
+  // Stars at night
+  if(nightFactor > 0.3){
+    const starseed = 42;
+    ctx.fillStyle = `rgba(255,255,255,${(nightFactor-0.3)*0.7})`;
+    for(let i=0;i<80;i++){
+      const sx = ((starseed*i*1234567)%W+W)%W;
+      const sy = ((starseed*i*7654321)%H*0.7+H*0.05)%(H*0.5);
+      const twinkle = 0.5+0.5*Math.sin(G.tick*0.04+i*1.3);
+      ctx.globalAlpha = twinkle*nightFactor*0.6;
+      ctx.beginPath();ctx.arc(sx,sy,0.8,0,Math.PI*2);ctx.fill();
+    }
+    ctx.globalAlpha=1;
+  }
+}
+
+function drawRain() {
+  if(G.rainIntensity<=0.05)return;
+  const rainAlpha = Math.min(0.22, G.rainIntensity * 0.28 + (G.weather==='storm'?0.1:0));
+  ctx.save();
+  ctx.strokeStyle=`rgba(190,220,255,${rainAlpha})`;
+  ctx.lineWidth = 1 + (G.weather==='storm'?0.9:0);
+  for(const d of G.rainDrops){
+    ctx.beginPath();
+    ctx.moveTo(d.x,d.y);
+    ctx.lineTo(d.x+d.vx*0.12,d.y+d.vy*0.12);
+    ctx.stroke();
+  }
+  if(G.lightning > 0){
+    ctx.fillStyle = `rgba(240,245,255,${G.lightning * 0.18})`;
+    ctx.fillRect(0,0,W*WORLD_SCALE,H*WORLD_SCALE);
+  }
+  ctx.restore();
+}
+
+function drawFog() {
+  if(G.fogOpacity<0.04)return;
+  const worldW = W * WORLD_SCALE;
+  const worldH = H * WORLD_SCALE;
+  const t = G.tick * 0.0012;
+  for(let i=0;i<10;i++){
+    const bx = worldW * ((i * 0.1 + Math.sin(t + i*1.1)*0.03 + 0.1) % 0.9);
+    const by = worldH * (0.05 + (i % 3) * 0.28 + Math.cos(t*0.8 + i*1.3) * 0.06);
+    const radius = worldW * 0.18 + Math.sin(i + t) * worldW * 0.02;
+    const fg = ctx.createRadialGradient(bx,by,0,bx,by,radius);
+    fg.addColorStop(0,`rgba(190,205,220,${G.fogOpacity*0.22})`);
+    fg.addColorStop(0.65,`rgba(190,205,220,${G.fogOpacity*0.08})`);
+    fg.addColorStop(1,'rgba(190,205,220,0)');
+    ctx.fillStyle = fg;ctx.beginPath();ctx.arc(bx,by,radius,0,Math.PI*2);ctx.fill();
+  }
+}
+
+function drawMinimap() {
+  const MW=180, MH=110;
+  const WW = W * WORLD_SCALE;
+  const HH = H * WORLD_SCALE;
+  mctx.clearRect(0,0,MW,MH);
+
+  // Background
+  mctx.fillStyle='rgba(3,8,18,0.95)';mctx.fillRect(0,0,MW,MH);
+
+  // Ocean
+  mctx.fillStyle='#06101e';mctx.fillRect(1,1,MW-2,MH-2);
+
+  // Islands
+  for(const ni of NEUTRAL_ISLANDS){
+    const mx=ni.x*MW, my=ni.y*MH;
+    mctx.fillStyle=ni.owner==='player'?'#2a7adf':ni.owner==='enemy'?'#df2a2a':'#3a6a8a';
+    mctx.beginPath();mctx.arc(mx,my,4,0,Math.PI*2);mctx.fill();
+  }
+  // Main bases
+  mctx.fillStyle='#3acfff';mctx.beginPath();mctx.arc(PLAYER_ISLAND.x*MW,PLAYER_ISLAND.y*MH,6,0,Math.PI*2);mctx.fill();
+  mctx.fillStyle='#ff4a4a';mctx.beginPath();mctx.arc(ENEMY_ISLAND.x*MW,ENEMY_ISLAND.y*MH,6,0,Math.PI*2);mctx.fill();
+
+  // Player fleet
+  for(const b of G.fleet){
+    const mx=b.x/WW*MW, my=b.y/HH*MH;
+    mctx.fillStyle='#5adfff';
+    mctx.fillRect(mx-1.5,my-1.5,3,3);
+  }
+  // Enemy fleet
+  for(const b of G.enemyFleet){
+    const mx=b.x/WW*MW, my=b.y/HH*MH;
+    mctx.fillStyle='#ff6a5a';
+    mctx.fillRect(mx-1.5,my-1.5,3,3);
+  }
+
+  // Camera viewport indicator
+  const vTL=stw(0,0), vBR=stw(W,H);
+  const vx=(vTL.x/WW*MW), vy=(vTL.y/HH*MH);
+  const vw=((vBR.x-vTL.x)/WW*MW), vh=((vBR.y-vTL.y)/HH*MH);
+  mctx.strokeStyle='rgba(58,207,255,0.5)';mctx.lineWidth=1;mctx.setLineDash([3,2]);
+  mctx.strokeRect(vx,vy,vw,vh);
+  mctx.setLineDash([]);
+}
+
+// ═══════════════════════════ GAME LOGIC ══════════════════
+
+function addExplosion(x, y, scale=1, fire=false) {
+  const cnt = Math.floor((5+Math.random()*6)*scale);
+  for(let i=0;i<cnt;i++){
+    const a=Math.random()*Math.PI*2, spd=30+Math.random()*60*scale;
+    const col=fire&&Math.random()<0.4?'#ff8800':'#ffcc44';
+    G.particles.push({x,y,vx:Math.cos(a)*spd,vy:Math.sin(a)*spd,life:0.5+Math.random()*0.5,maxLife:0.8,sz:2+Math.random()*3*scale,col});
+  }
+}
+
+function spawnCritText(x, y, dmg) {
+  const el = document.createElement('div');
+  el.className = 'crit-text';
+  el.textContent = `CRIT! ${Math.floor(dmg)}`;
+  const sc = wts(x, y);
+  el.style.left = (sc.x-30) + 'px';
+  el.style.top  = (sc.y-20) + 'px';
+  document.getElementById('ui').appendChild(el);
+  setTimeout(() => el.remove(), 1600);
+}
+
+function applyCrit(dmg) {
+  if(Math.random() < CRIT_CHANCE) return {dmg: dmg*CRIT_MULT, crit: true};
+  return {dmg, crit: false};
+}
+
+function tickBoats(dt) {
+  const WM = {clear:1, cloudy:0.96, fog:0.82, rain:0.78, storm:0.65};
+  const spdMult = WM[G.weather]||1;
+
+  // Night penalty
+  const nightFactor = 0.5 - 0.5*Math.cos((G.dayTime-0.25)*Math.PI*2);
+  const nightRange = 1 - nightFactor*0.28;
+
+  const pbp = {x:ix(PLAYER_ISLAND.x),y:iy(PLAYER_ISLAND.y)};
+  const ebp = {x:ix(ENEMY_ISLAND.x), y:iy(ENEMY_ISLAND.y)};
+
+  for(const b of G.fleet) {
+    b.fireTimer = Math.max(0, b.fireTimer-dt);
+    if(b.smokeCooldown !== undefined) b.smokeCooldown = Math.max(0, b.smokeCooldown-dt);
+    if(b.mineCooldown  !== undefined) b.mineCooldown  = Math.max(0, b.mineCooldown-dt);
+
+    // Fuel consumption (all boats)
+    if(b.status !== 'idle' || b.isSub) {
+      b.fuel = Math.max(0, b.fuel - b.fuelPerSec * dt);
+    }
+
+    // If low fuel, retreat to base
+    if(b.fuel < 8 && b.status !== 'retreat' && b.status !== 'idle') {
+      b.status = 'retreat';
+      showMsg(`⛽ ${b.name} low on fuel — retreating!`);
+    }
+
+    // Refuel at player base
+    if(dist(b, pbp) < BASE_R + 40 && b.fuel < 100) {
+      const refRate = 8 + (G.buildings['fueldepot']||0)*5;
+      b.fuel = Math.min(100, b.fuel + refRate*dt);
+      if(b.fuel >= 99 && b.status === 'retreat') {
+        b.status = 'idle';
+        showMsg(`⛽ ${b.name} refueled!`);
+      }
+    }
+
+    // Refuel at captured island dock
+    for(const ni of NEUTRAL_ISLANDS){
+      if(ni.owner==='player'&&ni.dock>0&&dist(b,{x:ix(ni.x),y:iy(ni.y)})<ni.r+40){
+        b.fuel = Math.min(100, b.fuel + 4*dt);
+      }
+    }
+
+    // Self-repair
+    if(b.hasRepair && b.status !== 'idle' && b.hp < b.maxHp) {
+      b.hp = Math.min(b.maxHp, b.hp + 3*dt);
+    }
+
+    // Dry dock repair at base
+    if(dist(b, pbp) < BASE_R+50 && b.status==='idle' && b.hp < b.maxHp) {
+      const dd = G.buildings['drydock']||0;
+      if(dd>0){
+        const rate = 7*dd*(G.advancedRepair?1.8:1);
+        b.hp = Math.min(b.maxHp, b.hp + rate*dt);
+      }
+    }
+
+    // Auto-smoke when under attack
+    if(b.hasSmoke && b.autoSmoke && (b.smokeCooldown||0)<=0){
+      const threatened = G.enemyFleet.some(e=>dist(b,e)<(b.range||180)*0.9||dist(b,e)<120);
+      if(threatened){deploySmoke(b);b.smokeCooldown=45;}
+    }
+
+    // Fire cooldown fades
+    if(b.onFire){b.fireLife=(b.fireLife||0)-dt; if(b.fireLife<=0)b.onFire=false;}
+
+    // Cooldowns tick down
+    if((b.smokeCooldown||0)>0) b.smokeCooldown=Math.max(0,(b.smokeCooldown||0)-dt);
+    if((b.mineCooldown||0)>0) b.mineCooldown=Math.max(0,(b.mineCooldown||0)-dt);
+    if((b.torpedoCooldown||0)>0) b.torpedoCooldown=Math.max(0,(b.torpedoCooldown||0)-dt);
+
+    // Wake
+    if(b.status!=='idle'&&G.tick%5===0) G.wakes.push({x:b.x,y:b.y,angle:b.angle,life:1});
+
+    const effRange = getBoatEffectiveRange(b);
+
+    if(b.status==='retreat'){
+      const d=dist(b,pbp);
+      if(d>BASE_R+30){const a=ang(b,pbp);b.angle=a;b.x+=Math.cos(a)*b.speed*spdMult*dt;b.y+=Math.sin(a)*b.speed*spdMult*dt;}
+      else{b.status='idle';}
+      continue;
+    }
+
+    if(b.status==='attack'){
+      const aaTarget = G.aircraft.filter(a=>!a.friendly&&dist(b,a)<effRange && a.flightMode==='air')[0];
+      if(aaTarget && b.fireTimer<=0 && b.dmg>0){
+        b.fireTimer=1/b.firerate;
+        const cr=applyCrit(b.dmg);
+        if(cr.crit){spawnCritText(aaTarget.x,aaTarget.y,cr.dmg);}
+        fireProj(b.x,b.y,aaTarget,cr.dmg,true,false,false,true);
+      }
+      const tgts=G.enemyFleet.filter(e=>!e.submerged||b.hasSonar||b.hasNuke);
+      const baseTarget={x:ebp.x,y:ebp.y,base:true};
+      let tgt=null;
+      if(b.hasICBM && !b.submerged){
+        const strong = tgts.filter(e=>e.maxHp>220);
+        tgt = strong.length ? strong.sort((a,c)=>c.maxHp-a.maxHp)[0] : baseTarget;
+      } else if(b.hasNuke){
+        const strong = tgts.filter(e=>e.maxHp>220);
+        if(strong.length){
+          tgt = strong.sort((a,c)=>c.maxHp-a.maxHp)[0];
+        } else if(dist(b,ebp)<=effRange){
+          tgt = baseTarget;
+        }
+      }
+      if(!tgt) tgt = tgts.sort((a,c)=>dist(b,a)-dist(b,c))[0] || baseTarget;
+      if(!tgt.base){
+        const d=dist(b,tgt);
+        if(d>effRange*0.82){const a=ang(b,tgt);b.angle=a;b.x+=Math.cos(a)*b.speed*spdMult*dt;b.y+=Math.sin(a)*b.speed*spdMult*dt;}
+        if(d<=effRange&&b.fireTimer<=0&&b.dmg>0&&b.fuel>0){
+          b.fireTimer=1/b.firerate;
+          const cr=applyCrit(b.dmg);
+          if(cr.crit){spawnCritText(tgt.x,tgt.y,cr.dmg);tgt.onFire=true;tgt.fireLife=2+Math.random();}
+          fireProj(b.x,b.y,tgt,cr.dmg,true,b.hasTorpedo,b.hasRocket,false,b.hasICBM && tgt.base);
+          if(b.hasTorpedo){
+            G.res.fuel=Math.max(0,G.res.fuel - (b.weapons?.includes('gun_torpedo')?10:14));
+            b.torpedoCooldown=12; // 12s reload
+          }
+        }
+      } else {
+        const d=dist(b,ebp);
+        if(d>BASE_R+30){const a=ang(b,ebp);b.angle=a;b.x+=Math.cos(a)*b.speed*spdMult*dt;b.y+=Math.sin(a)*b.speed*spdMult*dt;}
+        else if(b.fireTimer<=0&&b.dmg>0){
+          b.fireTimer=1/b.firerate;
+          if(b.hasICBM){
+            fireProj(b.x,b.y,baseTarget,b.dmg,true,false,false,false,true);
+          } else {
+            G.enemyBaseHP=Math.max(0,G.enemyBaseHP-b.dmg*1.5);
+            G.enemyBaseRegenCooldown=4;
+            addExplosion(ebp.x+Math.random()*22-11,ebp.y+Math.random()*12-6,0.5);
+          }
+        }
+      }
+      if(b.hp/b.maxHp*100<=b.retreatHP) b.status='retreat';
+    }
+
+    if(b.status==='patrol'&&b.patrolPoints.length===2){
+      const pt=b.patrolPoints[b.patrolIdx];
+      const d=dist(b,pt);
+      if(d>18){const a=ang(b,pt);b.angle=a;b.x+=Math.cos(a)*b.speed*spdMult*0.75*dt;b.y+=Math.sin(a)*b.speed*spdMult*0.75*dt;}
+      else{b.patrolIdx=(b.patrolIdx+1)%2;}
+      const aaTarget = b.isAntiAir ? G.aircraft.filter(a=>!a.friendly&&dist(b,a)<effRange)[0] : null;
+      if(aaTarget && b.fireTimer<=0){
+        b.fireTimer=1/b.firerate;
+        const cr=applyCrit(b.dmg);
+        if(cr.crit){spawnCritText(aaTarget.x,aaTarget.y,cr.dmg);}
+        fireProj(b.x,b.y,aaTarget,cr.dmg,true,false,false,true);
+      } else {
+        for(const e of G.enemyFleet){
+          if((!e.submerged||b.hasSonar)&&dist(b,e)<effRange&&b.fireTimer<=0&&b.dmg>0){
+            b.fireTimer=1/b.firerate;
+            const cr=applyCrit(b.dmg);
+            if(cr.crit){spawnCritText(e.x,e.y,cr.dmg);e.onFire=true;e.fireLife=2;}
+            fireProj(b.x,b.y,e,cr.dmg,true,b.hasTorpedo,b.hasRocket);
+          }
+        }
+      }
+    }
+
+    if(b.status==='guard'&&b.guardPos){
+      const d=dist(b,b.guardPos);
+      if(d>24){const a=ang(b,b.guardPos);b.angle=a;b.x+=Math.cos(a)*b.speed*spdMult*0.8*dt;b.y+=Math.sin(a)*b.speed*spdMult*0.8*dt;}
+      const aaTarget = b.isAntiAir ? G.aircraft.filter(a=>!a.friendly&&dist(b,a)<effRange)[0] : null;
+      if(aaTarget && b.fireTimer<=0){
+        b.fireTimer=1/b.firerate;
+        const cr=applyCrit(b.dmg);
+        if(cr.crit){spawnCritText(aaTarget.x,aaTarget.y,cr.dmg);}
+        fireProj(b.x,b.y,aaTarget,cr.dmg,true,false,false,true);
+      } else {
+        for(const e of G.enemyFleet){
+          if((!e.submerged||b.hasSonar)&&dist(b,e)<effRange&&b.fireTimer<=0&&b.dmg>0){
+            b.fireTimer=1/b.firerate;
+            const cr=applyCrit(b.dmg);
+            if(cr.crit){spawnCritText(e.x,e.y,cr.dmg);e.onFire=true;e.fireLife=2;}
+            fireProj(b.x,b.y,e,cr.dmg,true,b.hasTorpedo,b.hasRocket);
+          }
+        }
+      }
+    }
+
+    if(b.isSub&&b.submerged&&b.status==='attack'){
+      const tgts=G.enemyFleet.filter(e=>!e.submerged||b.hasSonar||b.hasNuke);
+      let tgt=null;
+      let nukeLaunched=false;
+      if(b.hasNuke){
+        const strong = tgts.filter(e=>e.maxHp>220);
+        if(strong.length){
+          tgt = strong.sort((a,c)=>c.maxHp-a.maxHp)[0];
+        } else if(dist(b,ebp)<=effRange){
+          if(b.fireTimer<=0&&b.dmg>0){
+            b.fireTimer=1/b.firerate;
+            G.enemyBaseHP=Math.max(0,G.enemyBaseHP-450);
+            addExplosion(ebp.x+Math.random()*22-11,ebp.y+Math.random()*12-6,1.4);
+            nukeLaunched=true;
+          }
+        }
+      }
+      if(!tgt && !nukeLaunched) tgt = tgts.sort((a,c)=>dist(b,a)-dist(b,c))[0];
+      if(tgt){
+        const d=dist(b,tgt);
+        if(d>effRange*0.82){const a=ang(b,tgt);b.angle=a;b.x+=Math.cos(a)*b.speed*spdMult*0.6*dt;b.y+=Math.sin(a)*b.speed*spdMult*0.6*dt;}
+        if(d<=effRange&&b.fireTimer<=0&&b.dmg>0){
+          b.fireTimer=1/b.firerate;
+          const cr=applyCrit(b.dmg);
+          if(cr.crit){spawnCritText(tgt.x,tgt.y,cr.dmg);tgt.onFire=true;tgt.fireLife=2;}
+          fireProj(b.x,b.y,tgt,cr.dmg,true,true,false);
+          G.res.fuel=Math.max(0,G.res.fuel-16);
+        }
+      }
+    }
+
+    if(b.status==='idle' && !b.submerged && b.fireTimer<=0 && b.dmg>0){
+      const tgt=G.enemyFleet.filter(e=>(!e.submerged||b.hasSonar||b.hasNuke||b.hasICBM) && dist(b,e)<=effRange).sort((a,c)=>dist(b,a)-dist(b,c))[0];
+      if(tgt){
+        const d=dist(b,tgt);
+        if(d<=effRange){
+          b.fireTimer=1/b.firerate;
+          const cr=applyCrit(b.dmg);
+          if(cr.crit){spawnCritText(tgt.x,tgt.y,cr.dmg);tgt.onFire=true;tgt.fireLife=2;}
+          fireProj(b.x,b.y,tgt,cr.dmg,true,b.hasTorpedo,b.hasRocket);
+        }
+      }
+    }
+    if(b.status==='idle' && b.isSub && b.fireTimer<=0 && b.dmg>0){
+      const tgt=G.enemyFleet.filter(e=>(!e.submerged||b.hasSonar||b.hasNuke) && dist(b,e)<=effRange).sort((a,c)=>dist(b,a)-dist(b,c))[0];
+      if(tgt){
+        const d=dist(b,tgt);
+        if(d<=effRange){
+          b.fireTimer=1/b.firerate;
+          const cr=applyCrit(b.dmg);
+          if(cr.crit){spawnCritText(tgt.x,tgt.y,cr.dmg);tgt.onFire=true;tgt.fireLife=2;}
+          fireProj(b.x,b.y,tgt,cr.dmg,true,b.hasTorpedo,b.hasRocket);
+        }
+      }
+    }
+  }
+
+  // Enemy boat AI
+  for(const b of G.enemyFleet){
+    b.fireTimer = Math.max(0, b.fireTimer-dt);
+    b.fuel = Math.max(0, b.fuel - b.fuelPerSec*dt*0.1);
+    if(b.status!=='idle'&&G.tick%5===0) G.wakes.push({x:b.x,y:b.y,angle:b.angle,life:1});
+
+    const effRange=getBoatEffectiveRange(b);
+
+    if(b.status==='attack'){
+      const aaTarget = G.aircraft.filter(a=>!a.friendly&&dist(b,a)<effRange && a.flightMode==='air')[0];
+      if(aaTarget && b.fireTimer<=0 && b.dmg>0){
+        b.fireTimer=1/b.firerate;
+        const cr=applyCrit(b.dmg);
+        if(cr.crit){spawnCritText(aaTarget.x,aaTarget.y,cr.dmg);}
+        fireProj(b.x,b.y,aaTarget,cr.dmg,false,false,false,true);
+      }
+      const visTargets=G.fleet.filter(f=>!f.submerged);
+      const tgt=(visTargets.length?visTargets:G.fleet).sort((a,c)=>dist(b,a)-dist(b,c))[0];
+      if(!tgt){
+        const d=dist(b,pbp);
+        if(d>BASE_R+22){const a=ang(b,pbp);b.angle=a;b.x+=Math.cos(a)*b.speed*spdMult*dt;b.y+=Math.sin(a)*b.speed*spdMult*dt;}
+        else if(b.fireTimer<=0){
+          b.fireTimer=1.1;
+          G.playerBaseHP=Math.max(0,G.playerBaseHP-b.dmg*1.5);
+          addExplosion(pbp.x+Math.random()*22-11,pbp.y+Math.random()*12-6,0.5);
+          showAlert('⚠️ Enemy attacking your base!');
+        }
+      } else {
+        const d=dist(b,tgt);
+        if(d>effRange*0.82){const a=ang(b,tgt);b.angle=a;b.x+=Math.cos(a)*b.speed*spdMult*dt;b.y+=Math.sin(a)*b.speed*spdMult*dt;}
+        if(d<=effRange&&b.fireTimer<=0&&b.dmg>0){
+          b.fireTimer=1/b.firerate;
+          const cr=applyCrit(b.dmg);
+          if(cr.crit){tgt.onFire=true;tgt.fireLife=2;}
+          fireProj(b.x,b.y,tgt,cr.dmg,false,b.hasTorpedo,b.hasRocket);
+        }
+      }
+    } else {
+      const aaTarget = G.aircraft.filter(a=>!a.friendly&&dist(b,a)<effRange && a.flightMode==='air')[0];
+      if(aaTarget && b.fireTimer<=0 && b.dmg>0 && !b.submerged){
+        b.fireTimer=1/b.firerate;
+        const cr=applyCrit(b.dmg);
+        if(cr.crit){spawnCritText(aaTarget.x,aaTarget.y,cr.dmg);}
+        fireProj(b.x,b.y,aaTarget,cr.dmg,false,false,false,true);
+      } else {
+        const visTargets=G.fleet.filter(f=>!f.submerged);
+        if(visTargets.length && b.fireTimer<=0 && b.dmg>0 && !b.submerged){
+          const tgt=visTargets.sort((a,c)=>dist(b,a)-dist(b,c))[0];
+          const dTarget=dist(b,tgt);
+          if(dTarget<=effRange){
+            b.fireTimer=1/b.firerate;
+            const cr=applyCrit(b.dmg);
+            if(cr.crit){tgt.onFire=true;tgt.fireLife=2;}
+            fireProj(b.x,b.y,tgt,cr.dmg,false,b.hasTorpedo,b.hasRocket);
+          }
+        }
+      }
+      const d=dist(b,ebp);
+      if(d>BASE_R+38){const a=ang(b,ebp);b.angle=a;b.x+=Math.cos(a)*b.speed*spdMult*0.22*dt;b.y+=Math.sin(a)*b.speed*spdMult*0.22*dt;}
+    }
+  }
+
+  // Mine collisions
+  for(let i=G.mines.length-1;i>=0;i--){
+    const m=G.mines[i];
+    const targets=m.friendly?G.enemyFleet:G.fleet;
+    for(const b of targets){
+      if(dist(b,m)<14){
+        b.hp=Math.max(0,b.hp-m.dmg);
+        addExplosion(m.x,m.y,1.3,true);
+        G.mines.splice(i,1);break;
+      }
+    }
+  }
+
+  // Smoke decay
+  for(let i=G.smokeClouds.length-1;i>=0;i--){
+    G.smokeClouds[i].opacity -= dt*0.06;
+    G.smokeClouds[i].r = Math.min(95,G.smokeClouds[i].r+dt*20);
+    if(G.smokeClouds[i].opacity<=0) G.smokeClouds.splice(i,1);
+  }
+
+  // Wake fade
+  for(const wk of G.wakes) wk.life=Math.max(0,wk.life-dt*0.85);
+  G.wakes=G.wakes.filter(w=>w.life>0);
+
+  // Particle update
+  for(const p of G.particles){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=40*dt;p.life-=dt;}
+  G.particles=G.particles.filter(p=>p.life>0);
+}
+
+function fireProj(sx,sy,tgt,dmg,friendly,isTorp=false,isRocket=false,isAA=false,isICBM=false){
+  G.projectiles.push({
+    x:sx,y:sy,tx:tgt.x,ty:tgt.y,target:tgt,dmg,friendly,
+    speed:isAA?360:isICBM?240:isRocket?205:isTorp?118:285,
+    isTorp,isRocket,isAA,isICBM,ang:ang({x:sx,y:sy},tgt),life:2.5,trail:[{x:sx,y:sy}]
+  });
+}
+
+function tickProjectiles(dt){
+  for(let i=G.projectiles.length-1;i>=0;i--){
+    const p=G.projectiles[i];
+    if(!p.trail)p.trail=[];
+    p.trail.unshift({x:p.x,y:p.y});
+    if(p.trail.length>8)p.trail.pop();
+    p.life=Math.max(0,(p.life||2.5)-dt);
+    const dx=p.tx-p.x,dy=p.ty-p.y,d=Math.hypot(dx,dy);
+    const spd=p.speed*dt;
+    if(d<spd+7||p.life<=0){
+      if(p.target&&p.target.base&&d<spd+30){
+        if(p.friendly){
+          G.enemyBaseHP=Math.max(0,G.enemyBaseHP-p.dmg);
+          G.enemyBaseRegenCooldown=4;
+          addExplosion(p.target.x,p.target.y,p.isRocket?1.3:1.4);
+        } else {
+          G.playerBaseHP=Math.max(0,G.playerBaseHP-p.dmg);
+          addExplosion(p.target.x,p.target.y,p.isRocket?1.3:1.4);
+        }
+        G.projectiles.splice(i,1);
+        continue;
+      }
+      if(p.target&&p.target.hp!==undefined&&d<spd+30){
+        p.target.hp=Math.max(0,p.target.hp-p.dmg);
+        addExplosion(p.target.x,p.target.y,p.isRocket?1.3:0.8);
+        if(p.target.hp<=0){
+          if(G.aircraft.includes(p.target)){
+            const idx=G.aircraft.indexOf(p.target);
+            if(idx>=0) G.aircraft.splice(idx,1);
+          } else {
+            const arr=p.friendly?G.enemyFleet:G.fleet;
+            const idx=arr.indexOf(p.target);
+            if(idx>=0){
+              arr.splice(idx,1);
+              if(!p.friendly&&G.selectedBoat===p.target){
+                G.selectedBoat=null;
+                document.getElementById('ordersPanel').style.display='none';
+                document.getElementById('boatDetail').style.display='none';
+              }
+              updateFleetPanel();
+            }
+          }
+        }
+      }
+      G.projectiles.splice(i,1);continue;
+    }
+    const a2=Math.atan2(dy,dx);
+    p.x+=Math.cos(a2)*spd;p.y+=Math.sin(a2)*spd;p.ang=a2;
+    if(p.target&&p.target.hp>0){p.tx=p.target.x;p.ty=p.target.y;}
+  }
+}
+
+function tickAircraft(dt){
+  for(let i=G.aircraft.length-1;i>=0;i--){
+    const a=G.aircraft[i];
+    a.fireTimer=Math.max(0,(a.fireTimer||0)-dt);
+    if(a.fuel===undefined) a.fuel=100;
+    if(a.flightMode==='water'){
+      const supply = G.fleet.find(b=>b.hull==='hull_supply' && dist(a,b)<70 && b.fuel>0);
+      if(supply && a.fuel < 100){
+        a.fuel = Math.min(100, a.fuel + 20*dt);
+      }
+      if(a.fuel>=100 && a.returning){
+        a.returning=false;
+      }
+      if(a.fuel<=0){
+        a.fuel=0;
+      }
+      if(a.flightMode==='water'){
+        a.tx=a.x; a.ty=a.y;
+      }
+      if(a.flightMode==='water'){continue;}
+    }
+    a.fuel = Math.max(0, a.fuel - (a.fuelPerSec||1.2) * dt * 1.4);
+    if(a.fuel <= 16 && a.flightMode==='air'){
+      const nearestSupply = G.fleet.filter(b=>b.hull==='hull_supply').sort((x,y2)=>dist(a,x)-dist(a,y2))[0];
+      if(nearestSupply && dist(a,nearestSupply) < 90){
+        a.flightMode='water';
+        a.returning=false;
+        a.attackTarget=null;
+        showMsg(`✈ ${a.name||'Plane'} landing near supply boat`);
+      } else {
+        a.returning = true;
+      }
+    }
+    const tBase=a.friendly?{x:ix(PLAYER_ISLAND.x),y:iy(PLAYER_ISLAND.y)}:{x:ix(ENEMY_ISLAND.x),y:iy(ENEMY_ISLAND.y)};
+    const eBase=a.friendly?{x:ix(ENEMY_ISLAND.x),y:iy(ENEMY_ISLAND.y)}:{x:ix(PLAYER_ISLAND.x),y:iy(PLAYER_ISLAND.y)};
+    if(!a.returning&&a.attackTarget&&a.attackTarget.hp<=0)a.attackTarget=null;
+    const enemyPlanes=G.aircraft.filter(x=>x.friendly!==a.friendly && x.flightMode==='air');
+    if(!a.attackTarget && enemyPlanes.length && a.type!=='plane_bomber'){
+      a.attackTarget=enemyPlanes.sort((x,y2)=>dist(a,x)-dist(a,y2))[0];
+    }
+    if(!a.returning&&!a.attackTarget&&a.type!=='plane_bomber'){
+      const pool=a.friendly?G.enemyFleet.filter(b=>!b.submerged):G.fleet.filter(b=>!b.submerged);
+      if(pool.length){a.attackTarget=pool.sort((x,y2)=>dist(a,x)-dist(a,y2))[0];}
+      else{a.returning=true;}
+    }
+    if(!a.returning&&a.type==='plane_bomber'&&!a.attackTarget){
+      a.tx=eBase.x;a.ty=eBase.y;
+    }
+    if(a.attackTarget&&a.attackTarget.hp>0&&!a.returning){
+      const targetDist=dist(a,a.attackTarget);
+      const idealDist=Math.max(45,Math.min(a.range*0.75,150));
+      if(targetDist > idealDist){
+        a.tx=a.attackTarget.x;a.ty=a.attackTarget.y;
+      } else if(targetDist < Math.max(40,a.range*0.45)){
+        const away={x:a.x-a.attackTarget.x,y:a.y-a.attackTarget.y};
+        const len=Math.max(1,Math.sqrt(away.x*away.x+away.y*away.y));
+        a.tx=a.x+away.x/len*idealDist;
+        a.ty=a.y+away.y/len*idealDist;
+      } else {
+        const orbitAngle=Math.atan2(a.y-a.attackTarget.y,a.x-a.attackTarget.x);
+        a.tx=a.attackTarget.x+Math.cos(orbitAngle)*idealDist;
+        a.ty=a.attackTarget.y+Math.sin(orbitAngle)*idealDist;
+      }
+      const attackRange=a.range + (a.type==='plane_bomber'?30:0);
+      if(targetDist <= attackRange && a.fireTimer<=0 && a.dmg>0){
+        a.fireTimer=1/a.firerate;
+        a.attackTarget.hp=Math.max(0,a.attackTarget.hp-a.dmg);
+        addExplosion(a.attackTarget.x,a.attackTarget.y,0.8);
+        if(a.attackTarget.hp<=0){
+          if(a.friendly) G.enemyFleet.splice(G.enemyFleet.indexOf(a.attackTarget),1);
+          else { G.fleet.splice(G.fleet.indexOf(a.attackTarget),1); updateFleetPanel(); }
+          a.attackTarget=null;
+        }
+      }
+    }
+    const da=dist(a,{x:a.tx,y:a.ty});
+    const baseBombDist=a.type==='plane_bomber' ? Math.min(a.range*0.85, 160) : 35;
+    if(da<baseBombDist && !a.returning){
+      if(a.type==='plane_bomber'&&a.fireTimer<=0){
+        a.fireTimer=2.2;
+        if(a.friendly){G.enemyBaseHP=Math.max(0,G.enemyBaseHP-a.dmg);G.enemyBaseRegenCooldown=4;addExplosion(eBase.x+Math.random()*20-10,eBase.y,1.4);}
+        else{G.playerBaseHP=Math.max(0,G.playerBaseHP-a.dmg);addExplosion(tBase.x+Math.random()*20-10,tBase.y,1.2);showAlert('✈️ Enemy bombers hitting your base!');}
+      }
+      if((!a.attackTarget||a.type==='plane_bomber')&&a.type!=='plane_bomber'){
+        a.returning=true;
+      }
+      if(a.type==='plane_bomber'){
+        a.returning=true;
+      }
+    }
+    if(a.returning&&da<30){G.aircraft.splice(i,1);continue;}
+    const ma=Math.atan2(a.ty-a.y,a.tx-a.x);
+    const airBonus=G.advancedAir?1.15:1;
+    a.x+=Math.cos(ma)*a.speed*dt*airBonus;a.y+=Math.sin(ma)*a.speed*dt*airBonus;
+  }
+}
+
+function tickNeutralIslands(dt){
+  for(const ni of NEUTRAL_ISLANDS){
+    const x=ix(ni.x),y=iy(ni.y);
+    const fb=G.fleet.filter(b=>dist(b,{x,y})<ni.r+70&&!b.submerged);
+    const eb=G.enemyFleet.filter(b=>dist(b,{x,y})<ni.r+70&&!b.submerged);
+    if(fb.length>0&&eb.length===0){
+      ni.cap=Math.min(100,ni.cap+fb.length*16*dt);
+      if(ni.cap>=100&&ni.owner!=='player'){ni.owner='player';ni.cap=100;showAlert(`🏴 Captured ${ni.name}! +${ni.rate} ${ni.res}/s`);}
+    } else if(eb.length>0&&fb.length===0){
+      if(ni.owner==='player'){
+        ni.cap=Math.max(0,ni.cap-eb.length*12*dt);
+        if(ni.cap<=0){ni.owner='enemy';ni.cap=100;showAlert(`⚠️ Lost ${ni.name}!`);}
+      } else {
+        ni.cap=Math.min(100,ni.cap+eb.length*12*dt);
+        if(ni.cap>=100&&ni.owner!=='enemy'){ni.owner='enemy';showAlert(`🔴 Enemy captured ${ni.name}!`);}
+      }
+    }
+    // Island turret fires
+    if(ni.owner==='player'&&ni.turret>0){
+      const eNear=G.enemyFleet.filter(b=>!b.submerged&&dist(b,{x,y})<200+ni.turret*50);
+      if(eNear.length>0&&G.tick%40===0){
+        fireProj(x,y,eNear[0],30+ni.turret*20,true,false,false);
+      }
+    }
+  }
+}
+
+const WEATHER_SEQ=['clear','clear','cloudy','fog','rain','storm','clear'];
+function tickWeather(dt){
+  G.weatherTimer+=dt;
+  if(G.weatherTimer>18+Math.random()*20){
+    G.weatherTimer=0;
+    const transitions = {
+      clear:  ['clear','clear','cloudy','cloudy','fog'],
+      cloudy: ['clear','cloudy','fog','rain','rain'],
+      fog:    ['cloudy','rain','rain','storm'],
+      rain:   ['cloudy','rain','storm','storm'],
+      storm:  ['rain','clear','cloudy']
+    };
+    const options = transitions[G.weather] || ['clear','cloudy','fog','rain','storm'];
+    G.weather = options[Math.floor(Math.random()*options.length)];
+    updateWeatherHUD();
+    const alerts={cloudy:'⛅ Weather: Cloudy',fog:'🌫️ Dense fog rolling in!',rain:'🌧️ Rain — boats slowing down!',storm:'⛈️ Storm! Severe sea conditions!',clear:'☀️ Skies clearing'};
+    if(alerts[G.weather]) showAlert(alerts[G.weather]);
+  }
+  const worldW = W * WORLD_SCALE;
+  const worldH = H * WORLD_SCALE;
+  const FT={clear:{f:0,r:0},cloudy:{f:0.1,r:0},fog:{f:0.74,r:0},rain:{f:0.22,r:0.68},storm:{f:0.5,r:1}};
+  const tgt=FT[G.weather]||{f:0,r:0};
+  G.fogOpacity=lerp(G.fogOpacity,tgt.f,dt*0.5);
+  G.rainIntensity=lerp(G.rainIntensity,tgt.r,dt*0.88);
+  if(G.weather==='storm' && G.lightning <= 0 && Math.random() < dt * 0.9) {
+    G.lightning = 0.18 + Math.random() * 0.22;
+  }
+  G.lightning = Math.max(0, G.lightning - dt * 0.4);
+  if(G.rainIntensity>0.08){
+    const cnt=Math.floor(G.rainIntensity*14);
+    for(let i=0;i<cnt;i++) if(G.rainDrops.length<800) G.rainDrops.push({x:Math.random()*worldW,y:Math.random()*worldH,vx:-4.2,vy:14+Math.random()*12});
+    for(const d of G.rainDrops){d.x+=d.vx*dt;d.y+=d.vy*dt;}
+    G.rainDrops=G.rainDrops.filter(d=>d.y<worldH+18&&d.x>-28);
+  } else G.rainDrops=[];
+}
+
+function updateWeatherHUD(){
+  const names={clear:'☀️ Clear',cloudy:'⛅ Cloudy',fog:'🌫️ Dense Fog',rain:'🌧️ Rain',storm:'⛈️ Storm'};
+  const effs={clear:'No effects',cloudy:'Slight range reduction',fog:'Enemy hidden! Range −35%',rain:'Speed −25%, range −20%',storm:'Speed −35%, range −45%!'};
+  document.getElementById('wname').textContent=names[G.weather]||G.weather;
+  document.getElementById('weffect').textContent=effs[G.weather]||'';
+}
+
+function tickDayNight(dt){
+  G.dayTime = (G.dayTime + dt/DAY_DURATION) % 1;
+  const t = G.dayTime;
+  let tname, col;
+  if(t < 0.08||t>0.95){tname='🌅 Dawn';col='#f0900a';}
+  else if(t < 0.3){tname='☀️ Day';col='#ffdd88';}
+  else if(t < 0.48){tname='🌆 Dusk';col='#f06020';}
+  else if(t < 0.72){tname='🌙 Night';col='#3a5aaf';}
+  else{tname='🌌 Midnight';col='#1a2a6f';}
+  document.getElementById('tname').textContent=tname;
+  const pct = t*100;
+  const fill=document.getElementById('dayFill');
+  fill.style.width=pct+'%';fill.style.background=col;
+}
+
+function tickResources(dt){
+  const rates={gold:0,wood:0,steel:0,fuel:0,food:0};
+  for(const[id,lv]of Object.entries(G.buildings)){
+    if(!lv)continue;const bd=BUILDINGS[id];if(!bd)continue;
+    for(const[k,v]of Object.entries(bd.gives)) rates[k]=(rates[k]||0)+v*lv;
+  }
+  for(const ni of NEUTRAL_ISLANDS) if(ni.owner==='player') rates[ni.res]=(rates[ni.res]||0)+ni.rate;
+  G.rates=rates;
+  for(const k of['gold','wood','steel','fuel','food']) G.res[k]=Math.max(0,(G.res[k]||0)+rates[k]*dt);
+  G.res.popCap=10+(G.buildings['housing']||0)*8+(G.buildings['barracks']||0)*5;
+  const hosp=G.buildings['hospital']||0;
+  if(hosp>0&&G.res.pop<G.res.popCap){
+    G.popGrowthTimer+=dt;
+    if(G.popGrowthTimer>15/hosp){G.res.pop=Math.min(G.res.popCap,G.res.pop+1);G.popGrowthTimer=0;}
+  }
+  // Difficulty resource bonus
+  if(G.difficulty===0) for(const k of['gold','wood','steel','fuel']) G.res[k]+=0.45*dt;
+  if(G.difficulty===1) for(const k of['gold','wood','steel','fuel']) G.res[k]+=0.25*dt;
+  G.powerDemand = getTotalPowerDemand();
+  G.powerSupply = getPowerOutput();
+}
+
+function tickEnemy(dt){
+  const diff=G.difficulty;
+  const baseRate=[3.2,4.5,6.2][diff];
+  G.enemyRes.gold+=baseRate*dt;G.enemyRes.steel+=baseRate*0.58*dt;G.enemyRes.fuel+=baseRate*0.48*dt;
+  for(const ni of NEUTRAL_ISLANDS) if(ni.owner==='enemy') G.enemyRes[ni.res]=(G.enemyRes[ni.res]||0)+ni.rate*dt;
+
+  // Hard AI: research counters
+  if(diff===2&&G.tick%300===0){
+    const playerHasPlanes=G.aircraft.some(a=>a.friendly);
+    if(playerHasPlanes&&!G.enemyHasAntiAir&&G.wave>=4){
+      G.enemyHasAntiAir=true;showAlert('🔴 Enemy developed anti-air defenses!');
+    }
+  }
+
+  G.enemyBuildTimer+=dt;
+  const buildInt=Math.max(15,[80,60,42][diff]-G.wave*3);
+  const maxFleet=6+Math.floor(G.wave/2)+diff*2;
+  if(G.enemyBuildTimer>buildInt&&G.enemyFleet.filter(b=>!b.isSub).length<maxFleet){
+    G.enemyBuildTimer=0;G.wave++;
+    const h=G.wave<4?'hull_small':G.wave<8?'hull_patrol':G.wave<13?'hull_heavy':'hull_cruiser';
+    let w=G.wave<5?'gun_light':G.wave<9?'gun_medium':G.wave<13?'gun_heavy':'gun_torpedo';
+    if(G.enemyHasAntiAir&&Math.random()<0.35) w='gun_antiair';
+    const ar=G.wave>6?'armor_light':'armor_none';
+    spawnEnemyBoat(h,'eng_basic',w,ar);
+    if(diff>=1) showAlert(`🔴 Enemy built a ship! (Wave ${G.wave})`);
+  }
+
+  // Subs
+  if(G.wave>=8&&G.enemyFleet.filter(b=>b.isSub).length<Math.floor(G.wave/5)){
+    if(Math.random()<0.0012*dt*60){spawnEnemyBoat('hull_sub','eng_sub','gun_subtorp','armor_none');}
+  }
+
+  // Enemy attacks islands
+  if(diff>=0){
+    G.enemyAttackTimer+=dt;
+    const attackInt=[55,35,22][diff];
+    if(G.enemyAttackTimer>attackInt){
+      G.enemyAttackTimer=0;
+      const idle=G.enemyFleet.filter(b=>b.status==='idle');
+      if(idle.length>0){
+        const n=Math.min(idle.length,1+diff);
+        for(let i=0;i<n;i++) idle[i].status='attack';
+      }
+    }
+  }
+
+  // Hard AI: immediate aggression if player fleet big
+  if(diff===2&&G.fleet.length>4&&!G.enemyAggressionTriggered){
+    G.enemyAggressionTriggered=true;
+    G.enemyFleet.forEach(b=>b.status='attack');
+    showAlert('🔴 Enemy launches coordinated assault!');
+  }
+
+  // Aircraft
+  G.enemyAircraftTimer+=dt;
+  const aircraftInt=[120,80,55][diff];
+  if(G.wave>=[5,5,3][diff]&&G.enemyAircraftTimer>aircraftInt){
+    G.enemyAircraftTimer=0;
+    const type=G.wave>10?'bomber':'fighter';
+    const ac=ACRAFT[type];
+    const eb={x:ix(ENEMY_ISLAND.x),y:iy(ENEMY_ISLAND.y)};
+    const tgtBoat=G.fleet.filter(b=>!b.submerged)[0];
+    const tgtPB={x:ix(PLAYER_ISLAND.x),y:iy(PLAYER_ISLAND.y)};
+    G.aircraft.push({
+      x:eb.x,y:eb.y,tx:tgtBoat?tgtBoat.x:tgtPB.x,ty:tgtBoat?tgtBoat.y:tgtPB.y,
+      attackTarget:tgtBoat||null,speed:ac.speed,hp:ac.hp,maxHp:ac.maxHp,
+      dmg:ac.dmg,firerate:ac.firerate,fireTimer:0,type,friendly:false,returning:false,
+      id:Math.random().toString(36).slice(2)
+    });
+    showAlert('✈️ Enemy aircraft spotted!');
+  }
+
+  // Coastal battery
+  const cb=G.buildings['coastalbat']||0;
+  if(cb>0){
+    G.coastalTimer=(G.coastalTimer||0)+dt;
+    if(G.coastalTimer>1.6){
+      G.coastalTimer=0;
+      const pbp={x:ix(PLAYER_ISLAND.x),y:iy(PLAYER_ISLAND.y)};
+      const planes=G.aircraft.filter(a=>a.friendly&&dist(a,pbp)<250+cb*50);
+      if(planes.length){
+        fireProj(pbp.x+(Math.random()*40-20),pbp.y+(Math.random()*40-20),planes[0],42+cb*28,true,false,false,true);
+      } else {
+        const nn=G.enemyFleet.filter(b=>!b.submerged&&dist(b,pbp)<250+cb*50);
+        if(nn.length){fireProj(pbp.x+(Math.random()*40-20),pbp.y+(Math.random()*40-20),nn[0],38+cb*25,true,false,false);}
+      }
+    }
+  }
+
+  // Enemy base slow regen only when not under recent fire
+  if(G.enemyBaseRegenCooldown>0){
+    G.enemyBaseRegenCooldown=Math.max(0,G.enemyBaseRegenCooldown-dt);
+  }
+  const enemyBasePos={x:ix(ENEMY_ISLAND.x),y:iy(ENEMY_ISLAND.y)};
+  const enemyThreat = G.fleet.some(b=>!b.submerged && dist(b,enemyBasePos)<260);
+  if(G.enemyBaseHP<G.enemyBaseMaxHP && G.enemyBaseRegenCooldown<=0 && !enemyThreat){
+    G.enemyBaseHP=Math.min(G.enemyBaseMaxHP,G.enemyBaseHP+1.2*dt);
+  }
+}
+
+function tickResearch(dt){
+  if(!activeRes)return;
+  activeRes.progress+=dt;
+  if(activeRes.progress>=activeRes.total){
+    G.researchDone.add(activeRes.id);
+    const r=RESEARCH[activeRes.id];
+    showMsg(`🔬 Research complete: ${r.name}`);
+    const id=activeRes.id;
+    if(id==='research_sub'){unlockedMods.add('hull_sub');unlockedMods.add('eng_sub');unlockedMods.add('gun_subtorp');}
+    if(id==='research_sub_advanced'){unlockedMods.add('hull_sub_raid'); unlockedMods.add('hull_sub_brawler'); unlockedMods.add('hull_sub_dread'); unlockedMods.add('gun_subgun'); unlockedMods.add('spec_fuel_tank');}
+    if(id==='research_nuke'){unlockedMods.add('gun_nuke'); unlockedMods.add('gun_nuke_icbm');}
+    if(id==='research_sub_stealth') unlockedMods.add('spec_stealth');
+    if(id==='research_aircraft'){unlockedMods.add('airport'); unlockedMods.add('plane_scout'); unlockedMods.add('plane_interceptor'); unlockedMods.add('gun_machinegun'); unlockedMods.add('gun_bombbay');}
+    if(id==='research_advair'){G.advancedAir=true; unlockedMods.add('plane_attacker'); unlockedMods.add('plane_bomber'); unlockedMods.add('spec_armor'); unlockedMods.add('spec_dogfight');}
+    if(id==='research_fleet_tactics') G.fleetTactics=true;
+    if(id==='research_advrepair') G.advancedRepair=true;
+    if(id==='research_mines') unlockedMods.add('gun_mine');
+    if(id==='research_smoke') unlockedMods.add('spec_smoke');
+    if(id==='research_sonar') unlockedMods.add('spec_sonar');
+    if(id==='research_lights') unlockedMods.add('spec_lights');
+    if(id==='research_rockets') unlockedMods.add('gun_rocket');
+    if(id==='research_antiair') unlockedMods.add('gun_antiair');
+    if(id==='research_torpedo') unlockedMods.add('gun_torpedo');
+    if(id==='research_eng') unlockedMods.add('eng_fast');
+    if(id==='research_turbo') unlockedMods.add('eng_turbo');
+    if(id==='research_arty') unlockedMods.add('gun_medium');
+    if(id==='research_heavy') unlockedMods.add('hull_heavy');
+    if(id==='research_heavygun') unlockedMods.add('gun_heavy');
+    if(id==='research_cruiser') unlockedMods.add('hull_cruiser');
+    if(id==='research_armor') unlockedMods.add('armor_heavy');
+    if(id==='research_reactive') unlockedMods.add('armor_reactive');
+    if(id==='research_repair') unlockedMods.add('spec_repair');
+    activeRes=null;
+    if(document.getElementById('baseModal').style.display==='block') renderBaseContent();
+  }
+}
+
+function tickBuildQueue(dt){
+  if(!buildQueue.length)return;
+  buildQueue[0].progress+=dt;
+  if(buildQueue[0].progress>=buildQueue[0].time){
+    const tmpl=buildQueue.shift().template;
+    spawnPlayerBoat(tmpl);
+    showMsg(`⚓ ${tmpl.name} built!`);
+    renderShipContent();
+  }
+}
+
+function checkGameOver(){
+  if(G.gameOver)return;
+  if(G.enemyBaseHP<=0){G.gameOver=true;endGame(true);}
+  if(G.playerBaseHP<=0){G.gameOver=true;endGame(false);}
+}
+
+// ═══════════════════════════ UI HELPERS ══════════════════
+function updateTopbar(){
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  set('rGold',Math.floor(G.res.gold));set('rGoldRate',`${G.rates.gold>=0?'+':''}${G.rates.gold.toFixed(1)}/s`);
+  set('rWood',Math.floor(G.res.wood));set('rWoodRate',`${G.rates.wood>=0?'+':''}${G.rates.wood.toFixed(1)}/s`);
+  set('rSteel',Math.floor(G.res.steel));set('rSteelRate',`${G.rates.steel>=0?'+':''}${G.rates.steel.toFixed(1)}/s`);
+  set('rPower',`${G.powerSupply.toFixed(0)}/${G.powerDemand.toFixed(0)}`);
+  set('rPowerRate',`${G.powerSupply-G.powerDemand>=0?'+':''}${(G.powerSupply-G.powerDemand).toFixed(1)}`);
+  set('rFuel',Math.floor(G.res.fuel));set('rFuelRate',`${G.rates.fuel>=0?'+':''}${G.rates.fuel.toFixed(1)}/s`);
+  set('rFood',Math.floor(G.res.food));set('rFoodRate',`${G.rates.food>=0?'+':''}${G.rates.food.toFixed(1)}/s`);
+  set('rPop',G.res.pop);set('rPopCap',`/${G.res.popCap}`);
+
+  // Update cooldown UI for selected boat
+  const b=G.selectedBoat;
+  if(b){
+    const scd=b.smokeCooldown||0;
+    const mcd=b.mineCooldown||0;
+    const sel=document.getElementById('smokeCd');if(sel)sel.textContent=scd>0?`(${scd.toFixed(0)}s)`:'';
+    const mel=document.getElementById('mineCd');if(mel)mel.textContent=mcd>0?`(${mcd.toFixed(0)}s)`:'';
+    const sfill=document.getElementById('smokeCdBar');if(sfill)sfill.style.width=((scd/45)*100)+'%';
+    const mfill=document.getElementById('mineCdBar');if(mfill)mfill.style.width=((mcd/30)*100)+'%';
+    // Torpedo cooldown
+    if(b.hasTorpedo){
+      const tcd=b.torpedoCooldown||0;
+      const tlabel=document.getElementById('torpCdLabel');
+      const tbar=document.getElementById('torpCdBar');
+      const torpDiv=document.getElementById('subTorpCooldownDiv');
+      if(tlabel)tlabel.textContent=tcd>0?`(${tcd.toFixed(0)}s reload)`:'READY';
+      if(tbar)tbar.style.width=tcd>0?((1-tcd/12)*100)+'%':'100%';
+      if(torpDiv)torpDiv.style.display='block';
+    }
+    // Sub depth gauge animation
+    if(b.isSub) updateSubDepthGauge(b);
+    // Update submerge button label
+    const subBtn=document.getElementById('subBtn');
+    if(subBtn&&b.isSub){
+      subBtn.textContent=b.submerged?'🌊 Surface':'🌊 Dive';
+    }
+  }
+}
+
+function updateFleetPanel(){
+  const list=document.getElementById('fleetList');
+  if(!list)return;
+  list.innerHTML=G.fleet.map(b=>{
+    const pct=b.hp/b.maxHp;
+    const hpcol=pct>0.6?'#3a8a3a':pct>0.3?'#8a7010':'#8a1a10';
+    const statMap={'idle':'si idle','attack':'sa atk','patrol':'sp pat','guard':'sg grd','retreat':'sr ret'};
+    const sc=statMap[b.status]||'si';
+    const statL={'idle':'IDLE','attack':'ATK','patrol':'PAT','guard':'GRD','retreat':'RTR'}[b.status]||b.status;
+    const fuelIco=b.fuel<20?'<span class="sfuel" style="font-size:7px;padding:1px 3px;border-radius:2px;">⛽LOW</span>':'';
+    return `<div class="fleet-boat${G.selectedBoat===b?' selected':''}" onclick="selectBoat('${b.id}')">
+      <div class="btype">${b.isSub?'🤿':'⛵'}</div>
+      <div class="bname">${b.name}</div>
+      <div class="bhp" style="color:${hpcol}">${Math.ceil(b.hp)}</div>
+      ${fuelIco}
+      <div class="bstat ${sc}">${statL}</div>
+    </div>`;
+  }).join('');
+  const fc=document.getElementById('fleetCount');
+  if(fc) fc.textContent=`${G.fleet.length} / ${G.res.popCap} pop`;
+}
+
+function updateCaptureHUD(){
+  const el=document.getElementById('captureHUD');
+  if(!el)return;
+  const actives=NEUTRAL_ISLANDS.filter(n=>n.cap>0&&n.cap<100);
+  el.innerHTML=actives.map(n=>`<div class="capture-item">
+    <div class="cn">${n.name}</div>
+    <div class="cs">${n.owner==='player'?'Losing control...':'Capturing...'}</div>
+    <div class="cbar"><div class="${n.owner==='player'?'cfe':'cfp'}" style="width:${n.cap}%"></div></div>
+  </div>`).join('');
+}
+
+function selectBoat(id){
+  G.selectedAircraft=null;
+  G.selectedBoat=G.fleet.find(b=>b.id===id)||null;
+  const op=document.getElementById('ordersPanel');
+  const bd=document.getElementById('boatDetail');
+  const dg=document.getElementById('subDepthGauge');
+  if(!G.selectedBoat){
+    op.style.display='none';bd.style.display='none';
+    if(dg)dg.style.display='none';
+    updateFleetPanel();return;
+  }
+  const b=G.selectedBoat;
+  op.style.display='block';bd.style.display='block';
+  document.getElementById('selBoatName').textContent=b.name;
+  document.querySelectorAll('.ship-only').forEach(el=>el.style.display='inline-block');
+  document.querySelectorAll('.air-only').forEach(el=>el.style.display='none');
+  const boatExtras=document.querySelectorAll('#boatOrderExtras');
+  boatExtras.forEach(el=>el.style.display='block');
+  const subBtn=document.getElementById('subBtn');
+  const smokeBtn=document.getElementById('smokeBtn');
+  const mineBtn=document.getElementById('mineBtn');
+  const torpDiv=document.getElementById('subTorpCooldownDiv');
+  if(subBtn) subBtn.style.display=b.isSub?'block':'none';
+  if(smokeBtn) smokeBtn.style.display=b.hasSmoke?'block':'none';
+  if(mineBtn) mineBtn.style.display=b.hasMines?'block':'none';
+  if(torpDiv) torpDiv.style.display=b.hasTorpedo?'block':'none';
+  if(dg) dg.style.display=b.isSub?'block':'none';
+  // update sub label
+  if(subBtn&&b.isSub){
+    subBtn.textContent=b.submerged?'🌊 Surface':'🌊 Dive';
+    subBtn.style.background=b.submerged?'rgba(8,40,60,0.9)':'rgba(30,10,50,0.9)';
+  }
+  const asc=document.getElementById('autoSmokeChk');
+  if(asc) asc.checked=b.autoSmoke||false;
+  updateBoatDetail(b);
+  updateSubDepthGauge(b);
+  updateFleetPanel();
+}
+
+function updateSubDepthGauge(b){
+  if(!b||!b.isSub)return;
+  const fill=document.getElementById('depthFill');
+  const val=document.getElementById('depthVal');
+  const status=document.getElementById('depthStatus');
+  if(!fill)return;
+  const submergedPct=b.submerged?100:0;
+  const current=b._depthPct||0;
+  b._depthPct=lerp(current,submergedPct,0.08);
+  if(fill) fill.style.height=b._depthPct+'%';
+  if(val) val.textContent=b.submerged?`${Math.round(b._depthPct*2.4)}m`:'Surface';
+  if(status) status.textContent=b.submerged?'SUBMERGED':'SURFACED';
+  if(status) status.style.color=b.submerged?'#2acfef':'#3a6a8a';
+}
+
+function selectAircraft(id){
+  G.selectedBoat=null;
+  G.selectedAircraft=G.aircraft.find(a=>a.id===id)||null;
+  const op=document.getElementById('ordersPanel');
+  const bd=document.getElementById('boatDetail');
+  if(!G.selectedAircraft){op.style.display='none';bd.style.display='none';updateFleetPanel();return;}
+  op.style.display='block';bd.style.display='block';
+  document.getElementById('selBoatName').textContent=G.selectedAircraft.name||'Aircraft';
+  document.querySelectorAll('.ship-only').forEach(el=>el.style.display='none');
+  document.querySelectorAll('.air-only').forEach(el=>el.style.display='inline-block');
+  const boatExtras=document.querySelectorAll('#boatOrderExtras');
+  boatExtras.forEach(el=>el.style.display='none');
+  updateAircraftDetail(G.selectedAircraft);
+  updateFleetPanel();
+}
+
+function updateAircraftDetail(a){
+  const el=document.getElementById('bdContent');
+  if(!el)return;
+  const pct=a.hp/a.maxHp;
+  const fpct=(a.fuel||0)/100;
+  const sightRange = Math.round(getAircraftEffectiveRange(a));
+  const specialName = PLANE_SPECIALS[a.special]?.name || 'None';
+  el.innerHTML=`
+    <div class="ds"><span class="dl">HP</span><span class="dv">${Math.ceil(a.hp)}/${a.maxHp}</span></div>
+    <div class="dbar"><div class="dbf" style="width:${pct*100}%;background:${pct>0.6?'#1a8a1a':pct>0.3?'#8a7010':'#8a1a10'}"></div></div>
+    <div class="ds"><span class="dl">Fuel</span><span class="dv">${Math.floor(a.fuel||0)}%</span></div>
+    <div class="dbar"><div class="dbf" style="width:${fpct*100}%;background:#f0d66e"></div></div>
+    <div class="ds"><span class="dl">Speed</span><span class="dv">${Math.round(a.speed)}</span></div>
+    <div class="ds"><span class="dl">Damage</span><span class="dv">${a.dmg||'—'}</span></div>
+    <div class="ds"><span class="dl">Range</span><span class="dv">${a.range||'—'}</span></div>
+    <div class="ds"><span class="dl">Flight</span><span class="dv">${a.flightMode==='water'?'Water-landed':'Airborne'}</span></div>
+    <div class="ds"><span class="dl">Sight</span><span class="dv">${sightRange}</span></div>
+    <div class="ds"><span class="dl">Special</span><span class="dv">${specialName}</span></div>
+    <div class="ds"><span class="dl">Fire/s</span><span class="dv">${a.firerate?a.firerate.toFixed(1):'—'}</span></div>
+    <div class="ds"><span class="dl">Fuel/s</span><span class="dv">${(a.fuelPerSec||0).toFixed(2)}</span></div>
+    <div class="ds"><span class="dl">Type</span><span class="dv">${PLANE_HULLS[a.type]?.name||a.type}</span></div>
+    <div class="ds"><span class="dl">Armament</span><span class="dv">${PLANE_WEAPONS[a.weapon]?.name||'None'}</span></div>
+    <div class="ds"><span class="dl">Status</span><span class="dv">${a.returning?'returning':'engaged'}</span></div>
+  `;
+}
+
+function updateBoatDetail(b){
+  const el=document.getElementById('bdContent');
+  if(!el)return;
+  const sh=BSHAPES[b.hull]||BSHAPES.hull_small;
+  const pct=b.hp/b.maxHp;
+  const fpct=(b.fuel||0)/100;
+  const slots=MOD.hulls[b.hull]?MOD.hulls[b.hull].slots:1;
+  const weapons=Array.isArray(b.weapons)?b.weapons:b.weapon?[b.weapon]:'gun_none';
+  const usedWeapons=weapons.filter(id=>id&&id!=='gun_none');
+  const sightRange = Math.round(getBoatEffectiveRange(b));
+  const specialName = Array.isArray(b.special)
+    ? b.special.filter(s=>s&&s!=='spec_none').map(id=>MOD.specials[id]?.name||id).join(' + ') || 'None'
+    : MOD.specials[b.special]?.name || 'None';
+  const slotsHtml = Array.from({length:slots},(_,i)=>
+    `<div class="slot ${i<usedWeapons.length?'used':'empty'}">${i<usedWeapons.length?'⚔':'·'}</div>`
+  ).join('');
+  el.innerHTML=`
+    <div class="ds"><span class="dl">HP</span><span class="dv">${Math.ceil(b.hp)}/${b.maxHp}</span></div>
+    <div class="dbar"><div class="dbf" style="width:${pct*100}%;background:${pct>0.6?'#1a8a1a':pct>0.3?'#8a7010':'#8a1a10'}"></div></div>
+    <div class="ds"><span class="dl">Fuel</span><span class="dv">${Math.floor(b.fuel||0)}%</span></div>
+    <div class="dbar"><div class="dbf" style="width:${fpct*100}%;background:#1a5a9a"></div></div>
+    <div class="ds"><span class="dl">Speed</span><span class="dv">${Math.round(b.speed)}</span></div>
+    <div class="ds"><span class="dl">Damage</span><span class="dv">${b.dmg||'—'}</span></div>
+    <div class="ds"><span class="dl">Range</span><span class="dv">${b.range||'—'}</span></div>
+    <div class="ds"><span class="dl">Sight</span><span class="dv">${sightRange}</span></div>
+    <div class="ds"><span class="dl">Special</span><span class="dv">${specialName}</span></div>
+    <div class="ds"><span class="dl">Fire/s</span><span class="dv">${b.firerate?b.firerate.toFixed(1):'—'}</span></div>
+    <div class="ds"><span class="dl">Fuel/s</span><span class="dv">${b.fuelPerSec.toFixed(2)}</span></div>
+    <div class="ds"><span class="dl">Status</span><span class="dv">${b.status}</span></div>
+    <div class="ds"><span class="dl">Weapons</span><span class="dv">${usedWeapons.length?usedWeapons.map(id=>MOD.weapons[id]?.name||id).join(' + '):'Unarmed'}</span></div>
+    <div style="margin-top:5px;font-size:9px;color:#2a5a7a;">Weapon Slots</div>
+    <div class="slots-display">${slotsHtml}</div>
+  `;
+  document.getElementById('bdTitle').textContent=b.name+(b.submerged?' (Submerged)':'');
+}
+
+// ═══════════════════════════ ORDERS ══════════════════════
+function orderAttack(){if(G.selectedBoat)G.selectedBoat.status='attack';}
+function orderPatrol(){if(G.selectedBoat){G.patrolMode=true;G.patrolPoints=[];showMsg('Click 2 patrol points on the map');}}
+function orderGuard(){if(G.selectedBoat){G.guardMode=true;showMsg('Click a guard position on the map');}}
+function orderRetreat(){if(G.selectedBoat)G.selectedBoat.status='retreat';}
+function orderAirAttack(){
+  if(G.selectedAircraft){
+    const a=G.selectedAircraft;
+    if(a.flightMode==='water'&&a.fuel<35){return showMsg('Need more fuel to take off!');}
+    a.flightMode='air';
+    a.returning=false;
+    a.attackTarget=null;
+    a.tx=ix(ENEMY_ISLAND.x);a.ty=iy(ENEMY_ISLAND.y);
+    showMsg(`✈ ${a.name||'Plane'} attacking`);
+    updateAircraftDetail(a);
+  }
+}
+function orderAirRetreat(){
+  if(G.selectedAircraft){
+    const a=G.selectedAircraft;
+    if(a.flightMode==='water'&&a.fuel<35){return showMsg('Need more fuel to take off and return!');}
+    a.flightMode='air';
+    a.returning=true;
+    a.tx=ix(PLAYER_ISLAND.x);a.ty=iy(PLAYER_ISLAND.y);
+    showMsg(`✈ ${a.name||'Plane'} returning`);
+    updateAircraftDetail(a);
+  }
+}
+function orderAirLand(){
+  if(G.selectedAircraft){
+    const a=G.selectedAircraft;
+    // Return to home base to land properly
+    a.flightMode='air';
+    a.returning=true;
+    a.attackTarget=null;
+    a.tx=ix(PLAYER_ISLAND.x);a.ty=iy(PLAYER_ISLAND.y);
+    showMsg(`✈ ${a.name||'Plane'} returning to base to land`);
+    updateAircraftDetail(a);
+  }
+}
+function orderAirTakeoff(){
+  if(G.selectedAircraft){
+    const a=G.selectedAircraft;
+    if(a.fuel < 35) return showMsg('Need more fuel to take off!');
+    a.flightMode='air';
+    a.returning=false;
+    a.attackTarget=null;
+    a.tx=ix(ENEMY_ISLAND.x);a.ty=iy(ENEMY_ISLAND.y);
+    showMsg(`✈ ${a.name||'Plane'} taking off`);
+    updateAircraftDetail(a);
+  }
+}
+function orderAirHold(){
+  if(G.selectedAircraft){
+    const a=G.selectedAircraft;
+    if(a.flightMode==='water'){return showMsg('Plane is landed — take off first.');}
+    a.returning=false;
+    a.attackTarget=null;
+    const angle = Math.random()*Math.PI*2;
+    a.tx = a.x + Math.cos(angle)*28;
+    a.ty = a.y + Math.sin(angle)*28;
+    showMsg(`✈ ${a.name||'Plane'} holding position`);
+    updateAircraftDetail(a);
+  }
+}
+function setRHP(v){if(G.selectedBoat){G.selectedBoat.retreatHP=+v;document.getElementById('retHPVal').textContent=v;}}
+function toggleAutoSmoke(){if(G.selectedBoat)G.selectedBoat.autoSmoke=document.getElementById('autoSmokeChk').checked;}
+
+function toggleSubmerge(){
+  const b=G.selectedBoat;
+  if(!b||!b.isSub)return;
+  b.submerged=!b.submerged;
+  if(b.submerged){
+    showMsg(`🤿 ${b.name} diving to periscope depth…`);
+    b.status='idle'; // pause while diving
+  } else {
+    showMsg(`🌊 ${b.name} surfacing!`);
+  }
+  // Update the submerge button label
+  const subBtn=document.getElementById('subBtn');
+  if(subBtn){
+    subBtn.textContent=b.submerged?'🌊 Surface':'🌊 Dive';
+    subBtn.style.background=b.submerged?'rgba(8,40,60,0.9)':'rgba(30,10,50,0.9)';
+  }
+  updateSubDepthGauge(b);
+  updateBoatDetail(b);
+}
+
+function deploySmoke(b){
+  const boat=b||G.selectedBoat;
+  if(!boat||!boat.hasSmoke)return;
+  if((boat.smokeCooldown||0)>0)return showMsg(`Smoke on cooldown! (${boat.smokeCooldown.toFixed(0)}s)`);
+  G.smokeClouds.push({x:boat.x,y:boat.y,r:20,opacity:1});
+  G.smokeClouds.push({x:boat.x+15,y:boat.y+10,r:18,opacity:0.85});
+  G.smokeClouds.push({x:boat.x-10,y:boat.y-8,r:16,opacity:0.9});
+  boat.smokeCooldown=45;
+  if(!b) showMsg('💨 Smoke deployed!');
+}
+
+function deployMine(){
+  const b=G.selectedBoat;
+  if(!b||!b.hasMines)return;
+  if((b.mineCooldown||0)>0)return showMsg(`Mine on cooldown! (${b.mineCooldown.toFixed(0)}s)`);
+  if(G.res.steel<15)return showMsg('Not enough steel!');
+  G.res.steel-=15;
+  G.mines.push({x:b.x,y:b.y,dmg:90,friendly:true});
+  b.mineCooldown=30;
+  showMsg('💣 Mine deployed!');
+}
+
+// ═══════════════════════════ SPAWN ═══════════════════════
+function spawnPlayerBoat(tmpl){
+  const pbp={x:ix(PLAYER_ISLAND.x),y:iy(PLAYER_ISLAND.y)};
+  const b=Object.assign({},tmpl,{
+    id:'p'+Math.random().toString(36).slice(2),
+    x:pbp.x+80+G.fleet.length*22,
+    y:pbp.y+(G.fleet.length%4-1.5)*28,
+    angle:0,hp:tmpl.maxHp,fuel:100,status:'idle',
+    target:null,retreatHP:25,fireTimer:0,submerged:false,
+    patrolPoints:[],patrolIdx:0,smokeCooldown:0,mineCooldown:0,
+    autoSmoke:false,onFire:false,fireLife:0,
+  });
+  G.fleet.push(b);updateFleetPanel();
+}
+
+function spawnEnemyBoat(hull,eng,wpn,armor='armor_none'){
+  const tmpl=makeTemplate('Enemy',hull,eng,wpn,armor);
+  const ebp={x:ix(ENEMY_ISLAND.x),y:iy(ENEMY_ISLAND.y)};
+  const b=Object.assign({},tmpl,{
+    id:'e'+Math.random().toString(36).slice(2),
+    name:['Raider','Viper','Kraken','Marauder','Predator','Shark'][Math.floor(Math.random()*6)],
+    x:ebp.x-90-G.enemyFleet.length*22,
+    y:ebp.y+(G.enemyFleet.length%4-1.5)*28,
+    angle:Math.PI,hp:tmpl.maxHp,fuel:100,
+    status:G.difficulty===0?'idle':'attack',
+    fireTimer:0,submerged:false,smokeCooldown:0,mineCooldown:0,
+  });
+  G.enemyFleet.push(b);
+}
+
+// ═══════════════════════════ MESSAGES ════════════════════
+function showMsg(txt){
+  const el=document.getElementById('msgbox');
+  el.textContent=txt;el.style.opacity=1;
+  clearTimeout(el._t);el._t=setTimeout(()=>el.style.opacity=0,2600);
+}
+function showAlert(txt){
+  const bar=document.getElementById('alertBar');
+  const div=document.createElement('div');
+  div.className='alert';div.textContent=txt;
+  bar.appendChild(div);setTimeout(()=>div.remove(),4200);
+}
+
+function endGame(win){
+  const ov=document.getElementById('overlay');
+  ov.innerHTML=`<h1 style="color:${win?'#3acfff':'#ff4a4a'}">${win?'VICTORY!':'DEFEAT!'}</h1>
+    <div class="sub">${win?'You captured the archipelago!':'Your empire has fallen...'}</div>
+    <div style="margin:12px 0;font-size:13px;color:#3a6a8a;">Wave reached: ${G.wave} | Fleet built: ${G.fleet.length+1}</div>
+    <button class="btn" style="font-size:18px;padding:14px 40px;" onclick="location.reload()">Play Again</button>`;
+  ov.style.display='flex';
+}
+
+// ═══════════════════════════ BASE MODAL ══════════════════
+let activeBaseTab='economy';
+function openBase(){
+  document.getElementById('baseModal').classList.add('open');
+  renderBaseContent();
+}
+function closeBase(){document.getElementById('baseModal').classList.remove('open');}
+function switchTab(e,tab){
+  activeBaseTab=tab;
+  document.querySelectorAll('#baseModal .tab').forEach(t=>t.classList.remove('active'));
+  e.target.classList.add('active');
+  renderBaseContent();
+}
+
+function renderBaseContent(){
+  const c=document.getElementById('modalContent');
+  if(activeBaseTab==='research'){renderResearchTab(c);return;}
+  const bldgs=Object.entries(BUILDINGS).filter(([id,b])=>b.tab===activeBaseTab);
+  const totalPop=Object.entries(G.buildings).reduce((s,[id,lv])=>s+(BUILDINGS[id]?.pop||0)*lv,0);
+  const popLeft=Math.max(0,G.res.pop-totalPop);
+  let html=`<div style="display:flex;gap:8px;margin-bottom:10px;font-size:10px;color:#2a5a7a;flex-wrap:wrap;">
+    <span>👷 Workers assigned: <strong style="color:#7dd4f8">${totalPop}/${G.res.pop}</strong></span>
+    <span>📦 Pop capacity: <strong style="color:#7dd4f8">${G.res.popCap}</strong></span>
+  </div>`;
+  html+='<div class="bldg-grid">';
+  bldgs.forEach(([id,b])=>{
+    const lv=G.buildings[id]||0;
+    const maxed=lv>=b.maxLv;
+    const cost=getBuildCost(id,lv+1);
+    const canAfford=canAffordCost(cost);
+    const locked=b.unlocks&&!G.researchDone.has(b.unlocks);
+    const currentGives=Object.entries(b.gives).map(([k,v])=>`+${v*lv} ${k}/s`).join(' ');
+    const nextGives=Object.entries(b.gives).map(([k,v])=>`+${v*(lv+1)} ${k}/s`).join(' ');
+    const givesDisplay=lv>0&&Object.keys(b.gives).length>0?`<div style="font-size:9px;color:#3acfff;margin-top:4px;">Now: <strong>${currentGives}</strong></div>`:'';
+    const nextDisplay=!maxed&&!locked&&Object.keys(b.gives).length>0?`<div style="font-size:8px;color:#2a6a4a;margin-top:2px;">→ Next lv: ${nextGives}</div>`:'';
+    const lvPct=lv/b.maxLv*100;
+    html+=`<div class="bldg-card${locked?' locked':''}">
+      <div class="blvl">Lv ${lv}/${b.maxLv}</div>
+      <h3>${b.icon} ${b.name}</h3>
+      <div style="height:3px;background:#060e1a;border-radius:2px;margin-bottom:6px;"><div style="height:100%;width:${lvPct}%;background:${maxed?'#2a8a4a':'#1a6adf'};border-radius:2px;transition:width 0.3s;"></div></div>
+      <div class="bdesc">${b.desc}</div>
+      ${locked?`<div style="font-size:9px;color:#6a2a2a;margin-top:4px;">🔒 Requires: <em>${b.unlocks}</em></div>`
+      :maxed?`<div style="font-size:9px;color:#2a8a4a;margin-top:4px;font-weight:700;">✅ MAXED OUT</div>`
+      :`<div class="bcost">💸 ${formatCost(cost)}</div>
+        <button class="btn small${canAfford?'':''}" ${!canAfford||locked?'disabled':''} onclick="buildBuilding('${id}')" style="margin-top:4px;">
+          ${lv>0?'⬆ Upgrade':'🔨 Build'}
+        </button>`}
+      ${givesDisplay}${nextDisplay}
+      ${b.pop>0?`<div style="font-size:8px;color:#2a5a7a;margin-top:4px;">👷 Uses ${b.pop} workers/level (${b.pop*lv} now)</div>`:''}
+    </div>`;
+  });
+  html+='</div>';
+  c.innerHTML=html;
+}
+
+function renderResearchTab(c){
+  const NODE_W=192, NODE_H=132, COL_GAP=218, ROW_GAP=160;
+  const COLS=5;
+  const containerW=COLS*COL_GAP+50, containerH=5*ROW_GAP+90;
+
+  // Branch color theme by column
+  const branchColors=['#f0a030','#2a8aef','#9a5aff','#3adf7a','#2acfef'];
+  const branchNames=['⚙️ Industry','🚢 Engineering','⚓ Naval','🏥 Support','✈️ Air/Sub'];
+  const tierLabels=['TIER I','TIER II','TIER III','TIER IV','TIER V'];
+  const tierColors=['#3a7aaf','#2a9adf','#8a5aff','#ff8a2a','#ff4a8a'];
+
+  function getBC(col){return branchColors[col%5]||'#7acfef';}
+
+  // Position map
+  const positions={};
+  for(const[id,r]of Object.entries(RESEARCH)){
+    positions[id]={x:r.col*COL_GAP+30, y:r.row*ROW_GAP+40};
+  }
+
+  // SVG lines with glow
+  let svgLines='';
+  for(const[id,r]of Object.entries(RESEARCH)){
+    if(!r.prereq||!positions[r.prereq])continue;
+    const from=positions[r.prereq];const to=positions[id];
+    const fx=from.x+NODE_W/2, fy=from.y+NODE_H;
+    const tx=to.x+NODE_W/2, ty=to.y;
+    const done=G.researchDone.has(id);
+    const prereqDone=G.researchDone.has(r.prereq);
+    const isAct=activeRes&&activeRes.id===id;
+    const bc=getBC(r.col);
+    if(done||prereqDone){
+      svgLines+=`<path d="M${fx},${fy} C${fx},${fy+48} ${tx},${ty-48} ${tx},${ty}" stroke="${bc}55" stroke-width="9" fill="none"/>`;
+    }
+    const col=done?bc+'dd':prereqDone?bc+'88':'rgba(30,55,80,0.4)';
+    const dash=(!done&&!prereqDone)?'stroke-dasharray="6,5"':'';
+    svgLines+=`<path d="M${fx},${fy} C${fx},${fy+48} ${tx},${ty-48} ${tx},${ty}" stroke="${col}" stroke-width="${done?2.5:1.8}" fill="none" ${dash}/>`;
+  }
+
+  // Column header row (branch labels)
+  let colHeaders='';
+  for(let col=0;col<COLS;col++){
+    const bc=getBC(col);
+    colHeaders+=`<div style="position:absolute;left:${col*COL_GAP+30}px;top:4px;width:${NODE_W}px;text-align:center;font-size:9px;color:${bc};font-weight:700;letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid ${bc}44;padding-bottom:3px;">${branchNames[col]}</div>`;
+  }
+
+  // Nodes
+  let nodesHtml='';
+  for(const[id,r]of Object.entries(RESEARCH)){
+    const pos=positions[id];
+    const done=G.researchDone.has(id);
+    const isAct=activeRes&&activeRes.id===id;
+    const prereqOk=!r.prereq||G.researchDone.has(r.prereq);
+    const locked=!prereqOk;
+    const canAfford=canAffordCost(r.cost);
+    const bc=getBC(r.col);
+
+    let cls='rnode';
+    if(done)cls+=' done';
+    else if(isAct)cls+=' act';
+    else if(locked)cls+=' locked';
+
+    const progress=isAct?(activeRes.progress/activeRes.total*100).toFixed(0):done?100:0;
+
+    let clickAction='';
+    if(!locked&&!done){
+      if(isAct) clickAction=`showMsg('Researching… ${(activeRes.total-activeRes.progress).toFixed(0)}s left')`;
+      else if(activeRes) clickAction=`showMsg('Finish current research first!')`;
+      else if(canAfford) clickAction=`startResearch('${id}')`;
+      else clickAction=`showMsg('Need: ${formatCost(r.cost)}')`;
+    }
+
+    const tierPill=`<span style="position:absolute;top:6px;right:6px;background:${tierColors[r.row]||'#2a5a7a'}22;border:1px solid ${tierColors[r.row]||'#2a5a7a'}55;border-radius:3px;padding:1px 5px;font-size:8px;color:${tierColors[r.row]||'#7acfef'};font-weight:700;letter-spacing:0.5px;">${tierLabels[r.row]||''}</span>`;
+
+    const statusBar=isAct?`<div class="rpbar"><div class="rpfill" style="width:${progress}%;background:linear-gradient(90deg,${bc},${bc}cc)"></div></div>`
+      :done?'':`<div class="rpbar" style="background:#0a1a2a"><div style="height:100%;width:0%"></div></div>`;
+
+    nodesHtml+=`<div class="${cls}" style="left:${pos.x}px;top:${pos.y}px;border-left:3px solid ${done?bc:locked?'#1a2a3a':canAfford&&!activeRes?bc+'bb':bc+'33'};" onclick="${clickAction}">
+      ${tierPill}
+      <h4 style="color:${done?bc:locked?'#3a5a6a':isAct?bc:'#7acfef'};padding-right:36px;">${r.name}</h4>
+      <div class="rdesc">${r.desc}</div>
+      <div class="rcost" style="display:flex;justify-content:space-between;align-items:center;">
+        <span>${done?`<span style="color:#2a8a4a">✅ Done</span>`:isAct?`<span style="color:${bc}">⚙ ${progress}%</span>`:locked?`<span style="color:#3a5a6a">🔒 Locked</span>`:`<span style="color:#c87a2a">${formatCost(r.cost)}</span>`}</span>
+        ${!done&&!locked&&!isAct?`<span style="color:#2a4a6a">${r.time}s</span>`:''}
+      </div>
+      ${statusBar}
+    </div>`;
+  }
+
+  // Legend
+  const legendHtml=branchColors.map((c,i)=>`<span style="display:inline-flex;align-items:center;gap:4px;font-size:9px;margin-right:12px;"><span style="width:10px;height:3px;background:${c};display:inline-block;border-radius:2px;"></span><span style="color:${c}66">${branchNames[i].split(' ')[1]||branchNames[i]}</span></span>`).join('');
+
+  c.innerHTML=`
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:6px 10px;background:rgba(4,10,22,0.8);border:1px solid #0e2030;border-radius:5px;">
+    <div>${legendHtml}</div>
+    <div style="font-size:10px;color:#2a5a7a;">${activeRes?`⚙️ <span style="color:#4a9aff;font-weight:700;">${RESEARCH[activeRes.id].name}</span> — ${(activeRes.progress/activeRes.total*100).toFixed(0)}% — <span style="color:#f0a030">${(activeRes.total-activeRes.progress).toFixed(0)}s remaining</span>`:'💡 Click any available node to begin research.'}</div>
+  </div>
+  <div id="researchContainer" style="position:relative;overflow:auto;height:66vh;">
+    <div style="position:relative;width:${containerW}px;height:${containerH}px;">
+      <svg id="researchSvg" style="position:absolute;top:0;left:0;width:${containerW}px;height:${containerH}px;">${svgLines}</svg>
+      ${colHeaders}
+      ${nodesHtml}
+    </div>
+  </div>`;
+}
+
+function getBuildCost(id,lvl){
+  const b=BUILDINGS[id];const mult=Math.pow(1.58,lvl-1);
+  const cost={};Object.keys(b.costBase).forEach(k=>cost[k]=Math.floor(b.costBase[k]*mult));return cost;
+}
+function canAffordCost(cost){return Object.keys(cost).every(k=>(G.res[k]||0)>=cost[k]);}
+function getPowerOutput(level=G.buildings.powerplant||0){return 11 * level;}
+function getBuildingPowerCost(id,lvl){
+  const b=BUILDINGS[id]; if(!b) return 0;
+  const rate=b.powerRate||0;
+  return lvl>7 ? (lvl-7)*rate : 0;
+}
+function getTotalPowerDemand(levels=G.buildings){
+  return Object.entries(levels).reduce((sum,[id,lv])=>{
+    return sum + (BUILDINGS[id]?getBuildingPowerCost(id,lv):0);
+  },0);
+}
+function hasEnoughPowerForUpgrade(id){
+  const nextLevels={...G.buildings, [id]:(G.buildings[id]||0)+1};
+  const supply = getPowerOutput(nextLevels.powerplant||0);
+  const demand = getTotalPowerDemand(nextLevels);
+  return demand <= supply;
+}
+function spendCost(cost){Object.keys(cost).forEach(k=>G.res[k]=Math.max(0,G.res[k]-cost[k]));}
+function formatCost(cost){return Object.entries(cost).map(([k,v])=>`${v}${({gold:'💰',wood:'🪵',steel:'⚙️',fuel:'⛽',food:'🍞'}[k]||k)}`).join(' ');}
+
+function buildBuilding(id){
+  const lv=G.buildings[id]||0;
+  if(lv>=BUILDINGS[id].maxLv)return;
+  const cost=getBuildCost(id,lv+1);
+  if(!canAffordCost(cost))return showMsg('Not enough resources!');
+  spendCost(cost);G.buildings[id]=lv+1;
+  showMsg(`${BUILDINGS[id].name} upgraded to level ${lv+1}!`);
+  renderBaseContent();
+}
+function startResearch(id){
+  if(activeRes)return;
+  const r=RESEARCH[id];
+  if(!canAffordCost(r.cost))return showMsg('Not enough resources!');
+  spendCost(r.cost);
+  activeRes={id,progress:0,total:r.time};
+  showMsg(`Started research: ${r.name}`);
+  renderBaseContent();
+}
+
+// ═══════════════════════════ SHIPYARD ════════════════════
+let activeShipTab='designer';
+function openShipyard(){
+  if(!(G.buildings['shipyard']>0))return showMsg('Build a Shipyard first!');
+  document.getElementById('shipyardModal').style.display='block';
+  renderShipContent();
+}
+function closeShipyard(){document.getElementById('shipyardModal').style.display='none';}
+function switchShipTab(e,tab){
+  activeShipTab=tab;
+  document.querySelectorAll('#shipyardModal .tab').forEach(t=>t.classList.remove('active'));
+  e.target.classList.add('active');
+  renderShipContent();
+}
+function renderShipContent(){
+  const c=document.getElementById('shipContent');
+  if(activeShipTab==='designer')renderDesigner(c);
+  else if(activeShipTab==='queue')renderQueue(c);
+  else if(activeShipTab==='modules')renderModules(c);
+  else if(activeShipTab==='aircraft')renderAircraftTab(c);
+  else renderSubDockTab(c);
+}
+
+function renderDesigner(c){
+  const tmpl=makeTemplate(curDesign.name,curDesign.hull,curDesign.engine,curDesign.weapons||curDesign.weapon||'gun_none',curDesign.armor,curDesign.special);
+  const h=MOD.hulls[curDesign.hull]||MOD.hulls.hull_patrol;
+  const specialSlots=h.specialSlots||0;
+  if(specialSlots===0 && curDesign.special!=='spec_none') curDesign.special='spec_none';
+  const selectedWeapons=Array.isArray(curDesign.weapons)?curDesign.weapons:[curDesign.weapon||'gun_none'];
+  const usedWeapons=selectedWeapons.filter(id=>id&&id!=='gun_none');
+  const slots=h.slots;
+  const weightPct=Math.min(1,tmpl.totalWeight/tmpl.maxWeight);
+  const weightCol=weightPct<0.6?'#1a8a1a':weightPct<0.85?'#8a7010':'#8a1a10';
+  const slotsHtml=Array.from({length:slots},(_,i)=>`<div class="slot ${i<usedWeapons.length?'used':'empty'}">${i<usedWeapons.length?'⚔':'·'}</div>`).join('');
+  const selectedWeaponText=usedWeapons.length?usedWeapons.map(id=>MOD.weapons[id]?.name||id).join(' + '):'No weapons selected';
+  const slotHint=`${usedWeapons.length}/${slots} weapon slot${slots===1?'':'s'} used`;
+  const specialUsed = curDesign.special && curDesign.special!=='spec_none';
+  const specialHint = specialSlots ? `${specialUsed?1:0}/${specialSlots} special slot${specialSlots===1?'':'s'} used` : 'No special slots available for this hull.';
+
+  const modSect=(cat,type,label)=>`<div class="mod-sect"><h3>${label}</h3>${Object.entries(MOD[cat])
+    .filter(([id])=>{
+      if(cat==='hulls') return !id.startsWith('hull_sub');
+      if(cat==='weapons') return !['gun_subtorp','gun_subgun','gun_nuke','gun_nuke_icbm'].includes(id);
+      if(cat==='specials') return !['spec_sonar','spec_stealth','spec_fuel_tank'].includes(id);
+      return true;
+    })
+    .map(([id,m])=>{
+      const locked=!unlockedMods.has(id) || (cat==='specials' && specialSlots===0 && id!=='spec_none');
+      const sel=cat==='weapons'?usedWeapons.includes(id):curDesign[type]===id;
+      const action=locked?'':cat==='weapons'?`toggleWeapon('${id}')`:`selectModule('${type}','${id}')`;
+      return `<div class="mrow${sel?' sel':''}${locked?' lk':''}" ${locked?'':`onclick="${action}"`}>
+        <div class="mn">${m.name}</div>
+        <div class="ms">${cat==='engines'?`spd:${m.spd}`:cat==='hulls'?`hp:${m.hp}`:cat==='weapons'?`dmg:${m.dmg}`:cat==='armor'?`def:${m.def}`:m.desc||''}</div>
+      </div>`;
+    }).join('')}</div>`;
+
+  const specialHtml = specialSlots ? modSect('specials','special','SPECIAL') : `<div class="mod-sect"><h3>SPECIAL</h3><div style="font-size:10px;color:#5a7a8a;line-height:1.5;">No special slots for this hull. Upgrade to Heavy, Supply, or Cruiser to equip special modules like lights.</div></div>`;
+
+  c.innerHTML=`<div class="designer">
+    ${modSect('hulls','hull','HULL')}
+    ${modSect('engines','engine','ENGINE')}
+    ${modSect('weapons','weapon','WEAPONS')}
+    ${modSect('armor','armor','ARMOR')}
+    ${specialHtml}
+    <div style="flex:1;min-width:200px;">
+      <div class="stat-preview">
+        <canvas id="shipPreview" width="260" height="140" style="width:100%;height:140px;background:#081426;border:1px solid #1a3550;border-radius:8px;margin-bottom:10px;"></canvas>
+        <input id="boatNameInput" type="text" value="${curDesign.name}" style="width:100%;margin-bottom:10px;padding:7px;background:#04101e;border:1px solid #1a3550;border-radius:5px;color:#8ecfff;font-size:13px;" oninput="curDesign.name=this.value" placeholder="Boat Name">
+        <div style="font-size:9px;color:#3a6a8a;text-align:left;margin-bottom:4px;">WEAPON LOADOUT</div>
+        <div style="font-size:11px;color:#8ecfff;margin-bottom:4px;min-height:20px;">${selectedWeaponText}</div>
+        <div style="font-size:9px;color:#5a8a7a;margin-bottom:6px;">${slotHint}</div>
+        <div style="font-size:9px;color:#3a6a8a;text-align:left;margin-bottom:4px;">WEAPON SLOTS</div>
+        <div class="slots-display">${slotsHtml}</div>
+        <div style="font-size:9px;color:#5a8a7a;margin:8px 0 4px;">${specialHint}</div>
+        <div style="font-size:9px;color:#3a6a8a;text-align:left;margin:6px 0 3px;">WEIGHT (${Math.round(tmpl.totalWeight)}/${Math.round(tmpl.maxWeight)})</div>
+        <div class="weight-bar"><div class="weight-fill" style="width:${weightPct*100}%;background:${weightCol}"></div></div>
+        <div style="height:1px;background:#0a1828;margin:8px 0;"></div>
+        <div class="stat-row"><span class="stat-label">Speed</span><span class="stat-val">${Math.round(tmpl.speed)}</span></div>
+        <div class="stat-row"><span class="stat-label">HP</span><span class="stat-val">${tmpl.hp}</span></div>
+        <div class="stat-row"><span class="stat-label">Damage</span><span class="stat-val">${tmpl.dmg||'—'}</span></div>
+        <div class="stat-row"><span class="stat-label">Range</span><span class="stat-val">${tmpl.range||'—'}</span></div>
+        <div class="stat-row"><span class="stat-label">Fuel/s</span><span class="stat-val">${tmpl.fuelPerSec.toFixed(2)}</span></div>
+        <div class="stat-row"><span class="stat-label">Build Cost</span><span class="stat-val" style="font-size:9px">${formatCost(tmpl.buildCost)}</span></div>
+        <button class="btn green" style="width:100%;margin-top:10px;" onclick="queueBoat()">⚓ Queue Build</button>
+        <button class="btn small orange" style="width:100%;margin-top:5px;" onclick="saveDesign()">💾 Save Design</button>
+      </div>
+      ${savedDesigns.length>0?`<div style="margin-top:10px;"><div style="font-size:10px;color:#5a7a9a;margin-bottom:5px;">Saved designs:</div>${savedDesigns.map((d,i)=>`<button class="btn small" style="width:100%;margin-bottom:3px;text-align:left;" onclick="loadDesign(${i})">${d.name}</button>`).join('')}</div>`:''}
+    </div>
+  </div>`;
+  drawShipPreview(tmpl);
+}
+
+function renderQueue(c){
+  if(!buildQueue.length){c.innerHTML='<div style="padding:30px;color:#2a5a7a;text-align:center;">Build queue empty</div>';return;}
+  c.innerHTML=buildQueue.map((q,i)=>`<div style="display:flex;gap:10px;padding:8px;background:rgba(6,18,34,0.9);border-radius:6px;margin-bottom:5px;align-items:center;">
+    <div style="flex:1;font-size:12px;color:#8ecfff">${q.template.name}</div>
+    <div style="width:110px"><div class="progress-bar"><div class="fill" style="width:${(q.progress/q.time*100).toFixed(0)}%"></div></div></div>
+    <button class="btn small red" onclick="cancelBuild(${i})">✕</button>
+  </div>`).join('');
+}
+
+function renderModules(c){
+  c.innerHTML=`<div style="color:#2a5a7a;font-size:11px;margin-bottom:10px;">Unlocked modules appear in the Designer. Research more in Base → Research tab.</div>
+  <div class="bldg-grid">${[...Object.values(MOD)].flatMap(cat=>Object.entries(cat)).map(([id,m])=>`<div class="bldg-card${unlockedMods.has(id)?'':' locked'}">
+    <h3>${m.name}</h3>
+    <div class="bdesc">${m.desc||''}</div>
+    <div style="font-size:9px;color:${unlockedMods.has(id)?'#3a8a3a':'#6a2a2a'};margin-top:4px;">${unlockedMods.has(id)?'✅ Unlocked':'🔒 Locked'}</div>
+  </div>`).join('')}</div>`;
+}
+
+function renderAircraftTab(c){
+  if(!(G.buildings['airport']>0)){c.innerHTML='<div style="padding:40px;text-align:center;color:#2a5a7a">Build an Airport first! (Requires Aviation research)</div>';return;}
+  const tmpl = makePlaneTemplate(curPlaneDesign.name, curPlaneDesign.hull, curPlaneDesign.weapon, curPlaneDesign.special);
+  const planeSect = (data, key, label) => `<div class="mod-sect"><h3>${label}</h3>${Object.entries(data).map(([id,m])=>{
+      const locked = m.req && !unlockedMods.has(id);
+      const sel = curPlaneDesign[key]===id;
+      const action = locked ? '' : `selectPlanePart('${key}','${id}')`;
+      return `<div class="mrow${sel?' sel':''}${locked?' lk':''}" ${locked?'':`onclick="${action}"`}>
+        <div class="mn">${m.name}</div>
+        <div class="ms">${m.desc}</div>
+      </div>`;
+    }).join('')}</div>`;
+  c.innerHTML=`<div class="designer">
+    ${planeSect(PLANE_HULLS,'hull','AIRFRAME')}
+    ${planeSect(PLANE_WEAPONS,'weapon','ARMAMENT')}
+    ${planeSect(PLANE_SPECIALS,'special','SPECIAL MODULE')}
+    <div style="flex:1;min-width:220px;">
+      <div class="stat-preview">
+        <div style="font-size:14px;margin-bottom:10px;">✈️ Aircraft Designer</div>
+        <input id="planeNameInput" type="text" value="${tmpl.name}" style="width:100%;margin-bottom:10px;padding:8px;background:#04101e;border:1px solid #1a3550;border-radius:6px;color:#8ecfff;font-size:13px;" placeholder="Plane name" oninput="curPlaneDesign.name=this.value">
+        <div style="font-size:10px;color:#5a7a8a;margin-bottom:6px;">FRAME: ${PLANE_HULLS[tmpl.hull]?.name||''}</div>
+        <div style="font-size:10px;color:#5a7a8a;margin-bottom:6px;">WEAPON: ${PLANE_WEAPONS[tmpl.weapon]?.name||''}</div>
+        <div style="font-size:10px;color:#5a7a8a;margin-bottom:10px;">MODULE: ${PLANE_SPECIALS[tmpl.special]?.name||''}</div>
+        <div class="stat-row"><span class="stat-label">HP</span><span class="stat-val">${tmpl.hp}</span></div>
+        <div class="stat-row"><span class="stat-label">Speed</span><span class="stat-val">${Math.round(tmpl.speed)}</span></div>
+        <div class="stat-row"><span class="stat-label">Range</span><span class="stat-val">${tmpl.range}</span></div>
+        <div class="stat-row"><span class="stat-label">Damage</span><span class="stat-val">${tmpl.dmg||'—'}</span></div>
+        <div class="stat-row"><span class="stat-label">Fire/s</span><span class="stat-val">${tmpl.firerate?tmpl.firerate.toFixed(1):'—'}</span></div>
+        <div class="stat-row"><span class="stat-label">Fuel/s</span><span class="stat-val">${tmpl.fuelPerSec.toFixed(2)}</span></div>
+        <div class="stat-row"><span class="stat-label">Build Cost</span><span class="stat-val" style="font-size:9px">${formatCost(tmpl.buildCost)}</span></div>
+        <button class="btn green" style="width:100%;margin-top:10px;" onclick="queuePlane()">🛫 Launch Aircraft</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderSubDockTab(c){
+  if(!(G.buildings['subdock']>0)){
+    c.innerHTML=`<div style="padding:40px;text-align:center;">
+      <div style="font-size:48px;margin-bottom:14px;">🤿</div>
+      <div style="color:#2a8aaf;font-size:14px;font-weight:700;margin-bottom:8px;">Submarine Dock Not Built</div>
+      <div style="font-size:11px;color:#1a3550;max-width:320px;margin:0 auto;line-height:1.7;">Build a Submarine Dock in Base → Military.<br>Requires <strong style="color:#3acfef">Submarine Tech</strong> research first.</div>
+    </div>`;return;
+  }
+  const subHulls = Object.entries(MOD.hulls).filter(([id])=>id.startsWith('hull_sub'));
+  const subWeps = Object.entries(MOD.weapons).filter(([id])=>['gun_subtorp','gun_subgun','gun_nuke','gun_nuke_icbm','gun_mine','gun_none'].includes(id));
+  const subSpecs = Object.entries(MOD.specials).filter(([id])=>['spec_none','spec_sonar','spec_stealth','spec_repair','spec_fuel_tank'].includes(id));
+  const subFleet = G.fleet.filter(b=>b.isSub);
+  const h = MOD.hulls[curSubDesign.hull] || MOD.hulls.hull_sub;
+  const weaponIds = Array.isArray(curSubDesign.weapons)?curSubDesign.weapons.filter(Boolean):[curSubDesign.weapons];
+  const specialIds = Array.isArray(curSubDesign.specials)?curSubDesign.specials.filter(Boolean):[curSubDesign.specials];
+  const selectedWeapons = weaponIds.filter(id=>id&&id!=='gun_none');
+  const selectedSpecials = specialIds.filter(id=>id&&id!=='spec_none');
+  const usedSlots = selectedWeapons.reduce((sum,id)=>sum + (MOD.weapons[id]?.slotCost||1),0);
+  const tmpl = makeTemplate((document.getElementById('subNameInput')?.value||'Barracuda'),curSubDesign.hull,'eng_sub',selectedWeapons.length?selectedWeapons:['gun_none'],'armor_none',selectedSpecials.length?selectedSpecials:['spec_none']);
+  const weaponHint = `${usedSlots}/${h.slots} weapon slot${h.slots===1?'':'s'} used`;
+  const specialHint = `${selectedSpecials.length}/${h.specialSlots||0} special slot${(h.specialSlots||0)===1?'':'s'} used`;
+
+  const hullHtml = subHulls.map(([id,m])=>{
+    const unlocked = !m.req || unlockedMods.has(id);
+    const sel = curSubDesign.hull===id;
+    return `<div class="mrow${sel?' sel':''}${unlocked?'':' lk'}" ${unlocked?`onclick="selectSubHull('${id}')"`:''}>
+      <div class="mn">${m.name}</div>
+      <div class="ms">HP:${m.hp} · SLOTS:${m.slots} · SPECS:${m.specialSlots}</div>
+    </div>`;
+  }).join('');
+
+  c.innerHTML=`<div style="display:flex;gap:16px;flex-wrap:wrap;">
+    <div style="flex:1;min-width:220px;">
+      <div class="mod-sect"><h3>HULLS</h3>${hullHtml}</div>
+      <div class="mod-sect"><h3>SUB WEAPONS</h3>
+        <div style="font-size:10px;color:#5a7a8a;margin-bottom:8px;">${weaponHint}</div>
+        ${subWeps.map(([id,m])=>{
+          const unlocked = unlockedMods.has(id);
+          const sel = selectedWeapons.includes(id);
+          return `<div class="mrow${sel?' sel':''}${unlocked?'':' lk'}" ${unlocked?`onclick="toggleSubWeapon('${id}')"`:''}>
+            <div style="flex:1"><div class="mn">${m.name}</div><div class="ms">Dmg:${m.dmg||0} · Rng:${m.rng||0} · Slots:${m.slotCost||1}</div></div>
+            ${sel?`<span style="font-size:9px;color:#2acfef;">SELECTED</span>`:''}
+          </div>`;
+        }).join('')}
+      </div>
+      <div class="mod-sect" style="margin-top:12px;"><h3>SPECIAL MODULES</h3>
+        <div style="font-size:10px;color:#5a7a8a;margin-bottom:8px;">${specialHint}</div>
+        ${subSpecs.map(([id,m])=>{
+          const unlocked = unlockedMods.has(id);
+          const sel = selectedSpecials.includes(id);
+          return `<div class="mrow${sel?' sel':''}${unlocked?'':' lk'}" ${unlocked?`onclick="toggleSubSpecial('${id}')"`:''}>
+            <div style="flex:1"><div class="mn">${m.name}</div><div class="ms" style="color:#2a6a8a">${m.desc}</div></div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+    <div class="stat-preview" style="flex:1;min-width:220px;text-align:left;">
+      <div style="font-size:13px;font-weight:700;color:#2acfef;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;">🤿 Submarine Designer</div>
+      <input id="subNameInput" type="text" value="Barracuda" style="width:100%;margin-bottom:10px;padding:7px 10px;background:#040e1e;border:1px solid #1a3a5a;border-radius:5px;color:#5acfef;font-size:12px;" placeholder="Sub name">
+      <div style="height:1px;background:#0a1a2a;margin:8px 0;"></div>
+      <div class="stat-row"><span class="stat-label">⚡ Speed</span><span class="stat-val">${Math.round(tmpl.speed)}</span></div>
+      <div class="stat-row"><span class="stat-label">❤️ Hull HP</span><span class="stat-val">${tmpl.hp}</span></div>
+      <div class="stat-row"><span class="stat-label">🎯 Damage</span><span class="stat-val">${tmpl.dmg||'—'}</span></div>
+      <div class="stat-row"><span class="stat-label">📡 Range</span><span class="stat-val">${tmpl.range||'—'}</span></div>
+      <div class="stat-row"><span class="stat-label">⛽ Fuel/s</span><span class="stat-val">${tmpl.fuelPerSec.toFixed(2)}</span></div>
+      <div class="stat-row"><span class="stat-label">💰 Cost</span><span class="stat-val" style="font-size:9px">${formatCost(tmpl.buildCost)}</span></div>
+      <div style="background:rgba(0,20,30,0.6);border:1px solid #0a3a5a;border-radius:4px;padding:7px;font-size:9px;color:#2a6a8a;margin-top:8px;line-height:1.7;">
+        🤿 Subs are invisible when submerged.<br>📡 Sonar reveals hidden threats.<br>🎯 Nuclear torpedoes strike the base when no heavy foes remain.
+      </div>
+      <button class="btn teal" style="width:100%;margin-top:12px;font-size:12px;letter-spacing:1px;" onclick="queueSubBoat()">🤿 BUILD SUBMARINE</button>
+    </div>
+    <div style="flex:1;min-width:220px;">
+      <div style="font-size:11px;color:#2acfef;margin-bottom:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #0a2a3a;padding-bottom:6px;">Submarine Fleet (${subFleet.length})</div>
+      ${subFleet.length===0
+        ?`<div style="color:#1a4a6a;font-size:11px;padding:20px;text-align:center;border:1px dashed #0a2a3a;border-radius:5px;">No submarines in fleet.</div>`
+        :subFleet.map(b=>{
+          const hpPct=b.hp/b.maxHp*100;
+          const fPct=b.fuel||0;
+          const hpCol=hpPct>60?'#2a9a4a':hpPct>30?'#9a7a2a':'#9a2a2a';
+          return `<div style="padding:9px;background:rgba(2,12,24,0.9);border:1px solid ${b.submerged?'#0a4a6a':'#0a2a3a'};border-left:3px solid ${b.submerged?'#2acfef':'#1a5a6a'};border-radius:5px;margin-bottom:6px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;">
+              <div style="color:#5acfef;font-size:12px;font-weight:700;">${b.name}</div>
+              <span style="font-size:9px;padding:2px 6px;border-radius:3px;background:${b.submerged?'rgba(0,40,60,0.9)':'rgba(20,20,40,0.9)'};border:1px solid ${b.submerged?'#2acfef':'#2a4a6a'};color:${b.submerged?'#2acfef':'#4a7a9a'};">${b.submerged?'🤿 SUBMERGED':'🌊 SURFACED'}</span>
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:4px;">
+              <div style="flex:1"><div style="font-size:8px;color:#2a5a7a;margin-bottom:2px;">HULL ${Math.ceil(b.hp)}/${b.maxHp}</div><div style="height:3px;background:#060e1a;border-radius:1px;"><div style="height:100%;width:${hpPct}%;background:${hpCol};border-radius:1px;"></div></div></div>
+              <div style="flex:1"><div style="font-size:8px;color:#2a5a7a;margin-bottom:2px;">FUEL ${Math.floor(fPct)}%</div><div style="height:3px;background:#060e1a;border-radius:1px;"><div style="height:100%;width:${fPct}%;background:#1a6a9a;border-radius:1px;"></div></div></div>
+            </div>
+            <div style="font-size:9px;color:#1a4a6a;">${Array.isArray(b.weapons)?b.weapons.filter(id=>id&&id!=='gun_none').map(id=>MOD.weapons[id]?.name||id).join(' + ')||'Unarmed':(MOD.weapons[b.weapon]?.name||b.weapon)} · ${b.status.toUpperCase()}</div>
+          </div>`;
+        }).join('')}
+    </div>
+  </div>`;
+}
+
+
+function queueSubBoat(){
+  const name=document.getElementById('subNameInput')?.value||'Submarine';
+  const weapons = Array.isArray(curSubDesign.weapons)?curSubDesign.weapons.filter(Boolean):[curSubDesign.weapons];
+  const specials = Array.isArray(curSubDesign.specials)?curSubDesign.specials.filter(Boolean):[curSubDesign.specials];
+  const tmpl=makeTemplate(name,curSubDesign.hull,'eng_sub',weapons.length?weapons:['gun_none'],'armor_none',specials.length?specials:['spec_none']);
+  if(!canAffordCost(tmpl.buildCost))return showMsg('Not enough resources!');
+  const maxQueue=G.buildings['subdock']||1;
+  if(buildQueue.filter(q=>q.template.isSub).length>=maxQueue)return showMsg('Sub Dock queue full!');
+  spendCost(tmpl.buildCost);
+  buildQueue.push({template:tmpl,progress:0,time:35});
+  showMsg(`${name} added to build queue`);
+  renderShipContent();
+}
+
+function getWeaponSlotCost(id){return MOD.weapons[id]?.slotCost||1;}
+function selectSubHull(id){
+  if(!unlockedMods.has(id))return;
+  curSubDesign.hull=id;
+  const h=MOD.hulls[id]||MOD.hulls.hull_sub;
+  const weapons = (Array.isArray(curSubDesign.weapons)?curSubDesign.weapons:[curSubDesign.weapons]).filter(w=>w&&w!=='gun_none');
+  let used=0;
+  const fitted=[];
+  for(const w of weapons){
+    const cost=getWeaponSlotCost(w);
+    if(used+cost<=h.slots){fitted.push(w);used+=cost;}
+  }
+  curSubDesign.weapons=fitted.length?fitted:['gun_none'];
+  const specials=(Array.isArray(curSubDesign.specials)?curSubDesign.specials:[curSubDesign.specials]).filter(s=>s&&s!=='spec_none').slice(0,h.specialSlots);
+  curSubDesign.specials=specials.length?specials:['spec_none'];
+  renderShipContent();
+}
+function toggleSubWeapon(id){
+  if(!unlockedMods.has(id))return;
+  const h=MOD.hulls[curSubDesign.hull]||MOD.hulls.hull_sub;
+  const weapons=(Array.isArray(curSubDesign.weapons)?curSubDesign.weapons:[curSubDesign.weapons]).filter(w=>w&&w!=='gun_none');
+  if(id==='gun_none'){curSubDesign.weapons=['gun_none'];renderShipContent();return;}
+  const idx=weapons.indexOf(id);
+  if(idx>=0){weapons.splice(idx,1);} else {
+    const used=weapons.reduce((sum,w)=>sum+getWeaponSlotCost(w),0);
+    const need=getWeaponSlotCost(id);
+    if(used+need>h.slots)return showMsg('No more weapon slots available!');
+    weapons.push(id);
+  }
+  curSubDesign.weapons=weapons.length?weapons:['gun_none'];
+  renderShipContent();
+}
+function toggleSubSpecial(id){
+  if(!unlockedMods.has(id))return;
+  const h=MOD.hulls[curSubDesign.hull]||MOD.hulls.hull_sub;
+  const specials=(Array.isArray(curSubDesign.specials)?curSubDesign.specials:[curSubDesign.specials]).filter(s=>s&&s!=='spec_none');
+  if(id==='spec_none'){curSubDesign.specials=['spec_none'];renderShipContent();return;}
+  const idx=specials.indexOf(id);
+  if(idx>=0){specials.splice(idx,1);} else {
+    if(specials.length>=h.specialSlots)return showMsg('No more special slots available!');
+    specials.push(id);
+  }
+  curSubDesign.specials=specials.length?specials:['spec_none'];
+  renderShipContent();
+}
+
+function selectModule(type,id){
+  curDesign[type]=id;
+  if(type==='hull'){
+    const h=MOD.hulls[id]||MOD.hulls.hull_patrol;
+    if((h.specialSlots||0)===0) curDesign.special='spec_none';
+  }
+  renderShipContent();
+}
+function toggleWeapon(id){
+  if(!unlockedMods.has(id))return;
+  const h=MOD.hulls[curDesign.hull]||MOD.hulls.hull_patrol;
+  const weapons=Array.isArray(curDesign.weapons)?[...curDesign.weapons]:[curDesign.weapon];
+  if(id==='gun_none'){
+    curDesign.weapons=['gun_none'];
+    renderShipContent();
+    return;
+  }
+  const used=weapons.filter(w=>w&&w!=='gun_none');
+  if(used.includes(id)){
+    const next=used.filter(w=>w!==id);
+    curDesign.weapons=next.length?next:['gun_none'];
+  } else {
+    if(used.length>=h.slots)return showMsg('No more weapon slots available!');
+    curDesign.weapons=[...used,id];
+  }
+  renderShipContent();
+}
+function queueBoat(){
+  const tmpl=makeTemplate(curDesign.name,curDesign.hull,curDesign.engine,curDesign.weapons||curDesign.weapon||'gun_none',curDesign.armor,curDesign.special);
+  if(tmpl.isSub)return showMsg('Use Sub Dock tab for submarines!');
+  if(!canAffordCost(tmpl.buildCost))return showMsg('Not enough resources!');
+  const maxQ=G.buildings['shipyard']||1;
+  if(buildQueue.length>=maxQ+2)return showMsg('Shipyard full! Upgrade it.');
+  spendCost(tmpl.buildCost);
+  buildQueue.push({template:tmpl,progress:0,time:22});
+  showMsg(`${tmpl.name} added to queue`);
+  renderShipContent();
+}
+function selectPlanePart(type,id){
+  curPlaneDesign[type]=id;
+  renderShipContent();
+}
+function queuePlane(){
+  if(!(G.buildings['airport']>0))return showMsg('Build an Airport first!');
+  const tmpl = makePlaneTemplate(curPlaneDesign.name, curPlaneDesign.hull, curPlaneDesign.weapon, curPlaneDesign.special);
+  if(!canAffordCost(tmpl.buildCost))return showMsg('Not enough resources!');
+  spendCost(tmpl.buildCost);
+  const eb={x:ix(PLAYER_ISLAND.x)+80,y:iy(PLAYER_ISLAND.y)-40};
+  G.aircraft.push({
+    x:eb.x,y:eb.y,tx:ix(ENEMY_ISLAND.x),ty:iy(ENEMY_ISLAND.y),
+    attackTarget:null,speed:tmpl.speed,hp:tmpl.hp,maxHp:tmpl.maxHp,
+    dmg:tmpl.dmg,firerate:tmpl.firerate,fireTimer:0,
+    fuel:100,fuelPerSec:tmpl.fuelPerSec,range:tmpl.range,
+    type:tmpl.hull,weapon:tmpl.weapon,special:tmpl.special,
+    flightMode:'air',friendly:true,returning:false,id:'p'+Date.now()
+  });
+  showMsg(`🛫 ${tmpl.name} launched!`);
+  renderShipContent();
+}
+function cancelBuild(i){
+  const tmpl=buildQueue[i].template;
+  Object.entries(tmpl.buildCost).forEach(([k,v])=>G.res[k]=(G.res[k]||0)+Math.floor(v*0.5));
+  buildQueue.splice(i,1);renderShipContent();
+}
+function saveDesign(){
+  const name=curDesign.name.trim()||'Unnamed';
+  savedDesigns.push({...curDesign,name});
+  showMsg(`Saved: ${name}`);renderShipContent();
+}
+function loadDesign(idx){if(!savedDesigns[idx])return;curDesign={...savedDesigns[idx]};showMsg(`Loaded: ${curDesign.name}`);renderShipContent();}
+function queueAircraft(type){
+  const ac=ACRAFT[type];
+  if(!canAffordCost(ac.cost))return showMsg('Not enough resources!');
+  spendCost(ac.cost);
+  const eb={x:ix(PLAYER_ISLAND.x)+80,y:iy(PLAYER_ISLAND.y)-40};
+  G.aircraft.push({
+    x:eb.x,y:eb.y,tx:ix(ENEMY_ISLAND.x),ty:iy(ENEMY_ISLAND.y),
+    attackTarget:null,speed:ac.speed,hp:ac.hp,maxHp:ac.maxHp,
+    dmg:ac.dmg,firerate:ac.firerate,fireTimer:0,
+    range:ac.range,type,friendly:true,returning:false,id:'a'+Date.now()
+  });
+  showMsg(`🛫 ${ac.name} launched!`);renderShipContent();
+}
+
+// ═══════════════════════════ ISLAND MENU ═════════════════
+function showIslandMenu(ni, sx, sy){
+  G.islandMenuTarget=ni;
+  const menu=document.getElementById('islandMenu');
+  document.getElementById('imTitle').textContent=ni.name;
+  menu.style.left=Math.min(sx,W-180)+'px';
+  menu.style.top=Math.min(sy,H-200)+'px';
+  menu.style.display='block';
+}
+function closeIslandMenu(){document.getElementById('islandMenu').style.display='none';G.islandMenuTarget=null;}
+function renameIsland(){
+  const ni=G.islandMenuTarget;if(!ni)return;
+  const name=prompt(`Rename island (current: ${ni.name}):`,ni.name);
+  if(name&&name.trim())ni.name=name.trim();
+  closeIslandMenu();showMsg(`Island renamed to ${ni.name}`);
+}
+function buildIslandTurret(){
+  const ni=G.islandMenuTarget;if(!ni)return;
+  if(G.res.gold<300||G.res.steel<200)return showMsg('Need 300💰 200⚙️');
+  G.res.gold-=300;G.res.steel-=200;
+  ni.turret=Math.min(3,ni.turret+1);
+  closeIslandMenu();showMsg(`🏰 Turret built on ${ni.name}!`);
+}
+function buildIslandDock(){
+  const ni=G.islandMenuTarget;if(!ni)return;
+  if(G.res.gold<400||G.res.wood<150)return showMsg('Need 400💰 150🪵');
+  G.res.gold-=400;G.res.wood-=150;
+  ni.dock=1;
+  closeIslandMenu();showMsg(`⚓ Dock built on ${ni.name}! Ships refuel here.`);
+}
+
+// ═══════════════════════════ DIFFICULTY ══════════════════
+function setDiff(d){
+  G.difficulty=d;
+  [0,1,2].forEach(i=>{
+    const el=document.getElementById('d'+i);
+    if(el)el.classList.toggle('active',i===d);
+  });
+}
+
+// ═══════════════════════════ GAME LOOP ═══════════════════
+let lastTime=0;
+function gameLoop(ts){
+  if(!G.started||G.gameOver)return;
+  const dt=Math.min((ts-lastTime)/1000,0.1);
+  lastTime=ts;G.tick++;
+
+  tickDayNight(dt);
+  tickResources(dt);
+  tickBoats(dt);
+  tickProjectiles(dt);
+  tickAircraft(dt);
+  tickNeutralIslands(dt);
+  tickWeather(dt);
+  tickEnemy(dt);
+  tickBuildQueue(dt);
+  tickResearch(dt);
+  checkGameOver();
+
+  tickClouds(dt);
+
+  drawWorld();
+
+  if(G.selectedBoat&&G.selectedBoat.hp!==undefined) updateBoatDetail(G.selectedBoat);
+  if(G.tick%7===0){updateTopbar();updateFleetPanel();updateCaptureHUD();}
+  requestAnimationFrame(gameLoop);
+}
+
+function startGame(){
+  document.getElementById('overlay').style.display='none';
+  G.started=true;
+  G.difficulty=G.difficulty;
+  randomizeIslands();
+  initCam();
+  initClouds();
+
+  // Starter buildings
+  G.buildings={market:1,woodmill:1,farm:1,housing:1,barracks:1,shipyard:1};
+
+  // Starting resources by difficulty
+  if(G.difficulty===0){G.res.gold=340;G.res.wood=240;G.res.steel=130;G.res.fuel=170;}
+  else if(G.difficulty===1){G.res.gold=430;G.res.wood=310;G.res.steel=190;G.res.fuel=220;}
+  else if(G.difficulty===2){G.res.gold=470;G.res.wood=340;G.res.steel=210;G.res.fuel=240;}
+
+  // Starter boat
+  const starter=makeTemplate('Corsair','hull_patrol','eng_basic','gun_light','armor_light');
+  spawnPlayerBoat(starter);
+
+  // Enemy starter
+  spawnEnemyBoat('hull_small','eng_basic','gun_light');
+  if(G.difficulty===2){spawnEnemyBoat('hull_patrol','eng_basic','gun_medium');G.wave=1;}
+
+  showMsg('Welcome to Island Commander II! Capture neutral islands for resources.');
+  lastTime=performance.now();
+  requestAnimationFrame(gameLoop);
+}
+
+// ═══════════════════════════ EVENTS ══════════════════════
+canvas.addEventListener('wheel', e=>{
+  e.preventDefault();
+  const delta=e.deltaY>0?0.88:1.14;
+  CAM.zoom=clamp(CAM.zoom*delta,0.35,3.5);
+  clampCam();
+},{passive:false});
+
+canvas.addEventListener('mousedown', e=>{
+  if(e.button===1||e.button===2){
+    CAM.drag=true;CAM.lx=e.clientX;CAM.ly=e.clientY;CAM.moved=false;
+  }
+});
+canvas.addEventListener('mousemove', e=>{
+  if(CAM.drag&&(e.buttons&(4|2))!==0){
+    const dx=e.clientX-CAM.lx, dy=e.clientY-CAM.ly;
+    if(Math.abs(dx)+Math.abs(dy)>2) CAM.moved=true;
+    CAM.cx-=dx/CAM.zoom;CAM.cy-=dy/CAM.zoom;
+    clampCam();
+    CAM.lx=e.clientX;CAM.ly=e.clientY;
+  }
+});
+canvas.addEventListener('mouseup', e=>{if(e.button===1||e.button===2) CAM.drag=false;});
+
+canvas.addEventListener('contextmenu', e=>{
+  e.preventDefault();
+  if(CAM.moved){CAM.moved=false;return;}
+  if(!G.started||G.gameOver)return;
+  const w=stw(e.clientX,e.clientY);
+  for(const ni of NEUTRAL_ISLANDS){
+    if(ni.owner==='player'&&dist(w,{x:ix(ni.x),y:iy(ni.y)})<ni.r+25){
+      showIslandMenu(ni,e.clientX,e.clientY);return;
+    }
+  }
+  closeIslandMenu();
+});
+
+canvas.addEventListener('click', e=>{
+  if(!G.started||G.gameOver||CAM.drag)return;
+  if(document.getElementById('islandMenu').style.display==='block'){closeIslandMenu();return;}
+  const w=stw(e.clientX,e.clientY);
+
+  // Base click
+  if(dist(w,{x:ix(PLAYER_ISLAND.x),y:iy(PLAYER_ISLAND.y)})<BASE_R+30){openBase();return;}
+
+  // Aircraft click
+  for(const a of G.aircraft){
+    if(dist(w,{x:a.x,y:a.y})<18){selectAircraft(a.id);return;}
+  }
+
+  // Boat click
+  for(const b of G.fleet){
+    if(dist(w,{x:b.x,y:b.y})<24){selectBoat(b.id);return;}
+  }
+
+  if(G.patrolMode&&G.selectedBoat&&G.patrolPoints.length<2){
+    G.patrolPoints.push({x:w.x,y:w.y});
+    if(G.patrolPoints.length===2){
+      G.selectedBoat.patrolPoints=[...G.patrolPoints];
+      G.selectedBoat.patrolIdx=0;G.selectedBoat.status='patrol';
+      G.patrolMode=false;G.patrolPoints=[];showMsg('Patrol route set!');
+    }
+    return;
+  }
+  if(G.guardMode&&G.selectedBoat){
+    G.selectedBoat.guardPos={x:w.x,y:w.y};
+    G.selectedBoat.status='guard';G.guardMode=false;showMsg('Guard position set!');
+    return;
+  }
+
+  G.selectedBoat=null;
+  document.getElementById('ordersPanel').style.display='none';
+  document.getElementById('boatDetail').style.display='none';
+  updateFleetPanel();
+});
+
+// Minimap click → center camera
+mcv.addEventListener('click', e=>{
+  const rect=mcv.getBoundingClientRect();
+  const mx=(e.clientX-rect.left)/180, my=(e.clientY-rect.top)/110;
+  CAM.cx=mx*W*WORLD_SCALE;CAM.cy=my*H*WORLD_SCALE;clampCam();
+});
+
+// Init weather + time display
+G.weather='clear';updateWeatherHUD();
+
+console.log('%c✅ Island Commander II: Remastered loaded!','color:#3acfff;font-weight:bold;font-size:14px;');
+</script>
+</body>
+</html>

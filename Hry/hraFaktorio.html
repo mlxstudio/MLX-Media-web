@@ -1,0 +1,2358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NEXUS — Industrial Survival v2.0</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#080810;color:#ddd;font-family:'Courier New',monospace;overflow:hidden;user-select:none}
+canvas{display:block;position:absolute;top:0;left:0}
+#menu{position:fixed;inset:0;background:radial-gradient(ellipse at 40% 40%,#0f1830 0%,#080810 70%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;gap:0}
+.m-title{font-size:80px;font-weight:900;letter-spacing:18px;
+  background:linear-gradient(135deg,#ff6600,#ffbb00,#ff4400);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+.m-sub{color:#445;font-size:12px;letter-spacing:6px;margin-bottom:50px;margin-top:6px}
+.m-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:680px;width:100%;padding:0 20px}
+.m-card{background:rgba(255,102,0,0.04);border:1px solid rgba(255,102,0,0.25);border-radius:8px;
+  padding:22px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden}
+.m-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,102,0,0.08),transparent);
+  opacity:0;transition:opacity 0.2s}
+.m-card:hover::before{opacity:1}
+.m-card:hover{border-color:#ff6600;transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,102,0,0.2)}
+.mc-icon{font-size:30px;margin-bottom:8px}
+.mc-name{font-size:16px;font-weight:bold;color:#ff9944;margin-bottom:6px;letter-spacing:2px}
+.mc-desc{font-size:11px;color:#667;line-height:1.6}
+.mc-badge{position:absolute;top:10px;right:10px;font-size:9px;background:rgba(255,102,0,0.2);
+  color:#ff8844;padding:2px 8px;border-radius:3px;letter-spacing:1px}
+.m-version{color:#334;font-size:10px;margin-top:30px;letter-spacing:3px}
+#hud{position:fixed;top:0;left:0;right:0;height:52px;
+  background:rgba(8,8,16,0.95);border-bottom:1px solid rgba(255,102,0,0.25);
+  display:none;align-items:center;padding:0 14px;gap:0;z-index:50;backdrop-filter:blur(4px)}
+.h-seg{display:flex;align-items:center;gap:6px;padding:0 12px;border-right:1px solid rgba(255,102,0,0.15);height:100%}
+.h-seg:last-child{border-right:none}
+.h-label{font-size:9px;color:#445;letter-spacing:2px;text-transform:uppercase}
+.h-val{font-size:13px;font-weight:bold;color:#eee}
+.h-icon{font-size:14px}
+.h-power{color:#ffcc00}
+.h-wave{color:#ff4444;margin-left:auto;font-size:13px;font-weight:bold;letter-spacing:2px}
+.h-day{color:#88aaff;font-size:11px}
+.h-score{color:#ffaa44;font-size:12px}
+.h-mode{font-size:9px;color:#556;letter-spacing:3px;padding:3px 8px;border:1px solid rgba(255,102,0,0.2);border-radius:3px}
+#hp-bar-wrap{width:80px;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden}
+#hp-bar{height:100%;background:linear-gradient(90deg,#44ff44,#aaff44);border-radius:4px;transition:width 0.3s}
+#power-meter{width:60px;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden}
+#power-fill{height:100%;background:#ffcc00;border-radius:4px;transition:width 0.5s}
+#toolbar{position:fixed;bottom:0;left:0;right:0;height:72px;
+  background:rgba(8,8,16,0.97);border-top:1px solid rgba(255,102,0,0.25);
+  display:none;align-items:center;padding:0 8px;gap:3px;z-index:50;
+  overflow-x:auto;overflow-y:hidden}
+.t-sep{width:1px;height:50px;background:rgba(255,102,0,0.2);flex-shrink:0;margin:0 4px}
+.t-cat{font-size:8px;color:#445;letter-spacing:2px;writing-mode:vertical-lr;padding:4px 2px;flex-shrink:0}
+.tbtn{width:58px;height:58px;border:1px solid rgba(255,102,0,0.2);
+  background:rgba(255,102,0,0.03);border-radius:6px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2px;transition:all 0.15s;flex-shrink:0;position:relative}
+.tbtn:hover,.tbtn.sel{background:rgba(255,102,0,0.18);border-color:#ff6600}
+.tbtn.locked{opacity:0.25;cursor:not-allowed;pointer-events:none}
+.tbtn .ti{font-size:22px;line-height:1}
+.tbtn .tl{font-size:7px;color:#778;text-align:center;line-height:1.2;max-width:54px}
+.tbtn.sel .tl{color:#ffaa44}
+.t-demo{color:#ff4444}
+.t-demo.sel,.t-demo:hover{background:rgba(255,50,50,0.2)!important;border-color:#ff4444!important}
+.side-panel{position:fixed;right:0;top:52px;bottom:72px;width:280px;
+  background:rgba(8,8,16,0.97);border-left:1px solid rgba(255,102,0,0.2);
+  transform:translateX(100%);transition:transform 0.25s;overflow-y:auto;z-index:40;padding:14px}
+.side-panel.open{transform:translateX(0)}
+.panel-title{color:#ff8844;font-size:11px;letter-spacing:4px;margin-bottom:10px;margin-top:12px;font-weight:bold}
+.ptoggle{position:fixed;right:0;background:rgba(255,102,0,0.12);
+  border:1px solid rgba(255,102,0,0.3);border-right:none;color:#ff8844;
+  font-size:9px;writing-mode:vertical-lr;padding:10px 5px;cursor:pointer;
+  z-index:41;transition:background 0.2s;letter-spacing:2px;border-radius:6px 0 0 6px}
+.ptoggle:hover{background:rgba(255,102,0,0.28)}
+#ttoggle{top:100px}
+#itoggle{top:180px}
+.tech-node{border:1px solid rgba(255,102,0,0.2);border-radius:6px;
+  padding:10px;margin-bottom:8px;cursor:pointer;transition:all 0.2s}
+.tech-node:hover:not(.locked):not(.done){border-color:#ff6600;background:rgba(255,102,0,0.1)}
+.tech-node.done{border-color:rgba(0,255,80,0.4);background:rgba(0,255,80,0.05)}
+.tech-node.locked{opacity:0.35;cursor:not-allowed}
+.tech-node.active{border-color:#ffaa00;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.6}}
+.tn-name{font-size:12px;font-weight:bold;color:#eee}
+.tn-cost{font-size:10px;color:#ffaa44;margin-top:3px}
+.tn-desc{font-size:10px;color:#667;margin-top:4px;line-height:1.5}
+.tn-req{font-size:9px;color:#446;margin-top:3px}
+.tn-status{font-size:9px;margin-top:4px}
+.tn-tier{font-size:8px;color:#556;float:right;letter-spacing:1px}
+.inv-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.inv-item{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+  border-radius:5px;padding:8px 10px;display:flex;align-items:center;gap:8px}
+.inv-icon{width:18px;height:18px;border-radius:3px;flex-shrink:0}
+.inv-name{font-size:10px;color:#889}
+.inv-count{font-size:13px;font-weight:bold;color:#eee;margin-left:auto}
+.recipe-btn{width:100%;background:rgba(255,102,0,0.05);border:1px solid rgba(255,102,0,0.2);
+  border-radius:5px;padding:8px;cursor:pointer;margin-bottom:5px;text-align:left;
+  font-family:'Courier New',monospace;font-size:10px;color:#aaa;transition:all 0.15s}
+.recipe-btn:hover,.recipe-btn.sel{background:rgba(255,102,0,0.15);border-color:#ff6600;color:#fff}
+.recipe-hdr{font-size:9px;color:#ff6622;letter-spacing:2px;margin:8px 0 4px;border-bottom:1px solid rgba(255,102,0,0.2);padding-bottom:4px}
+#wave-ann{position:fixed;top:80px;left:50%;transform:translateX(-50%);
+  background:rgba(255,30,30,0.9);border:1px solid #ff5050;border-radius:8px;
+  padding:10px 28px;font-size:16px;font-weight:bold;color:#fff;z-index:60;
+  opacity:0;transition:opacity 0.4s;pointer-events:none;letter-spacing:3px}
+#wave-ann.show{opacity:1}
+#obj-panel{position:fixed;top:60px;left:14px;background:rgba(8,8,16,0.9);
+  border:1px solid rgba(255,102,0,0.2);border-radius:7px;padding:12px 14px;
+  z-index:45;font-size:11px;display:none;min-width:220px}
+.obj-title{color:#ff8844;font-size:9px;letter-spacing:3px;margin-bottom:8px}
+.obj-row{display:flex;align-items:center;gap:8px;margin-bottom:4px;color:#889}
+.obj-done{color:#44ff88;text-decoration:line-through}
+#msg-log{position:fixed;bottom:80px;left:14px;display:flex;flex-direction:column;
+  gap:4px;z-index:45;pointer-events:none;max-width:300px}
+.msg{background:rgba(8,8,16,0.88);border-left:3px solid #ff6600;
+  padding:4px 10px;font-size:11px;color:#ccc;
+  animation:msgAnim 4s forwards;border-radius:0 4px 4px 0}
+.msg.warn{border-left-color:#ff4444;color:#ff9999}
+.msg.good{border-left-color:#44ff88;color:#88ffbb}
+@keyframes msgAnim{0%{opacity:0;transform:translateX(-12px)}12%{opacity:1;transform:translateX(0)}75%{opacity:1}100%{opacity:0}}
+.over{position:fixed;inset:0;background:rgba(0,0,0,0.88);display:none;
+  flex-direction:column;align-items:center;justify-content:center;z-index:80;gap:18px}
+.over.show{display:flex}
+.over-title{font-size:72px;font-weight:900;letter-spacing:10px}
+.over-sub{font-size:14px;color:#889;letter-spacing:4px}
+.over-score{font-size:22px;color:#ffaa44}
+.btn{background:#ff6600;border:none;color:#fff;font-size:13px;padding:12px 30px;
+  border-radius:6px;cursor:pointer;font-family:'Courier New',monospace;
+  letter-spacing:2px;font-weight:bold;transition:background 0.2s}
+.btn:hover{background:#ff8844}
+.btn.sec{background:rgba(255,102,0,0.15);border:1px solid rgba(255,102,0,0.4)}
+.btn.sec:hover{background:rgba(255,102,0,0.3)}
+#binfo{position:fixed;background:rgba(8,8,16,0.96);border:1px solid rgba(255,102,0,0.4);
+  border-radius:7px;padding:10px 14px;font-size:11px;z-index:70;pointer-events:none;
+  max-width:220px;line-height:1.7;display:none}
+.bi-name{font-size:13px;font-weight:bold;color:#ffaa44;margin-bottom:5px}
+.bi-cost{color:#ff8844;font-size:10px}
+.bi-pow{color:#ffcc00;font-size:10px}
+.bi-desc{color:#889;font-size:10px;margin-top:4px}
+#night{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 50%,
+  transparent 30%,rgba(0,0,20,0.6) 100%);pointer-events:none;z-index:10;opacity:0;transition:opacity 1s}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,102,0,0.3);border-radius:2px}
+</style>
+</head>
+<body>
+
+<div id="menu">
+  <div class="m-title">NEXUS</div>
+  <div class="m-sub">INDUSTRIAL SURVIVAL v2.0</div>
+  <div class="m-grid">
+    <div class="m-card" onclick="startGame('sandbox')">
+      <div class="mc-icon">🔧</div>
+      <div class="mc-name">SANDBOX</div>
+      <div class="mc-desc">Free build, unlimited resources. Experiment with all 38 machines, new ores, and the full tech tree.</div>
+      <div class="mc-badge">FREE BUILD</div>
+    </div>
+    <div class="m-card" onclick="startGame('survival')">
+      <div class="mc-icon">🌙</div>
+      <div class="mc-name">SURVIVAL</div>
+      <div class="mc-desc">Day/night cycle. Build during day, defend at night. New Tanks, Leapers and Corruptors await.</div>
+      <div class="mc-badge">HARDCORE</div>
+    </div>
+    <div class="m-card" onclick="startGame('campaign',1)">
+      <div class="mc-icon">📋</div>
+      <div class="mc-name">CAMPAIGN</div>
+      <div class="mc-desc">5 levels. From basic mining to Nuclear Power and the OMEGA final boss. Master the full tech tree.</div>
+      <div class="mc-badge">5 LEVELS</div>
+    </div>
+    <div class="m-card" onclick="startGame('challenge',1)">
+      <div class="mc-icon">⚡</div>
+      <div class="mc-name">CHALLENGE</div>
+      <div class="mc-desc">Special conditions: no walls, resource crunch, speed runs. Master every machine to survive.</div>
+      <div class="mc-badge">HARD</div>
+    </div>
+  </div>
+  <div class="m-version">NEXUS v2.0 — WASD MOVE · LMB PLACE · RMB REMOVE · R ROTATE · E MINE · 38 BUILDINGS · 15 ORES · 14 TECHS</div>
+</div>
+
+<canvas id="c"></canvas>
+<div id="night"></div>
+
+<div id="hud">
+  <div class="h-seg"><span class="h-mode" id="h-mode">SANDBOX</span></div>
+  <div class="h-seg">
+    <span class="h-icon">❤</span>
+    <div><div class="h-label">CORE HP</div><div id="hp-bar-wrap"><div id="hp-bar" style="width:100%"></div></div></div>
+    <span class="h-val" id="h-hp">1500</span>
+  </div>
+  <div class="h-seg h-power">
+    <span class="h-icon">⚡</span>
+    <div><div class="h-label">POWER</div><div id="power-meter"><div id="power-fill" style="width:0%"></div></div></div>
+    <span class="h-val" id="h-pow">0/0W</span>
+  </div>
+  <div class="h-seg"><span class="h-icon">🔬</span><span class="h-val" id="h-res">0</span><span class="h-label">RP</span></div>
+  <div class="h-seg"><span class="h-icon">🌙</span><span class="h-val h-day" id="h-day">DAY 1</span></div>
+  <div class="h-seg" id="h-wave-seg"><span class="h-wave" id="h-wave">WAVE 0</span></div>
+  <div class="h-seg" style="margin-left:auto"><span class="h-score" id="h-score">0 pts</span></div>
+</div>
+
+<!-- TOOLBAR -->
+<div id="toolbar">
+  <span class="t-cat">EXTRACT</span>
+  <div class="tbtn" id="tb-mining_drill" onclick="selectBuild('mining_drill')"><span class="ti">⛏</span><span class="tl">DRILL T1</span></div>
+  <div class="tbtn locked" id="tb-heavy_drill" onclick="selectBuild('heavy_drill')"><span class="ti">⚒</span><span class="tl">DRILL T2</span></div>
+  <div class="tbtn locked" id="tb-quantum_drill" onclick="selectBuild('quantum_drill')"><span class="ti">🔩</span><span class="tl">DRILL T3</span></div>
+  <div class="t-sep"></div>
+  <span class="t-cat">TRANSPORT</span>
+  <div class="tbtn" id="tb-conveyor" onclick="selectBuild('conveyor')"><span class="ti">→</span><span class="tl">BELT T1</span></div>
+  <div class="tbtn locked" id="tb-fast_belt" onclick="selectBuild('fast_belt')"><span class="ti">⇒</span><span class="tl">BELT T2</span></div>
+  <div class="tbtn locked" id="tb-turbo_belt" onclick="selectBuild('turbo_belt')"><span class="ti">»</span><span class="tl">BELT T3</span></div>
+  <div class="tbtn locked" id="tb-splitter" onclick="selectBuild('splitter')"><span class="ti">⋈</span><span class="tl">SPLITTER</span></div>
+  <div class="t-sep"></div>
+  <span class="t-cat">PROCESS</span>
+  <div class="tbtn" id="tb-smelter" onclick="selectBuild('smelter')"><span class="ti">🔥</span><span class="tl">SMELT T1</span></div>
+  <div class="tbtn locked" id="tb-electric_furnace" onclick="selectBuild('electric_furnace')"><span class="ti">🌡</span><span class="tl">E.FURNACE</span></div>
+  <div class="tbtn locked" id="tb-arc_furnace" onclick="selectBuild('arc_furnace')"><span class="ti">⚡</span><span class="tl">ARC FURN.</span></div>
+  <div class="tbtn locked" id="tb-crusher" onclick="selectBuild('crusher')"><span class="ti">🪨</span><span class="tl">CRUSHER</span></div>
+  <div class="tbtn locked" id="tb-centrifuge" onclick="selectBuild('centrifuge')"><span class="ti">🌀</span><span class="tl">CENTRIFUGE</span></div>
+  <div class="tbtn locked" id="tb-chemical_plant" onclick="selectBuild('chemical_plant')"><span class="ti">⚗</span><span class="tl">CHEM.PLANT</span></div>
+  <div class="tbtn locked" id="tb-assembler" onclick="selectBuild('assembler')"><span class="ti">⚙</span><span class="tl">ASSEMBLER</span></div>
+  <div class="tbtn locked" id="tb-fabricator" onclick="selectBuild('fabricator')"><span class="ti">🏭</span><span class="tl">FABRICATOR</span></div>
+  <div class="t-sep"></div>
+  <span class="t-cat">POWER</span>
+  <div class="tbtn" id="tb-coal_gen" onclick="selectBuild('coal_gen')"><span class="ti">🔋</span><span class="tl">COAL GEN</span></div>
+  <div class="tbtn locked" id="tb-steam_engine" onclick="selectBuild('steam_engine')"><span class="ti">♨</span><span class="tl">STEAM ENG</span></div>
+  <div class="tbtn locked" id="tb-solar_panel" onclick="selectBuild('solar_panel')"><span class="ti">☀</span><span class="tl">SOLAR</span></div>
+  <div class="tbtn locked" id="tb-wind_turbine" onclick="selectBuild('wind_turbine')"><span class="ti">🌬</span><span class="tl">WIND</span></div>
+  <div class="tbtn locked" id="tb-bio_gen" onclick="selectBuild('bio_gen')"><span class="ti">🌿</span><span class="tl">BIO GEN</span></div>
+  <div class="tbtn locked" id="tb-nuclear_reactor" onclick="selectBuild('nuclear_reactor')"><span class="ti">☢</span><span class="tl">NUCLEAR</span></div>
+  <div class="tbtn" id="tb-power_pole" onclick="selectBuild('power_pole')"><span class="ti">ǁ</span><span class="tl">POLE</span></div>
+  <div class="tbtn locked" id="tb-battery_bank" onclick="selectBuild('battery_bank')"><span class="ti">🔌</span><span class="tl">BATTERY</span></div>
+  <div class="t-sep"></div>
+  <span class="t-cat">STORAGE</span>
+  <div class="tbtn" id="tb-storage" onclick="selectBuild('storage')"><span class="ti">📦</span><span class="tl">STORAGE</span></div>
+  <div class="tbtn locked" id="tb-large_storage" onclick="selectBuild('large_storage')"><span class="ti">🗃</span><span class="tl">LG.STORE</span></div>
+  <div class="tbtn locked" id="tb-vault" onclick="selectBuild('vault')"><span class="ti">🏛</span><span class="tl">VAULT</span></div>
+  <div class="tbtn locked" id="tb-pump" onclick="selectBuild('pump')"><span class="ti">💧</span><span class="tl">PUMP</span></div>
+  <div class="tbtn locked" id="tb-pipe" onclick="selectBuild('pipe')"><span class="ti">═</span><span class="tl">PIPE</span></div>
+  <div class="t-sep"></div>
+  <span class="t-cat">DEFENSE</span>
+  <div class="tbtn" id="tb-wall_stone" onclick="selectBuild('wall_stone')"><span class="ti">▪</span><span class="tl">WALL T1</span></div>
+  <div class="tbtn locked" id="tb-wall_iron" onclick="selectBuild('wall_iron')"><span class="ti">▪</span><span class="tl">WALL T2</span></div>
+  <div class="tbtn locked" id="tb-wall_steel" onclick="selectBuild('wall_steel')"><span class="ti">▪</span><span class="tl">WALL T3</span></div>
+  <div class="tbtn" id="tb-turret" onclick="selectBuild('turret')"><span class="ti">⊕</span><span class="tl">TURRET T1</span></div>
+  <div class="tbtn locked" id="tb-turret_auto" onclick="selectBuild('turret_auto')"><span class="ti">⊗</span><span class="tl">AUTO TUR.</span></div>
+  <div class="tbtn locked" id="tb-missile_launcher" onclick="selectBuild('missile_launcher')"><span class="ti">🚀</span><span class="tl">MISSILE</span></div>
+  <div class="tbtn locked" id="tb-laser_turret" onclick="selectBuild('laser_turret')"><span class="ti">🔆</span><span class="tl">LASER</span></div>
+  <div class="tbtn locked" id="tb-flamethrower_turret" onclick="selectBuild('flamethrower_turret')"><span class="ti">🔥</span><span class="tl">FLAME</span></div>
+  <div class="tbtn locked" id="tb-shield_gen" onclick="selectBuild('shield_gen')"><span class="ti">🛡</span><span class="tl">SHIELD</span></div>
+  <div class="t-sep"></div>
+  <span class="t-cat">SPECIAL</span>
+  <div class="tbtn locked" id="tb-research_lab" onclick="selectBuild('research_lab')"><span class="ti">🔬</span><span class="tl">LAB T1</span></div>
+  <div class="tbtn locked" id="tb-advanced_lab" onclick="selectBuild('advanced_lab')"><span class="ti">🧬</span><span class="tl">LAB T2</span></div>
+  <div class="tbtn locked" id="tb-repair_bot" onclick="selectBuild('repair_bot')"><span class="ti">🤖</span><span class="tl">REPAIR BOT</span></div>
+  <div class="tbtn locked" id="tb-drone_hub" onclick="selectBuild('drone_hub')"><span class="ti">🛸</span><span class="tl">DRONE HUB</span></div>
+  <div class="t-sep"></div>
+  <div class="tbtn t-demo" id="tb-demolish" onclick="toggleDemolish()"><span class="ti">🔨</span><span class="tl">DEMOLISH</span></div>
+</div>
+
+<button class="ptoggle" id="ttoggle" onclick="togglePanel('tech')">⚗ TECH</button>
+<button class="ptoggle" id="itoggle" style="top:182px" onclick="togglePanel('inv')">📦 INV</button>
+
+<div class="side-panel" id="tech-panel">
+  <div class="panel-title">RESEARCH TREE</div>
+  <div id="tech-list"></div>
+</div>
+
+<div class="side-panel" id="inv-panel">
+  <div class="panel-title">INVENTORY</div>
+  <div class="inv-grid" id="inv-grid"></div>
+  <div style="margin-top:4px">
+    <div class="recipe-hdr">⚙ ASSEMBLER</div>
+    <div id="recipe-list"></div>
+    <div class="recipe-hdr">⚡ ARC FURNACE</div>
+    <div id="arc-recipe-list"></div>
+    <div class="recipe-hdr">⚗ CHEMICAL PLANT</div>
+    <div id="chem-recipe-list"></div>
+    <div class="recipe-hdr">🏭 FABRICATOR</div>
+    <div id="fab-recipe-list"></div>
+    <div id="asm-progress" style="margin-top:8px;font-size:10px;color:#667"></div>
+  </div>
+</div>
+
+<div id="obj-panel">
+  <div class="obj-title">OBJECTIVES</div>
+  <div id="obj-list"></div>
+</div>
+
+<div id="binfo"></div>
+<div id="msg-log"></div>
+<div id="wave-ann"></div>
+
+<div class="over" id="gameover">
+  <div class="over-title" style="color:#ff4444">GAME OVER</div>
+  <div class="over-sub">YOUR BASE WAS DESTROYED</div>
+  <div class="over-score" id="go-score"></div>
+  <div style="display:flex;gap:12px">
+    <button class="btn" onclick="location.reload()">RETRY</button>
+    <button class="btn sec" onclick="location.reload()">MENU</button>
+  </div>
+</div>
+
+<div class="over" id="winscreen">
+  <div class="over-title" style="color:#ffaa00">VICTORY!</div>
+  <div class="over-sub" id="win-sub">OBJECTIVE COMPLETE</div>
+  <div class="over-score" id="win-score"></div>
+  <div style="display:flex;gap:12px">
+    <button class="btn" id="win-next" onclick="nextLevel()">NEXT LEVEL</button>
+    <button class="btn sec" onclick="location.reload()">MENU</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+// ================================================================
+// NEXUS v2.0 — Expanded Industrial Survival
+// ================================================================
+const TS=48, WW=80, WH=80;
+const DX=[1,0,-1,0], DY=[0,1,0,-1];
+const DIR_CH=['→','↓','←','↑'];
+
+// ── TILE DEFS ────────────────────────────────────────────────────
+const T={GRASS:0,DIRT:1,STONE:2,IRON:3,COAL:4,TREE:5,WATER:6,COPPER:7,
+  TIN:8,GOLD:9,SULFUR:10,CRYSTAL:11,OBSIDIAN:12,SAND:13,URANIUM:14};
+const TCOL=[
+  '#2a3e2a','#3d3020','#4a4a58','#7a5048','#252525',
+  '#1a3c16','#142034','#806018',
+  '#7a6850','#b89018','#c8c030','#3850c8','#180820','#d0b878','#104810'
+];
+const TMINE={
+  '2':'stone','3':'iron_ore','4':'coal','5':'wood','7':'copper_ore',
+  '8':'tin_ore','9':'gold_ore','10':'sulfur','11':'crystal',
+  '12':'obsidian_shard','13':'sand','14':'uranium_ore'
+};
+
+// ── ITEM DEFS ────────────────────────────────────────────────────
+const INAME={
+  stone:'Stone',iron_ore:'Iron Ore',coal:'Coal',wood:'Wood',biomass:'Biomass',
+  copper_ore:'Copper Ore',tin_ore:'Tin Ore',gold_ore:'Gold Ore',sulfur:'Sulfur',
+  crystal:'Crystal',obsidian_shard:'Obsidian Shard',sand:'Sand',uranium_ore:'Uranium Ore',
+  iron_plate:'Iron Plate',copper_plate:'Copper Plate',steel:'Steel',tin_plate:'Tin Plate',
+  gold_ingot:'Gold Ingot',glass:'Glass',alloy_plate:'Alloy Plate',titanium_plate:'Titanium Plate',
+  obsidian_plate:'Obsidian Plate',electrum:'Electrum',polymer:'Polymer',
+  circuit:'Circuit',adv_circuit:'Adv.Circuit',nano_chip:'Nano Chip',crystal_lens:'Crystal Lens',
+  biofuel:'Biofuel',fuel_cell:'Fuel Cell',plasma_crystal:'Plasma Crystal',uranium:'Uranium',
+  ammo:'Ammo',smart_ammo:'Smart Ammo',missile:'Missile',explosive:'Explosive',
+  repair_kit:'Repair Kit'
+};
+const ICOL={
+  stone:'#888',iron_ore:'#c87850',coal:'#3a3a3a',wood:'#8a5830',biomass:'#3a8a40',
+  copper_ore:'#d88020',tin_ore:'#c0b090',gold_ore:'#d8a820',sulfur:'#d0d030',
+  crystal:'#4060e8',obsidian_shard:'#3020b0',sand:'#d4c080',uranium_ore:'#40e840',
+  iron_plate:'#c0c0d0',copper_plate:'#e09040',steel:'#90a8c0',tin_plate:'#d0c0a0',
+  gold_ingot:'#ffd040',glass:'#80c0f8',alloy_plate:'#a0b8c0',titanium_plate:'#8898c8',
+  obsidian_plate:'#5040a8',electrum:'#ffc040',polymer:'#78a860',
+  circuit:'#40d880',adv_circuit:'#8080ff',nano_chip:'#ff60c0',crystal_lens:'#60a0ff',
+  biofuel:'#40d060',fuel_cell:'#40c880',plasma_crystal:'#c040ff',uranium:'#60ff40',
+  ammo:'#ffd040',smart_ammo:'#ff8040',missile:'#ff4020',explosive:'#ffcc00',
+  repair_kit:'#40ff80'
+};
+
+// ── BUILDING DEFS ─────────────────────────────────────────────────
+const BDEF={
+  core:{name:'Core',icon:'⬡',hp:1500,col:'#ff8800',power:0,cost:{},desc:'Your base. Defend it!',cat:''},
+
+  // EXTRACTION
+  mining_drill:{name:'Mining Drill',icon:'⛏',hp:200,col:'#7888a0',power:2,
+    cost:{stone:5,iron_plate:3},desc:'Auto-mines adjacent ore. Output→front.',mineRate:2.5},
+  heavy_drill:{name:'Heavy Drill',icon:'⚒',hp:350,col:'#6878b0',power:5,
+    cost:{iron_plate:8,stone:8},desc:'Faster drill (2×). Mines all ore types.',mineRate:1.2},
+  quantum_drill:{name:'Quantum Drill',icon:'🔩',hp:500,col:'#5068d8',power:12,
+    cost:{alloy_plate:5,circuit:4,iron_plate:10},desc:'Ultra-fast (4×). Deposits last much longer.',mineRate:0.6},
+
+  // TRANSPORT
+  conveyor:{name:'Conveyor',icon:'→',hp:60,col:'#334455',power:0,
+    cost:{iron_plate:1},desc:'Belt T1 speed. R=rotate.',beltSpd:1.5,isBelt:true},
+  fast_belt:{name:'Fast Belt',icon:'⇒',hp:80,col:'#224466',power:0,
+    cost:{iron_plate:1,tin_plate:1},desc:'Belt T2, 2× speed.',beltSpd:3.5,isBelt:true},
+  turbo_belt:{name:'Turbo Belt',icon:'»',hp:100,col:'#1830a0',power:0,
+    cost:{alloy_plate:1,circuit:1},desc:'Belt T3, 5× speed.',beltSpd:7.0,isBelt:true},
+  splitter:{name:'Splitter',icon:'⋈',hp:80,col:'#304878',power:0,
+    cost:{iron_plate:3,circuit:1},desc:'Splits items L/R alternating. Output forward+side.',beltSpd:3.0,isBelt:true,isSplitter:true},
+
+  // PROCESSING
+  smelter:{name:'Smelter',icon:'🔥',hp:300,col:'#b04820',power:4,
+    cost:{stone:10,iron_plate:5},desc:'Iron/Copper ore→plates. Input=back, Output=front.',smeltTime:3.5},
+  electric_furnace:{name:'Electric Furnace',icon:'🌡',hp:400,col:'#8830a0',power:6,
+    cost:{iron_plate:12,circuit:3,stone:8},desc:'Faster+more recipes. Tin,Gold,Sand,Glass.',smeltTime:1.8},
+  arc_furnace:{name:'Arc Furnace',icon:'⚡',hp:450,col:'#a04020',power:10,
+    cost:{steel:6,circuit:4,iron_plate:15},desc:'Makes Alloys, Titanium, Electrum. Set recipe in Inv.',craftTime:6},
+  crusher:{name:'Crusher',icon:'🪨',hp:350,col:'#605040',power:4,
+    cost:{iron_plate:10,stone:15},desc:'Stone→Sand×2. Obsidian→Plate. Coal→Coal.',smeltTime:4.0},
+  centrifuge:{name:'Centrifuge',icon:'🌀',hp:400,col:'#306080',power:8,
+    cost:{iron_plate:12,steel:4,circuit:3},desc:'Enriches ores. Uranium Ore→Uranium. Crystal→Lens.',smeltTime:5.0},
+  chemical_plant:{name:'Chemical Plant',icon:'⚗',hp:400,col:'#286050',power:8,
+    cost:{iron_plate:14,copper_plate:8,circuit:4},desc:'Makes Explosives, Fuel Cells, Lenses. Set recipe.',craftTime:6},
+  assembler:{name:'Assembler',icon:'⚙',hp:450,col:'#4a6898',power:6,
+    cost:{iron_plate:15,circuit:3},desc:'Crafts Circuits, Ammo, Steel, etc. Set recipe in Inv.',craftTime:5},
+  fabricator:{name:'Fabricator',icon:'🏭',hp:600,col:'#482878',power:12,
+    cost:{alloy_plate:8,adv_circuit:4,nano_chip:2},desc:'T3 crafter. Nano Chips, Missiles, Plasma Crystals.',craftTime:4},
+
+  // POWER
+  coal_gen:{name:'Coal Gen',icon:'🔋',hp:300,col:'#504828',power:-20,
+    cost:{stone:8,iron_plate:4},desc:'Burns coal for 20W.',burnRate:4/60,isGenerator:true},
+  steam_engine:{name:'Steam Engine',icon:'♨',hp:350,col:'#604030',power:-30,
+    cost:{iron_plate:10,copper_plate:5,stone:12},desc:'Burns coal/wood/biofuel for 30W.',burnRate:3/60,isGenerator:true},
+  solar_panel:{name:'Solar Panel',icon:'☀',hp:150,col:'#102848',power:-12,
+    cost:{glass:6,copper_plate:4,iron_plate:4},desc:'Free 12W during daytime only. No fuel.',isGenerator:true,isSolar:true},
+  wind_turbine:{name:'Wind Turbine',icon:'🌬',hp:180,col:'#103848',power:-12,
+    cost:{iron_plate:8,tin_plate:4},desc:'Random 8-18W, always on. No fuel.',isGenerator:true,isWind:true},
+  bio_gen:{name:'Bio Generator',icon:'🌿',hp:250,col:'#306028',power:-15,
+    cost:{wood:15,iron_plate:6},desc:'Burns biofuel for 15W.',burnRate:6/60,isGenerator:true},
+  nuclear_reactor:{name:'Nuclear Reactor',icon:'☢',hp:800,col:'#0a2010',power:-200,
+    cost:{steel:20,adv_circuit:10,titanium_plate:5},desc:'Burns Uranium for 200W. Extremely efficient.',burnRate:1/120,isGenerator:true},
+  power_pole:{name:'Power Pole',icon:'ǁ',hp:80,col:'#704020',power:0,
+    cost:{iron_plate:2,wood:2},desc:'Extends power network 7 tiles.',poleRange:7},
+  battery_bank:{name:'Battery Bank',icon:'🔌',hp:400,col:'#183060',power:-30,
+    cost:{steel:6,circuit:4,copper_plate:8},desc:'Stores surplus power. Releases 30W when grid is low.',isGenerator:true,isBattery:true},
+
+  // STORAGE
+  storage:{name:'Storage',icon:'□',hp:250,col:'#604828',power:0,
+    cost:{wood:8,iron_plate:3},desc:'Stores items. 200-slot capacity.',cap:200},
+  large_storage:{name:'Large Storage',icon:'🗃',hp:350,col:'#504038',power:0,
+    cost:{iron_plate:10,steel:4},desc:'500-slot storage.',cap:500},
+  vault:{name:'Vault',icon:'🏛',hp:500,col:'#403028',power:0,
+    cost:{steel:12,titanium_plate:3},desc:'2000-slot vault. Nearly indestructible.',cap:2000},
+  pump:{name:'Water Pump',icon:'💧',hp:150,col:'#205878',power:3,
+    cost:{iron_plate:5,stone:5},desc:'Place on water. Pumps water into adjacent pipes.'},
+  pipe:{name:'Pipe',icon:'═',hp:60,col:'#1c3858',power:0,
+    cost:{iron_plate:1},desc:'Transports fluids.'},
+
+  // DEFENSE
+  wall_stone:{name:'Stone Wall',icon:'▪',hp:450,col:'#555568',power:0,
+    cost:{stone:4},desc:'Blocks enemies. 450 HP.',isWall:true},
+  wall_iron:{name:'Iron Wall',icon:'▪',hp:1200,col:'#8898b0',power:0,
+    cost:{iron_plate:4},desc:'Heavy barrier. 1200 HP.',isWall:true},
+  wall_steel:{name:'Steel Wall',icon:'▪',hp:3500,col:'#5870a8',power:0,
+    cost:{steel:4,titanium_plate:1},desc:'Fortress wall. 3500 HP.',isWall:true},
+  turret:{name:'Turret',icon:'⊕',hp:300,col:'#485838',power:0,
+    cost:{iron_plate:10,stone:5},desc:'Shoots enemies. Needs ammo from storage.',range:7,fireRate:1.5,dmg:18},
+  turret_auto:{name:'Auto Turret',icon:'⊗',hp:400,col:'#386050',power:5,
+    cost:{steel:5,circuit:3,iron_plate:8},desc:'Powered turret. Longer range, faster fire.',range:10,fireRate:0.65,dmg:35},
+  missile_launcher:{name:'Missile Launcher',icon:'🚀',hp:500,col:'#483030',power:0,
+    cost:{steel:8,circuit:5,iron_plate:15},desc:'Fires missiles for HUGE splash damage. Slow fire rate.',range:15,fireRate:0.25,dmg:200,splashR:2.5},
+  laser_turret:{name:'Laser Turret',icon:'🔆',hp:450,col:'#183058',power:12,
+    cost:{adv_circuit:5,crystal_lens:3,titanium_plate:3},desc:'No ammo needed. Very fast, instant hit.',range:12,fireRate:4,dmg:28},
+  flamethrower_turret:{name:'Flamethrower',icon:'🔥',hp:350,col:'#602818',power:8,
+    cost:{steel:4,circuit:2,copper_plate:6},desc:'Burns all enemies in range every 0.5s. Uses biofuel.',range:4,dmg:20},
+  shield_gen:{name:'Shield Gen',icon:'🛡',hp:600,col:'#3038a8',power:15,
+    cost:{steel:10,circuit:8,adv_circuit:2},desc:'Projects energy shield 8 tile radius.',shieldR:8},
+
+  // SPECIAL
+  research_lab:{name:'Research Lab',icon:'🔬',hp:200,col:'#6050b0',power:8,
+    cost:{iron_plate:10,circuit:2,wood:5},desc:'Generates 1 RP/min when powered.',resRate:1/60},
+  advanced_lab:{name:'Advanced Lab',icon:'🧬',hp:300,col:'#5040a8',power:15,
+    cost:{adv_circuit:6,nano_chip:2,titanium_plate:2},desc:'Generates 5 RP/min. 5× faster research.',resRate:5/60},
+  repair_bot:{name:'Repair Bot',icon:'🤖',hp:300,col:'#304050',power:8,
+    cost:{circuit:4,iron_plate:12,steel:3},desc:'Auto-heals nearby buildings every 2s using Repair Kits.'},
+  drone_hub:{name:'Drone Hub',icon:'🛸',hp:350,col:'#283848',power:10,
+    cost:{adv_circuit:4,nano_chip:2,alloy_plate:4},desc:'Drones auto-mine nearby ore tiles every 5s.'}
+};
+
+// ── SMELTER RECIPE MAPS ───────────────────────────────────────────
+const SMELT_MAP={iron_ore:'iron_plate',copper_ore:'copper_plate'};
+const EFURNACE_MAP={iron_ore:'iron_plate',copper_ore:'copper_plate',
+  tin_ore:'tin_plate',gold_ore:'gold_ingot',sand:'glass',obsidian_shard:'obsidian_plate'};
+const CRUSHER_MAP={stone:{out:'sand',count:2},obsidian_shard:{out:'obsidian_plate',count:1}};
+const CENTRIFUGE_MAP={
+  uranium_ore:{out:'uranium',count:1},
+  crystal:{out:'crystal_lens',count:1},
+  iron_ore:{out:'iron_plate',count:3},
+  gold_ore:{out:'gold_ingot',count:2}
+};
+
+// ── ASSEMBLER RECIPES ─────────────────────────────────────────────
+const RECIPES=[
+  {id:'circuit',name:'Circuit',inputs:{iron_plate:2,copper_plate:1},out:'circuit',count:1,time:4},
+  {id:'adv_circuit',name:'Adv. Circuit',inputs:{circuit:3,steel:1},out:'adv_circuit',count:1,time:8},
+  {id:'ammo',name:'Ammo ×10',inputs:{iron_plate:3,copper_plate:1},out:'ammo',count:10,time:5},
+  {id:'steel',name:'Steel',inputs:{iron_plate:2,coal:2},out:'steel',count:1,time:5},
+  {id:'biofuel',name:'Biofuel ×3',inputs:{biomass:5,wood:2},out:'biofuel',count:3,time:6},
+  {id:'repair_kit',name:'Repair Kit ×2',inputs:{iron_plate:3,circuit:1},out:'repair_kit',count:2,time:5},
+  {id:'smart_ammo',name:'Smart Ammo ×5',inputs:{ammo:5,copper_plate:1},out:'smart_ammo',count:5,time:5}
+];
+
+// ── ARC FURNACE RECIPES ───────────────────────────────────────────
+const ARC_RECIPES=[
+  {id:'alloy_plate',name:'Alloy Plate',inputs:{iron_plate:2,tin_plate:1},out:'alloy_plate',count:1,time:6},
+  {id:'titanium_plate',name:'Titanium Plate',inputs:{obsidian_plate:2,coal:3},out:'titanium_plate',count:1,time:9},
+  {id:'electrum',name:'Electrum',inputs:{gold_ingot:1,copper_plate:2},out:'electrum',count:1,time:5},
+  {id:'polymer',name:'Polymer ×2',inputs:{biomass:4,coal:2},out:'polymer',count:2,time:7}
+];
+
+// ── CHEMICAL PLANT RECIPES ────────────────────────────────────────
+const CHEM_RECIPES=[
+  {id:'explosive',name:'Explosive ×5',inputs:{sulfur:3,coal:2,iron_plate:1},out:'explosive',count:5,time:6},
+  {id:'fuel_cell',name:'Fuel Cell',inputs:{biofuel:3,circuit:1},out:'fuel_cell',count:1,time:5},
+  {id:'crystal_lens_chem',name:'Crystal Lens',inputs:{crystal:2},out:'crystal_lens',count:1,time:4},
+  {id:'smart_ammo_chem',name:'Smart Ammo ×10',inputs:{ammo:10,circuit:2},out:'smart_ammo',count:10,time:8},
+  {id:'polymer_chem',name:'Polymer ×3',inputs:{biomass:6,coal:3,sulfur:1},out:'polymer',count:3,time:8}
+];
+
+// ── FABRICATOR RECIPES ────────────────────────────────────────────
+const FAB_RECIPES=[
+  {id:'nano_chip',name:'Nano Chip',inputs:{circuit:2,crystal_lens:1,gold_ingot:1},out:'nano_chip',count:1,time:10},
+  {id:'missile',name:'Missile ×3',inputs:{explosive:3,iron_plate:5,circuit:2},out:'missile',count:3,time:8},
+  {id:'plasma_crystal',name:'Plasma Crystal',inputs:{crystal:5,gold_ingot:2,adv_circuit:1},out:'plasma_crystal',count:1,time:15},
+  {id:'adv_circuit_fab',name:'Adv.Circuit ×2',inputs:{circuit:5,gold_ingot:1},out:'adv_circuit',count:2,time:6},
+  {id:'titanium_fab',name:'Titanium Plate',inputs:{obsidian_shard:3,coal:2,adv_circuit:1},out:'titanium_plate',count:1,time:10},
+  {id:'repair_kit_fab',name:'Repair Kit ×5',inputs:{iron_plate:6,circuit:2,polymer:1},out:'repair_kit',count:5,time:8},
+  {id:'smart_ammo_fab',name:'Smart Ammo ×20',inputs:{ammo:20,nano_chip:1},out:'smart_ammo',count:20,time:10}
+];
+
+// ── TECH TREE (14 nodes) ──────────────────────────────────────────
+const TECHS=[
+  // Tier 1
+  {id:'basic_machines',name:'Basic Machines',cost:30,requires:[],tier:1,
+    unlocks:['assembler','research_lab'],desc:'Assembler + Research Lab'},
+  {id:'fortification',name:'Fortification',cost:25,requires:[],tier:1,
+    unlocks:['wall_iron','turret_auto'],desc:'Iron Wall + Auto Turret'},
+
+  // Tier 2
+  {id:'fluid_tech',name:'Fluid Systems',cost:80,requires:['basic_machines'],tier:2,
+    unlocks:['pump','pipe','bio_gen'],desc:'Pump + Pipe + Bio Generator'},
+  {id:'advanced_drills',name:'Advanced Drills',cost:60,requires:['basic_machines'],tier:2,
+    unlocks:['heavy_drill','crusher'],desc:'Heavy Drill T2 + Crusher'},
+  {id:'logistics',name:'Logistics',cost:50,requires:['basic_machines'],tier:2,
+    unlocks:['fast_belt','splitter'],desc:'Fast Belt T2 + Splitter'},
+  {id:'power_expansion',name:'Power Expansion',cost:80,requires:['basic_machines'],tier:2,
+    unlocks:['steam_engine','solar_panel','wind_turbine'],desc:'Steam Engine + Solar Panel + Wind Turbine'},
+
+  // Tier 3
+  {id:'electric_industry',name:'Electric Industry',cost:150,requires:['advanced_drills','fluid_tech'],tier:3,
+    unlocks:['electric_furnace','large_storage'],desc:'Electric Furnace + Large Storage'},
+  {id:'heavy_fortification',name:'Heavy Fortification',cost:200,requires:['fortification','advanced_drills'],tier:3,
+    unlocks:['wall_steel','missile_launcher','flamethrower_turret'],desc:'Steel Wall + Missile Launcher + Flamethrower'},
+  {id:'energy_shields',name:'Energy Shields',cost:300,requires:['fluid_tech','fortification'],tier:3,
+    unlocks:['shield_gen'],desc:'Shield Generator'},
+  {id:'advanced_research',name:'Advanced Research',cost:200,requires:['basic_machines','power_expansion'],tier:3,
+    unlocks:['advanced_lab','centrifuge'],desc:'Advanced Lab (5× RP) + Centrifuge'},
+
+  // Tier 4
+  {id:'chemical_industry',name:'Chemical Industry',cost:400,requires:['electric_industry','fluid_tech'],tier:4,
+    unlocks:['chemical_plant','arc_furnace'],desc:'Chemical Plant + Arc Furnace'},
+  {id:'nuclear_power',name:'Nuclear Power',cost:600,requires:['power_expansion','advanced_research'],tier:4,
+    unlocks:['nuclear_reactor','laser_turret','battery_bank'],desc:'Nuclear Reactor + Laser Turret + Battery Bank'},
+  {id:'quantum_tech',name:'Quantum Tech',cost:800,requires:['advanced_drills','advanced_research'],tier:4,
+    unlocks:['quantum_drill','turbo_belt','fabricator'],desc:'Quantum Drill T3 + Turbo Belt T3 + Fabricator'},
+  {id:'endgame',name:'Endgame Systems',cost:1000,requires:['energy_shields','quantum_tech'],tier:4,
+    unlocks:['repair_bot','drone_hub','vault'],desc:'Repair Bot + Drone Hub + Vault'}
+];
+
+const LOCKED_DEFAULT=new Set([
+  'assembler','research_lab','wall_iron','turret_auto','pump','pipe','bio_gen','shield_gen',
+  'heavy_drill','quantum_drill','fast_belt','turbo_belt','splitter',
+  'electric_furnace','arc_furnace','crusher','centrifuge','chemical_plant','fabricator',
+  'steam_engine','solar_panel','wind_turbine','nuclear_reactor','battery_bank',
+  'large_storage','vault','wall_steel','missile_launcher','laser_turret','flamethrower_turret',
+  'advanced_lab','repair_bot','drone_hub'
+]);
+
+// ── ENEMY TYPES ───────────────────────────────────────────────────
+const ETYPES={
+  crawler:{name:'Crawler',col:'#44ff44',hp:50,spd:1.8,dmg:8,sz:12,val:10,score:10},
+  brute:{name:'Brute',col:'#ff5533',hp:240,spd:0.75,dmg:32,sz:20,val:20,score:30},
+  spitter:{name:'Spitter',col:'#aaff00',hp:80,spd:1.3,dmg:14,sz:14,val:15,score:20,ranged:true,rRange:5.5},
+  swarm:{name:'Swarm',col:'#ffaa00',hp:28,spd:2.8,dmg:4,sz:9,val:6,score:8},
+  tank:{name:'Tank',col:'#ff4400',hp:1500,spd:0.5,dmg:60,sz:28,val:80,score:100,isTank:true},
+  leaper:{name:'Leaper',col:'#88ffcc',hp:150,spd:2.0,dmg:20,sz:15,val:25,score:35,isLeaper:true},
+  corruptor:{name:'Corruptor',col:'#cc44ff',hp:200,spd:1.0,dmg:10,sz:16,val:40,score:50,ranged:true,rRange:8,isCorruptor:true},
+  boss:{name:'TITAN',col:'#ff2020',hp:3000,spd:0.4,dmg:120,sz:36,val:200,score:500,isBoss:true},
+  behemoth:{name:'BEHEMOTH',col:'#ff0044',hp:8000,spd:0.3,dmg:150,sz:44,val:400,score:1000,isBoss:true},
+  omega:{name:'OMEGA',col:'#ff00ff',hp:25000,spd:0.25,dmg:250,sz:56,val:1000,score:5000,isBoss:true}
+};
+
+// ── CAMPAIGN OBJECTIVES ───────────────────────────────────────────
+const CAMPAIGN_OBJ={
+  1:[
+    {id:'w3',desc:'Survive 3 waves',done:false},
+    {id:'iron20',desc:'Collect 20 iron plates',done:false}
+  ],
+  2:[
+    {id:'w5',desc:'Survive 5 waves',done:false},
+    {id:'power50',desc:'Reach 50W production',done:false},
+    {id:'build_asm',desc:'Build an Assembler',done:false}
+  ],
+  3:[
+    {id:'w7',desc:'Survive 7 waves',done:false},
+    {id:'circuits',desc:'Craft 10 circuits',done:false},
+    {id:'power80',desc:'Reach 80W production',done:false}
+  ],
+  4:[
+    {id:'w10',desc:'Survive 10 waves',done:false},
+    {id:'labs3',desc:'Build 3 Research Labs',done:false},
+    {id:'boss',desc:'Defeat the TITAN Boss',done:false}
+  ],
+  5:[
+    {id:'boss2',desc:'Defeat 2 Bosses',done:false},
+    {id:'shields',desc:'Build a Shield Generator',done:false},
+    {id:'w15',desc:'Survive 15 waves',done:false}
+  ]
+};
+
+const CHALLENGES=[
+  {name:'RESOURCE CRUNCH',desc:'Only 50% resources + no stone walls',noStoneWall:true,resMult:0.5},
+  {name:'NO WALLS',desc:'Walls are banned. Defense with turrets only!',noWalls:true},
+  {name:'SPEED RUN',desc:'Defeat the boss in under 10 minutes!',speedRun:true,timeLimit:600}
+];
+
+// ── GAME STATE ────────────────────────────────────────────────────
+let G={};
+let canvas,ctx;
+let animId=null;
+
+function seededRng(s){
+  return()=>{s=(s*1664525+1013904223)&0xffffffff;return(s>>>0)/4294967296};
+}
+
+function initG(mode,level=1){
+  const rng=seededRng(Date.now()&0xffff);
+  const isSandbox=mode==='sandbox';
+
+  // Build sandbox inventory from all items
+  const sbInv={};
+  for(const k of Object.keys(INAME)) sbInv[k]=999;
+  sbInv.biomass=0;
+  const startInv={};
+  for(const k of Object.keys(INAME)) startInv[k]=0;
+  startInv.ammo=30;
+
+  G={
+    mode,level,phase:'playing',tick:0,dt:0,last:0,WW,WH,
+    tiles:new Uint8Array(WW*WH),
+    tileHP:new Uint16Array(WW*WH),
+    buildings:new Map(),
+    bGrid:new Array(WW*WH).fill(null),
+    enemies:[],projectiles:[],particles:[],floats:[],
+
+    player:{
+      x:(WW/2-2)*TS+TS/2,y:(WH/2+2)*TS+TS/2,
+      w:20,h:20,spd:isSandbox?220:175,
+      hp:100,maxHp:100,mineTimer:0,
+      inv:isSandbox?sbInv:startInv
+    },
+
+    core:{hp:1500,maxHp:1500},
+    power:{prod:0,cons:0},
+    poweredSet:new Set(),
+    powerTimer:0,
+
+    research:isSandbox?9999:0,
+    unlockedTechs:isSandbox?new Set(TECHS.map(t=>t.id)):new Set(),
+    unlockedBlds:isSandbox?new Set(Object.keys(BDEF)):new Set(
+      Object.keys(BDEF).filter(k=>!LOCKED_DEFAULT.has(k))
+    ),
+
+    wave:0,waveTimer:mode==='survival'?60:90,waveCooldown:0,
+    waveActive:false,enemiesThisWave:0,totalKills:0,
+
+    dayTime:0.3,daySpd:mode==='survival'?1/120:1/240,day:1,isNight:false,
+    score:0,kills:0,
+
+    objectives:mode==='campaign'?JSON.parse(JSON.stringify(CAMPAIGN_OBJ[level]||CAMPAIGN_OBJ[1])):null,
+    objectivesDone:false,bossKills:0,assemblerBuilt:false,
+
+    challenge:mode==='challenge'?CHALLENGES[(level-1)%CHALLENGES.length]:null,
+
+    sel:null,dir:0,demolish:false,
+    cam:{x:0,y:0},keys:{},mouse:{x:0,y:0,wx:0,wy:0,down:false},
+
+    selectedAssemblerRecipe:RECIPES[0].id,
+    selectedArcRecipe:ARC_RECIPES[0].id,
+    selectedChemRecipe:CHEM_RECIPES[0].id,
+    selectedFabRecipe:FAB_RECIPES[0].id,
+    craftedTotals:{},
+    rng
+  };
+
+  generateWorld(rng);
+  placeCore();
+  buildFlowField();
+
+  if(mode==='challenge'&&G.challenge){
+    msg(`CHALLENGE: ${G.challenge.name}`,false,true);
+    if(G.challenge.timeLimit) G.challengeTimer=G.challenge.timeLimit;
+  }
+  if(mode==='campaign') showObjectives();
+  if(isSandbox){
+    for(const k of Object.keys(BDEF)) G.unlockedBlds.add(k);
+    TECHS.forEach(t=>G.unlockedTechs.add(t.id));
+  }
+
+  refreshToolbar();
+  updateTechPanel();
+  updateHUD();
+}
+
+// ── WORLD GEN ─────────────────────────────────────────────────────
+function generateWorld(rng){
+  G.tiles.fill(T.GRASS);
+  G.tileHP.fill(30);
+
+  const patch=(cx,cy,r,type)=>{
+    for(let y=cy-r;y<=cy+r;y++){
+      for(let x=cx-r;x<=cx+r;x++){
+        if(x<2||y<2||x>WW-3||y>WH-3) continue;
+        if(Math.sqrt((x-cx)**2+(y-cy)**2)<=r*(0.7+rng()*0.6)){
+          G.tiles[y*WW+x]=type;
+          G.tileHP[y*WW+x]=type===T.WATER?999:20+Math.floor(rng()*35);
+        }
+      }
+    }
+  };
+
+  const rr=(min,max)=>min+Math.floor(rng()*(max-min));
+  const rpos=(margin=6)=>({x:rr(margin,WW-margin),y:rr(margin,WH-margin)});
+
+  // Terrain
+  for(let i=0;i<10;i++){const p=rpos(4);patch(p.x,p.y,rr(2,5),T.DIRT);}
+  for(let i=0;i<22;i++){const p=rpos(4);patch(p.x,p.y,rr(2,5),T.STONE);}
+  // Standard ores
+  for(let i=0;i<14;i++){const p=rpos(5);patch(p.x,p.y,rr(2,4),T.IRON);}
+  for(let i=0;i<12;i++){const p=rpos(5);patch(p.x,p.y,rr(2,4),T.COAL);}
+  for(let i=0;i<10;i++){const p=rpos(6);patch(p.x,p.y,rr(1,3),T.COPPER);}
+  // New T2 ores
+  for(let i=0;i<9;i++){const p=rpos(6);patch(p.x,p.y,rr(1,3),T.TIN);}
+  for(let i=0;i<7;i++){const p=rpos(7);patch(p.x,p.y,rr(1,3),T.GOLD);}
+  for(let i=0;i<8;i++){const p=rpos(6);patch(p.x,p.y,rr(1,3),T.SULFUR);}
+  for(let i=0;i<7;i++){const p=rpos(7);patch(p.x,p.y,rr(1,3),T.CRYSTAL);}
+  for(let i=0;i<6;i++){const p=rpos(7);patch(p.x,p.y,rr(1,3),T.OBSIDIAN);}
+  for(let i=0;i<8;i++){const p=rpos(5);patch(p.x,p.y,rr(2,4),T.SAND);}
+  // Rare T3 ore
+  for(let i=0;i<4;i++){const p=rpos(10);patch(p.x,p.y,rr(1,2),T.URANIUM);}
+  // Trees and water
+  for(let i=0;i<16;i++){const p=rpos(4);patch(p.x,p.y,rr(3,6),T.TREE);}
+  for(let i=0;i<5;i++){const p=rpos(8);patch(p.x,p.y,rr(2,4),T.WATER);}
+
+  // Clear center for base
+  const cx=Math.floor(WW/2),cy=Math.floor(WH/2);
+  for(let y=cy-5;y<=cy+5;y++)
+    for(let x=cx-5;x<=cx+5;x++)
+      if(x>=0&&y>=0&&x<WW&&y<WH){G.tiles[y*WW+x]=T.GRASS;G.tileHP[y*WW+x]=0;}
+}
+
+function placeCore(){
+  const cx=Math.floor(WW/2),cy=Math.floor(WH/2);
+  const core={type:'core',tx:cx,ty:cy,hp:G.core.maxHp,maxHp:G.core.maxHp,
+    powered:true,timer:0,isCore:true};
+  for(let dy=0;dy<2;dy++) for(let dx=0;dx<2;dx++){
+    const key=`${cx+dx},${cy+dy}`;
+    G.buildings.set(key,core);
+    G.bGrid[(cy+dy)*WW+(cx+dx)]=core;
+  }
+  G.player.x=(cx-3)*TS+TS/2;
+  G.player.y=(cy+1)*TS+TS/2;
+  G.cam.x=cx*TS-canvas.width/2;
+  G.cam.y=cy*TS-canvas.height/2;
+}
+
+// ── BUILDING PLACEMENT ────────────────────────────────────────────
+function placeBuilding(tx,ty,type,dir=0,free=false){
+  if(tx<0||ty<0||tx>=WW||ty>=WH) return false;
+  const def=BDEF[type];
+  if(!def) return false;
+  if(G.bGrid[ty*WW+tx]) return false;
+  if(type==='pump'&&G.tiles[ty*WW+tx]!==T.WATER){msg('Pump must be on water!',true);return false;}
+  if(type!=='pump'&&G.tiles[ty*WW+tx]===T.WATER){msg('Cannot build on water!',true);return false;}
+  if(G.challenge){
+    if(G.challenge.noWalls&&def.isWall){msg('Walls banned in this challenge!',true);return false;}
+    if(G.challenge.noStoneWall&&type==='wall_stone'){msg('Stone walls banned!',true);return false;}
+  }
+  if(!free&&G.mode!=='sandbox'){
+    if(!canAfford(def.cost)){msg('Not enough resources!',true);return false;}
+    payCost(def.cost);
+  }
+
+  const b={type,tx,ty,dir:dir||0,hp:def.hp,maxHp:def.hp,powered:false,timer:0};
+
+  // Type-specific init
+  if(def.cap) b.inv=makeInv();
+  if(type==='smelter'||type==='electric_furnace'||type==='crusher'||type==='centrifuge'){
+    b.inputItem=null;b.outputItem=null;b.smeltTimer=0;b.outputCount=0;
+  }
+  if(type==='assembler'){b.recipe=G.selectedAssemblerRecipe||'circuit';b.craftTimer=0;b.inputs={};b.output=null;b.outputCount=0;}
+  if(type==='arc_furnace'){b.recipe=G.selectedArcRecipe||'alloy_plate';b.craftTimer=0;b.inputs={};b.output=null;b.outputCount=0;}
+  if(type==='chemical_plant'){b.recipe=G.selectedChemRecipe||'explosive';b.craftTimer=0;b.inputs={};b.output=null;b.outputCount=0;}
+  if(type==='fabricator'){b.recipe=G.selectedFabRecipe||'nano_chip';b.craftTimer=0;b.inputs={};b.output=null;b.outputCount=0;}
+  if(type==='coal_gen'||type==='bio_gen'||type==='steam_engine'){b.fuel=0;b.fuelTimer=0;b.hasFuel=false;}
+  if(type==='nuclear_reactor'){b.fuel=0;b.fuelTimer=0;b.hasFuel=false;}
+  if(type==='solar_panel'||type==='wind_turbine'){b.hasFuel=false;b.currentPow=0;}
+  if(type==='battery_bank'){b.charge=0;b.hasFuel=false;}
+  if(type==='research_lab'||type==='advanced_lab'){b.resTimer=0;}
+  if(type==='turret'||type==='turret_auto'||type==='missile_launcher'||type==='laser_turret'){b.shootTimer=0;b.target=null;}
+  if(type==='flamethrower_turret'){b.shootTimer=0;}
+  if(type==='shield_gen'){b.shieldHP=500;b.shieldMaxHP=500;}
+  if(type==='mining_drill'||type==='heavy_drill'||type==='quantum_drill'){
+    b.mineTimer=0;b.oreType=getAdjacentOre(tx,ty,dir);
+  }
+  if(type==='splitter'){b.splitSide=0;}
+  if(type==='repair_bot'){b.repairTimer=0;}
+  if(type==='drone_hub'){b.droneTimer=0;}
+
+  const key=`${tx},${ty}`;
+  G.buildings.set(key,b);
+  G.bGrid[ty*WW+tx]=b;
+
+  if(type==='assembler') G.assemblerBuilt=true;
+  checkObjectives();
+  rebuildFlowField();
+  return true;
+}
+
+function removeBuilding(tx,ty,force=false){
+  const key=`${tx},${ty}`;
+  const b=G.buildings.get(key);
+  if(!b) return;
+  if(b.isCore&&!force) return;
+  for(const[k,v] of G.buildings){
+    if(v===b){
+      const parts=k.split(',');
+      G.buildings.delete(k);
+      G.bGrid[parseInt(parts[1])*WW+parseInt(parts[0])]=null;
+    }
+  }
+  spawnParticles(tx*TS+TS/2,ty*TS+TS/2,'#888',8,30);
+  rebuildFlowField();
+}
+
+function getAdjacentOre(tx,ty,dir){
+  const tile=G.tiles[ty*WW+tx];
+  if(TMINE[tile]) return TMINE[tile];
+  const bx=tx-DX[dir],by=ty-DY[dir];
+  if(bx>=0&&by>=0&&bx<WW&&by<WH){
+    const bt=G.tiles[by*WW+bx];
+    if(TMINE[bt]) return TMINE[bt];
+  }
+  return null;
+}
+
+function makeInv(){
+  const inv={};
+  for(const k of Object.keys(INAME)) inv[k]=0;
+  return inv;
+}
+function invTotal(inv){return Object.values(inv).reduce((a,b)=>a+b,0);}
+function canAfford(cost){for(const[k,v] of Object.entries(cost)){if((G.player.inv[k]||0)<v)return false;}return true;}
+function payCost(cost){for(const[k,v] of Object.entries(cost)){G.player.inv[k]=(G.player.inv[k]||0)-v;}}
+
+function isStorageType(type){return type==='storage'||type==='large_storage'||type==='vault';}
+function getStorageCap(type){return BDEF[type]?.cap||200;}
+
+// ── FLOW FIELD (enemy pathfinding) ───────────────────────────────
+let flowField=null;
+function buildFlowField(){
+  const field=new Int8Array(WW*WH).fill(-1);
+  const visited=new Uint8Array(WW*WH);
+  const queue=[];
+  for(const[,b] of G.buildings){
+    if(b.isCore){
+      for(let dy=0;dy<2;dy++) for(let dx=0;dx<2;dx++){
+        const idx=(b.ty+dy)*WW+(b.tx+dx);
+        if(!visited[idx]){visited[idx]=1;field[idx]=4;queue.push(idx);}
+      }
+      break;
+    }
+  }
+  let qi=0;
+  while(qi<queue.length){
+    const cur=queue[qi++];
+    const cx=cur%WW,cy=(cur/WW)|0;
+    for(let d=0;d<4;d++){
+      const nx=cx+DX[d],ny=cy+DY[d];
+      if(nx<0||ny<0||nx>=WW||ny>=WH) continue;
+      const nidx=ny*WW+nx;
+      if(visited[nidx]) continue;
+      const nb=G.bGrid[nidx];
+      if(nb&&nb.isWall) continue;
+      if(G.tiles[nidx]===T.WATER) continue;
+      visited[nidx]=1;
+      field[nidx]=(d+2)%4;
+      queue.push(nidx);
+    }
+  }
+  flowField=field;
+}
+function rebuildFlowField(){buildFlowField();}
+
+// ── PLAYER UPDATE ────────────────────────────────────────────────
+function updatePlayer(dt){
+  const p=G.player;
+  let vx=0,vy=0;
+  const spd=p.spd*dt;
+  if(G.keys['KeyW']||G.keys['ArrowUp']) vy-=spd;
+  if(G.keys['KeyS']||G.keys['ArrowDown']) vy+=spd;
+  if(G.keys['KeyA']||G.keys['ArrowLeft']) vx-=spd;
+  if(G.keys['KeyD']||G.keys['ArrowRight']) vx+=spd;
+  if(vx&&vy){vx*=0.707;vy*=0.707;}
+
+  const tryMove=(dx,dy)=>{
+    const nx=p.x+dx,ny=p.y+dy;
+    const tx=Math.floor(nx/TS),ty=Math.floor(ny/TS);
+    if(tx<0||ty<0||tx>=WW||ty>=WH) return;
+    const t=G.tiles[ty*WW+tx];
+    const blocked=t===T.WATER||(G.bGrid[ty*WW+tx]&&G.bGrid[ty*WW+tx].isWall);
+    if(!blocked){p.x=nx;p.y=ny;}
+  };
+  tryMove(vx,0);tryMove(0,vy);
+
+  G.cam.x=p.x-canvas.width/2;
+  G.cam.y=p.y-canvas.height/2;
+  G.cam.x=Math.max(0,Math.min(G.cam.x,WW*TS-canvas.width));
+  G.cam.y=Math.max(0,Math.min(G.cam.y,WH*TS-canvas.height));
+
+  if(G.keys['KeyE']){
+    p.mineTimer+=dt;
+    if(p.mineTimer>=0.5){
+      p.mineTimer=0;
+      const tx=Math.floor(p.x/TS),ty=Math.floor(p.y/TS);
+      for(let d=0;d<4;d++){
+        const nx=tx+DX[d],ny=ty+DY[d];
+        if(nx<0||ny<0||nx>=WW||ny>=WH) continue;
+        const t=G.tiles[ny*WW+nx];
+        const item=TMINE[t];
+        if(item&&!G.bGrid[ny*WW+nx]){
+          p.inv[item]=(p.inv[item]||0)+1;
+          spawnFloat(`+1 ${INAME[item]}`,nx*TS+TS/2,ny*TS,ICOL[item]);
+          G.tileHP[ny*WW+nx]--;
+          if(G.tileHP[ny*WW+nx]<=0){G.tiles[ny*WW+nx]=T.DIRT;rebuildFlowField();}
+          break;
+        }
+      }
+    }
+  } else {p.mineTimer=0;}
+}
+
+// ── BUILDING UPDATES ──────────────────────────────────────────────
+function updateBuildings(dt){
+  for(const[key,b] of G.buildings){
+    if(b.isCore) continue;
+    const anchor=`${b.tx},${b.ty}`;
+    if(key!==anchor) continue;
+    if(b.disabledTimer>0){b.disabledTimer-=dt;continue;} // corruptor disable
+    const def=BDEF[b.type];
+    if(!def) continue;
+    const powered=G.poweredSet.has(key)||(def.power<=0&&b.hasFuel!==undefined?b.hasFuel:def.power===0);
+
+    switch(b.type){
+      case 'mining_drill':
+      case 'heavy_drill':
+      case 'quantum_drill':
+        updateDrill(b,dt,powered,def); break;
+      case 'smelter':
+        updateSmelterLike(b,dt,powered,SMELT_MAP,def.smeltTime); break;
+      case 'electric_furnace':
+        updateSmelterLike(b,dt,powered,EFURNACE_MAP,def.smeltTime); break;
+      case 'crusher':
+        updateCrusher(b,dt,powered,def); break;
+      case 'centrifuge':
+        updateCentrifuge(b,dt,powered,def); break;
+      case 'assembler':
+        updateAssemblerLike(b,dt,powered,def,RECIPES,b.recipe||G.selectedAssemblerRecipe); break;
+      case 'arc_furnace':
+        updateAssemblerLike(b,dt,powered,def,ARC_RECIPES,b.recipe||G.selectedArcRecipe); break;
+      case 'chemical_plant':
+        updateAssemblerLike(b,dt,powered,def,CHEM_RECIPES,b.recipe||G.selectedChemRecipe); break;
+      case 'fabricator':
+        updateAssemblerLike(b,dt,powered,def,FAB_RECIPES,b.recipe||G.selectedFabRecipe); break;
+      case 'coal_gen':
+        updateGen(b,dt,'coal',def.burnRate,Math.abs(def.power)); break;
+      case 'bio_gen':
+        updateGen(b,dt,'biofuel',def.burnRate,Math.abs(def.power)); break;
+      case 'steam_engine':
+        updateSteamEngine(b,dt); break;
+      case 'nuclear_reactor':
+        updateNuclearReactor(b,dt); break;
+      case 'battery_bank':
+        updateBatteryBank(b,dt); break;
+      case 'research_lab':
+        if(G.poweredSet.has(key)){b.resTimer+=dt;if(b.resTimer>=1){b.resTimer-=1;G.research+=BDEF.research_lab.resRate;}} break;
+      case 'advanced_lab':
+        if(G.poweredSet.has(key)){b.resTimer+=dt;if(b.resTimer>=1){b.resTimer-=1;G.research+=BDEF.advanced_lab.resRate;}} break;
+      case 'storage':
+      case 'large_storage':
+      case 'vault':
+        updateStorage(b,dt,def.cap||200); break;
+      case 'turret':
+        updateTurret(b,dt,false,'ammo'); break;
+      case 'turret_auto':
+        updateTurret(b,dt,true,'ammo'); break;
+      case 'missile_launcher':
+        updateMissileLauncher(b,dt); break;
+      case 'laser_turret':
+        updateLaserTurret(b,dt); break;
+      case 'flamethrower_turret':
+        updateFlamethrower(b,dt); break;
+      case 'repair_bot':
+        updateRepairBot(b,dt,powered); break;
+      case 'drone_hub':
+        updateDroneHub(b,dt,powered); break;
+    }
+  }
+}
+
+// ── DRILL ─────────────────────────────────────────────────────────
+function updateDrill(b,dt,powered,def){
+  if(!powered) return;
+  const tile=G.tiles[b.ty*WW+b.tx];
+  const oreItem=TMINE[tile]||b.oreType;
+  if(!oreItem) return;
+  b.mineTimer+=dt;
+  if(b.mineTimer<def.mineRate) return;
+  b.mineTimer-=def.mineRate;
+  const ox=b.tx+DX[b.dir],oy=b.ty+DY[b.dir];
+  const front=G.bGrid[oy*WW+ox];
+  if(front&&BDEF[front.type]?.isBelt&&!front.item){
+    front.item={id:oreItem,prog:0};
+    spawnFloat(`+1`,b.tx*TS+TS/2,b.ty*TS,ICOL[oreItem]||'#fff');
+  } else {
+    const collected=tryPushToNearbyStorage(b.tx,b.ty,oreItem,1);
+    if(!collected) G.player.inv[oreItem]=(G.player.inv[oreItem]||0)+1;
+    spawnFloat(`+1`,b.tx*TS+TS/2,b.ty*TS,ICOL[oreItem]||'#fff');
+  }
+  // Quantum drill depletes much slower
+  const depletionRate=b.type==='quantum_drill'?0.2:1;
+  if(G.rng()<=depletionRate){
+    G.tileHP[b.ty*WW+b.tx]--;
+    if(G.tileHP[b.ty*WW+b.tx]<=0&&G.mode!=='sandbox'){
+      G.tiles[b.ty*WW+b.tx]=T.DIRT;
+      msg('Ore deposit depleted!');
+      removeBuilding(b.tx,b.ty,true);
+    }
+  }
+}
+
+// ── SMELTER-LIKE (smelter + electric furnace) ─────────────────────
+function updateSmelterLike(b,dt,powered,smeltMap,smeltTime){
+  if(!powered) return;
+  if(!b.inputItem){
+    const bx=b.tx-DX[b.dir],by=b.ty-DY[b.dir];
+    const belt=G.bGrid[by*WW+bx];
+    if(belt&&BDEF[belt.type]?.isBelt&&belt.item){
+      b.inputItem=belt.item.id;belt.item=null;
+    }
+    if(!b.inputItem){
+      for(let d=0;d<4;d++){
+        const nx=b.tx+DX[d],ny=b.ty+DY[d];
+        const nb=G.bGrid[ny*WW+nx];
+        if(nb&&isStorageType(nb.type)&&nb.inv){
+          for(const k of Object.keys(smeltMap)){
+            if((nb.inv[k]||0)>0){nb.inv[k]--;b.inputItem=k;break;}
+          }
+        }
+        if(b.inputItem) break;
+      }
+    }
+  }
+  if(b.inputItem&&!b.outputItem){
+    if(smeltMap[b.inputItem]){
+      b.smeltTimer+=dt;
+      if(b.smeltTimer>=smeltTime){
+        b.smeltTimer=0;
+        b.outputItem=smeltMap[b.inputItem];
+        b.inputItem=null;
+        spawnFloat('✓',b.tx*TS+TS/2,b.ty*TS,ICOL[b.outputItem]||'#fff');
+      }
+    } else {b.inputItem=null;}
+  }
+  pushOutput(b);
+}
+
+// ── CRUSHER ───────────────────────────────────────────────────────
+function updateCrusher(b,dt,powered,def){
+  if(!powered) return;
+  if(!b.inputItem){
+    const bx=b.tx-DX[b.dir],by=b.ty-DY[b.dir];
+    const belt=G.bGrid[by*WW+bx];
+    if(belt&&BDEF[belt.type]?.isBelt&&belt.item){
+      if(CRUSHER_MAP[belt.item.id]){b.inputItem=belt.item.id;belt.item=null;}
+      else belt.item=null;
+    }
+  }
+  if(b.inputItem&&!b.outputItem){
+    b.smeltTimer+=dt;
+    if(b.smeltTimer>=def.smeltTime){
+      b.smeltTimer=0;
+      const recipe=CRUSHER_MAP[b.inputItem];
+      b.outputItem=recipe.out;
+      b.outputCount=(b.outputCount||0)+recipe.count;
+      b.inputItem=null;
+    }
+  }
+  if(b.outputItem&&(b.outputCount||0)>0){
+    const fx=b.tx+DX[b.dir],fy=b.ty+DY[b.dir];
+    const front=G.bGrid[fy*WW+fx];
+    if(front&&BDEF[front.type]?.isBelt&&!front.item){
+      front.item={id:b.outputItem,prog:0};
+      b.outputCount--;
+      if(b.outputCount<=0) b.outputItem=null;
+    } else {
+      const stored=tryPushToNearbyStorage(b.tx,b.ty,b.outputItem,b.outputCount||1);
+      if(stored){b.outputCount=0;b.outputItem=null;}
+      else{G.player.inv[b.outputItem]=(G.player.inv[b.outputItem]||0)+(b.outputCount||1);b.outputCount=0;b.outputItem=null;}
+    }
+  }
+}
+
+// ── CENTRIFUGE ────────────────────────────────────────────────────
+function updateCentrifuge(b,dt,powered,def){
+  if(!powered) return;
+  if(!b.inputItem){
+    const bx=b.tx-DX[b.dir],by=b.ty-DY[b.dir];
+    const belt=G.bGrid[by*WW+bx];
+    if(belt&&BDEF[belt.type]?.isBelt&&belt.item){
+      if(CENTRIFUGE_MAP[belt.item.id]){b.inputItem=belt.item.id;belt.item=null;}
+      else belt.item=null;
+    }
+  }
+  if(b.inputItem&&!b.outputItem){
+    b.smeltTimer+=dt;
+    if(b.smeltTimer>=def.smeltTime){
+      b.smeltTimer=0;
+      const recipe=CENTRIFUGE_MAP[b.inputItem];
+      b.outputItem=recipe.out;
+      b.outputCount=recipe.count;
+      b.inputItem=null;
+      spawnFloat(`+${recipe.count}`,b.tx*TS+TS/2,b.ty*TS,'#40ffcc');
+    }
+  }
+  if(b.outputItem&&(b.outputCount||0)>0){
+    const fx=b.tx+DX[b.dir],fy=b.ty+DY[b.dir];
+    const front=G.bGrid[fy*WW+fx];
+    if(front&&BDEF[front.type]?.isBelt&&!front.item){
+      front.item={id:b.outputItem,prog:0};
+      b.outputCount--;
+      if(b.outputCount<=0) b.outputItem=null;
+    } else {
+      const stored=tryPushToNearbyStorage(b.tx,b.ty,b.outputItem,b.outputCount||1);
+      if(stored){b.outputCount=0;b.outputItem=null;}
+      else{G.player.inv[b.outputItem]=(G.player.inv[b.outputItem]||0)+(b.outputCount||1);b.outputCount=0;b.outputItem=null;}
+    }
+  }
+}
+
+// ── ASSEMBLER-LIKE (assembler, arc furnace, chemical plant, fabricator) ──
+function updateAssemblerLike(b,dt,powered,def,recipeSet,selectedId){
+  if(!powered) return;
+  if(!b.recipe||!recipeSet.find(r=>r.id===b.recipe)) b.recipe=selectedId;
+  const recipe=recipeSet.find(r=>r.id===b.recipe);
+  if(!recipe) return;
+
+  if(!b.crafting){
+    let hasAll=true;
+    for(const[item,need] of Object.entries(recipe.inputs)){
+      if((b.inputs[item]||0)<need){hasAll=false;break;}
+    }
+    if(hasAll){
+      for(const[item,need] of Object.entries(recipe.inputs))
+        b.inputs[item]=(b.inputs[item]||0)-need;
+      b.crafting=true;b.craftTimer=0;
+    } else {
+      for(let d=0;d<4;d++){
+        const nx=b.tx+DX[d],ny=b.ty+DY[d];
+        const nb=G.bGrid[ny*WW+nx];
+        if(nb&&BDEF[nb.type]?.isBelt&&nb.item){
+          const item=nb.item.id;
+          if(recipe.inputs[item]!==undefined&&(b.inputs[item]||0)<recipe.inputs[item]*3){
+            b.inputs[item]=(b.inputs[item]||0)+1;nb.item=null;
+          }
+        }
+        if(nb&&isStorageType(nb.type)&&nb.inv){
+          for(const[item,need] of Object.entries(recipe.inputs)){
+            if((b.inputs[item]||0)<need*3&&(nb.inv[item]||0)>0){
+              const take=Math.min(nb.inv[item],need*3-(b.inputs[item]||0));
+              nb.inv[item]-=take;b.inputs[item]=(b.inputs[item]||0)+take;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  if(b.crafting){
+    b.craftTimer+=dt;
+    if(b.craftTimer>=recipe.time){
+      b.crafting=false;
+      if(!b.outputCount){b.output=recipe.out;b.outputCount=recipe.count;}
+      else b.outputCount+=recipe.count;
+      G.craftedTotals[recipe.out]=(G.craftedTotals[recipe.out]||0)+recipe.count;
+      spawnFloat(`+${recipe.count} ${INAME[recipe.out]||recipe.out}`,b.tx*TS+TS/2,b.ty*TS,'#40d880');
+      checkObjectives();
+    }
+  }
+
+  if(b.output&&b.outputCount>0){
+    for(let d=0;d<4;d++){
+      const nx=b.tx+DX[d],ny=b.ty+DY[d];
+      const nb=G.bGrid[ny*WW+nx];
+      if(nb&&BDEF[nb.type]?.isBelt&&!nb.item){
+        nb.item={id:b.output,prog:0};
+        b.outputCount--;
+        if(b.outputCount<=0) b.output=null;
+        break;
+      }
+      if(nb&&isStorageType(nb.type)&&nb.inv&&invTotal(nb.inv)<getStorageCap(nb.type)){
+        nb.inv[b.output]=(nb.inv[b.output]||0)+b.outputCount;
+        b.outputCount=0;b.output=null;break;
+      }
+    }
+    if(b.output&&b.outputCount>0){
+      G.player.inv[b.output]=(G.player.inv[b.output]||0)+b.outputCount;
+      b.outputCount=0;b.output=null;
+    }
+  }
+}
+
+// ── PUSH OUTPUT HELPER ────────────────────────────────────────────
+function pushOutput(b){
+  if(!b.outputItem) return;
+  const fx=b.tx+DX[b.dir],fy=b.ty+DY[b.dir];
+  const front=G.bGrid[fy*WW+fx];
+  if(front&&BDEF[front.type]?.isBelt&&!front.item){
+    front.item={id:b.outputItem,prog:0};b.outputItem=null;
+  } else if(!front){
+    const stored=tryPushToNearbyStorage(b.tx,b.ty,b.outputItem,1);
+    if(!stored) G.player.inv[b.outputItem]=(G.player.inv[b.outputItem]||0)+1;
+    b.outputItem=null;
+  }
+}
+
+function tryPushToNearbyStorage(tx,ty,item,amt){
+  for(let d=0;d<4;d++){
+    const nx=tx+DX[d],ny=ty+DY[d];
+    if(nx<0||ny<0||nx>=WW||ny>=WH) continue;
+    const nb=G.bGrid[ny*WW+nx];
+    if(nb&&isStorageType(nb.type)&&nb.inv&&invTotal(nb.inv)<getStorageCap(nb.type)){
+      nb.inv[item]=(nb.inv[item]||0)+amt;return true;
+    }
+  }
+  return false;
+}
+
+// ── GENERATORS ────────────────────────────────────────────────────
+function updateGen(b,dt,fuelItem,burnRate,watts){
+  if(b.fuel<5){
+    for(let d=0;d<4;d++){
+      const nx=b.tx+DX[d],ny=b.ty+DY[d];
+      if(nx<0||ny<0||nx>=WW||ny>=WH) continue;
+      const nb=G.bGrid[ny*WW+nx];
+      if(nb&&isStorageType(nb.type)&&nb.inv&&(nb.inv[fuelItem]||0)>0){
+        const take=Math.min(nb.inv[fuelItem],10-b.fuel);
+        nb.inv[fuelItem]-=take;b.fuel+=take;break;
+      }
+    }
+    const px=Math.floor(G.player.x/TS),py=Math.floor(G.player.y/TS);
+    if(Math.abs(px-b.tx)<=2&&Math.abs(py-b.ty)<=2&&(G.player.inv[fuelItem]||0)>0&&b.fuel<2){
+      const take=Math.min(G.player.inv[fuelItem],10);
+      G.player.inv[fuelItem]-=take;b.fuel+=take;
+    }
+  }
+  if(b.fuel>0){
+    b.hasFuel=true;b.fuelTimer+=dt;
+    const interval=1/burnRate;
+    if(b.fuelTimer>=interval){b.fuelTimer-=interval;b.fuel=Math.max(0,b.fuel-1);}
+  } else b.hasFuel=false;
+}
+
+function updateSteamEngine(b,dt){
+  const FUELS=['coal','wood','biofuel'];
+  if(b.fuel<5){
+    for(let d=0;d<4;d++){
+      const nx=b.tx+DX[d],ny=b.ty+DY[d];
+      if(nx<0||ny<0||nx>=WW||ny>=WH) continue;
+      const nb=G.bGrid[ny*WW+nx];
+      if(nb&&isStorageType(nb.type)&&nb.inv){
+        for(const f of FUELS){if((nb.inv[f]||0)>0){const take=Math.min(nb.inv[f],10-b.fuel);nb.inv[f]-=take;b.fuel+=take;b.fuelType=f;break;}}
+        if(b.fuel>=5) break;
+      }
+    }
+    const px=Math.floor(G.player.x/TS),py=Math.floor(G.player.y/TS);
+    if(Math.abs(px-b.tx)<=2&&Math.abs(py-b.ty)<=2&&b.fuel<2){
+      for(const f of FUELS){if((G.player.inv[f]||0)>0){const take=Math.min(G.player.inv[f],10);G.player.inv[f]-=take;b.fuel+=take;b.fuelType=f;break;}}
+    }
+  }
+  if(b.fuel>0){
+    b.hasFuel=true;b.fuelTimer+=dt;
+    if(b.fuelTimer>=1/BDEF.steam_engine.burnRate){b.fuelTimer-=1/BDEF.steam_engine.burnRate;b.fuel=Math.max(0,b.fuel-1);}
+  } else b.hasFuel=false;
+}
+
+function updateNuclearReactor(b,dt){
+  if(b.fuel<2){
+    for(let d=0;d<4;d++){
+      const nx=b.tx+DX[d],ny=b.ty+DY[d];
+      if(nx<0||ny<0||nx>=WW||ny>=WH) continue;
+      const nb=G.bGrid[ny*WW+nx];
+      if(nb&&nb.inv&&(nb.inv.uranium||0)>0){const take=Math.min(nb.inv.uranium,5-b.fuel);nb.inv.uranium-=take;b.fuel+=take;break;}
+    }
+    const px=Math.floor(G.player.x/TS),py=Math.floor(G.player.y/TS);
+    if(Math.abs(px-b.tx)<=2&&Math.abs(py-b.ty)<=2&&(G.player.inv.uranium||0)>0&&b.fuel<1){
+      const take=Math.min(G.player.inv.uranium,3);G.player.inv.uranium-=take;b.fuel+=take;
+    }
+  }
+  if(b.fuel>0){
+    b.hasFuel=true;b.fuelTimer+=dt;
+    if(b.fuelTimer>=1/BDEF.nuclear_reactor.burnRate){b.fuelTimer-=1/BDEF.nuclear_reactor.burnRate;b.fuel=Math.max(0,b.fuel-1);}
+  } else b.hasFuel=false;
+}
+
+function updateBatteryBank(b,dt){
+  const key=`${b.tx},${b.ty}`;
+  const surplus=G.power.prod>G.power.cons+5;
+  const deficit=G.power.prod<G.power.cons-5;
+  if(surplus&&b.charge<500){
+    b.charge=Math.min(500,b.charge+dt*40);
+    b.hasFuel=false;
+  } else if(deficit&&b.charge>0){
+    b.hasFuel=true;
+    b.charge=Math.max(0,b.charge-dt*40);
+    if(b.charge<=0) b.hasFuel=false;
+  } else if(!deficit){
+    b.hasFuel=false;
+  }
+}
+
+// ── STORAGE UPDATE ────────────────────────────────────────────────
+function updateStorage(b,dt,cap){
+  for(let d=0;d<4;d++){
+    const nx=b.tx+DX[d],ny=b.ty+DY[d];
+    if(nx<0||ny<0||nx>=WW||ny>=WH) continue;
+    const nb=G.bGrid[ny*WW+nx];
+    if(nb&&BDEF[nb.type]?.isBelt&&nb.item&&nb.item.prog>=0.9){
+      if(invTotal(b.inv)<cap){
+        b.inv[nb.item.id]=(b.inv[nb.item.id]||0)+1;
+        nb.item=null;
+      }
+    }
+  }
+}
+
+// ── CONVEYOR UPDATE ───────────────────────────────────────────────
+function updateConveyors(dt){
+  for(const[key,b] of G.buildings){
+    if(!BDEF[b.type]?.isBelt||!b.item) continue;
+    const anchor=`${b.tx},${b.ty}`;
+    if(key!==anchor) continue;
+
+    const spd=BDEF[b.type].beltSpd||1.5;
+    b.item.prog=Math.min(1,b.item.prog+dt*spd);
+
+    if(b.item.prog>=1){
+      // Splitter: alternate between two outputs
+      if(BDEF[b.type].isSplitter){
+        const outs=[
+          {dx:DX[b.dir],dy:DY[b.dir]},
+          {dx:DX[(b.dir+1)%4],dy:DY[(b.dir+1)%4]}
+        ];
+        const tries=[b.splitSide%2,(b.splitSide+1)%2];
+        let placed=false;
+        for(const idx of tries){
+          const {dx,dy}=outs[idx];
+          const nx=b.tx+dx,ny=b.ty+dy;
+          if(nx<0||ny<0||nx>=WW||ny>=WH) continue;
+          const next=G.bGrid[ny*WW+nx];
+          if(next&&BDEF[next.type]?.isBelt&&!next.item){
+            next.item={id:b.item.id,prog:0};
+            b.item=null;b.splitSide=(b.splitSide+1)%2;placed=true;break;
+          }
+        }
+        if(!placed){ /* blocked */ }
+        continue;
+      }
+
+      const nx=b.tx+DX[b.dir],ny=b.ty+DY[b.dir];
+      if(nx<0||ny<0||nx>=WW||ny>=WH){b.item=null;continue;}
+      const next=G.bGrid[ny*WW+nx];
+      if(!next){b.item=null;continue;}
+      if(BDEF[next.type]?.isBelt&&!next.item){
+        next.item={id:b.item.id,prog:0};b.item=null;
+      } else if(next.type==='smelter'||next.type==='electric_furnace'){
+        if(!next.inputItem){next.inputItem=b.item.id;b.item=null;}
+      } else if(next.type==='crusher'||next.type==='centrifuge'){
+        const map=next.type==='crusher'?CRUSHER_MAP:CENTRIFUGE_MAP;
+        if(!next.inputItem&&map[b.item.id]){next.inputItem=b.item.id;b.item=null;}
+      } else if(isStorageType(next.type)&&invTotal(next.inv)<getStorageCap(next.type)){
+        next.inv[b.item.id]=(next.inv[b.item.id]||0)+1;b.item=null;
+      } else if(next.type==='coal_gen'&&(next.fuel||0)<20&&b.item.id==='coal'){
+        next.fuel+=1;b.item=null;
+      } else if(next.type==='bio_gen'&&(next.fuel||0)<20&&b.item.id==='biofuel'){
+        next.fuel+=1;b.item=null;
+      } else if(next.type==='steam_engine'&&(next.fuel||0)<20){
+        if(['coal','wood','biofuel'].includes(b.item.id)){next.fuel+=1;b.item=null;}
+      } else if(next.type==='nuclear_reactor'&&(next.fuel||0)<10&&b.item.id==='uranium'){
+        next.fuel+=1;b.item=null;
+      }
+      // assembler-like: they pull from adjacent belts themselves
+    }
+  }
+}
+
+// ── POWER GRID ────────────────────────────────────────────────────
+function updatePowerGrid(){
+  G.power={prod:0,cons:0};
+  G.poweredSet.clear();
+
+  // Update special generators
+  for(const[key,b] of G.buildings){
+    const anchor=`${b.tx},${b.ty}`;if(key!==anchor) continue;
+    if(b.type==='solar_panel'){b.hasFuel=!G.isNight;}
+    if(b.type==='wind_turbine'){
+      b.hasFuel=true;
+      b.currentPow=8+Math.round(Math.sin(performance.now()/3000+b.tx+b.ty)*5);
+    }
+  }
+
+  const queue=[];const inQ=new Set();
+  const GEN_TYPES=['coal_gen','bio_gen','steam_engine','nuclear_reactor','solar_panel','wind_turbine','battery_bank'];
+
+  for(const[key,b] of G.buildings){
+    const anchor=`${b.tx},${b.ty}`;if(key!==anchor) continue;
+    if(GEN_TYPES.includes(b.type)&&b.hasFuel){
+      queue.push({tx:b.tx,ty:b.ty,key});
+      inQ.add(key);
+      if(b.type==='wind_turbine') G.power.prod+=b.currentPow||10;
+      else G.power.prod+=Math.abs(BDEF[b.type].power);
+    }
+  }
+
+  let qi=0;
+  while(qi<queue.length){
+    const{tx,ty,key}=queue[qi++];
+    const b=G.buildings.get(key);
+    const range=(b&&b.type==='power_pole')?BDEF.power_pole.poleRange:3;
+    const rr=range*range;
+    for(let dy=-range;dy<=range;dy++){
+      for(let dx=-range;dx<=range;dx++){
+        if(dx*dx+dy*dy>rr) continue;
+        const nx=tx+dx,ny=ty+dy;
+        if(nx<0||ny<0||nx>=WW||ny>=WH) continue;
+        const nkey=`${nx},${ny}`;
+        const nb=G.buildings.get(nkey);
+        if(!nb) continue;
+        G.poweredSet.add(nkey);
+        if(nb.type==='power_pole'&&!inQ.has(nkey)){inQ.add(nkey);queue.push({tx:nx,ty:ny,key:nkey});}
+      }
+    }
+  }
+  for(const key of G.poweredSet){
+    const b=G.buildings.get(key);
+    if(b&&BDEF[b.type]){const p=BDEF[b.type].power;if(p>0) G.power.cons+=p;}
+  }
+}
+
+// ── TURRET SYSTEM ─────────────────────────────────────────────────
+function updateTurret(b,dt,needsPower,ammoItem){
+  const key=`${b.tx},${b.ty}`;
+  const powered=!needsPower||G.poweredSet.has(key);
+  if(!powered) return;
+  const def=BDEF[b.type];
+
+  const findAmmo=()=>{
+    for(let d=0;d<4;d++){
+      const nx=b.tx+DX[d],ny=b.ty+DY[d];
+      if(nx<0||ny<0||nx>=WW||ny>=WH) continue;
+      const nb=G.bGrid[ny*WW+nx];
+      if(nb&&isStorageType(nb.type)&&nb.inv&&(nb.inv[ammoItem]||0)>0) return nb;
+      if(nb&&isStorageType(nb.type)&&nb.inv&&(nb.inv.smart_ammo||0)>0) return{src:nb,item:'smart_ammo'};
+    }
+    if((G.player.inv[ammoItem]||0)>0) return 'player';
+    if((G.player.inv.smart_ammo||0)>0) return{src:'player',item:'smart_ammo'};
+    return null;
+  };
+
+  b.shootTimer+=dt;
+  if(b.shootTimer<1/def.fireRate) return;
+
+  const bx=(b.tx+0.5)*TS,by=(b.ty+0.5)*TS;
+  let best=null,bestDist=Infinity;
+  for(const e of G.enemies){
+    const d=Math.hypot(e.x-bx,e.y-by);
+    if(d<def.range*TS&&d<bestDist){bestDist=d;best=e;}
+  }
+  if(!best) return;
+
+  const ammoSrc=findAmmo();
+  if(!ammoSrc) return;
+
+  const usedItem=ammoSrc?.item||ammoItem;
+  const dmgMult=usedItem==='smart_ammo'?2:1;
+  if(typeof ammoSrc==='string'&&ammoSrc==='player') G.player.inv[usedItem]--;
+  else if(ammoSrc?.src==='player') G.player.inv[usedItem]--;
+  else if(ammoSrc?.src) ammoSrc.src.inv[usedItem]--;
+  else if(ammoSrc?.inv) ammoSrc.inv[usedItem]--;
+
+  b.shootTimer=0;
+  G.projectiles.push({
+    x:bx,y:by,tx:best.x,ty:best.y,target:best,
+    spd:12,dmg:def.dmg*dmgMult,
+    col:b.type==='turret_auto'?'#40d8ff':'#ffd040',
+    sz:b.type==='turret_auto'?4:3,life:1.5
+  });
+  spawnParticles(bx,by,b.type==='turret_auto'?'#40d8ff':'#ffd040',2,8);
+}
+
+function updateMissileLauncher(b,dt){
+  b.shootTimer=(b.shootTimer||0)+dt;
+  if(b.shootTimer<1/BDEF.missile_launcher.fireRate) return;
+
+  let missileSrc=null;
+  for(let d=0;d<4;d++){
+    const nx=b.tx+DX[d],ny=b.ty+DY[d];
+    if(nx<0||ny<0||nx>=WW||ny>=WH) continue;
+    const nb=G.bGrid[ny*WW+nx];
+    if(nb&&isStorageType(nb.type)&&nb.inv&&(nb.inv.missile||0)>0){missileSrc=nb;break;}
+  }
+  if(!missileSrc&&(G.player.inv.missile||0)>0) missileSrc='player';
+  if(!missileSrc) return;
+
+  const bx=(b.tx+0.5)*TS,by=(b.ty+0.5)*TS;
+  let best=null,bestDist=Infinity;
+  for(const e of G.enemies){
+    const d=Math.hypot(e.x-bx,e.y-by);
+    if(d<BDEF.missile_launcher.range*TS&&d<bestDist){bestDist=d;best=e;}
+  }
+  if(!best) return;
+
+  if(missileSrc==='player') G.player.inv.missile--;
+  else missileSrc.inv.missile--;
+
+  b.shootTimer=0;
+  G.projectiles.push({
+    x:bx,y:by,tx:best.x,ty:best.y,target:best,
+    spd:7,dmg:BDEF.missile_launcher.dmg,
+    col:'#ff8800',sz:6,life:4,
+    splash:true,splashR:BDEF.missile_launcher.splashR*TS
+  });
+}
+
+function updateLaserTurret(b,dt){
+  if(!G.poweredSet.has(`${b.tx},${b.ty}`)) return;
+  b.shootTimer=(b.shootTimer||0)+dt;
+  if(b.shootTimer<1/BDEF.laser_turret.fireRate) return;
+
+  const bx=(b.tx+0.5)*TS,by=(b.ty+0.5)*TS;
+  let best=null,bestDist=Infinity;
+  for(const e of G.enemies){
+    const d=Math.hypot(e.x-bx,e.y-by);
+    if(d<BDEF.laser_turret.range*TS&&d<bestDist){bestDist=d;best=e;}
+  }
+  if(!best) return;
+
+  b.shootTimer=0;
+  best.hp-=BDEF.laser_turret.dmg;
+  b.laserTarget={x:best.x,y:best.y,life:0.08};
+  spawnParticles(best.x,best.y,'#00ffff',3,8);
+  if(best.hp<=0) killEnemy(best);
+}
+
+function updateFlamethrower(b,dt){
+  if(!G.poweredSet.has(`${b.tx},${b.ty}`)) return;
+  b.shootTimer=(b.shootTimer||0)+dt;
+  if(b.shootTimer<0.5) return;
+  b.shootTimer=0;
+
+  // Check biofuel
+  let consumed=false;
+  for(let d=0;d<4;d++){
+    const nx=b.tx+DX[d],ny=b.ty+DY[d];
+    if(nx<0||ny<0||nx>=WW||ny>=WH) continue;
+    const nb=G.bGrid[ny*WW+nx];
+    if(nb&&nb.inv&&(nb.inv.biofuel||0)>0){nb.inv.biofuel--;consumed=true;break;}
+  }
+  if(!consumed&&(G.player.inv.biofuel||0)>0){G.player.inv.biofuel--;consumed=true;}
+  if(!consumed) return;
+
+  const bx=(b.tx+0.5)*TS,by=(b.ty+0.5)*TS;
+  const range=BDEF.flamethrower_turret.range*TS;
+  for(const e of G.enemies){
+    if(e.dead) continue;
+    if(Math.hypot(e.x-bx,e.y-by)<range){
+      e.hp-=BDEF.flamethrower_turret.dmg;
+      spawnParticles(e.x,e.y,'#ff6600',3,15);
+      if(e.hp<=0) killEnemy(e);
+    }
+  }
+}
+
+function updateRepairBot(b,dt,powered){
+  if(!powered) return;
+  b.repairTimer=(b.repairTimer||0)+dt;
+  if(b.repairTimer<2) return;
+  b.repairTimer=0;
+
+  // Check for repair kits
+  let hasKit=false;
+  let kitSrc=null;
+  for(let d=0;d<4;d++){
+    const nx=b.tx+DX[d],ny=b.ty+DY[d];
+    if(nx<0||ny<0||nx>=WW||ny>=WH) continue;
+    const nb=G.bGrid[ny*WW+nx];
+    if(nb&&nb.inv&&(nb.inv.repair_kit||0)>0){kitSrc=nb;hasKit=true;break;}
+  }
+  if(!hasKit&&(G.player.inv.repair_kit||0)>0){kitSrc='player';hasKit=true;}
+  if(!hasKit) return;
+
+  // Repair nearby buildings
+  let repaired=false;
+  const bx=b.tx*TS,by=b.ty*TS;
+  for(const[key,nb] of G.buildings){
+    if(nb===b||nb.isCore) continue;
+    if(nb.hp>=nb.maxHp) continue;
+    const d=Math.hypot(nb.tx*TS-bx,nb.ty*TS-by);
+    if(d>5*TS) continue;
+    nb.hp=Math.min(nb.maxHp,nb.hp+15);
+    spawnParticles(nb.tx*TS+TS/2,nb.ty*TS+TS/2,'#40ff80',3,12);
+    repaired=true;
+    break;
+  }
+  if(repaired){
+    if(kitSrc==='player') G.player.inv.repair_kit--;
+    else if(kitSrc?.inv) kitSrc.inv.repair_kit--;
+  }
+}
+
+function updateDroneHub(b,dt,powered){
+  if(!powered) return;
+  b.droneTimer=(b.droneTimer||0)+dt;
+  if(b.droneTimer<5) return;
+  b.droneTimer=0;
+
+  // Auto-mine nearby ore tiles
+  const bx=b.tx,by=b.ty;
+  for(let dy=-4;dy<=4;dy++){
+    for(let dx=-4;dx<=4;dx++){
+      const nx=bx+dx,ny=by+dy;
+      if(nx<0||ny<0||nx>=WW||ny>=WH) continue;
+      if(Math.sqrt(dx*dx+dy*dy)>4) continue;
+      const t=G.tiles[ny*WW+nx];
+      const item=TMINE[t];
+      if(item&&!G.bGrid[ny*WW+nx]&&G.tileHP[ny*WW+nx]>0){
+        const stored=tryPushToNearbyStorage(b.tx,b.ty,item,1);
+        if(!stored) G.player.inv[item]=(G.player.inv[item]||0)+1;
+        G.tileHP[ny*WW+nx]--;
+        if(G.tileHP[ny*WW+nx]<=0&&G.mode!=='sandbox') G.tiles[ny*WW+nx]=T.DIRT;
+        spawnFloat(`🛸+1`,b.tx*TS+TS/2,b.ty*TS,ICOL[item]||'#fff');
+        return; // one item per tick
+      }
+    }
+  }
+}
+
+// ── PROJECTILES ───────────────────────────────────────────────────
+function updateProjectiles(dt){
+  for(let i=G.projectiles.length-1;i>=0;i--){
+    const p=G.projectiles[i];
+    p.life-=dt;
+    if(p.life<=0||(!p.enemy&&(!p.target||p.target.dead))){G.projectiles.splice(i,1);continue;}
+
+    if(!p.enemy){
+      const dx=p.target.x-p.x,dy=p.target.y-p.y;
+      const d=Math.hypot(dx,dy);
+      const hitDist=p.splash?16:8;
+      if(d<p.spd*TS*dt+hitDist){
+        if(p.splash){
+          // Splash damage
+          const hitX=p.target.x,hitY=p.target.y;
+          for(const e of G.enemies){
+            if(e.dead) continue;
+            const sd=Math.hypot(e.x-hitX,e.y-hitY);
+            if(sd<p.splashR){
+              const dmg=p.dmg*(1-sd/p.splashR*0.5);
+              e.hp-=dmg;
+              if(e.hp<=0) killEnemy(e);
+            }
+          }
+          spawnParticles(hitX,hitY,'#ff8800',20,50);
+        } else {
+          p.target.hp-=p.dmg;
+          spawnParticles(p.target.x,p.target.y,p.col,4,12);
+          if(p.target.hp<=0) killEnemy(p.target);
+        }
+        G.projectiles.splice(i,1);
+      } else {
+        p.x+=dx/d*p.spd*TS*dt;
+        p.y+=dy/d*p.spd*TS*dt;
+      }
+    }
+  }
+
+  // Enemy projectiles hitting player/core
+  for(let i=G.projectiles.length-1;i>=0;i--){
+    const p=G.projectiles[i];
+    if(!p.enemy) continue;
+    p.life-=dt;
+    if(p.life<=0){G.projectiles.splice(i,1);continue;}
+    const dx=p.tx-p.x,dy=p.ty-p.y;
+    const d=Math.hypot(dx,dy);
+    if(d<10){
+      if(p.disables){
+        // Corruptor disable beam
+        const tx=Math.floor(p.tx/TS),ty=Math.floor(p.ty/TS);
+        const tb=G.bGrid[ty*WW+tx];
+        if(tb&&!tb.isCore) tb.disabledTimer=3.0;
+      } else if(p.target&&p.target.isPlayer){
+        G.player.hp-=p.dmg;if(G.player.hp<0) G.player.hp=0;
+      } else {
+        G.core.hp-=p.dmg;if(G.core.hp<=0) triggerGameOver();
+      }
+      spawnParticles(p.x,p.y,p.col,3,8);
+      G.projectiles.splice(i,1);
+    } else {
+      p.x+=dx/d*p.spd*TS*dt;
+      p.y+=dy/d*p.spd*TS*dt;
+    }
+  }
+
+  // Update laser target life
+  for(const[key,b] of G.buildings){
+    if(b.laserTarget){b.laserTarget.life-=dt;if(b.laserTarget.life<=0)b.laserTarget=null;}
+  }
+}
+
+// ── ENEMY SYSTEM ──────────────────────────────────────────────────
+function spawnEnemy(type,wx,wy){
+  const def=ETYPES[type];
+  if(!def) return;
+  const hp=def.hp+(G.wave||1)*def.hp*0.04;
+  G.enemies.push({
+    type,x:wx*TS+TS/2,y:wy*TS+TS/2,
+    hp,maxHp:hp,
+    spd:def.spd,dmg:def.dmg,sz:def.sz,val:def.val,
+    score:def.score,col:def.col,
+    attackTimer:0,dead:false,
+    ranged:def.ranged||false,rRange:def.rRange||0,
+    shootTimer:0,
+    isTank:def.isTank||false,
+    isLeaper:def.isLeaper||false,
+    isCorruptor:def.isCorruptor||false,
+    isBoss:def.isBoss||false,
+    leapTimer:0
+  });
+}
+
+function getSpawnPos(){
+  const side=Math.floor(G.rng()*4);
+  if(side===0) return{wx:Math.floor(G.rng()*WW),wy:0};
+  if(side===1) return{wx:WW-1,wy:Math.floor(G.rng()*WH)};
+  if(side===2) return{wx:Math.floor(G.rng()*WW),wy:WH-1};
+  return{wx:0,wy:Math.floor(G.rng()*WH)};
+}
+
+function getCoreCenter(){
+  for(const[,b] of G.buildings){if(b.isCore) return{x:(b.tx+1)*TS,y:(b.ty+1)*TS};}
+  return{x:WW/2*TS,y:WH/2*TS};
+}
+
+function updateEnemies(dt){
+  const core=getCoreCenter();
+  for(let i=G.enemies.length-1;i>=0;i--){
+    const e=G.enemies[i];
+    if(e.dead){G.enemies.splice(i,1);continue;}
+
+    const etx=Math.floor(e.x/TS),ety=Math.floor(e.y/TS);
+    const idx=ety*WW+etx;
+
+    // Leaper: jump over walls every 3s
+    if(e.isLeaper){
+      e.leapTimer+=dt;
+      if(e.leapTimer>=3){
+        e.leapTimer=0;
+        // Teleport toward core past any obstacles
+        const dx=core.x-e.x,dy=core.y-e.y;
+        const d=Math.hypot(dx,dy);
+        if(d>TS*2){
+          const leapX=e.x+dx/d*TS*4;
+          const leapY=e.y+dy/d*TS*4;
+          const ltx=Math.floor(leapX/TS),lty=Math.floor(leapY/TS);
+          if(ltx>=0&&lty>=0&&ltx<WW&&lty<WH&&G.tiles[lty*WW+ltx]!==T.WATER){
+            e.x=leapX;e.y=leapY;
+            spawnParticles(leapX,leapY,'#88ffcc',5,20);
+          }
+        }
+      }
+    }
+
+    // Move via flow field
+    let moved=false;
+    if(flowField&&idx>=0&&idx<flowField.length){
+      const dir=flowField[idx];
+      if(dir>=0&&dir<4){
+        // Check if next tile is wall — tanks bulldoze, others stop
+        const nextTx=etx+DX[dir],nextTy=ety+DY[dir];
+        if(nextTx>=0&&nextTy>=0&&nextTx<WW&&nextTy<WH){
+          const nb=G.bGrid[nextTy*WW+nextTx];
+          if(nb&&nb.isWall&&e.isTank){
+            // Tank attacks wall
+            e.attackTimer+=dt;
+            if(e.attackTimer>=0.5){
+              e.attackTimer=0;
+              nb.hp-=e.dmg*3;
+              spawnParticles(nb.tx*TS+TS/2,nb.ty*TS+TS/2,'#ff4400',6,28);
+              if(nb.hp<=0){removeBuilding(nb.tx,nb.ty,true);}
+            }
+          } else {
+            const targetX=(nextTx+0.5)*TS, targetY=(nextTy+0.5)*TS;
+            const dx2=targetX-e.x, dy2=targetY-e.y;
+            const dist=Math.hypot(dx2,dy2);
+            if(dist>1){e.x+=dx2/dist*e.spd*TS*dt; e.y+=dy2/dist*e.spd*TS*dt;}
+            moved=true;
+          }
+        }
+      }
+    }
+    if(!moved){
+      const dx=core.x-e.x, dy=core.y-e.y;
+      const d=Math.hypot(dx,dy);
+      if(d>4){e.x+=dx/d*e.spd*TS*dt; e.y+=dy/d*e.spd*TS*dt;}
+    }
+
+    e.attackTimer+=dt;
+    if(e.attackTimer>=1/1.5){
+      e.attackTimer=0;
+      const etx=Math.floor(e.x/TS), ety=Math.floor(e.y/TS);
+      let attacked=false;
+      for(let ddy=-1; ddy<=1 && !attacked; ddy++){
+        for(let ddx=-1; ddx<=1 && !attacked; ddx++){
+          const nx=etx+ddx, ny=ety+ddy;
+          if(nx<0||ny<0||nx>=WW||ny>=WH) continue;
+          const b=G.bGrid[ny*WW+nx];
+          if(b){
+            b.hp-=e.dmg;
+            spawnParticles(b.tx*TS+TS/2,b.ty*TS+TS/2,'#ff4444',4,14);
+            attacked=true;
+            if(b.isCore){G.core.hp-=e.dmg; if(G.core.hp<=0) triggerGameOver();}
+            else if(b.hp<=0){removeBuilding(b.tx,b.ty,true);}
+          }
+        }
+      }
+    }
+
+    if(e.ranged){
+      e.shootTimer+=dt;
+      if(e.shootTimer>=1/0.9){
+        e.shootTimer=0;
+        const targetDist=Math.hypot(G.player.x-e.x,G.player.y-e.y);
+        const target = targetDist < e.rRange*TS ? {x:G.player.x,y:G.player.y,isPlayer:true} : {x:core.x,y:core.y};
+        G.projectiles.push({
+          x:e.x,y:e.y,tx:target.x,ty:target.y,target,enemy:true,
+          spd:6,dmg:e.dmg*0.5,col:'#aaff00',sz:3,life:2.5,disables:e.isCorruptor
+        });
+      }
+    }
+  }
+
+  for(let i=G.projectiles.length-1;i>=0;i--){
+    const p=G.projectiles[i];
+    if(!p.enemy) continue;
+    p.life-=dt;
+    if(p.life<=0){G.projectiles.splice(i,1);continue;}
+    const dx=p.tx-p.x, dy=p.ty-p.y;
+    const d=Math.hypot(dx,dy);
+    if(d<8){
+      if(p.target&&p.target.isPlayer){G.player.hp-=p.dmg; if(G.player.hp<0) G.player.hp=0;}
+      else {G.core.hp-=p.dmg; if(G.core.hp<=0) triggerGameOver();}
+      spawnParticles(p.x,p.y,p.col,3,8);
+      G.projectiles.splice(i,1);
+    } else {p.x+=dx/d*p.spd*TS*dt; p.y+=dy/d*p.spd*TS*dt;}
+  }
+}
+
+function killEnemy(e){
+  if(e.dead) return;
+  e.dead=true;
+  G.kills++;
+  G.totalKills++;
+  G.score+=e.score;
+  const gain=Math.floor(G.rng()*3+1);
+  G.player.inv.biomass=(G.player.inv.biomass||0)+gain;
+  spawnParticles(e.x,e.y,e.col,10,30);
+  G.enemiesThisWave--;
+  if(e.isBoss){G.bossKills++; msg(`${ETYPES[e.type].name} defeated!`,false,true);}
+  if(G.waveActive&&G.enemiesThisWave<=0){
+    G.waveActive=false;
+    G.waveCooldown=30;
+    waveAnnounce(`WAVE ${G.wave} COMPLETE! Next in 30s`);
+    checkObjectives();
+  }
+}
+
+function updateWaves(dt){
+  if(G.mode==='sandbox') return;
+  if(!G.waveActive){
+    if(G.waveCooldown>0) G.waveCooldown-=dt;
+    else {G.waveTimer-=dt; if(G.waveTimer<=0){G.wave++; startWave(G.wave);}}
+  }
+  if(G.challenge&&G.challenge.speedRun){
+    G.challengeTimer-=dt;
+    if(G.challengeTimer<=0) triggerGameOver();
+  }
+}
+
+function startWave(w){
+  G.waveActive=true;
+  G.waveTimer=w<3?60:w<6?50:w<10?40:35;
+  const types=[];
+  if(w%6===0){types.push({t:'omega',n:1});types.push({t:'behemoth',n:1});types.push({t:'tank',n:3});}
+  else if(w%5===0){types.push({t:'boss',n:1});types.push({t:'tank',n:2+w});types.push({t:'corruptor',n:3+Math.floor(w/2)});} 
+  else {
+    types.push({t:'crawler',n:4+w*3});
+    if(w>=2) types.push({t:'brute',n:1+Math.floor(w/2)});
+    if(w>=3) types.push({t:'spitter',n:2+Math.floor(w/2)});
+    if(w>=4) types.push({t:'swarm',n:w*2});
+    if(w>=6) types.push({t:'tank',n:Math.floor(w/3)});
+    if(w>=8) types.push({t:'leaper',n:2+Math.floor(w/3)});
+  }
+  G.enemiesThisWave=types.reduce((sum,obj)=>sum+obj.n,0);
+  let delay=0;
+  for(const {t,n} of types){
+    for(let i=0;i<n;i++){
+      const sp=getSpawnPos();
+      setTimeout(()=>{if(G.phase==='playing') spawnEnemy(t,sp.wx,sp.wy);},delay*1000);
+      delay+=0.08+G.rng()*0.12;
+    }
+  }
+  waveAnnounce(`WAVE ${w} INCOMING!`);
+}
+
+function waveAnnounce(text){
+  const el=document.getElementById('wave-ann');
+  el.textContent=text;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),3500);
+}
+
+function updateHUD(){
+  document.getElementById('h-mode').textContent=G.mode.toUpperCase();
+  document.getElementById('h-hp').textContent=G.core.hp;
+  document.getElementById('hp-bar').style.width=`${Math.max(0,Math.min(100,(G.core.hp/G.core.maxHp)*100))}%`;
+  const prod=Math.floor(G.power.prod), cons=Math.floor(G.power.cons);
+  document.getElementById('h-pow').textContent=`${prod}/${cons}W`;
+  document.getElementById('power-fill').style.width=`${cons?Math.min(100,(prod/Math.max(1,cons))*100):0}%`;
+  document.getElementById('h-res').textContent=Math.floor(G.research);
+  document.getElementById('h-day').textContent=`DAY ${G.day}${G.isNight?' NIGHT':''}`;
+  document.getElementById('h-wave').textContent=G.mode==='sandbox'?'FREE':`WAVE ${G.wave}`;
+  document.getElementById('h-wave-seg').style.display=G.mode==='sandbox'?'none':'flex';
+  document.getElementById('h-score').textContent=`${G.score} pts`;
+}
+
+function refreshToolbar(){
+  for(const key of Object.keys(BDEF)){
+    const btn=document.getElementById(`tb-${key}`);
+    if(!btn) continue;
+    const unlocked=G.unlockedBlds.has(key);
+    btn.classList.toggle('locked',!unlocked);
+    btn.title=unlocked?BDEF[key].name:`${BDEF[key].name} (locked)`;
+  }
+}
+
+function updateTechPanel(){
+  const techList=document.getElementById('tech-list');
+  techList.innerHTML='';
+  TECHS.forEach(tech=>{
+    const node=document.createElement('div');
+    node.className='tech-node';
+    const unlocked=G.unlockedTechs.has(tech.id);
+    const blocked=tech.requires.some(req=>!G.unlockedTechs.has(req));
+    if(unlocked) node.classList.add('done');
+    if(!unlocked&&blocked) node.classList.add('locked');
+    node.innerHTML=`<div class="tn-name">${tech.name}</div><div class="tn-desc">${tech.desc}</div><div class="tn-cost">RP ${tech.cost}</div>${tech.requires.length?`<div class="tn-req">Requires: ${tech.requires.map(r=>TECHS.find(t=>t.id===r)?.name||r).join(', ')}</div>`:''}<div class="tn-status">${unlocked?'UNLOCKED':blocked?'LOCKED':'CLICK TO RESEARCH'}</div>`;
+    node.addEventListener('click',()=>{if(!unlocked&&!blocked) researchTech(tech.id);});
+    techList.appendChild(node);
+  });
+}
+
+function updateInventoryUI(){
+  const grid=document.getElementById('inv-grid');
+  grid.innerHTML='';
+  for(const [key,count] of Object.entries(G.player.inv)){
+    if(count<=0) continue;
+    const item=document.createElement('div');
+    item.className='inv-item';
+    item.innerHTML=`<div class="inv-icon" style="background:${ICOL[key]||'#888'}"></div><div class="inv-name">${INAME[key]||key}</div><div class="inv-count">${count}</div>`;
+    grid.appendChild(item);
+  }
+  const recipeList=document.getElementById('recipe-list');
+  const arcList=document.getElementById('arc-recipe-list');
+  const chemList=document.getElementById('chem-recipe-list');
+  const fabList=document.getElementById('fab-recipe-list');
+  recipeList.innerHTML=''; arcList.innerHTML=''; chemList.innerHTML=''; fabList.innerHTML='';
+  RECIPES.forEach(recipe=>{
+    const btn=document.createElement('button');
+    btn.className='recipe-btn'+(G.selectedAssemblerRecipe===recipe.id?' sel':'');
+    btn.textContent=`${recipe.name} — ${Object.entries(recipe.inputs).map(([k,v])=>`${v} ${INAME[k]||k}`).join(', ')}`;
+    btn.addEventListener('click',()=>{G.selectedAssemblerRecipe=recipe.id;updateInventoryUI();});
+    recipeList.appendChild(btn);
+  });
+  ARC_RECIPES.forEach(recipe=>{
+    const btn=document.createElement('button');
+    btn.className='recipe-btn'+(G.selectedArcRecipe===recipe.id?' sel':'');
+    btn.textContent=`${recipe.name} — ${Object.entries(recipe.inputs).map(([k,v])=>`${v} ${INAME[k]||k}`).join(', ')}`;
+    btn.addEventListener('click',()=>{G.selectedArcRecipe=recipe.id;updateInventoryUI();});
+    arcList.appendChild(btn);
+  });
+  CHEM_RECIPES.forEach(recipe=>{
+    const btn=document.createElement('button');
+    btn.className='recipe-btn'+(G.selectedChemRecipe===recipe.id?' sel':'');
+    btn.textContent=`${recipe.name} — ${Object.entries(recipe.inputs).map(([k,v])=>`${v} ${INAME[k]||k}`).join(', ')}`;
+    btn.addEventListener('click',()=>{G.selectedChemRecipe=recipe.id;updateInventoryUI();});
+    chemList.appendChild(btn);
+  });
+  FAB_RECIPES.forEach(recipe=>{
+    const btn=document.createElement('button');
+    btn.className='recipe-btn'+(G.selectedFabRecipe===recipe.id?' sel':'');
+    btn.textContent=`${recipe.name} — ${Object.entries(recipe.inputs).map(([k,v])=>`${v} ${INAME[k]||k}`).join(', ')}`;
+    btn.addEventListener('click',()=>{G.selectedFabRecipe=recipe.id;updateInventoryUI();});
+    fabList.appendChild(btn);
+  });
+  const progress=document.getElementById('asm-progress');
+  const selected=RECIPES.find(r=>r.id===G.selectedAssemblerRecipe);
+  progress.textContent=`Selected: ${selected?.name||'None'}`;
+}
+
+function selectBuild(type){
+  G.demolish=false; G.sel=type;
+  document.querySelectorAll('.tbtn').forEach(btn=>btn.classList.remove('sel'));
+  const button=document.getElementById(`tb-${type}`);
+  if(button) button.classList.add('sel');
+}
+
+function toggleDemolish(){
+  G.demolish=!G.demolish; G.sel=null;
+  document.querySelectorAll('.tbtn').forEach(btn=>btn.classList.remove('sel'));
+  document.getElementById('tb-demolish').classList.toggle('sel',G.demolish);
+}
+
+function togglePanel(panel){
+  const tech=document.getElementById('tech-panel');
+  const inv=document.getElementById('inv-panel');
+  if(panel==='tech') tech.classList.toggle('open');
+  if(panel==='inv') inv.classList.toggle('open');
+}
+
+function msg(text,warn=false,important=false){
+  const wrap=document.getElementById('msg-log');
+  const row=document.createElement('div');
+  row.className='msg'+(warn?' warn':'')+(important?' good':'');
+  row.textContent=text;
+  wrap.prepend(row);
+  setTimeout(()=>{row.remove();},important?5000:3000);
+}
+
+function handleBuildAction(){
+  const tx=Math.floor(G.mouse.wx/TS), ty=Math.floor(G.mouse.wy/TS);
+  if(tx<0||ty<0||tx>=WW||ty>=WH) return;
+  if(G.demolish){if(G.bGrid[ty*WW+tx]){removeBuilding(tx,ty,true);msg('Structure removed');}} else if(G.sel){
+    if(placeBuilding(tx,ty,G.sel,G.dir)){msg(`${BDEF[G.sel].name} placed`);if(G.sel==='assembler') updateInventoryUI();}
+    else msg('Cannot place building here',true);
+  }
+}
+
+function handleRemoveAction(){
+  const tx=Math.floor(G.mouse.wx/TS), ty=Math.floor(G.mouse.wy/TS);
+  if(tx<0||ty<0||tx>=WW||ty>=WH) return;
+  if(G.bGrid[ty*WW+tx]){removeBuilding(tx,ty,true);msg('Structure removed');}
+}
+
+function update(dt){
+  updatePlayer(dt);
+  updatePowerGrid();
+  updateBuildings(dt);
+  updateConveyors(dt);
+  updateEnemies(dt);
+  updateProjectiles(dt);
+  updateParticles(dt);
+  updateWaves(dt);
+  updateDayNight(dt);
+  checkObjectives();
+  if(G.player.hp<=0) triggerGameOver();
+  if(!G.lastUIUpdate||performance.now()-G.lastUIUpdate>250){updateInventoryUI();G.lastUIUpdate=performance.now();}
+}
+
+function loop(timestamp){
+  if(!G.last) G.last=timestamp;
+  const dt=Math.min((timestamp-G.last)/1000,0.03);
+  G.last=timestamp;
+  if(G.phase==='playing'){update(dt);render();updateHUD();}
+  animId=requestAnimationFrame(loop);
+}
+
+function resizeCanvas(){
+  canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+  canvas.style.width='100%'; canvas.style.height='100%';
+  if(ctx) ctx.imageSmoothingEnabled=false;
+}
+
+function startGame(mode,level=1){
+  document.getElementById('menu').style.display='none';
+  document.getElementById('hud').style.display='flex';
+  document.getElementById('toolbar').style.display='flex';
+  document.getElementById('obj-panel').style.display=(mode==='campaign'||mode==='challenge')?'block':'none';
+  document.getElementById('gameover').classList.remove('show');
+  document.getElementById('winscreen').classList.remove('show');
+  initG(mode,level);
+  refreshToolbar(); updateTechPanel(); updateInventoryUI(); resizeCanvas();
+  G.last=performance.now(); G.phase='playing';
+  if(animId) cancelAnimationFrame(animId);
+  animId=requestAnimationFrame(loop);
+}
+
+function triggerGameOver(){
+  if(G.phase==='gameover') return;
+  G.phase='gameover';
+  document.getElementById('go-score').textContent=`Score: ${G.score} pts | Waves: ${G.wave} | Kills: ${G.kills}`;
+  document.getElementById('gameover').classList.add('show');
+}
+
+function triggerWin(){
+  if(G.phase==='win') return;
+  G.phase='win';
+  const nextBtn=document.getElementById('win-next');
+  if(G.mode==='campaign'&&G.level<5) nextBtn.style.display=''; else nextBtn.style.display='none';
+  document.getElementById('win-sub').textContent=G.mode==='campaign'?`LEVEL ${G.level} COMPLETE`:'OBJECTIVE ACHIEVED';
+  document.getElementById('win-score').textContent=`Score: ${G.score} pts | Kills: ${G.kills}`;
+  document.getElementById('winscreen').classList.add('show');
+}
+
+function nextLevel(){
+  document.getElementById('winscreen').classList.remove('show');
+  startGame(G.mode,G.level+1);
+}
+
+function researchTech(techId){
+  const tech=TECHS.find(t=>t.id===techId);
+  if(!tech) return;
+  if(G.unlockedTechs.has(techId)){msg('Already researched!');return;}
+  if(G.research<tech.cost){msg(`Need ${tech.cost} research points!`,true);return;}
+  for(const req of tech.requires){if(!G.unlockedTechs.has(req)){msg(`Requires ${TECHS.find(t=>t.id===req)?.name||req}`,true);return;}}
+  G.research-=tech.cost;
+  G.unlockedTechs.add(techId);
+  for(const b of tech.unlocks) G.unlockedBlds.add(b);
+  msg(`Researched ${tech.name}!`,false,true);
+  refreshToolbar(); updateTechPanel();
+}
+
+function updateDayNight(dt){
+  G.dayTime=(G.dayTime+G.daySpd*dt)%1;
+  if(G.dayTime>=0.5&&!G.isNight){G.isNight=true;G.day++;msg(`Night falls — Wave ${G.wave+1} approaches!`,true);}
+  if(G.dayTime<0.5&&G.isNight){G.isNight=false;msg(`Day ${G.day} begins.`,false);}
+  const nightAlpha=G.isNight?Math.min(0.7,(G.dayTime-0.5)/0.2):Math.max(0,(0.5-G.dayTime)/0.1);
+  document.getElementById('night').style.opacity=Math.min(0.7,nightAlpha);
+}
+
+function checkObjectives(){
+  if(!G.objectives||G.objectivesDone) return;
+  for(const obj of G.objectives){
+    if(obj.done) continue;
+    if(obj.id==='w3'&&G.wave>=3) obj.done=true;
+    if(obj.id==='w5'&&G.wave>=5) obj.done=true;
+    if(obj.id==='w7'&&G.wave>=7) obj.done=true;
+    if(obj.id==='w10'&&G.wave>=10) obj.done=true;
+    if(obj.id==='w15'&&G.wave>=15) obj.done=true;
+    if(obj.id==='iron20'&&(G.player.inv.iron_plate||0)>=20) obj.done=true;
+    if(obj.id==='power50'&&G.power.prod>=50) obj.done=true;
+    if(obj.id==='power80'&&G.power.prod>=80) obj.done=true;
+    if(obj.id==='build_asm'&&G.assemblerBuilt) obj.done=true;
+    if(obj.id==='circuits'&&(G.craftedTotals.circuit||0)>=10) obj.done=true;
+    if(obj.id==='boss'&&G.bossKills>=1) obj.done=true;
+    if(obj.id==='boss2'&&G.bossKills>=2) obj.done=true;
+    if(obj.id==='labs3'){const labs=new Set();for(const[,b]of G.buildings) if(b.type==='research_lab'||b.type==='advanced_lab') labs.add(b); if(labs.size>=3) obj.done=true;}
+    if(obj.id==='shields'){for(const[,b]of G.buildings) if(b.type==='shield_gen'){obj.done=true;break;}}
+  }
+  updateObjectivesUI();
+  if(G.objectives.every(o=>o.done)){G.objectivesDone=true;setTimeout(()=>triggerWin(),2000);}
+}
+
+function showObjectives(){document.getElementById('obj-panel').style.display='block'; updateObjectivesUI();}
+
+function updateObjectivesUI(){
+  if(!G.objectives) return;
+  const el=document.getElementById('obj-list'); el.innerHTML='';
+  for(const obj of G.objectives){
+    const row=document.createElement('div');
+    row.className='obj-row'+(obj.done?' obj-done':'');
+    row.innerHTML=`<span>${obj.done?'✓':'○'}</span><span>${obj.desc}</span>`;
+    el.appendChild(row);
+  }
+}
+
+function spawnParticles(x,y,col,n,spd){
+  for(let i=0;i<n;i++){
+    const a=G.rng()*Math.PI*2;
+    const v=G.rng()*spd+spd*0.3;
+    G.particles.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,col,life:0.6+G.rng()*0.4,maxLife:1,r:2+G.rng()*3});
+  }
+}
+
+function spawnFloat(text,x,y,col='#fff'){
+  G.floats.push({text,x,y,vy:-40,life:1.2,col});
+}
+
+function updateParticles(dt){
+  for(let i=G.particles.length-1;i>=0;i--){
+    const p=G.particles[i];
+    p.life-=dt;
+    if(p.life<=0){G.particles.splice(i,1);continue;}
+    p.x+=p.vx*dt; p.y+=p.vy*dt; p.vy+=80*dt;
+  }
+  for(let i=G.floats.length-1;i>=0;i--){
+    const f=G.floats[i];
+    f.life-=dt;
+    if(f.life<=0){G.floats.splice(i,1);continue;}
+    f.y+=f.vy*dt;
+  }
+}
+
+function render(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const cx=G.cam.x, cy=G.cam.y;
+  const startX=Math.max(0,Math.floor(cx/TS));
+  const startY=Math.max(0,Math.floor(cy/TS));
+  const endX=Math.min(WW,startX+Math.ceil(canvas.width/TS)+2);
+  const endY=Math.min(WH,startY+Math.ceil(canvas.height/TS)+2);
+
+  for(let ty=startY;ty<endY;ty++){
+    for(let tx=startX;tx<endX;tx++){
+      const t=G.tiles[ty*WW+tx];
+      const sx=tx*TS-cx, sy=ty*TS-cy;
+      ctx.fillStyle=TCOL[t]||'#222';
+      ctx.fillRect(sx,sy,TS,TS);
+      ctx.strokeStyle='rgba(0,0,0,0.16)';
+      ctx.strokeRect(sx,sy,TS,TS);
+      if(t>=T.STONE&&t!==T.WATER&&t!==T.GRASS&&t!==T.DIRT){
+        ctx.fillStyle='rgba(255,255,255,0.06)';
+        ctx.beginPath();ctx.arc(sx+TS/2,sy+TS/2,10,0,Math.PI*2);ctx.fill();
+      }
+    }
+  }
+
+  const drawnCores=new Set();
+  for(const[key,b] of G.buildings){
+    const bx=b.tx*TS-cx, by=b.ty*TS-cy;
+    if(bx<-TS||by<-TS||bx>canvas.width+TS||by>canvas.height+TS) continue;
+    if(b.isCore){if(drawnCores.has(b)) continue; drawnCores.add(b);
+      const cxx=bx, cyy=by;
+      ctx.fillStyle='#1a2030'; ctx.fillRect(cxx,cyy,TS*2,TS*2);
+      const hpPct=G.core.hp/G.core.maxHp;
+      ctx.strokeStyle=hpPct>0.5?'#ff8800':hpPct>0.25?'#ffcc00':'#ff4444';
+      ctx.lineWidth=2; ctx.strokeRect(cxx+1,cyy+1,TS*2-2,TS*2-2);
+      ctx.fillStyle='#ffaa44'; ctx.font='bold 36px monospace'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('⬡',cxx+TS,cyy+TS);
+      ctx.font='bold 11px monospace'; ctx.fillStyle='#ffd080'; ctx.fillText('CORE',cxx+TS,cyy+TS+22);
+    } else {
+      const def=BDEF[b.type];
+      if(!def) continue;
+      const unpowered=def.power>0&&!G.poweredSet.has(`${b.tx},${b.ty}`);
+      ctx.fillStyle=unpowered?'#222230':def.col;
+      ctx.fillRect(bx+1,by+1,TS-2,TS-2);
+      ctx.strokeStyle=unpowered?'rgba(100,100,150,0.4)':'rgba(255,255,255,0.2)';
+      ctx.lineWidth=1; ctx.strokeRect(bx+1,by+1,TS-2,TS-2);
+      ctx.fillStyle=unpowered?'#445':'#fff';
+      ctx.font='20px monospace'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(def.icon||'?',bx+TS/2,by+TS/2-2);
+      if(def.isBelt&&b.item){
+        const itemX=bx+TS/2+(DX[b.dir]*TS*(b.item.prog-0.5));
+        const itemY=by+TS/2+(DY[b.dir]*TS*(b.item.prog-0.5));
+        ctx.fillStyle=ICOL[b.item.id]||'#fff';
+        ctx.beginPath();ctx.arc(itemX,itemY,6,0,Math.PI*2);ctx.fill();
+      }
+      if(b.hp<b.maxHp){
+        const hpPct=b.hp/b.maxHp;
+        ctx.fillStyle='rgba(0,0,0,0.5)';ctx.fillRect(bx+3,by+TS-7,TS-6,4);
+        ctx.fillStyle=hpPct>0.5?'#44ff44':hpPct>0.25?'#ffcc00':'#ff4444';
+        ctx.fillRect(bx+3,by+TS-7,(TS-6)*hpPct,4);
+      }
+    }
+  }
+
+  for(const e of G.enemies){
+    if(e.dead) continue;
+    const ex=e.x-cx, ey=e.y-cy;
+    if(ex<-50||ey<-50||ex>canvas.width+50||ey>canvas.height+50) continue;
+    ctx.fillStyle='rgba(0,0,0,0.35)';
+    ctx.beginPath();ctx.ellipse(ex,ey+e.sz-4,e.sz*0.7,e.sz*0.25,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle=e.col; ctx.beginPath();ctx.arc(ex,ey,e.sz,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='rgba(0,0,0,0.7)'; ctx.beginPath();ctx.arc(ex-e.sz*0.3,ey-e.sz*0.2,e.sz*0.2,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(ex+e.sz*0.3,ey-e.sz*0.2,e.sz*0.2,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#ff4444';
+    ctx.beginPath();ctx.arc(ex-e.sz*0.28,ey-e.sz*0.18,e.sz*0.1,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(ex+e.sz*0.28,ey-e.sz*0.18,e.sz*0.1,0,Math.PI*2);ctx.fill();
+    const hpPct=e.hp/e.maxHp;
+    ctx.fillStyle='rgba(0,0,0,0.6)';ctx.fillRect(ex-e.sz,ey-e.sz-8,e.sz*2,5);
+    ctx.fillStyle=hpPct>0.5?'#44ff44':hpPct>0.25?'#ffcc00':'#ff4444';
+    ctx.fillRect(ex-e.sz,ey-e.sz-8,e.sz*2*hpPct,5);
+    if(e.isBoss||e.isBehemoth||e.type==='omega'){
+      ctx.fillStyle='#ff4444'; ctx.font='bold 11px monospace'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(e.type.toUpperCase(),ex,ey-e.sz-16);
+    }
+  }
+
+  for(const p of G.projectiles){
+    const px=p.x-cx, py=p.y-cy;
+    ctx.fillStyle=p.col;
+    ctx.beginPath();ctx.arc(px,py,p.sz,0,Math.PI*2);ctx.fill();
+  }
+
+  const px=G.player.x-cx, py=G.player.y-cy;
+  ctx.fillStyle='rgba(0,0,0,0.35)'; ctx.beginPath();ctx.ellipse(px,py+8,8,3,0,0,Math.PI*2);ctx.fill();
+  ctx.save(); ctx.shadowColor='#88aaff'; ctx.shadowBlur=12; ctx.fillStyle='#aaccff'; ctx.beginPath();ctx.arc(px,py,10,0,Math.PI*2);ctx.fill(); ctx.restore();
+  ctx.fillStyle='#ffffff'; ctx.beginPath();ctx.arc(px,py,6,0,Math.PI*2);ctx.fill();
+  const playerHp=G.player.hp/G.player.maxHp;
+  ctx.fillStyle='rgba(0,0,0,0.5)'; ctx.fillRect(px-12,py-18,24,4);
+  ctx.fillStyle=playerHp>0.5?'#44ff88':'#ffcc44'; ctx.fillRect(px-12,py-18,24*playerHp,4);
+
+  for(const f of G.floats){
+    ctx.globalAlpha=Math.min(1,f.life*2);
+    ctx.fillStyle=f.col||'#fff';
+    ctx.font='bold 12px monospace'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(f.text,f.x-cx,f.y-cy);
+  }
+  ctx.globalAlpha=1;
+
+  if(G.sel&&!G.demolish){
+    const tx=Math.floor(G.mouse.wx/TS), ty=Math.floor(G.mouse.wy/TS);
+    const def=BDEF[G.sel];
+    if(def){
+      const gx=tx*TS-cx, gy=ty*TS-cy;
+      const canPlace=!G.bGrid[ty*WW+tx]&&tx>=0&&ty>=0&&tx<WW&&ty<WH;
+      ctx.fillStyle=canPlace?'rgba(100,255,100,0.2)':'rgba(255,80,80,0.2)';
+      ctx.fillRect(gx,gy,TS,TS);
+      ctx.strokeStyle=canPlace?'rgba(100,255,100,0.7)':'rgba(255,80,80,0.7)';
+      ctx.lineWidth=2;ctx.strokeRect(gx,gy,TS,TS);
+      ctx.fillStyle=canPlace?'rgba(100,255,100,0.9)':'rgba(255,80,80,0.6)';
+      ctx.font='18px monospace';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(def.icon||'?',gx+TS/2,gy+TS/2);
+      ctx.font='10px monospace';ctx.fillText(DIR_CH[G.dir],gx+TS/2,gy+TS/2+14);
+    }
+  }
+
+  if(G.demolish){
+    const tx=Math.floor(G.mouse.wx/TS), ty=Math.floor(G.mouse.wy/TS);
+    const gx=tx*TS-cx, gy=ty*TS-cy;
+    ctx.fillStyle='rgba(255,80,80,0.24)';ctx.fillRect(gx,gy,TS,TS);
+    ctx.strokeStyle='#ff5555';ctx.lineWidth=2;ctx.strokeRect(gx,gy,TS,TS);
+    if(G.bGrid[ty*WW+tx]){
+      ctx.fillStyle='#ffdddd';ctx.font='10px monospace';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText('REMOVE',gx+TS/2,gy+TS/2+3);
+    }
+  }
+}
+
+function initInput(){
+  window.addEventListener('resize',resizeCanvas);
+  window.addEventListener('keydown',e=>{G.keys[e.code]=true; if(e.code==='KeyR'){G.dir=(G.dir+1)%4;} if(e.code==='Escape'){document.getElementById('menu').style.display='flex'; document.getElementById('hud').style.display='none'; document.getElementById('toolbar').style.display='none';}});
+  window.addEventListener('keyup',e=>{G.keys[e.code]=false;});
+  canvas.addEventListener('mousemove',e=>{const rect=canvas.getBoundingClientRect();G.mouse.x=e.clientX-rect.left;G.mouse.y=e.clientY-rect.top;G.mouse.wx=G.mouse.x+G.cam.x;G.mouse.wy=G.mouse.y+G.cam.y;});
+  canvas.addEventListener('mousedown',e=>{if(G.phase!=='playing') return; if(e.button===0) handleBuildAction(); if(e.button===2) handleRemoveAction();});
+  canvas.addEventListener('contextmenu',e=>e.preventDefault());
+}
+
+window.addEventListener('load',()=>{canvas=document.getElementById('c');ctx=canvas.getContext('2d');initInput();resizeCanvas();});</script>
