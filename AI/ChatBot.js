@@ -65,7 +65,7 @@
     }
 
     if (found.length === 0) {
-      return "🤔 Tomu nerozumím, zkuste to napsat jinak nebo mi napište přímo na <a href='mailto:info@mlxmedia.cz'>info@mlxmedia.cz</a>.";
+      return "🤔 Tomu nerozumím, zkuste to napsat jinak nebo mi napište přímo na <a href='mailto:mlx.studio2222@gmail.com'>mlx.studio2222@gmail.com</a>.";
     }
     if (found.length === 1) return found[0];
     if (found.length === 2) return found[0] + "<br><br>A zároveň: " + found[1];
