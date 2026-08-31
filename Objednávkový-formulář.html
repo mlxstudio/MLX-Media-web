@@ -57,13 +57,13 @@
       --border:rgba(255,255,255,0.07);
       --accent:#FF8A00; --accent-soft:rgba(255,138,0,0.10); --accent-glow:rgba(255,138,0,0.22);
       --text:#e8e4de; --text-muted:#5e5a56; --text-dim:#8a8580;
-      --noise-op:0.028; --noise-op2:0.015;
+      --noise-op:0.06; --noise-op2:0.04;
       --hero-grad:linear-gradient(160deg,#0d0d0d 0%,#141008 100%);
       --stripe:linear-gradient(90deg,transparent,#FF8A00,#ffb347,transparent);
       --footer-desc:#888480;
       --input-bg:#1a1a1a; --input-border:rgba(255,255,255,0.10); --input-focus:rgba(255,138,0,0.35);
       --grid-line:rgba(255,138,0,0.04);
-      --vignette:rgba(0,0,0,0.35);
+      --vignette:rgba(0,0,0,0.60);
       --tape-color:rgba(255,200,100,0.22); --tape-border:rgba(255,220,140,0.18);
       --ruled-line:rgba(255,255,255,0.02);
     }
@@ -73,13 +73,13 @@
       --border:rgba(0,0,0,0.08);
       --accent:#00BFA6; --accent-soft:rgba(0,191,166,0.08); --accent-glow:rgba(0,191,166,0.20);
       --text:#0f1e1c; --text-muted:#a0a8a6; --text-dim:#6b7574;
-      --noise-op:0.050; --noise-op2:0.040;
+      --noise-op:0.10; --noise-op2:0.08;
       --hero-grad:linear-gradient(160deg,#f4f2ec 0%,#e5f5f2 100%);
       --stripe:linear-gradient(90deg,transparent,#00BFA6,#7dd7cc,transparent);
       --footer-desc:#6b7574;
       --input-bg:#ffffff; --input-border:rgba(0,0,0,0.12); --input-focus:rgba(0,191,166,0.25);
       --grid-line:rgba(0,191,166,0.055);
-      --vignette:rgba(0,0,0,0.10);
+      --vignette:rgba(0,0,0,0.20);
       --tape-color:rgba(210,185,120,0.40); --tape-border:rgba(180,155,80,0.30);
       --ruled-line:rgba(0,0,0,0.028);
     }
@@ -113,6 +113,35 @@
       position:fixed; inset:0; pointer-events:none; z-index:9996;
       background:radial-gradient(ellipse at 50% 40%,transparent 55%,var(--vignette) 100%);
       transition:background var(--trans);
+    }
+
+    /* ── PAPER TEXTURE ── */
+    .form-outer {
+      position: relative;
+      isolation: isolate;
+      background: var(--bg-surface);
+      border: none;
+      background-image: linear-gradient(var(--ruled-line) 1px, transparent 1px);
+      background-size: 100% 32px;
+      box-shadow: none;
+    }
+    .form-outer::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image: url('Paper-Texture01.jpg'), url('Paper-Texture01.jpg');
+      background-size: 640px 640px, 640px 640px;
+      background-repeat: repeat;
+      background-position: 0 0, 320px 320px;
+      mix-blend-mode: multiply;
+      opacity: 0.22;
+      filter: blur(0.3px);
+    }
+    .form-section > * {
+      position: relative;
+      z-index: 1;
     }
 
     @keyframes grainDrift {
@@ -272,7 +301,7 @@
 
     /* ── HERO ── */
     .hero {
-      min-height: 70svh; background: var(--hero-grad);
+      min-height: 100svh; background: var(--hero-grad);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       padding: calc(var(--nav-h) + 60px) clamp(20px,5vw,80px) 100px;
       text-align: center; position: relative; overflow: hidden; z-index: 0;
@@ -595,6 +624,7 @@
     <li><a href="index.html" data-i18n="nav-home">Domů</a></li>
     <li><a href="O-mně.html" data-i18n="nav-about">O mně</a></li>
     <li><a href="Portfolio.html" data-i18n="nav-portfolio">Portfolio</a></li>
+    <li><a href="Nabídka.html" data-i18n="nav-offers">Nabídka</a></li>
     <li><a href="Aspekty.html" data-i18n="nav-aspekty">Aspekty</a></li>
     <li><a href="Ceník.html" data-i18n="nav-cenik">Ceník</a></li>
     <li><a href="Objednávkový-formulář.html" class="active" data-i18n="nav-objednavka">Objednávka</a></li>
@@ -610,6 +640,12 @@
     <button class="theme-toggle" id="themeToggle" aria-label="Přepnout téma">
       <div class="toggle-icons"><span>🌙</span><span>☀️</span></div>
     </button>
+    <button class="settings-btn" id="mlx-settings-toggle" type="button" aria-label="Nastavení">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"></path>
+      </svg>
+    </button>
     <div class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></div>
   </div>
 </nav>
@@ -620,6 +656,7 @@
   <a href="index.html" data-i18n="nav-home">Domů</a>
   <a href="O-mně.html" data-i18n="nav-about">O mně</a>
   <a href="Portfolio.html" data-i18n="nav-portfolio">Portfolio</a>
+  <a href="Nabídka.html" data-i18n="nav-offers">Nabídka</a>
   <a href="Aspekty.html" data-i18n="nav-aspekty">Aspekty</a>
   <a href="Ceník.html" data-i18n="nav-cenik">Ceník</a>
   <a href="Objednávkový-formulář.html" data-i18n="nav-objednavka">Objednávka</a>
@@ -942,7 +979,7 @@
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 00.5 6.2 31.3 31.3 0 000 12a31.3 31.3 0 00.5 5.8 3 3 0 002.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 002.1-2.1A31.3 31.3 0 0024 12a31.3 31.3 0 00-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
           YouTube
         </a>
-        <a href="https://www.instagram.com/mlxmedia" target="_blank" rel="noopener" class="f-social-btn">
+        <a href="https://www.instagram.com/matos.lexa" target="_blank" rel="noopener" class="f-social-btn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
           Instagram
         </a>
@@ -955,6 +992,7 @@
         <li><a href="O-mně.html">O mně</a></li>
         <li><a href="Portfolio.html">Portfolio</a></li>
         <li><a href="Aspekty.html">Aspekty</a></li>
+        <li><a href="Nabídka.html">Nabídka</a></li>
         <li><a href="Ceník.html">Ceník</a></li>
         <li><a href="Objednávka.html">Objednávka</a></li>
       </ul>
@@ -992,8 +1030,8 @@
   </div>
 
   <div class="f-stats-band">
-    <div class="f-stat-item"><div class="f-stat-number">35<span>+</span></div><div class="f-stat-label">Projektů</div></div>
-    <div class="f-stat-item"><div class="f-stat-number">4<span>+</span></div><div class="f-stat-label">Roky zkušeností</div></div>
+    <div class="f-stat-item"><div class="f-stat-number">45<span>+</span></div><div class="f-stat-label">Projektů</div></div>
+    <div class="f-stat-item"><div class="f-stat-number">5<span>+</span></div><div class="f-stat-label">Roky zkušeností</div></div>
     <div class="f-stat-item"><div class="f-stat-number">95<span>%</span></div><div class="f-stat-label">Doporučení</div></div>
     <div class="f-stat-item"><div class="f-stat-number">6<span>K</span></div><div class="f-stat-label">RAW rozlišení</div></div>
   </div>
@@ -1018,6 +1056,7 @@
 </footer>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="mlx-settings.js"></script>
 <script>
 /* ════════════════════════════════════════════════
    THEME
@@ -1502,24 +1541,50 @@ _checkCounters();
 /* ════════════════════════════════════════════════
    CALENDAR DATA
    ════════════════════════════════════════════════ */
-const BOOKED_FULL    = ["2026-05-26","2026-05-27","2026-05-28"];
-const BOOKED_PARTIAL = ["2026-05-12","2026-05-13","2026-05-14","2026-05-19","2026-05-20"];
-const HARD = [
-  "2026-04-06","2026-04-07","2026-04-08","2026-04-09","2026-04-10",
-  "2026-04-13","2026-04-14","2026-04-15","2026-04-16","2026-04-17",
-  "2026-04-20","2026-04-21","2026-04-22","2026-04-23","2026-04-24",
-  "2026-04-27","2026-04-28","2026-04-29","2026-04-30","2026-05-01",
-  "2026-05-04","2026-05-05","2026-05-06","2026-05-07","2026-05-08",
-  "2026-05-11","2026-05-12","2026-05-18","2026-05-19","2026-05-22",
-  "2026-05-25","2026-05-26","2026-06-01","2026-06-02","2026-06-03",
-  "2026-06-04","2026-06-05","2026-06-08","2026-06-09","2026-06-10",
-  "2026-06-11","2026-06-12","2026-06-15","2026-06-16","2026-06-17",
-  "2026-06-18","2026-06-19","2026-06-22","2026-06-23","2026-06-24",
-  "2026-06-25","2026-06-26","2026-06-29","2026-06-30","2026-07-01",
-  "2026-07-02","2026-07-03","2026-07-06","2026-07-07","2026-07-08",
-  "2026-07-09","2026-07-10","2026-07-13","2026-07-14","2026-07-15",
-  "2026-07-16","2026-07-17"
-];
+const FALLBACK_AVAILABILITY = {
+  green: [
+    "2026-07-06","2026-07-07","2026-07-15","2026-07-20","2026-07-21","2026-07-22","2026-07-25","2026-07-26",
+    "2026-08-02","2026-08-03","2026-08-04","2026-08-05","2026-08-06","2026-08-07","2026-09-07","2026-09-08",
+    "2026-09-09","2026-09-10","2026-09-13","2026-09-14","2026-09-15","2026-09-16","2026-09-17","2026-09-23",
+    "2026-09-24","2026-09-27","2026-09-28","2026-09-29"
+  ],
+  blue: [
+    "2026-07-11","2026-07-12","2026-07-13","2026-07-14","2026-07-28","2026-07-29","2026-07-30","2026-08-08",
+    "2026-08-09","2026-08-10","2026-08-11","2026-08-17","2026-08-18","2026-08-19","2026-09-02","2026-09-03",
+    "2026-09-04","2026-09-05","2026-09-06","2026-09-20"
+  ],
+  yellow: [
+    "2026-07-16","2026-07-24","2026-07-31","2026-08-01","2026-08-27","2026-08-28","2026-08-29","2026-08-30",
+    "2026-08-31","2026-09-01","2026-09-11","2026-09-12","2026-09-18"
+  ]
+};
+
+let BOOKED_FULL = [];
+let BOOKED_PARTIAL = [];
+let HARD = [];
+let activeAvailability = { ...FALLBACK_AVAILABILITY };
+
+async function loadAvailability() {
+  try {
+    const response = await fetch('dates.json', { cache: 'no-store' });
+    if (!response.ok) throw new Error('Failed to load dates.json');
+    const data = await response.json();
+    if (data && typeof data === 'object') {
+      activeAvailability = {
+        green: Array.isArray(data.green) ? data.green : [],
+        blue: Array.isArray(data.blue) ? data.blue : [],
+        yellow: Array.isArray(data.yellow) ? data.yellow : []
+      };
+    }
+  } catch (error) {
+    activeAvailability = { ...FALLBACK_AVAILABILITY };
+  }
+
+  BOOKED_FULL = [...activeAvailability.yellow];
+  BOOKED_PARTIAL = [...activeAvailability.green];
+  HARD = [...activeAvailability.blue];
+}
+
 const bookedDates = BOOKED_FULL;
 const MONTHS_CS = ['Leden','Únor','Březen','Duben','Květen','Červen','Červenec','Srpen','Září','Říjen','Listopad','Prosinec'];
 
@@ -1581,14 +1646,17 @@ function renderCalDelivery() { buildCalendar(calDateDelivery,'cal-days-delivery'
 document.getElementById('cal-prev-delivery').addEventListener('click', () => { playSound('universal'); haptic(8); calDateDelivery.setMonth(calDateDelivery.getMonth()-1); renderCalDelivery(); });
 document.getElementById('cal-next-delivery').addEventListener('click', () => { playSound('universal'); haptic(8); calDateDelivery.setMonth(calDateDelivery.getMonth()+1); renderCalDelivery(); });
 addBookedClickHandlers('cal-days-delivery','cal-status-delivery');
-renderCalDelivery();
 
 let calDateShoot = new Date(); calDateShoot.setDate(1);
 function renderCalShoot() { buildCalendar(calDateShoot,'cal-days-shoot','cal-month-shoot','cal-status-shoot','shootDate'); }
 document.getElementById('cal-prev-shoot').addEventListener('click', () => { playSound('universal'); haptic(8); calDateShoot.setMonth(calDateShoot.getMonth()-1); renderCalShoot(); });
 document.getElementById('cal-next-shoot').addEventListener('click', () => { playSound('universal'); haptic(8); calDateShoot.setMonth(calDateShoot.getMonth()+1); renderCalShoot(); });
 addBookedClickHandlers('cal-days-shoot','cal-status-shoot');
-renderCalShoot();
+
+loadAvailability().then(() => {
+  renderCalDelivery();
+  renderCalShoot();
+});
 
 /* ════════════════════════════════════════════════
    LEAFLET MAP
