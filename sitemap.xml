@@ -1,44 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+                xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
     <url>
         <loc>https://mlxmedia.cz/</loc>
-        <lastmod>2026-04-02</lastmod>
-        <priority>1.0</priority>
+        <lastmod>2026-09-05</lastmod>
+        <changefreq>monthly</changefreq>
+        <image:image>
+            <image:loc>https://mlxmedia.cz/Matou%C5%A1-Kamera.jpeg</image:loc>
+            <image:title>Portrét Matouše Lexy, kameramana a zakladatele MLX Media</image:title>
+            <image:caption>Matouš Lexa - kameraman a zakladatel MLX Media</image:caption>
+        </image:image>
     </url>
     <url>
         <loc>https://mlxmedia.cz/O-mně.html</loc>
-        <lastmod>2026-04-02</lastmod>
-        <priority>0.8</priority>
-    </url>
-    <url>
-        <loc>https://mlxmedia.cz/Ceník.html</loc>
-        <lastmod>2026-04-02</lastmod>
-        <priority>0.8</priority>
-    </url>
-    <url>
-        <loc>https://mlxmedia.cz/Aspekty.html</loc>
-        <lastmod>2026-04-02</lastmod>
-        <priority>0.7</priority>
+        <lastmod>2026-09-05</lastmod>
+        <changefreq>monthly</changefreq>
     </url>
     <url>
         <loc>https://mlxmedia.cz/Portfolio.html</loc>
-        <lastmod>2026-04-02</lastmod>
-        <priority>0.8</priority>
+        <lastmod>2026-09-05</lastmod>
+        <changefreq>monthly</changefreq>
     </url>
     <url>
-        <loc>https://mlxmedia.cz/Obědnávka.html</loc>
-        <lastmod>2026-04-02</lastmod>
-        <priority>0.8</priority>
+        <loc>https://mlxmedia.cz/Nabídka.html</loc>
+        <lastmod>2026-09-05</lastmod>
+        <changefreq>monthly</changefreq>
+    </url>
+    <url>
+        <loc>https://mlxmedia.cz/Aspekty.html</loc>
+        <lastmod>2026-09-05</lastmod>
+        <changefreq>monthly</changefreq>
+    </url>
+    <url>
+        <loc>https://mlxmedia.cz/Ceník.html</loc>
+        <lastmod>2026-09-05</lastmod>
+        <changefreq>monthly</changefreq>
+    </url>
+    <url>
+        <loc>https://mlxmedia.cz/Objednávka.html</loc>
+        <lastmod>2026-09-05</lastmod>
+        <changefreq>monthly</changefreq>
     </url>
     <url>
         <loc>https://mlxmedia.cz/Objednávkový-formulář.html</loc>
-        <lastmod>2026-04-02</lastmod>
-        <priority>0.8</priority>
+        <lastmod>2026-09-05</lastmod>
+        <changefreq>monthly</changefreq>
     </url>
     <url>
-        <loc>https://mlxmedia.cz/Linktree.html</loc>
-        <lastmod>2026-04-02</lastmod>
-        <priority>0.8</priority>
+        <loc>https://mlxmedia.cz/LinkTree.html</loc>
+        <lastmod>2026-09-05</lastmod>
+        <changefreq>yearly</changefreq>
     </url>
-    <!-- Přidej další stránky, pokud máš -->
 </urlset>
