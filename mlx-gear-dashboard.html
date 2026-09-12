@@ -163,6 +163,11 @@
   }
   .modal-actions { display: flex; gap: 8px; margin-top: 18px; }
   #add-new-toggle { font-size: 12px; color: var(--accent); margin-top: 4px; display: inline-block; }
+  .code-add-btn {
+    width: 38px; flex-shrink: 0; background: var(--panel2); border: 1px solid var(--line);
+    border-radius: 8px; font-size: 16px; color: var(--text-dim);
+  }
+  .code-add-btn:hover { color: var(--text); border-color: var(--line2); }
 </style>
 </head>
 <body>
@@ -259,15 +264,24 @@
     <div class="form-row two">
       <div>
         <span class="field-label">Category</span>
-        <select id="m-category" onchange="onRegistryFieldChange('category')"></select>
+        <div style="display:flex;gap:6px">
+          <select id="m-category" onchange="updateSerialPreview()"></select>
+          <button type="button" class="code-add-btn" onclick="addNewCode('category')" title="Add new category code">+</button>
+        </div>
       </div>
       <div>
         <span class="field-label">Type</span>
-        <select id="m-type" onchange="onRegistryFieldChange('type')"></select>
+        <div style="display:flex;gap:6px">
+          <select id="m-type" onchange="updateSerialPreview()"></select>
+          <button type="button" class="code-add-btn" onclick="addNewCode('type')" title="Add new type code">+</button>
+        </div>
       </div>
       <div>
         <span class="field-label">Brand</span>
-        <select id="m-brand" onchange="onRegistryFieldChange('brand')"></select>
+        <div style="display:flex;gap:6px">
+          <select id="m-brand" onchange="updateSerialPreview()"></select>
+          <button type="button" class="code-add-btn" onclick="addNewCode('brand')" title="Add new brand code">+</button>
+        </div>
       </div>
     </div>
     <div class="form-row two">
@@ -324,6 +338,7 @@ const STATUS_META = {
 };
 const STARTER_CATEGORIES = { C: "Camera", L: "Lens", W: "Wireless", P: "Power", G: "Grip", T: "Tripod/Support", I: "Illumination", A: "Audio" };
 const STARTER_TYPES = { C: "Cinema", M: "Mirrorless", P: "Prime", Z: "Zoom" };
+const STARTER_BRANDS = { A: "ARRI", B: "Blackmagic", C: "Canon", S: "Sony", F: "Fujifilm", R: "RED", P: "Panasonic", N: "Nikon", D: "DJI", Z: "Zeiss", G: "Sigma", T: "Teradek" };
 
 let items = [];
 let activeStatusFilter = null;
@@ -496,33 +511,37 @@ function uniqueRegistryValues(field) {
   items.forEach(i => { if (i.model_registry?.[field]) vals.add(i.model_registry[field]); });
   return vals;
 }
+const STARTER_BY_FIELD = { category: STARTER_CATEGORIES, type: STARTER_TYPES, brand: STARTER_BRANDS };
+
 function populateDropdown(id, starter, extra) {
   const sel = document.getElementById(id);
   const codes = new Set([...Object.keys(starter), ...extra]);
-  sel.innerHTML = [...codes].sort().map(c => `<option value="${c}">${c}${starter[c] ? " — " + starter[c] : ""}</option>`).join("")
-    + `<option value="__new__">+ Add new code…</option>`;
+  sel.innerHTML = [...codes].sort().map(c => `<option value="${c}">${c}${starter[c] ? " — " + starter[c] : ""}</option>`).join("");
 }
 function openAddModal() {
   populateDropdown("m-category", STARTER_CATEGORIES, uniqueRegistryValues("category"));
   populateDropdown("m-type", STARTER_TYPES, uniqueRegistryValues("type"));
-  populateDropdown("m-brand", {}, uniqueRegistryValues("brand"));
+  populateDropdown("m-brand", STARTER_BRANDS, uniqueRegistryValues("brand"));
   ["m-model-code","m-display-name","m-purchase-date","m-price","m-condition","m-notes"].forEach(id => document.getElementById(id).value = "");
   document.getElementById("serial-preview-box").textContent = "Serial will generate on save";
   document.getElementById("modal-overlay").classList.add("show");
+  updateSerialPreview();
 }
 function closeAddModal() { document.getElementById("modal-overlay").classList.remove("show"); }
-function onRegistryFieldChange(which) {
+function addNewCode(which) {
+  const label = { category: "category", type: "type", brand: "brand" }[which];
+  const raw = prompt(`Enter a new single-character code for this ${label} (e.g. a letter not already used):`);
+  if (!raw) return;
+  const code = raw.trim().toUpperCase();
+  if (code.length !== 1) { alert("Code must be exactly one character."); return; }
   const sel = document.getElementById("m-" + which);
-  if (sel.value === "__new__") {
-    const code = prompt("Enter a new single-character code for " + which + ":");
-    if (code && code.length === 1) {
-      const opt = document.createElement("option");
-      opt.value = code.toUpperCase(); opt.textContent = code.toUpperCase() + " (new)"; opt.selected = true;
-      sel.insertBefore(opt, sel.lastElementChild);
-    } else {
-      sel.value = sel.options[0]?.value || "";
-    }
+  const already = [...sel.options].some(o => o.value === code);
+  if (!already) {
+    const opt = document.createElement("option");
+    opt.value = code; opt.textContent = code + " (new)";
+    sel.appendChild(opt);
   }
+  sel.value = code;
   updateSerialPreview();
 }
 function updateSerialPreview() {
@@ -543,8 +562,8 @@ async function submitNewItem() {
   const brand = document.getElementById("m-brand").value;
   const modelCode = document.getElementById("m-model-code").value.toUpperCase().trim();
   const displayName = document.getElementById("m-display-name").value.trim();
-  if (!category || !type || !brand || !modelCode || !displayName) {
-    alert("Category, type, brand, model code and display name are all required.");
+  if (category.length !== 1 || type.length !== 1 || brand.length !== 1 || !modelCode || !displayName) {
+    alert("Category, type and brand must each be a single character, and model code/display name are required.");
     return;
   }
   const { data: serialData, error: serialError } = await sb.rpc("issue_serial", {
