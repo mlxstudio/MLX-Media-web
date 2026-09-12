@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MLX Gear — Control</title>
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 <style>
   :root {
     --bg: #0A0A0C;
@@ -18,20 +20,12 @@
     --accent: #4CC9F0;
     --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
     --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-    --radius: 10px;
-    --idle: #6b7280;
-    --in_use: #4CC9F0;
-    --on_set: #9b5de5;
-    --borrowed: #f4a261;
-    --damaged: #FF4444;
-    --repaired: #06D6A0;
+    --idle: #6b7280; --in_use: #4CC9F0; --on_set: #9b5de5;
+    --borrowed: #f4a261; --damaged: #FF4444; --repaired: #06D6A0;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; }
-  body {
-    background: var(--bg); color: var(--text); font-family: var(--font);
-    font-size: 14px; -webkit-font-smoothing: antialiased;
-  }
+  body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 14px; -webkit-font-smoothing: antialiased; }
   button, input, select, textarea { font-family: inherit; color: inherit; }
   input, select, textarea {
     background: var(--panel2); border: 1px solid var(--line); border-radius: 8px;
@@ -40,51 +34,39 @@
   input:focus, select:focus, textarea:focus { border-color: var(--line2); }
   button { cursor: pointer; border: none; background: none; }
 
-  /* ---- LOGIN ---- */
-  #login-screen {
-    height: 100vh; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 18px;
-  }
+  #login-screen { height: 100vh; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 18px; }
   #login-screen .wordmark { font-size: 15px; font-weight: 700; letter-spacing: -0.2px; color: var(--text-dim); }
   #login-box { width: 300px; display: flex; flex-direction: column; gap: 10px; }
-  #login-box button.primary {
-    background: var(--accent); color: #001217; font-weight: 600; padding: 10px; border-radius: 8px; margin-top: 4px;
-  }
+  #login-box button.primary { background: var(--accent); color: #001217; font-weight: 600; padding: 10px; border-radius: 8px; margin-top: 4px; }
   #login-error { color: var(--damaged); font-size: 12.5px; min-height: 16px; }
 
-  /* ---- SHELL ---- */
   #app { display: none; height: 100vh; flex-direction: column; }
-  #topbar {
-    display: flex; align-items: center; gap: 16px; padding: 14px 22px;
-    border-bottom: 1px solid var(--line); flex-shrink: 0;
-  }
+  #topbar { display: flex; align-items: center; gap: 18px; padding: 14px 22px; border-bottom: 1px solid var(--line); flex-shrink: 0; }
   #topbar .wordmark { font-weight: 700; font-size: 15px; letter-spacing: -0.2px; white-space: nowrap; }
   #topbar .wordmark span { color: var(--accent); }
-  #search { max-width: 320px; }
+  #tabs { display: flex; gap: 4px; background: var(--panel2); border-radius: 8px; padding: 3px; }
+  .tab-btn { padding: 6px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; color: var(--text-dim); }
+  .tab-btn.active { background: var(--panel); color: var(--text); }
+  #search { max-width: 300px; }
   #topbar .spacer { flex: 1; }
   #user-email { color: var(--text-dim); font-size: 12.5px; }
   #signout { color: var(--text-dim); font-size: 12.5px; padding: 6px 10px; border-radius: 6px; }
   #signout:hover { background: var(--panel2); color: var(--text); }
 
-  #filters {
-    display: flex; gap: 8px; padding: 12px 22px; border-bottom: 1px solid var(--line);
-    flex-shrink: 0; flex-wrap: wrap;
-  }
-  .pill {
-    padding: 6px 13px; border-radius: 999px; font-size: 12.5px; font-weight: 500;
-    border: 1px solid var(--line); color: var(--text-dim); display: flex; align-items: center; gap: 6px;
-  }
+  #filters { display: flex; align-items: center; gap: 8px; padding: 12px 22px; border-bottom: 1px solid var(--line); flex-shrink: 0; flex-wrap: wrap; }
+  .pill { padding: 6px 13px; border-radius: 999px; font-size: 12.5px; font-weight: 500; border: 1px solid var(--line); color: var(--text-dim); display: flex; align-items: center; gap: 6px; }
   .pill.active { border-color: var(--line2); color: var(--text); background: var(--panel2); }
   .pill .dot { width: 6px; height: 6px; border-radius: 50%; }
+  #filters select, #filters input { width: auto; padding: 6px 10px; font-size: 12.5px; }
+  #filters .filter-spacer { flex: 1; }
+  #stats-bar { font-size: 12.5px; color: var(--text-dim); white-space: nowrap; }
+  #stats-bar b { color: var(--text); font-weight: 600; }
 
   #main { flex: 1; overflow: hidden; display: flex; position: relative; }
-  #table-wrap { flex: 1; overflow-y: auto; padding: 0 22px 100px; }
+  #table-wrap, #locations-wrap { flex: 1; overflow-y: auto; padding: 0 22px 100px; }
 
   table { width: 100%; border-collapse: collapse; }
-  thead th {
-    position: sticky; top: 0; background: var(--bg); text-align: left; font-size: 11.5px;
-    color: var(--text-faint); font-weight: 600; padding: 14px 10px 8px; cursor: pointer; user-select: none;
-    border-bottom: 1px solid var(--line);
-  }
+  thead th { position: sticky; top: 0; background: var(--bg); text-align: left; font-size: 11.5px; color: var(--text-faint); font-weight: 600; padding: 14px 10px 8px; cursor: pointer; user-select: none; border-bottom: 1px solid var(--line); }
   thead th:hover { color: var(--text-dim); }
   tbody tr { cursor: pointer; }
   tbody tr:hover td { background: var(--panel); }
@@ -93,47 +75,39 @@
   td.name { font-weight: 500; }
   td.dim { color: var(--text-dim); }
 
-  .status-pill {
-    display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px;
-    font-size: 11.5px; font-weight: 600; background: var(--panel2);
-  }
+  .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 600; background: var(--panel2); }
   .status-pill .dot { width: 6px; height: 6px; border-radius: 50%; }
 
   #empty-state { padding: 60px 20px; text-align: center; color: var(--text-faint); }
 
-  /* ---- FAB ---- */
-  #fab {
-    position: fixed; bottom: 28px; right: 28px; width: 52px; height: 52px; border-radius: 50%;
-    background: var(--accent); color: #001217; font-size: 26px; display: flex; align-items: center;
-    justify-content: center; box-shadow: 0 6px 24px rgba(76,201,240,0.35); z-index: 20;
-  }
+  /* Locations view */
+  .loc-row { display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-bottom: 1px solid var(--line); border-radius: 8px; cursor: pointer; }
+  .loc-row:hover { background: var(--panel); }
+  .loc-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--panel2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 15px; }
+  .loc-info { flex: 1; min-width: 0; }
+  .loc-name { font-weight: 600; font-size: 14px; }
+  .loc-sub { font-size: 11.5px; color: var(--text-faint); margin-top: 1px; text-transform: capitalize; }
+  .loc-stats { text-align: right; font-size: 12.5px; color: var(--text-dim); white-space: nowrap; }
+  .loc-stats b { color: var(--text); font-weight: 600; }
+  .loc-add-btn { padding: 6px 12px; border-radius: 8px; background: var(--panel2); font-size: 12px; color: var(--text-dim); }
+  .loc-add-btn:hover { color: var(--text); }
+  #locations-header { display: flex; justify-content: space-between; align-items: center; padding: 18px 0 10px; }
+  #locations-header h2 { font-size: 15px; }
+
+  #fab { position: fixed; bottom: 28px; right: 28px; width: 52px; height: 52px; border-radius: 50%; background: var(--accent); color: #001217; font-size: 26px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 24px rgba(76,201,240,0.35); z-index: 20; }
   #fab:active { transform: scale(0.94); }
 
-  /* ---- SLIDE-OVER ---- */
-  #overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 30; display: none;
-  }
-  #panel {
-    position: fixed; top: 0; right: 0; height: 100%; width: 420px; max-width: 92vw;
-    background: var(--panel); border-left: 1px solid var(--line); z-index: 31;
-    transform: translateX(100%); transition: transform 0.25s ease; overflow-y: auto;
-    display: flex; flex-direction: column;
-  }
-  #panel.open { transform: translateX(0); }
+  #overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 30; display: none; }
   #overlay.show { display: block; }
-  .panel-header {
-    display: flex; align-items: center; justify-content: space-between; padding: 20px 22px 14px;
-    border-bottom: 1px solid var(--line);
-  }
+  #panel { position: fixed; top: 0; right: 0; height: 100%; width: 420px; max-width: 92vw; background: var(--panel); border-left: 1px solid var(--line); z-index: 31; transform: translateX(100%); transition: transform 0.25s ease; overflow-y: auto; display: flex; flex-direction: column; }
+  #panel.open { transform: translateX(0); }
+  .panel-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 22px 14px; border-bottom: 1px solid var(--line); }
   .panel-header .serial-big { font-family: var(--mono); font-size: 13px; color: var(--text-dim); }
   .panel-close { width: 30px; height: 30px; border-radius: 50%; background: var(--panel2); display: flex; align-items: center; justify-content: center; font-size: 16px; }
   .panel-body { padding: 18px 22px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
   .field-label { font-size: 11.5px; color: var(--text-faint); font-weight: 600; margin-bottom: 5px; display: block; }
   .status-row { display: flex; gap: 6px; flex-wrap: wrap; }
-  .status-choice {
-    padding: 6px 11px; border-radius: 999px; font-size: 11.5px; font-weight: 600;
-    border: 1px solid var(--line); color: var(--text-dim); display: flex; align-items: center; gap: 6px;
-  }
+  .status-choice { padding: 6px 11px; border-radius: 999px; font-size: 11.5px; font-weight: 600; border: 1px solid var(--line); color: var(--text-dim); display: flex; align-items: center; gap: 6px; }
   .status-choice.active { border-color: var(--line2); color: var(--text); background: var(--panel2); }
   .panel-footer { padding: 16px 22px; border-top: 1px solid var(--line); display: flex; gap: 8px; }
   .btn { padding: 10px; border-radius: 8px; font-weight: 600; font-size: 13.5px; flex: 1; text-align: center; }
@@ -142,31 +116,23 @@
   .btn.danger { background: rgba(255,68,68,0.12); color: var(--damaged); }
   #event-log { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
   .event-row { font-size: 12px; color: var(--text-dim); display: flex; justify-content: space-between; gap: 10px; }
+  .loc-select-row { display: flex; gap: 6px; }
 
-  /* ---- MODAL (Add Item) ---- */
-  #modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 40; display: none;
-    align-items: center; justify-content: center;
-  }
-  #modal-overlay.show { display: flex; }
-  #modal {
-    background: var(--panel); border: 1px solid var(--line); border-radius: 16px; width: 460px; max-width: 92vw;
-    max-height: 86vh; overflow-y: auto; padding: 24px;
-  }
-  #modal h2 { font-size: 17px; margin-bottom: 18px; }
+  /* Tag / barcode section */
+  #tag-section { background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  #tag-section canvas { background: #fff; border-radius: 6px; max-width: 100%; }
+  #tag-canvases { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; justify-content: center; }
+
+  #modal-overlay, #loc-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 40; display: none; align-items: center; justify-content: center; }
+  #modal-overlay.show, #loc-modal-overlay.show { display: flex; }
+  #modal, #loc-modal { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; width: 460px; max-width: 92vw; max-height: 86vh; overflow-y: auto; padding: 24px; }
+  #modal h2, #loc-modal h2 { font-size: 17px; margin-bottom: 18px; }
   .form-row { margin-bottom: 12px; }
   .form-row.two { display: flex; gap: 10px; }
   .form-row.two > div { flex: 1; }
-  #serial-preview-box {
-    font-family: var(--mono); font-size: 13px; color: var(--accent); background: var(--panel2);
-    border: 1px dashed var(--line2); border-radius: 8px; padding: 10px 12px; margin-bottom: 14px;
-  }
+  #serial-preview-box { font-family: var(--mono); font-size: 13px; color: var(--accent); background: var(--panel2); border: 1px dashed var(--line2); border-radius: 8px; padding: 10px 12px; margin-bottom: 14px; }
   .modal-actions { display: flex; gap: 8px; margin-top: 18px; }
-  #add-new-toggle { font-size: 12px; color: var(--accent); margin-top: 4px; display: inline-block; }
-  .code-add-btn {
-    width: 38px; flex-shrink: 0; background: var(--panel2); border: 1px solid var(--line);
-    border-radius: 8px; font-size: 16px; color: var(--text-dim);
-  }
+  .code-add-btn { width: 38px; flex-shrink: 0; background: var(--panel2); border: 1px solid var(--line); border-radius: 8px; font-size: 16px; color: var(--text-dim); }
   .code-add-btn:hover { color: var(--text); border-color: var(--line2); }
 </style>
 </head>
@@ -185,12 +151,18 @@
 <div id="app">
   <div id="topbar">
     <div class="wordmark">MLX <span>GEAR</span></div>
+    <div id="tabs">
+      <button class="tab-btn active" id="tab-inventory" onclick="switchTab('inventory')">Inventory</button>
+      <button class="tab-btn" id="tab-locations" onclick="switchTab('locations')">Locations</button>
+    </div>
     <input id="search" placeholder="Search serial or name…" oninput="renderTable()">
     <div class="spacer"></div>
     <div id="user-email"></div>
     <button id="signout" onclick="doLogout()">Sign out</button>
   </div>
+
   <div id="filters"></div>
+
   <div id="main">
     <div id="table-wrap">
       <table>
@@ -199,6 +171,7 @@
             <th onclick="setSort('serial')">Serial</th>
             <th onclick="setSort('name')">Item</th>
             <th onclick="setSort('category')">Category</th>
+            <th onclick="setSort('locationPath')">Location</th>
             <th onclick="setSort('status')">Status</th>
             <th onclick="setSort('purchase_date')">Purchased</th>
             <th onclick="setSort('price')">Price</th>
@@ -208,7 +181,16 @@
       </table>
       <div id="empty-state" style="display:none">No items match this view.</div>
     </div>
+
+    <div id="locations-wrap" style="display:none">
+      <div id="locations-header">
+        <h2>Storage locations</h2>
+        <button class="loc-add-btn" onclick="openLocationModal(null)">+ Add top-level location</button>
+      </div>
+      <div id="locations-list"></div>
+    </div>
   </div>
+
   <button id="fab" onclick="openAddModal()">+</button>
 </div>
 
@@ -216,9 +198,7 @@
 <div id="overlay" onclick="closePanel()"></div>
 <div id="panel">
   <div class="panel-header">
-    <div>
-      <div class="serial-big" id="p-serial"></div>
-    </div>
+    <div><div class="serial-big" id="p-serial"></div></div>
     <button class="panel-close" onclick="closePanel()">✕</button>
   </div>
   <div class="panel-body">
@@ -229,6 +209,13 @@
     <div>
       <span class="field-label">Status</span>
       <div class="status-row" id="p-status-row"></div>
+    </div>
+    <div class="form-row">
+      <span class="field-label">Location</span>
+      <div class="loc-select-row">
+        <select id="p-location"></select>
+        <button type="button" class="code-add-btn" onclick="quickAddLocation()" title="Add new location">+</button>
+      </div>
     </div>
     <div class="form-row">
       <span class="field-label">Purchase date</span>
@@ -246,12 +233,20 @@
       <span class="field-label">Notes</span>
       <textarea id="p-notes" rows="3"></textarea>
     </div>
+    <div id="tag-section">
+      <div id="tag-canvases">
+        <canvas id="tag-qr-canvas"></canvas>
+        <canvas id="tag-barcode-canvas"></canvas>
+      </div>
+      <button class="btn ghost" style="flex:none;padding:8px 16px" onclick="downloadTag()">Download printable tag</button>
+    </div>
     <div>
       <span class="field-label">History</span>
       <div id="event-log"></div>
     </div>
   </div>
   <div class="panel-footer">
+    <button class="btn danger" style="flex:none;padding:10px 16px" onclick="deleteItem()">Delete</button>
     <button class="btn ghost" onclick="closePanel()">Cancel</button>
     <button class="btn primary" onclick="saveItem()">Save changes</button>
   </div>
@@ -295,6 +290,10 @@
       </div>
     </div>
     <div id="serial-preview-box">Serial will generate on save</div>
+    <div class="form-row">
+      <span class="field-label">Location (optional)</span>
+      <select id="m-location"></select>
+    </div>
     <div class="form-row two">
       <div>
         <span class="field-label">Purchase date</span>
@@ -320,6 +319,36 @@
   </div>
 </div>
 
+<!-- Add Location modal -->
+<div id="loc-modal-overlay">
+  <div id="loc-modal">
+    <h2>Add location</h2>
+    <div class="form-row">
+      <span class="field-label">Name</span>
+      <input id="loc-name" placeholder="e.g. Case 03, Gaffer bag">
+    </div>
+    <div class="form-row two">
+      <div>
+        <span class="field-label">Type</span>
+        <select id="loc-type">
+          <option value="case">Case</option>
+          <option value="crate">Crate</option>
+          <option value="box">Box</option>
+          <option value="bag">Bag</option>
+        </select>
+      </div>
+      <div>
+        <span class="field-label">Inside (optional)</span>
+        <select id="loc-parent"><option value="">— Top level —</option></select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="closeLocationModal()">Cancel</button>
+      <button class="btn primary" onclick="submitNewLocation()">Add location</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ============================================================
 // CONFIG
@@ -336,15 +365,21 @@ const STATUS_META = {
   damaged:   { label: "Damaged",   color: "var(--damaged)" },
   repaired:  { label: "Repaired",  color: "var(--repaired)" },
 };
+const LOC_ICON = { case: "🧳", crate: "📦", box: "🗃️", bag: "👜" };
 const STARTER_CATEGORIES = { C: "Camera", L: "Lens", W: "Wireless", P: "Power", G: "Grip", T: "Tripod/Support", I: "Illumination", A: "Audio" };
 const STARTER_TYPES = { C: "Cinema", M: "Mirrorless", P: "Prime", Z: "Zoom" };
 const STARTER_BRANDS = { A: "ARRI", B: "Blackmagic", C: "Canon", S: "Sony", F: "Fujifilm", R: "RED", P: "Panasonic", N: "Nikon", D: "DJI", Z: "Zeiss", G: "Sigma", T: "Teradek" };
 
 let items = [];
+let locations = [];
 let activeStatusFilter = null;
+let activeLocationFilter = null; // 'all' | 'none' | location id
+let minPriceFilter = null;
 let sortField = "serial";
 let sortDir = 1;
 let panelItemId = null;
+let currentTab = "inventory";
+let pendingLocationParent = null;
 
 // ============================================================
 // AUTH
@@ -368,11 +403,27 @@ async function enterApp(session) {
   document.getElementById("app").style.display = "flex";
   document.getElementById("user-email").textContent = session.user.email;
   renderFilters();
-  await loadItems();
+  await Promise.all([loadItems(), loadLocations()]);
+  renderFilters();
+  renderTable();
 }
 async function checkSession() {
   const { data } = await sb.auth.getSession();
   if (data.session) enterApp(data.session);
+}
+
+// ============================================================
+// TABS
+// ============================================================
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById("tab-inventory").classList.toggle("active", tab === "inventory");
+  document.getElementById("tab-locations").classList.toggle("active", tab === "locations");
+  document.getElementById("table-wrap").style.display = tab === "inventory" ? "block" : "none";
+  document.getElementById("locations-wrap").style.display = tab === "locations" ? "block" : "none";
+  document.getElementById("filters").style.display = tab === "inventory" ? "flex" : "none";
+  document.getElementById("fab").style.display = tab === "inventory" ? "flex" : "none";
+  if (tab === "locations") renderLocationsView();
 }
 
 // ============================================================
@@ -381,28 +432,76 @@ async function checkSession() {
 async function loadItems() {
   const { data, error } = await sb
     .from("items")
-    .select("id, serial, unit_id, purchase_date, price, condition, notes, photo_url, status, created_at, model_registry(id, category, type, brand, model_code, display_name, spec_json)");
+    .select("id, serial, unit_id, purchase_date, price, condition, notes, photo_url, status, location_id, created_at, model_registry(id, category, type, brand, model_code, display_name, spec_json)");
   if (error) { console.error(error); return; }
   items = (data || []).map(i => ({
     ...i,
     name: i.model_registry?.display_name || "(unknown model)",
     category: i.model_registry?.category || "",
   }));
-  renderTable();
+}
+async function loadLocations() {
+  const { data, error } = await sb.from("locations").select("*").order("name");
+  if (error) { console.error(error); return; }
+  locations = data || [];
 }
 
 // ============================================================
-// FILTERS
+// LOCATION HELPERS
+// ============================================================
+function locationById(id) { return locations.find(l => l.id === id); }
+function locationBreadcrumb(id) {
+  const chain = [];
+  let cur = locationById(id);
+  let guard = 0;
+  while (cur && guard++ < 10) { chain.unshift(cur.name); cur = cur.parent_id ? locationById(cur.parent_id) : null; }
+  return chain.join(" › ");
+}
+function locationPathFor(item) { return item.location_id ? locationBreadcrumb(item.location_id) : ""; }
+function childrenOf(parentId) { return locations.filter(l => (l.parent_id || null) === (parentId || null)); }
+function descendantIds(id) {
+  const out = [id];
+  childrenOf(id).forEach(c => out.push(...descendantIds(c.id)));
+  return out;
+}
+function locationStats(id) {
+  const ids = new Set(descendantIds(id));
+  const inside = items.filter(i => i.location_id && ids.has(i.location_id));
+  return { count: inside.length, value: inside.reduce((s, i) => s + (Number(i.price) || 0), 0) };
+}
+function populateLocationSelect(selectId, { includeEmpty = true, excludeId = null } = {}) {
+  const sel = document.getElementById(selectId);
+  const opts = [];
+  if (includeEmpty) opts.push(`<option value="">${excludeId !== undefined && selectId==="p-location" ? "— No location —" : "— Top level —"}</option>`);
+  const sorted = [...locations].sort((a,b) => locationBreadcrumb(a.id).localeCompare(locationBreadcrumb(b.id)));
+  sorted.forEach(l => {
+    if (excludeId && (l.id === excludeId || descendantIds(excludeId).includes(l.id))) return;
+    opts.push(`<option value="${l.id}">${escapeHtml(locationBreadcrumb(l.id))}</option>`);
+  });
+  sel.innerHTML = opts.join("");
+}
+
+// ============================================================
+// FILTERS (inventory tab)
 // ============================================================
 function renderFilters() {
   const el = document.getElementById("filters");
-  const all = `<button class="pill${activeStatusFilter===null?' active':''}" onclick="setFilter(null)">All</button>`;
+  const all = `<button class="pill${activeStatusFilter===null?' active':''}" onclick="setStatusFilter(null)">All</button>`;
   const pills = Object.entries(STATUS_META).map(([key, m]) =>
-    `<button class="pill${activeStatusFilter===key?' active':''}" onclick="setFilter('${key}')"><span class="dot" style="background:${m.color}"></span>${m.label}</button>`
+    `<button class="pill${activeStatusFilter===key?' active':''}" onclick="setStatusFilter('${key}')"><span class="dot" style="background:${m.color}"></span>${m.label}</button>`
   ).join("");
-  el.innerHTML = all + pills;
+  const locOptions = [`<option value="all">All locations</option>`, `<option value="none">Unassigned</option>`]
+    .concat([...locations].sort((a,b)=>locationBreadcrumb(a.id).localeCompare(locationBreadcrumb(b.id)))
+      .map(l => `<option value="${l.id}">${escapeHtml(locationBreadcrumb(l.id))}</option>`)).join("");
+  el.innerHTML = all + pills +
+    `<select id="loc-filter" onchange="setLocationFilter(this.value)">${locOptions}</select>` +
+    `<input id="min-price-filter" type="number" placeholder="Min price…" style="width:110px" oninput="setMinPriceFilter(this.value)">` +
+    `<div class="filter-spacer"></div><div id="stats-bar"></div>`;
+  document.getElementById("loc-filter").value = activeLocationFilter || "all";
 }
-function setFilter(status) { activeStatusFilter = status; renderFilters(); renderTable(); }
+function setStatusFilter(status) { activeStatusFilter = status; renderFilters(); renderTable(); }
+function setLocationFilter(val) { activeLocationFilter = val === "all" ? null : val; renderTable(); }
+function setMinPriceFilter(val) { minPriceFilter = val ? Number(val) : null; renderTable(); }
 function setSort(field) {
   if (sortField === field) sortDir *= -1; else { sortField = field; sortDir = 1; }
   renderTable();
@@ -413,8 +512,11 @@ function setSort(field) {
 // ============================================================
 function renderTable() {
   const q = document.getElementById("search").value.trim().toLowerCase();
-  let rows = items.filter(i => {
+  let rows = items.map(i => ({ ...i, locationPath: locationPathFor(i) })).filter(i => {
     if (activeStatusFilter && i.status !== activeStatusFilter) return false;
+    if (activeLocationFilter === "none" && i.location_id) return false;
+    if (activeLocationFilter && activeLocationFilter !== "none" && i.location_id !== activeLocationFilter) return false;
+    if (minPriceFilter !== null && !(Number(i.price) >= minPriceFilter)) return false;
     if (q && !(i.serial.toLowerCase().includes(q) || i.name.toLowerCase().includes(q))) return false;
     return true;
   });
@@ -428,6 +530,11 @@ function renderTable() {
   });
   const body = document.getElementById("table-body");
   const empty = document.getElementById("empty-state");
+  const statsBar = document.getElementById("stats-bar");
+  if (statsBar) {
+    const totalValue = rows.reduce((s, i) => s + (Number(i.price) || 0), 0);
+    statsBar.innerHTML = `<b>${rows.length}</b> item${rows.length===1?"":"s"} · <b>${totalValue.toLocaleString()} Kč</b> total`;
+  }
   if (rows.length === 0) { body.innerHTML = ""; empty.style.display = "block"; return; }
   empty.style.display = "none";
   body.innerHTML = rows.map(i => {
@@ -436,13 +543,82 @@ function renderTable() {
       <td class="serial">${i.serial}</td>
       <td class="name">${escapeHtml(i.name)}</td>
       <td class="dim">${escapeHtml(i.category)}</td>
+      <td class="dim">${escapeHtml(i.locationPath) || "—"}</td>
       <td><span class="status-pill"><span class="dot" style="background:${sm.color}"></span>${sm.label}</span></td>
       <td class="dim">${i.purchase_date || "—"}</td>
-      <td class="dim">${i.price ? i.price + " Kč" : "—"}</td>
+      <td class="dim">${i.price ? Number(i.price).toLocaleString() + " Kč" : "—"}</td>
     </tr>`;
   }).join("");
 }
 function escapeHtml(s) { return (s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+// ============================================================
+// LOCATIONS TAB
+// ============================================================
+function renderLocationsView() {
+  const list = document.getElementById("locations-list");
+  const topLevel = childrenOf(null);
+  if (locations.length === 0) {
+    list.innerHTML = `<div id="empty-state">No locations yet — add a case, crate, box or bag to start organizing gear.</div>`;
+    return;
+  }
+  function renderNode(loc, depth) {
+    const stats = locationStats(loc.id);
+    const kids = childrenOf(loc.id);
+    const rowHtml = `<div class="loc-row" style="margin-left:${depth * 22}px" onclick="filterByLocation('${loc.id}')">
+      <div class="loc-icon">${LOC_ICON[loc.location_type] || "📦"}</div>
+      <div class="loc-info">
+        <div class="loc-name">${escapeHtml(loc.name)}</div>
+        <div class="loc-sub">${loc.location_type}${kids.length ? ` · ${kids.length} inside` : ""}</div>
+      </div>
+      <div class="loc-stats"><b>${stats.count}</b> item${stats.count===1?"":"s"}<br>${stats.value.toLocaleString()} Kč</div>
+      <button class="loc-add-btn" onclick="event.stopPropagation(); openLocationModal('${loc.id}')" title="Add location inside">+</button>
+      <button class="loc-add-btn" onclick="event.stopPropagation(); deleteLocation('${loc.id}')" title="Delete">✕</button>
+    </div>`;
+    return rowHtml + kids.map(k => renderNode(k, depth + 1)).join("");
+  }
+  list.innerHTML = topLevel.map(l => renderNode(l, 0)).join("");
+}
+function filterByLocation(id) {
+  activeLocationFilter = id;
+  switchTab("inventory");
+  renderFilters();
+  renderTable();
+}
+function openLocationModal(parentId) {
+  pendingLocationParent = parentId;
+  document.getElementById("loc-name").value = "";
+  document.getElementById("loc-type").value = "case";
+  populateLocationSelect("loc-parent", { includeEmpty: true });
+  document.getElementById("loc-parent").value = parentId || "";
+  document.getElementById("loc-modal-overlay").classList.add("show");
+}
+function closeLocationModal() { document.getElementById("loc-modal-overlay").classList.remove("show"); }
+async function submitNewLocation() {
+  const name = document.getElementById("loc-name").value.trim();
+  const location_type = document.getElementById("loc-type").value;
+  const parent_id = document.getElementById("loc-parent").value || null;
+  if (!name) { alert("Give the location a name."); return; }
+  const { error } = await sb.from("locations").insert({ name, location_type, parent_id });
+  if (error) { alert("Could not add location: " + error.message); return; }
+  closeLocationModal();
+  await loadLocations();
+  if (currentTab === "locations") renderLocationsView(); else { renderFilters(); renderTable(); }
+}
+async function deleteLocation(id) {
+  const stats = locationStats(id);
+  const msg = stats.count > 0
+    ? `This location (and anything nested inside it) holds ${stats.count} item(s). Deleting it will leave those items unassigned, not delete them. Continue?`
+    : "Delete this location?";
+  if (!confirm(msg)) return;
+  const { error } = await sb.from("locations").delete().eq("id", id);
+  if (error) { alert("Could not delete: " + error.message); return; }
+  await Promise.all([loadItems(), loadLocations()]);
+  renderLocationsView();
+}
+function quickAddLocation() {
+  openLocationModal(null);
+}
 
 // ============================================================
 // SLIDE-OVER PANEL
@@ -451,12 +627,15 @@ async function openPanel(id) {
   const item = items.find(i => i.id === id);
   if (!item) return;
   panelItemId = id;
+  item._pendingStatus = item.status;
   document.getElementById("p-serial").textContent = item.serial;
   document.getElementById("p-name").textContent = item.name;
   document.getElementById("p-purchase-date").value = item.purchase_date || "";
   document.getElementById("p-price").value = item.price || "";
   document.getElementById("p-condition").value = item.condition || "";
   document.getElementById("p-notes").value = item.notes || "";
+  populateLocationSelect("p-location", { includeEmpty: true });
+  document.getElementById("p-location").value = item.location_id || "";
   const statusRow = document.getElementById("p-status-row");
   statusRow.innerHTML = Object.entries(STATUS_META).map(([key, m]) =>
     `<button class="status-choice${item.status===key?' active':''}" onclick="setPanelStatus('${key}')" data-status="${key}"><span class="dot" style="background:${m.color}"></span>${m.label}</button>`
@@ -464,6 +643,7 @@ async function openPanel(id) {
   document.getElementById("overlay").classList.add("show");
   document.getElementById("panel").classList.add("open");
   loadEvents(id);
+  renderTagCanvases(item.serial);
 }
 function setPanelStatus(status) {
   const item = items.find(i => i.id === panelItemId);
@@ -493,6 +673,7 @@ async function saveItem() {
     condition: document.getElementById("p-condition").value || null,
     notes: document.getElementById("p-notes").value || null,
     status: newStatus,
+    location_id: document.getElementById("p-location").value || null,
   };
   const { error } = await sb.from("items").update(updates).eq("id", item.id);
   if (error) { alert("Could not save: " + error.message); return; }
@@ -500,7 +681,54 @@ async function saveItem() {
     await sb.from("item_events").insert({ item_id: item.id, event_type: "status_change", detail: `Status changed to ${STATUS_META[newStatus].label}` });
   }
   closePanel();
-  loadItems();
+  await loadItems();
+  if (currentTab === "locations") renderLocationsView(); else renderTable();
+}
+async function deleteItem() {
+  const item = items.find(i => i.id === panelItemId);
+  if (!item) return;
+  if (!confirm(`Delete ${item.serial} (${item.name}) permanently? This can't be undone.`)) return;
+  await sb.from("item_events").delete().eq("item_id", item.id);
+  const { error } = await sb.from("items").delete().eq("id", item.id);
+  if (error) { alert("Could not delete: " + error.message); return; }
+  closePanel();
+  await loadItems();
+  if (currentTab === "locations") renderLocationsView(); else renderTable();
+}
+
+// ============================================================
+// BARCODE / QR TAG
+// ============================================================
+function renderTagCanvases(serial) {
+  const qrCanvas = document.getElementById("tag-qr-canvas");
+  const barCanvas = document.getElementById("tag-barcode-canvas");
+  QRCode.toCanvas(qrCanvas, serial, { width: 110, margin: 1 });
+  try {
+    JsBarcode(barCanvas, serial, { format: "CODE128", width: 1.6, height: 60, fontSize: 12, margin: 6 });
+  } catch (e) { /* some checksum chars are fine for CODE128B, ignore edge failures */ }
+}
+function downloadTag() {
+  const item = items.find(i => i.id === panelItemId);
+  if (!item) return;
+  const qrCanvas = document.getElementById("tag-qr-canvas");
+  const W = 700, H = 320;
+  const out = document.createElement("canvas");
+  out.width = W; out.height = H;
+  const ctx = out.getContext("2d");
+  ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = "#000"; ctx.lineWidth = 2; ctx.strokeRect(6, 6, W - 12, H - 12);
+  ctx.fillStyle = "#000";
+  ctx.font = "bold 22px -apple-system, Arial, sans-serif";
+  ctx.fillText("MLX MEDIA", 30, 46);
+  ctx.font = "16px -apple-system, Arial, sans-serif";
+  ctx.fillText(item.name, 30, 76);
+  ctx.font = "bold 26px ui-monospace, Menlo, monospace";
+  ctx.fillText(item.serial, 30, 250);
+  ctx.drawImage(qrCanvas, W - 190, 40, 150, 150);
+  const a = document.createElement("a");
+  a.download = `tag-${item.serial}.png`;
+  a.href = out.toDataURL("image/png");
+  a.click();
 }
 
 // ============================================================
@@ -511,8 +739,6 @@ function uniqueRegistryValues(field) {
   items.forEach(i => { if (i.model_registry?.[field]) vals.add(i.model_registry[field]); });
   return vals;
 }
-const STARTER_BY_FIELD = { category: STARTER_CATEGORIES, type: STARTER_TYPES, brand: STARTER_BRANDS };
-
 function populateDropdown(id, starter, extra) {
   const sel = document.getElementById(id);
   const codes = new Set([...Object.keys(starter), ...extra]);
@@ -522,6 +748,7 @@ function openAddModal() {
   populateDropdown("m-category", STARTER_CATEGORIES, uniqueRegistryValues("category"));
   populateDropdown("m-type", STARTER_TYPES, uniqueRegistryValues("type"));
   populateDropdown("m-brand", STARTER_BRANDS, uniqueRegistryValues("brand"));
+  populateLocationSelect("m-location", { includeEmpty: true });
   ["m-model-code","m-display-name","m-purchase-date","m-price","m-condition","m-notes"].forEach(id => document.getElementById(id).value = "");
   document.getElementById("serial-preview-box").textContent = "Serial will generate on save";
   document.getElementById("modal-overlay").classList.add("show");
@@ -529,8 +756,7 @@ function openAddModal() {
 }
 function closeAddModal() { document.getElementById("modal-overlay").classList.remove("show"); }
 function addNewCode(which) {
-  const label = { category: "category", type: "type", brand: "brand" }[which];
-  const raw = prompt(`Enter a new single-character code for this ${label} (e.g. a letter not already used):`);
+  const raw = prompt(`Enter a new single-character code for this ${which} (e.g. a letter not already used):`);
   if (!raw) return;
   const code = raw.trim().toUpperCase();
   if (code.length !== 1) { alert("Code must be exactly one character."); return; }
@@ -578,11 +804,13 @@ async function submitNewItem() {
     price: document.getElementById("m-price").value ? Number(document.getElementById("m-price").value) : null,
     condition: document.getElementById("m-condition").value || null,
     notes: document.getElementById("m-notes").value || null,
+    location_id: document.getElementById("m-location").value || null,
     status: "idle",
   });
   if (insertError) { alert("Serial generated (" + row.serial + ") but saving the item failed: " + insertError.message); return; }
   closeAddModal();
-  loadItems();
+  await loadItems();
+  if (currentTab === "locations") renderLocationsView(); else renderTable();
 }
 
 checkSession();
