@@ -6,8 +6,9 @@
 <title>MLX Gear — Control</title>
 <script>(function(){try{var t=localStorage.getItem('mlx-gear-theme');if(t==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();</script>
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+<script src="https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="https://unpkg.com/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+<script src="https://unpkg.com/chart.js@4/dist/chart.umd.js"></script>
 <style>
   :root {
     --bg: #0A0A0C;
@@ -156,6 +157,51 @@
   .color-swatch.active { border-color: var(--text); }
   .loc-icon.colored { border: 1px solid transparent; }
 
+  /* Simulate-role banner */
+  #sim-banner { display: none; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 22px; background: linear-gradient(90deg, rgba(255,209,102,0.16), rgba(255,209,102,0.05)); border-bottom: 1px solid rgba(255,209,102,0.35); color: #FFD166; font-size: 12.5px; font-weight: 600; flex-shrink: 0; }
+  #sim-banner.show { display: flex; }
+  #sim-banner button { color: #FFD166; font-weight: 700; text-decoration: underline; }
+  #sim-select-row { display: flex; align-items: center; gap: 8px; }
+  #sim-select-row select { width: auto; padding: 5px 9px; font-size: 12px; }
+
+  /* Analytics */
+  #analytics-wrap { flex: 1; overflow-y: auto; padding: 20px 22px 100px; display: none; }
+  .chart-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+  .chart-card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+  .chart-card h3 { font-size: 13px; font-weight: 600; margin-bottom: 4px; color: var(--text); }
+  .chart-card .chart-sub { font-size: 11.5px; color: var(--text-faint); margin-bottom: 14px; }
+  .chart-canvas-wrap { position: relative; height: 230px; }
+  .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 16px; }
+  .kpi-card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; }
+  .kpi-val { font-size: 24px; font-weight: 700; letter-spacing: -0.4px; }
+  .kpi-label { font-size: 11.5px; color: var(--text-faint); margin-top: 2px; }
+
+  /* Users / roles */
+  #users-wrap { flex: 1; overflow-y: auto; padding: 20px 22px 100px; display: none; }
+  .users-section-title { font-size: 13px; font-weight: 600; color: var(--text-dim); margin: 22px 0 10px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .users-section-title:first-child { margin-top: 0; }
+  .user-row { display: flex; align-items: center; gap: 12px; padding: 13px 4px; border-bottom: 1px solid var(--line); }
+  .user-row:last-child { border-bottom: none; }
+  .user-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--panel2); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: var(--text-dim); flex-shrink: 0; }
+  .user-info { flex: 1; min-width: 0; }
+  .user-email { font-size: 13.5px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .user-sub { font-size: 11px; color: var(--text-faint); margin-top: 1px; }
+  .role-badge { font-size: 10.5px; font-weight: 700; padding: 3px 10px; border-radius: 999px; letter-spacing: 0.3px; text-transform: uppercase; flex-shrink: 0; }
+  .role-badge.owner { background: rgba(255,209,102,0.18); color: #FFD166; }
+  .role-badge.admin { background: rgba(76,201,240,0.18); color: #4CC9F0; }
+  .role-badge.editor { background: rgba(6,214,160,0.18); color: #06D6A0; }
+  .role-badge.guest { background: rgba(107,114,128,0.22); color: #9aa1ac; }
+  .role-select { width: auto; padding: 6px 10px; font-size: 12px; flex-shrink: 0; }
+  .icon-action { width: 30px; height: 30px; border-radius: 50%; background: var(--panel2); display: flex; align-items: center; justify-content: center; font-size: 13px; color: var(--text-dim); flex-shrink: 0; }
+  .icon-action:hover { color: var(--text); }
+  .icon-action.danger:hover { color: var(--damaged); }
+  #add-user-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  #add-user-row input { flex: 1; min-width: 180px; }
+  #add-user-row select { width: auto; }
+  .data-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+  .data-actions .btn { flex: none; padding: 10px 18px; }
+  .note-text { font-size: 12px; color: var(--text-faint); line-height: 1.6; margin-top: 8px; max-width: 520px; }
+
   /* ============================================================
      RESPONSIVE / MOBILE
      ============================================================ */
@@ -215,12 +261,19 @@
     <div id="tabs">
       <button class="tab-btn active" id="tab-inventory" onclick="switchTab('inventory')">Inventory</button>
       <button class="tab-btn" id="tab-locations" onclick="switchTab('locations')">Locations</button>
+      <button class="tab-btn" id="tab-analytics" onclick="switchTab('analytics')">Analytics</button>
+      <button class="tab-btn" id="tab-users" style="display:none" onclick="switchTab('users')">Users</button>
     </div>
     <input id="search" placeholder="Search serial or name…" oninput="renderTable()">
     <div class="spacer"></div>
     <div id="user-email"></div>
     <button id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark">🌙</button>
     <button id="signout" onclick="doLogout()">Sign out</button>
+  </div>
+
+  <div id="sim-banner">
+    <span id="sim-banner-text"></span>
+    <button onclick="exitSimulation()">Return to Owner</button>
   </div>
 
   <div id="filters"></div>
@@ -247,9 +300,59 @@
     <div id="locations-wrap" style="display:none">
       <div id="locations-header">
         <h2>Storage locations</h2>
-        <button class="loc-add-btn" onclick="openLocationModal(null)">+ Add top-level location</button>
+        <button class="loc-add-btn" id="loc-add-toplevel-btn" onclick="openLocationModal(null)">+ Add top-level location</button>
       </div>
       <div id="locations-list"></div>
+    </div>
+
+    <div id="analytics-wrap">
+      <div class="kpi-row" id="kpi-row"></div>
+      <div class="chart-grid">
+        <div class="chart-card">
+          <h3>Items by category</h3>
+          <div class="chart-sub">How your gear breaks down by class</div>
+          <div class="chart-canvas-wrap"><canvas id="chart-category"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>Items by status</h3>
+          <div class="chart-sub">Where everything currently stands</div>
+          <div class="chart-canvas-wrap"><canvas id="chart-status"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>Value by category</h3>
+          <div class="chart-sub">Total purchase value per class (CZK)</div>
+          <div class="chart-canvas-wrap"><canvas id="chart-value"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>Items added over time</h3>
+          <div class="chart-sub">Purchases by month</div>
+          <div class="chart-canvas-wrap"><canvas id="chart-timeline"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="users-wrap">
+      <div class="users-section-title">Team</div>
+      <div id="users-list"></div>
+      <div id="add-user-section" style="display:none">
+        <div id="add-user-row">
+          <input id="add-user-email" type="email" placeholder="Existing account's email…">
+          <select id="add-user-role"></select>
+          <button class="btn primary" style="flex:none;padding:10px 16px" onclick="submitAddUserRole()">Grant access</button>
+        </div>
+        <div class="note-text">They need to have signed in at least once (or you've created their account in Supabase) before you can grant them a role here — new logins can't be created from this dashboard.</div>
+      </div>
+
+      <div class="users-section-title">Simulate view (Owner only)</div>
+      <div id="sim-controls" class="note-text"></div>
+
+      <div class="users-section-title">Data</div>
+      <div class="note-text">Export a full backup of your inventory, or restore/merge from a previous export.</div>
+      <div class="data-actions">
+        <button class="btn ghost" onclick="exportData()">Export backup (.json)</button>
+        <button class="btn ghost" onclick="document.getElementById('import-file-input').click()">Import backup…</button>
+        <input type="file" id="import-file-input" accept="application/json" style="display:none" onchange="handleImportFile(this)">
+      </div>
     </div>
   </div>
 
@@ -439,12 +542,38 @@ let items = [];
 let locations = [];
 let activeStatusFilter = null;
 let activeLocationFilter = null; // 'all' | 'none' | location id
+let activeCategoryFilter = null; // 'all' | category code
 let minPriceFilter = null;
 let sortField = "serial";
 let sortDir = 1;
 let panelItemId = null;
 let currentTab = "inventory";
 let pendingLocationParent = null;
+let myRole = null;          // the real, DB-backed role of the signed-in user
+let simulatedRole = null;   // owner-only "view as" preview, UI-level only
+let userRows = [];          // rows from user_roles, for the Users tab
+let charts = {};            // Chart.js instances, keyed by canvas id
+
+// ============================================================
+// ROLES & PERMISSIONS
+// ============================================================
+const ROLE_LABELS = { owner: "Owner", admin: "Admin", editor: "Editor", guest: "Guest" };
+function effectiveRole() { return simulatedRole || myRole; }
+function canEditItems() { return ["owner", "admin", "editor"].includes(effectiveRole()); }
+function canViewUsersTab() { return ["owner", "admin", "editor"].includes(effectiveRole()); }
+function canManageRoles() { return ["owner", "admin"].includes(effectiveRole()); }
+function canEditTargetRole(targetRole) {
+  const r = effectiveRole();
+  if (r === "owner") return true;
+  if (r === "admin") return !["owner", "admin"].includes(targetRole);
+  return false;
+}
+async function loadMyRole() {
+  const { data: { user } } = await sb.auth.getUser();
+  const { data, error } = await sb.from("user_roles").select("role").eq("user_id", user.id).maybeSingle();
+  if (error) { console.error(error); }
+  myRole = data?.role || "guest";
+}
 
 // ============================================================
 // THEME
@@ -460,6 +589,7 @@ function toggleTheme() {
   else document.documentElement.removeAttribute("data-theme");
   try { localStorage.setItem("mlx-gear-theme", next); } catch (e) {}
   updateThemeToggleIcon();
+  if (currentTab === "analytics") renderAnalytics();
 }
 updateThemeToggleIcon();
 
@@ -481,13 +611,21 @@ async function doLogout() {
   document.getElementById("login-screen").style.display = "flex";
 }
 async function enterApp(session) {
+  await loadMyRole();
+  if (myRole === "guest") {
+    alert("Guest accounts are mobile-only. Please use the MLX Gear phone app instead.");
+    await doLogout();
+    return;
+  }
   document.getElementById("login-screen").style.display = "none";
   document.getElementById("app").style.display = "flex";
   document.getElementById("user-email").textContent = session.user.email;
+  document.getElementById("tab-users").style.display = canViewUsersTab() ? "" : "none";
   renderFilters();
   await Promise.all([loadItems(), loadLocations()]);
   renderFilters();
   renderTable();
+  updateSimBanner();
 }
 async function checkSession() {
   const { data } = await sb.auth.getSession();
@@ -501,11 +639,17 @@ function switchTab(tab) {
   currentTab = tab;
   document.getElementById("tab-inventory").classList.toggle("active", tab === "inventory");
   document.getElementById("tab-locations").classList.toggle("active", tab === "locations");
+  document.getElementById("tab-analytics").classList.toggle("active", tab === "analytics");
+  document.getElementById("tab-users").classList.toggle("active", tab === "users");
   document.getElementById("table-wrap").style.display = tab === "inventory" ? "block" : "none";
   document.getElementById("locations-wrap").style.display = tab === "locations" ? "block" : "none";
+  document.getElementById("analytics-wrap").style.display = tab === "analytics" ? "block" : "none";
+  document.getElementById("users-wrap").style.display = tab === "users" ? "block" : "none";
   document.getElementById("filters").style.display = tab === "inventory" ? "flex" : "none";
-  document.getElementById("fab").style.display = tab === "inventory" ? "flex" : "none";
+  document.getElementById("fab").style.display = (tab === "inventory" && canEditItems()) ? "flex" : "none";
   if (tab === "locations") renderLocationsView();
+  else if (tab === "analytics") renderAnalytics();
+  else if (tab === "users") { if (!canViewUsersTab()) { switchTab("inventory"); return; } renderUsersTab(); }
 }
 
 // ============================================================
@@ -581,14 +725,20 @@ function renderFilters() {
   const locOptions = [`<option value="all">All locations</option>`, `<option value="none">Unassigned</option>`]
     .concat([...locations].sort((a,b)=>locationBreadcrumb(a.id).localeCompare(locationBreadcrumb(b.id)))
       .map(l => `<option value="${l.id}">${escapeHtml(locationBreadcrumb(l.id))}</option>`)).join("");
+  const catCodes = new Set([...Object.keys(STARTER_CATEGORIES), ...uniqueRegistryValues("category")]);
+  const catOptions = [`<option value="all">All categories</option>`]
+    .concat([...catCodes].sort().map(c => `<option value="${c}">${c}${STARTER_CATEGORIES[c] ? " — " + STARTER_CATEGORIES[c] : ""}</option>`)).join("");
   el.innerHTML = all + pills +
+    `<select id="cat-filter" onchange="setCategoryFilter(this.value)">${catOptions}</select>` +
     `<select id="loc-filter" onchange="setLocationFilter(this.value)">${locOptions}</select>` +
     `<input id="min-price-filter" type="number" placeholder="Min price…" style="width:110px" oninput="setMinPriceFilter(this.value)">` +
     `<div class="filter-spacer"></div><div id="stats-bar"></div>`;
   document.getElementById("loc-filter").value = activeLocationFilter || "all";
+  document.getElementById("cat-filter").value = activeCategoryFilter || "all";
 }
 function setStatusFilter(status) { activeStatusFilter = status; renderFilters(); renderTable(); }
 function setLocationFilter(val) { activeLocationFilter = val === "all" ? null : val; renderTable(); }
+function setCategoryFilter(val) { activeCategoryFilter = val === "all" ? null : val; renderTable(); }
 function setMinPriceFilter(val) { minPriceFilter = val ? Number(val) : null; renderTable(); }
 function setSort(field) {
   if (sortField === field) sortDir *= -1; else { sortField = field; sortDir = 1; }
@@ -604,6 +754,7 @@ function renderTable() {
     if (activeStatusFilter && i.status !== activeStatusFilter) return false;
     if (activeLocationFilter === "none" && i.location_id) return false;
     if (activeLocationFilter && activeLocationFilter !== "none" && i.location_id !== activeLocationFilter) return false;
+    if (activeCategoryFilter && i.category !== activeCategoryFilter) return false;
     if (minPriceFilter !== null && !(Number(i.price) >= minPriceFilter)) return false;
     if (q && !(i.serial.toLowerCase().includes(q) || i.name.toLowerCase().includes(q))) return false;
     return true;
@@ -644,6 +795,7 @@ function escapeHtml(s) { return (s || "").replace(/[&<>"']/g, c => ({"&":"&amp;"
 // LOCATIONS TAB
 // ============================================================
 function renderLocationsView() {
+  document.getElementById("loc-add-toplevel-btn").style.display = canEditItems() ? "" : "none";
   const list = document.getElementById("locations-list");
   const topLevel = childrenOf(null);
   if (locations.length === 0) {
@@ -663,9 +815,10 @@ function renderLocationsView() {
         <div class="loc-sub">${loc.location_type}${kids.length ? ` · ${kids.length} inside` : ""}</div>
       </div>
       <div class="loc-stats"><b>${stats.count}</b> item${stats.count===1?"":"s"}<br>${stats.value.toLocaleString()} Kč</div>
+      ${canEditItems() ? `
       <button class="loc-add-btn" onclick="event.stopPropagation(); openEditLocationModal('${loc.id}')" title="Edit">✎</button>
       <button class="loc-add-btn" onclick="event.stopPropagation(); openLocationModal('${loc.id}')" title="Add location inside">+</button>
-      <button class="loc-add-btn" onclick="event.stopPropagation(); deleteLocation('${loc.id}')" title="Delete">✕</button>
+      <button class="loc-add-btn" onclick="event.stopPropagation(); deleteLocation('${loc.id}')" title="Delete">✕</button>` : ""}
     </div>`;
     return rowHtml + kids.map(k => renderNode(k, depth + 1)).join("");
   }
@@ -715,6 +868,7 @@ function openEditLocationModal(id) {
 }
 function closeLocationModal() { document.getElementById("loc-modal-overlay").classList.remove("show"); }
 async function submitNewLocation() {
+  if (!canEditItems()) { alert("You don't have permission to do that."); return; }
   const name = document.getElementById("loc-name").value.trim();
   const location_type = document.getElementById("loc-type").value;
   const parent_id = document.getElementById("loc-parent").value || null;
@@ -732,6 +886,7 @@ async function submitNewLocation() {
   if (currentTab === "locations") renderLocationsView(); else { renderFilters(); renderTable(); }
 }
 async function deleteLocation(id) {
+  if (!canEditItems()) { alert("You don't have permission to do that."); return; }
   const stats = locationStats(id);
   const msg = stats.count > 0
     ? `This location (and anything nested inside it) holds ${stats.count} item(s). Deleting it will leave those items unassigned, not delete them. Continue?`
@@ -745,6 +900,186 @@ async function deleteLocation(id) {
 function quickAddLocation() {
   openLocationModal(null);
 }
+
+// ============================================================
+// ANALYTICS
+// ============================================================
+function chartColors() {
+  const style = getComputedStyle(document.documentElement);
+  return {
+    text: style.getPropertyValue("--text-dim").trim() || "#999",
+    grid: style.getPropertyValue("--line").trim() || "rgba(255,255,255,0.08)",
+    accent: style.getPropertyValue("--accent").trim() || "#4CC9F0",
+  };
+}
+const CHART_PALETTE = ["#4CC9F0","#FF6B6B","#FFD166","#06D6A0","#7B5EA7","#FF8C42","#F72585","#118AB2","#E76F51","#A8DADC"];
+function destroyChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
+function renderAnalytics() {
+  if (typeof Chart === "undefined") {
+    document.getElementById("analytics-wrap").innerHTML = `<div class="note-text" style="color:var(--damaged)">Could not load the charting library (check your internet connection) — try refreshing the page.</div>`;
+    return;
+  }
+  const col = chartColors();
+  Chart.defaults.color = col.text;
+  Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
+
+  const totalValue = items.reduce((s, i) => s + (Number(i.price) || 0), 0);
+  const kpi = document.getElementById("kpi-row");
+  kpi.innerHTML = `
+    <div class="kpi-card"><div class="kpi-val">${items.length}</div><div class="kpi-label">Total items</div></div>
+    <div class="kpi-card"><div class="kpi-val">${locations.length}</div><div class="kpi-label">Locations</div></div>
+    <div class="kpi-card"><div class="kpi-val">${totalValue.toLocaleString()} Kč</div><div class="kpi-label">Total value</div></div>
+    <div class="kpi-card"><div class="kpi-val">${new Set(items.map(i=>i.category).filter(Boolean)).size}</div><div class="kpi-label">Categories in use</div></div>
+  `;
+
+  // Items by category
+  const catCounts = {};
+  items.forEach(i => { const c = i.category || "?"; catCounts[c] = (catCounts[c] || 0) + 1; });
+  const catLabels = Object.keys(catCounts).sort();
+  destroyChart("chart-category");
+  charts["chart-category"] = new Chart(document.getElementById("chart-category"), {
+    type: "doughnut",
+    data: { labels: catLabels.map(c => `${c} — ${STARTER_CATEGORIES[c] || "Custom"}`), datasets: [{ data: catLabels.map(c => catCounts[c]), backgroundColor: CHART_PALETTE, borderWidth: 0 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: "right", labels: { boxWidth: 10, font: { size: 11 } } } } },
+  });
+
+  // Items by status
+  const statusKeys = Object.keys(STATUS_META);
+  const statusCounts = statusKeys.map(k => items.filter(i => i.status === k).length);
+  destroyChart("chart-status");
+  charts["chart-status"] = new Chart(document.getElementById("chart-status"), {
+    type: "bar",
+    data: { labels: statusKeys.map(k => STATUS_META[k].label), datasets: [{ data: statusCounts, backgroundColor: statusKeys.map(k => getComputedStyle(document.documentElement).getPropertyValue("--" + k).trim() || col.accent), borderRadius: 6 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: col.grid }, ticks: { precision: 0 } } } },
+  });
+
+  // Value by category
+  const catValues = {};
+  items.forEach(i => { const c = i.category || "?"; catValues[c] = (catValues[c] || 0) + (Number(i.price) || 0); });
+  const valLabels = Object.keys(catValues).sort();
+  destroyChart("chart-value");
+  charts["chart-value"] = new Chart(document.getElementById("chart-value"), {
+    type: "bar",
+    data: { labels: valLabels, datasets: [{ data: valLabels.map(c => catValues[c]), backgroundColor: col.accent, borderRadius: 6 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => ctx.parsed.y.toLocaleString() + " Kč" } } }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: col.grid }, ticks: { callback: (v) => v.toLocaleString() } } } },
+  });
+
+  // Items added over time (by month, using purchase_date, falling back to created_at)
+  const monthCounts = {};
+  items.forEach(i => {
+    const d = i.purchase_date || i.created_at;
+    if (!d) return;
+    const key = String(d).slice(0, 7); // YYYY-MM
+    monthCounts[key] = (monthCounts[key] || 0) + 1;
+  });
+  const months = Object.keys(monthCounts).sort();
+  destroyChart("chart-timeline");
+  charts["chart-timeline"] = new Chart(document.getElementById("chart-timeline"), {
+    type: "line",
+    data: { labels: months, datasets: [{ data: months.map(m => monthCounts[m]), borderColor: col.accent, backgroundColor: col.accent + "22", fill: true, tension: 0.3, pointRadius: 3 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: col.grid }, ticks: { precision: 0 } } } },
+  });
+}
+
+// ============================================================
+// USERS & ROLES
+// ============================================================
+async function loadUsers() {
+  const { data, error } = await sb.from("user_roles").select("user_id, email, role, updated_at").order("role");
+  if (error) { console.error(error); userRows = []; return; }
+  const order = { owner: 0, admin: 1, editor: 2, guest: 3 };
+  userRows = (data || []).sort((a, b) => (order[a.role] ?? 9) - (order[b.role] ?? 9) || (a.email || "").localeCompare(b.email || ""));
+}
+function initialsFor(email) { return (email || "?").slice(0, 2).toUpperCase(); }
+async function renderUsersTab() {
+  await loadUsers();
+  const canManage = canManageRoles();
+  const { data: { user } } = await sb.auth.getUser();
+  const myId = user?.id;
+  const list = document.getElementById("users-list");
+  list.innerHTML = userRows.map(u => {
+    const canEditThis = canManage && canEditTargetRole(u.role) && u.user_id !== myId;
+    const roleOptions = ["owner","admin","editor","guest"]
+      .filter(r => effectiveRole() === "owner" || !["owner","admin"].includes(r)) // admin can only assign editor/guest
+      .map(r => `<option value="${r}" ${r===u.role?"selected":""}>${ROLE_LABELS[r]}</option>`).join("");
+    return `<div class="user-row">
+      <div class="user-avatar">${initialsFor(u.email)}</div>
+      <div class="user-info">
+        <div class="user-email">${escapeHtml(u.email || u.user_id)}${u.user_id===myId ? " (you)" : ""}</div>
+        <div class="user-sub">Updated ${u.updated_at ? new Date(u.updated_at).toLocaleDateString() : "—"}</div>
+      </div>
+      ${canEditThis
+        ? `<select class="role-select" onchange="setUserRole('${u.user_id}', this.value)">${roleOptions}</select>
+           <button class="icon-action danger" title="Remove access" onclick="removeUserAccess('${u.user_id}','${escapeHtml(u.email||"")}')">✕</button>`
+        : `<span class="role-badge ${u.role}">${ROLE_LABELS[u.role] || u.role}</span>`
+      }
+    </div>`;
+  }).join("") || `<div class="note-text">No one has an assigned role yet.</div>`;
+
+  document.getElementById("add-user-section").style.display = canManage ? "" : "none";
+  if (canManage) {
+    const addRoleSel = document.getElementById("add-user-role");
+    const assignable = effectiveRole() === "owner" ? ["admin","editor","guest"] : ["editor","guest"];
+    addRoleSel.innerHTML = assignable.map(r => `<option value="${r}">${ROLE_LABELS[r]}</option>`).join("");
+  }
+  renderSimControls();
+}
+async function setUserRole(userId, newRole) {
+  const { error } = await sb.from("user_roles").update({ role: newRole, updated_at: new Date().toISOString() }).eq("user_id", userId);
+  if (error) { alert("Could not update role: " + error.message); }
+  renderUsersTab();
+}
+async function removeUserAccess(userId, email) {
+  if (!confirm(`Remove ${email || "this person"}'s access? They'll no longer be able to sign in to any MLX Gear app.`)) return;
+  const { error } = await sb.from("user_roles").delete().eq("user_id", userId);
+  if (error) { alert("Could not remove: " + error.message); return; }
+  renderUsersTab();
+}
+async function submitAddUserRole() {
+  const email = document.getElementById("add-user-email").value.trim();
+  const role = document.getElementById("add-user-role").value;
+  if (!email) { alert("Enter the email of an account that has already signed in once."); return; }
+  const { data: uid, error: lookupError } = await sb.rpc("get_user_id_by_email", { p_email: email });
+  if (lookupError) { alert("Could not look up that email: " + lookupError.message); return; }
+  if (!uid) { alert("No account found for that email. They need to sign in once first (or you create their account in Supabase Studio), then you can grant them a role here."); return; }
+  const { error } = await sb.from("user_roles").upsert({ user_id: uid, email, role, updated_at: new Date().toISOString() });
+  if (error) { alert("Could not grant access: " + error.message); return; }
+  document.getElementById("add-user-email").value = "";
+  renderUsersTab();
+}
+
+// ── Simulate view (Owner only) ──
+function renderSimControls() {
+  const el = document.getElementById("sim-controls");
+  if (myRole !== "owner") { el.innerHTML = `<div class="note-text">Only the Owner can preview the app as another role.</div>`; return; }
+  const roles = ["owner","admin","editor","guest"];
+  el.innerHTML = `<div id="sim-select-row">
+    <span>Viewing as:</span>
+    <select onchange="setSimulatedRole(this.value)">
+      ${roles.map(r => `<option value="${r}" ${effectiveRole()===r?"selected":""}>${ROLE_LABELS[r]}</option>`).join("")}
+    </select>
+  </div>`;
+}
+function setSimulatedRole(role) {
+  simulatedRole = role === "owner" ? null : role;
+  updateSimBanner();
+  document.getElementById("tab-users").style.display = canViewUsersTab() ? "" : "none";
+  if (currentTab === "users") { if (!canViewUsersTab()) switchTab("inventory"); else renderUsersTab(); }
+  if (currentTab === "inventory") { renderFilters(); renderTable(); }
+  if (currentTab === "locations") renderLocationsView();
+  if (panelItemId) openPanel(panelItemId);
+}
+function exitSimulation() { setSimulatedRole("owner"); }
+function updateSimBanner() {
+  const banner = document.getElementById("sim-banner");
+  if (simulatedRole) {
+    banner.classList.add("show");
+    document.getElementById("sim-banner-text").textContent = `Simulating: ${ROLE_LABELS[simulatedRole]} — you still have full Owner access underneath.`;
+  } else {
+    banner.classList.remove("show");
+  }
+}
+
 
 // ============================================================
 // SLIDE-OVER PANEL
@@ -770,6 +1105,11 @@ async function openPanel(id) {
   document.getElementById("panel").classList.add("open");
   loadEvents(id);
   renderTagCanvases(item.serial);
+  const readOnly = !canEditItems();
+  ["p-purchase-date","p-price","p-condition","p-notes","p-location"].forEach(id => document.getElementById(id).disabled = readOnly);
+  document.querySelectorAll("#p-status-row .status-choice").forEach(b => b.disabled = readOnly);
+  document.querySelector(".panel-footer .btn.primary").style.display = readOnly ? "none" : "";
+  document.querySelector(".panel-footer .btn.danger").style.display = readOnly ? "none" : "";
 }
 function setPanelStatus(status) {
   const item = items.find(i => i.id === panelItemId);
@@ -790,6 +1130,7 @@ async function loadEvents(itemId) {
   log.innerHTML = data.map(e => `<div class="event-row"><span>${escapeHtml(e.detail || e.event_type)}</span><span>${new Date(e.occurred_at).toLocaleDateString()}</span></div>`).join("");
 }
 async function saveItem() {
+  if (!canEditItems()) { alert("You don't have permission to do that."); return; }
   const item = items.find(i => i.id === panelItemId);
   if (!item) return;
   const newStatus = item._pendingStatus || item.status;
@@ -811,6 +1152,7 @@ async function saveItem() {
   if (currentTab === "locations") renderLocationsView(); else renderTable();
 }
 async function deleteItem() {
+  if (!canEditItems()) { alert("You don't have permission to do that."); return; }
   const item = items.find(i => i.id === panelItemId);
   if (!item) return;
   if (!confirm(`Delete ${item.serial} (${item.name}) permanently? This can't be undone.`)) return;
@@ -828,10 +1170,23 @@ async function deleteItem() {
 function renderTagCanvases(serial) {
   const qrCanvas = document.getElementById("tag-qr-canvas");
   const barCanvas = document.getElementById("tag-barcode-canvas");
-  QRCode.toCanvas(qrCanvas, serial, { width: 110, margin: 1 });
+  const section = document.getElementById("tag-section");
+  let existingNote = section.querySelector(".tag-error-note");
+  if (existingNote) existingNote.remove();
+  if (typeof QRCode === "undefined" || typeof JsBarcode === "undefined") {
+    const note = document.createElement("div");
+    note.className = "tag-error-note";
+    note.style.cssText = "font-size:12px;color:var(--damaged)";
+    note.textContent = "Could not load the QR/barcode library (check your internet connection) — try refreshing the page.";
+    section.appendChild(note);
+    return;
+  }
+  try {
+    QRCode.toCanvas(qrCanvas, serial, { width: 110, margin: 1 }, (err) => { if (err) console.error("QR generation failed:", err); });
+  } catch (e) { console.error("QR generation failed:", e); }
   try {
     JsBarcode(barCanvas, serial, { format: "CODE128", width: 1.6, height: 60, fontSize: 12, margin: 6 });
-  } catch (e) { /* some checksum chars are fine for CODE128B, ignore edge failures */ }
+  } catch (e) { console.error("Barcode generation failed:", e); }
 }
 function downloadTag() {
   const item = items.find(i => i.id === panelItemId);
@@ -871,6 +1226,7 @@ function populateDropdown(id, starter, extra) {
   sel.innerHTML = [...codes].sort().map(c => `<option value="${c}">${c}${starter[c] ? " — " + starter[c] : ""}</option>`).join("");
 }
 function openAddModal() {
+  if (!canEditItems()) { alert("You don't have permission to do that."); return; }
   populateDropdown("m-category", STARTER_CATEGORIES, uniqueRegistryValues("category"));
   populateDropdown("m-type", STARTER_TYPES, uniqueRegistryValues("type"));
   populateDropdown("m-brand", STARTER_BRANDS, uniqueRegistryValues("brand"));
@@ -909,6 +1265,7 @@ function updateSerialPreview() {
   }
 }
 async function submitNewItem() {
+  if (!canEditItems()) { alert("You don't have permission to do that."); return; }
   const category = document.getElementById("m-category").value;
   const type = document.getElementById("m-type").value;
   const brand = document.getElementById("m-brand").value;
@@ -937,6 +1294,80 @@ async function submitNewItem() {
   closeAddModal();
   await loadItems();
   if (currentTab === "locations") renderLocationsView(); else renderTable();
+}
+
+// ============================================================
+// EXPORT / IMPORT — a compact, self-describing backup format
+// ============================================================
+const EXPORT_FORMAT = "mlxgear.v1";
+async function exportData() {
+  const models = [];
+  const seenModelIds = new Set();
+  items.forEach(i => {
+    if (i.model_registry && !seenModelIds.has(i.model_registry.id)) {
+      seenModelIds.add(i.model_registry.id);
+      models.push(i.model_registry);
+    }
+  });
+  const payload = {
+    format: EXPORT_FORMAT,
+    exported_at: new Date().toISOString(),
+    counts: { items: items.length, locations: locations.length, models: models.length },
+    locations: locations.map(l => ({ id: l.id, name: l.name, location_type: l.location_type, parent_id: l.parent_id, color: l.color })),
+    models: models.map(m => ({ id: m.id, category: m.category, type: m.type, brand: m.brand, model_code: m.model_code, display_name: m.display_name, spec_json: m.spec_json })),
+    items: items.map(i => ({
+      id: i.id, serial: i.serial, model_id: i.model_registry?.id || null, unit_id: i.unit_id,
+      purchase_date: i.purchase_date, price: i.price, condition: i.condition, notes: i.notes,
+      photo_url: i.photo_url, status: i.status, location_id: i.location_id, created_at: i.created_at,
+    })),
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `mlx-gear-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function handleImportFile(input) {
+  const file = input.files[0];
+  input.value = "";
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    let parsed;
+    try { parsed = JSON.parse(e.target.result); }
+    catch (err) { alert("That file isn't valid JSON."); return; }
+    if (parsed.format !== EXPORT_FORMAT) { alert(`Unrecognized backup format (expected "${EXPORT_FORMAT}").`); return; }
+    const c = parsed.counts || {};
+    const ok = confirm(`This backup has ${parsed.locations?.length ?? 0} location(s), ${parsed.models?.length ?? 0} model(s) and ${parsed.items?.length ?? 0} item(s), exported ${parsed.exported_at ? new Date(parsed.exported_at).toLocaleString() : "at an unknown time"}.\n\nThis will add/update matching records in your live database (matched by ID) — it will NOT delete anything that isn't in the file. Continue?`);
+    if (!ok) return;
+    await performImport(parsed);
+  };
+  reader.readAsText(file);
+}
+async function performImport(parsed) {
+  if (!canEditItems()) { alert("You don't have permission to do that."); return; }
+  try {
+    if (parsed.locations?.length) {
+      const { error } = await sb.from("locations").upsert(parsed.locations);
+      if (error) throw new Error("Locations: " + error.message);
+    }
+    if (parsed.models?.length) {
+      const { error } = await sb.from("model_registry").upsert(parsed.models);
+      if (error) throw new Error("Models: " + error.message);
+    }
+    if (parsed.items?.length) {
+      const { error } = await sb.from("items").upsert(parsed.items.map(i => ({ ...i, model_id: i.model_id })));
+      if (error) throw new Error("Items: " + error.message);
+    }
+    alert("Import complete.");
+    await Promise.all([loadItems(), loadLocations()]);
+    renderFilters(); renderTable();
+    if (currentTab === "locations") renderLocationsView();
+    if (currentTab === "analytics") renderAnalytics();
+  } catch (err) {
+    alert("Import failed partway through: " + err.message + "\n\nAnything already written stays written — check your data before retrying.");
+  }
 }
 
 checkSession();
