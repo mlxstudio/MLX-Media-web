@@ -248,6 +248,25 @@
   #loading-veil { position: fixed; inset: 0; background: var(--bg); display: none; align-items: center; justify-content: center; z-index: 5; color: var(--text3); font-size: 13px; }
   #loading-veil.show { display: flex; }
 
+  /* ── HOME PAGER (Crates ↔ Inventory sheet, swipe between them) ── */
+  .page-dots { display: flex; justify-content: center; gap: 6px; padding: 2px 0 10px; }
+  .dot { width: 6px; height: 6px; border-radius: 3px; background: var(--border2); border: none; padding: 0; transition: all 0.2s; }
+  .dot.active { width: 16px; background: var(--text2); }
+  .home-pager { flex: 1; display: flex; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+  .home-pager::-webkit-scrollbar { display: none; }
+  .home-page { min-width: 100%; flex-shrink: 0; scroll-snap-align: start; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 6px 16px calc(var(--safe-bottom) + 90px); }
+  .home-page::-webkit-scrollbar { display: none; }
+
+  /* ── INVENTORY SHEET PAGE ── */
+  .sheet-page-header { position: sticky; top: 0; background: var(--bg); z-index: 2; padding-top: 2px; margin-bottom: 2px; }
+  .chip-row { display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 12px; }
+  .chip-row::-webkit-scrollbar { display: none; }
+  .chip { flex-shrink: 0; padding: 6px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; border: 1px solid var(--border); background: var(--surface); color: var(--text2); white-space: nowrap; display: flex; align-items: center; gap: 5px; }
+  .chip.active { background: var(--surface2); border-color: var(--border2); color: var(--text); }
+  .sheet-stats-line { font-size: 12px; color: var(--text3); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .sort-btn { font-size: 12px; color: var(--accent); font-weight: 600; display: flex; align-items: center; gap: 3px; flex-shrink: 0; }
+  .sort-btn:active { opacity: 0.6; }
+
   @keyframes fadeUp { from { opacity:0; transform:translateY(8px) } to { opacity:1; transform:translateY(0) } }
   @keyframes fadeIn { from { opacity:0 } to { opacity:1 } }
   @keyframes sheetUp { from { transform:translateY(20px); opacity:0 } to { transform:translateY(0); opacity:1 } }
@@ -275,6 +294,14 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
     </div>
+  </div>
+  <div class="page-dots" id="page-dots" style="display:none">
+    <button class="dot active" onclick="goToHomePage(0)"></button>
+    <button class="dot" onclick="goToHomePage(1)"></button>
+  </div>
+  <div class="home-pager" id="home-pager" style="display:none">
+    <div class="home-page" id="home-page-crates"></div>
+    <div class="home-page" id="home-page-sheet"></div>
   </div>
   <div class="scroll" id="scroll"></div>
   <div id="loading-veil">Loading…</div>
@@ -359,8 +386,13 @@ let historyStack = [];
 let searchMode = false;
 let searchQuery = "";
 let html5QrCode = null;
+let homePage = 0; // 0 = crates grid, 1 = inventory sheet (swipe left from crates)
+let sheetQuery = "";
+let sheetStatusFilter = null;
+let sheetSort = { field: "name", dir: 1 }; // field: name | price | purchase_date | status
+const SORT_LABELS = { name: "Name", price: "Price", purchase_date: "Date added", status: "Status" };
 
-function pushHistory() { historyStack.push({ view, pathStack: [...pathStack], activeItemId }); }
+function pushHistory() { historyStack.push({ view, pathStack: [...pathStack], activeItemId, homePage }); }
 function currentLocationId() { return pathStack.length ? pathStack[pathStack.length - 1] : null; }
 
 // ============================================================
@@ -390,7 +422,7 @@ async function enterApp() {
   setLoading(true);
   await loadAll();
   setLoading(false);
-  view = "home"; pathStack = []; activeItemId = null; historyStack = [];
+  view = "home"; pathStack = []; activeItemId = null; historyStack = []; homePage = 0;
   render();
 }
 
@@ -459,7 +491,7 @@ function uniqueRegistryValues(field) {
 // ============================================================
 // NAVIGATION
 // ============================================================
-function goHome() { pushHistory(); view = "home"; pathStack = []; activeItemId = null; searchMode = false; searchQuery = ""; render(); }
+function goHome() { pushHistory(); view = "home"; pathStack = []; activeItemId = null; searchMode = false; searchQuery = ""; homePage = 0; render(); }
 function openLocation(id) { pushHistory(); view = "location"; pathStack.push(id); activeItemId = null; render(); }
 function openItem(itemId) {
   pushHistory();
@@ -478,9 +510,35 @@ function ancestorChain(id) {
 }
 function goBack() {
   const prev = historyStack.pop();
-  if (!prev) { view = "home"; pathStack = []; activeItemId = null; render(); return; }
-  view = prev.view; pathStack = prev.pathStack; activeItemId = prev.activeItemId;
+  if (!prev) { view = "home"; pathStack = []; activeItemId = null; homePage = 0; render(); return; }
+  view = prev.view; pathStack = prev.pathStack; activeItemId = prev.activeItemId; homePage = prev.homePage ?? 0;
   render();
+}
+function goToHomePage(i) {
+  homePage = i;
+  document.getElementById("search-wrap").style.display = i === 0 ? "" : "none";
+  updateDots();
+  const pager = document.getElementById("home-pager");
+  pager.scrollTo({ left: i * pager.clientWidth, behavior: "smooth" });
+}
+function updateDots() {
+  document.querySelectorAll("#page-dots .dot").forEach((d, i) => d.classList.toggle("active", i === homePage));
+}
+function initPagerScrollListener() {
+  const pager = document.getElementById("home-pager");
+  let debounce;
+  pager.addEventListener("scroll", () => {
+    clearTimeout(debounce);
+    debounce = setTimeout(() => {
+      const w = pager.clientWidth || 1;
+      const idx = Math.round(pager.scrollLeft / w);
+      if (idx !== homePage) {
+        homePage = idx;
+        document.getElementById("search-wrap").style.display = idx === 0 ? "" : "none";
+        updateDots();
+      }
+    }, 80);
+  }, { passive: true });
 }
 
 // ============================================================
@@ -488,10 +546,22 @@ function goBack() {
 // ============================================================
 function render() {
   renderNav();
-  document.getElementById("search-wrap").style.display = view === "home" ? "" : "none";
+  const isHome = view === "home";
+  document.getElementById("home-pager").style.display = isHome ? "flex" : "none";
+  document.getElementById("page-dots").style.display = isHome ? "flex" : "none";
+  document.getElementById("scroll").style.display = isHome ? "none" : "";
+  document.getElementById("search-wrap").style.display = isHome && homePage === 0 ? "" : "none";
   renderFab();
-  if (view === "home" && searchMode && searchQuery) renderSearch();
-  else if (view === "home") renderHome();
+  if (isHome) {
+    if (searchMode && searchQuery) renderSearch("home-page-crates");
+    else renderHome("home-page-crates");
+    renderSheetInto("home-page-sheet");
+    updateDots();
+    requestAnimationFrame(() => {
+      const pager = document.getElementById("home-pager");
+      pager.scrollLeft = homePage * pager.clientWidth;
+    });
+  }
   else if (view === "location") renderLocationView();
   else if (view === "item") renderItemView();
 }
@@ -535,7 +605,7 @@ function renderNav() {
 // ============================================================
 // HOME VIEW
 // ============================================================
-function renderHome() {
+function renderHome(targetId = "scroll") {
   const top = allTopLevel();
   const totalItems = items.length;
   let html = `<div class="stats-row">
@@ -564,7 +634,7 @@ function renderHome() {
     });
     html += `</div>`;
   }
-  document.getElementById("scroll").innerHTML = html;
+  document.getElementById(targetId).innerHTML = html;
   initSearch();
 }
 function initSearch() {
@@ -573,17 +643,17 @@ function initSearch() {
   const box = document.getElementById("search-box");
   if (!inp) return;
   inp.value = searchQuery;
-  inp.oninput = e => { searchQuery = e.target.value; clr.style.display = searchQuery ? "" : "none"; if (searchQuery) { searchMode = true; renderSearch(); } else { searchMode = false; renderHome(); } };
+  inp.oninput = e => { searchQuery = e.target.value; clr.style.display = searchQuery ? "" : "none"; if (searchQuery) { searchMode = true; renderSearch("home-page-crates"); } else { searchMode = false; renderHome("home-page-crates"); } };
   inp.onfocus = () => box.classList.add("focused");
   inp.onblur = () => box.classList.remove("focused");
-  clr.onclick = () => { searchQuery = ""; inp.value = ""; clr.style.display = "none"; searchMode = false; renderHome(); };
+  clr.onclick = () => { searchQuery = ""; inp.value = ""; clr.style.display = "none"; searchMode = false; renderHome("home-page-crates"); };
   clr.style.display = searchQuery ? "" : "none";
 }
 
 // ============================================================
 // SEARCH
 // ============================================================
-function renderSearch() {
+function renderSearch(targetId = "scroll") {
   const q = searchQuery.toLowerCase();
   const results = items.filter(i =>
     i.name.toLowerCase().includes(q) ||
@@ -614,9 +684,100 @@ function renderSearch() {
       ${svgIcon("M9 18l6-6-6-6",14,0.3)}
     </div>`;
   });
-  document.getElementById("scroll").innerHTML = html;
+  document.getElementById(targetId).innerHTML = html;
   initSearch();
   document.getElementById("search-input").focus();
+}
+
+// ============================================================
+// INVENTORY SHEET — stripped, mobile version of the PC dashboard's table.
+// Reached by swiping left from the crates page.
+// ============================================================
+function sheetFilteredSorted() {
+  const q = sheetQuery.trim().toLowerCase();
+  let rows = items.filter(i => {
+    if (sheetStatusFilter && i.status !== sheetStatusFilter) return false;
+    if (q && !((i.name || "").toLowerCase().includes(q) || (i.serial || "").toLowerCase().includes(q))) return false;
+    return true;
+  });
+  rows.sort((a, b) => {
+    let av, bv;
+    if (sheetSort.field === "price") { av = Number(a.price) || 0; bv = Number(b.price) || 0; }
+    else if (sheetSort.field === "purchase_date") { av = a.purchase_date || ""; bv = b.purchase_date || ""; }
+    else if (sheetSort.field === "status") { av = a.status || ""; bv = b.status || ""; }
+    else { av = (a.name || "").toLowerCase(); bv = (b.name || "").toLowerCase(); }
+    if (av < bv) return -1 * sheetSort.dir;
+    if (av > bv) return 1 * sheetSort.dir;
+    return 0;
+  });
+  return rows;
+}
+function renderSheetInto(targetId) {
+  const rows = sheetFilteredSorted();
+  const totalValue = rows.reduce((s, i) => s + (Number(i.price) || 0), 0);
+  const statuses = Object.keys(STATUS_META);
+  let html = `<div class="sheet-page-header">
+    <div class="section-label" style="padding-top:2px">Inventory</div>
+    <div class="search-box" id="sheet-search-box" style="margin-bottom:10px">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="flex-shrink:0;opacity:0.4"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input id="sheet-search-input" type="search" placeholder="Search inventory…" value="${escapeHtml(sheetQuery)}" oninput="onSheetSearchInput(this.value)">
+    </div>
+    <div class="chip-row">
+      <button class="chip${!sheetStatusFilter ? " active" : ""}" onclick="setSheetStatusFilter(null)">All</button>
+      ${statuses.map(s => `<button class="chip${sheetStatusFilter === s ? " active" : ""}" onclick="setSheetStatusFilter('${s}')"><span style="width:6px;height:6px;border-radius:50%;background:${STATUS_META[s].color};display:inline-block"></span>${STATUS_META[s].label}</button>`).join("")}
+    </div>
+    <div class="sheet-stats-line">
+      <span>${rows.length} item${rows.length !== 1 ? "s" : ""} · ${totalValue.toLocaleString()} Kč</span>
+      <button class="sort-btn" onclick="openSortSheet()">${SORT_LABELS[sheetSort.field]} ${sheetSort.dir === 1 ? "↑" : "↓"}</button>
+    </div>
+  </div>`;
+  if (!rows.length) {
+    html += `<div class="empty"><div class="empty-icon" style="background:rgba(76,201,240,0.1)">${svgIcon("M9 17V7m6 10V11m6 6V4M3 21h18",26,0.5,"#4CC9F0")}</div><h3>No items match</h3><p>Try a different search or filter</p></div>`;
+  } else {
+    html += rows.map(i => sheetRowHTML(i)).join("");
+  }
+  document.getElementById(targetId).innerHTML = html;
+}
+function sheetRowHTML(item) {
+  const sm = STATUS_META[item.status] || STATUS_META.idle;
+  const loc = item.location_id ? locationById(item.location_id) : null;
+  const locText = loc ? breadcrumbNames(loc.id).join(" › ") : "Unassigned";
+  return `<div class="item-row" onclick="openItem('${item.id}')">
+    <span class="item-dot" style="background:${sm.color}"></span>
+    <div class="item-info">
+      <div class="item-name">${escapeHtml(item.name)}</div>
+      <div class="item-serial">${escapeHtml(item.serial || "—")} · ${escapeHtml(locText)}</div>
+    </div>
+    <div style="text-align:right;flex-shrink:0;font-size:13px;font-weight:600">${formatPrice(item.price)}</div>
+  </div>`;
+}
+function onSheetSearchInput(val) {
+  sheetQuery = val;
+  renderSheetInto("home-page-sheet");
+  const inp = document.getElementById("sheet-search-input");
+  if (inp) { inp.focus(); try { inp.setSelectionRange(inp.value.length, inp.value.length); } catch (e) {} }
+}
+function setSheetStatusFilter(s) { sheetStatusFilter = s; renderSheetInto("home-page-sheet"); }
+function openSortSheet() {
+  const opts = [
+    { field: "name", dir: 1, label: "Name (A–Z)" },
+    { field: "name", dir: -1, label: "Name (Z–A)" },
+    { field: "price", dir: -1, label: "Price (high to low)" },
+    { field: "price", dir: 1, label: "Price (low to high)" },
+    { field: "purchase_date", dir: -1, label: "Recently added" },
+    { field: "status", dir: 1, label: "Status" },
+  ];
+  openSheet(`<div class="sheet-title">Sort by</div>` +
+    opts.map(o => `<div class="move-row" onclick="applySheetSort('${o.field}',${o.dir})">
+      <div style="flex:1;font-size:14px;font-weight:500">${o.label}</div>
+      ${sheetSort.field === o.field && sheetSort.dir === o.dir ? svgIcon("M20 6L9 17l-5-5",16,1,"var(--accent)") : ""}
+    </div>`).join("") +
+    `<button class="btn-cancel" onclick="closeSheet()" style="width:100%;margin-top:6px">Close</button>`);
+}
+function applySheetSort(field, dir) {
+  sheetSort = { field, dir: Number(dir) };
+  closeSheet();
+  renderSheetInto("home-page-sheet");
 }
 
 // ============================================================
@@ -1173,6 +1334,7 @@ function onScanSuccess(decodedText) {
 // ============================================================
 // START
 // ============================================================
+initPagerScrollListener();
 checkSession();
 </script>
 </body>
