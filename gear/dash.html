@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MLX Gear — Control</title>
+<script>(function(){try{var t=localStorage.getItem('mlx-gear-theme');if(t==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();</script>
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
@@ -22,6 +23,16 @@
     --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
     --idle: #6b7280; --in_use: #4CC9F0; --on_set: #9b5de5;
     --borrowed: #f4a261; --damaged: #FF4444; --repaired: #06D6A0;
+  }
+  :root[data-theme="light"] {
+    --bg: #F4F5F7;
+    --panel: #FFFFFF;
+    --panel2: #EDEEF1;
+    --line: rgba(16,17,20,0.09);
+    --line2: rgba(16,17,20,0.16);
+    --text: #101114;
+    --text-dim: rgba(16,17,20,0.6);
+    --text-faint: rgba(16,17,20,0.35);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; }
@@ -134,6 +145,56 @@
   .modal-actions { display: flex; gap: 8px; margin-top: 18px; }
   .code-add-btn { width: 38px; flex-shrink: 0; background: var(--panel2); border: 1px solid var(--line); border-radius: 8px; font-size: 16px; color: var(--text-dim); }
   .code-add-btn:hover { color: var(--text); border-color: var(--line2); }
+
+  /* Theme toggle */
+  #theme-toggle { font-size: 15px; padding: 6px 9px; border-radius: 6px; color: var(--text-dim); background: none; }
+  #theme-toggle:hover { background: var(--panel2); color: var(--text); }
+
+  /* Color swatches (locations) */
+  .color-grid { display: grid; grid-template-columns: repeat(8,1fr); gap: 8px; margin-bottom: 14px; }
+  .color-swatch { aspect-ratio: 1; border-radius: 8px; border: 2px solid transparent; cursor: pointer; }
+  .color-swatch.active { border-color: var(--text); }
+  .loc-icon.colored { border: 1px solid transparent; }
+
+  /* ============================================================
+     RESPONSIVE / MOBILE
+     ============================================================ */
+  @media (max-width: 760px) {
+    #topbar { flex-wrap: wrap; row-gap: 10px; padding: 12px 14px; }
+    #topbar .wordmark { order: 1; }
+    #tabs { order: 2; }
+    #topbar .spacer { display: none; }
+    #user-email { display: none; }
+    #theme-toggle, #signout { order: 3; }
+    #search { order: 4; max-width: none; width: 100%; flex: 1 1 100%; }
+
+    #filters { padding: 10px 14px; overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; }
+    #filters::-webkit-scrollbar { display: none; }
+    #filters .pill, #filters select, #filters input { flex-shrink: 0; }
+    #filters .filter-spacer { display: none; }
+    #stats-bar { flex-shrink: 0; }
+
+    #table-wrap, #locations-wrap { padding: 0 10px 100px; }
+
+    /* Card-style table on narrow screens */
+    table thead { display: none; }
+    table, tbody, tr, td { display: block; width: 100%; }
+    tbody tr {
+      background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+      margin: 10px 0; padding: 4px 0; overflow: hidden;
+    }
+    tbody tr td { border-bottom: none; padding: 7px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    tbody tr td::before { content: attr(data-label); font-size: 10.5px; font-weight: 600; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.4px; flex-shrink: 0; }
+    tbody tr td.serial { padding-top: 12px; }
+    tbody tr td.name { font-size: 14.5px; }
+    tbody tr td:last-child { padding-bottom: 12px; }
+
+    #panel { width: 100%; max-width: 100%; }
+    #modal, #loc-modal { width: 94vw; padding: 20px; }
+    .color-grid { grid-template-columns: repeat(6,1fr); }
+    .loc-row { flex-wrap: wrap; }
+    #fab { bottom: 20px; right: 20px; }
+  }
 </style>
 </head>
 <body>
@@ -158,6 +219,7 @@
     <input id="search" placeholder="Search serial or name…" oninput="renderTable()">
     <div class="spacer"></div>
     <div id="user-email"></div>
+    <button id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark">🌙</button>
     <button id="signout" onclick="doLogout()">Sign out</button>
   </div>
 
@@ -319,10 +381,10 @@
   </div>
 </div>
 
-<!-- Add Location modal -->
+<!-- Add/Edit Location modal -->
 <div id="loc-modal-overlay">
   <div id="loc-modal">
-    <h2>Add location</h2>
+    <h2 id="loc-modal-title">Add location</h2>
     <div class="form-row">
       <span class="field-label">Name</span>
       <input id="loc-name" placeholder="e.g. Case 03, Gaffer bag">
@@ -342,9 +404,11 @@
         <select id="loc-parent"><option value="">— Top level —</option></select>
       </div>
     </div>
+    <span class="field-label">Color</span>
+    <div class="color-grid" id="loc-color-grid"></div>
     <div class="modal-actions">
       <button class="btn ghost" onclick="closeLocationModal()">Cancel</button>
-      <button class="btn primary" onclick="submitNewLocation()">Add location</button>
+      <button class="btn primary" id="loc-modal-submit" onclick="submitNewLocation()">Add location</button>
     </div>
   </div>
 </div>
@@ -366,6 +430,7 @@ const STATUS_META = {
   repaired:  { label: "Repaired",  color: "var(--repaired)" },
 };
 const LOC_ICON = { case: "🧳", crate: "📦", box: "🗃️", bag: "👜" };
+const PALETTES = ["#4CC9F0","#FF6B6B","#FFD166","#06D6A0","#7B5EA7","#FF8C42","#F72585","#118AB2","#E76F51","#A8DADC","#6b7280","#9b5de5"];
 const STARTER_CATEGORIES = { C: "Camera", L: "Lens", W: "Wireless", P: "Power", G: "Grip", T: "Tripod/Support", I: "Illumination", A: "Audio" };
 const STARTER_TYPES = { C: "Cinema", M: "Mirrorless", P: "Prime", Z: "Zoom" };
 const STARTER_BRANDS = { A: "ARRI", B: "Blackmagic", C: "Canon", S: "Sony", F: "Fujifilm", R: "RED", P: "Panasonic", N: "Nikon", D: "DJI", Z: "Zeiss", G: "Sigma", T: "Teradek" };
@@ -380,6 +445,23 @@ let sortDir = 1;
 let panelItemId = null;
 let currentTab = "inventory";
 let pendingLocationParent = null;
+
+// ============================================================
+// THEME
+// ============================================================
+function currentTheme() { return document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark"; }
+function updateThemeToggleIcon() {
+  const btn = document.getElementById("theme-toggle");
+  if (btn) btn.textContent = currentTheme() === "light" ? "☀️" : "🌙";
+}
+function toggleTheme() {
+  const next = currentTheme() === "light" ? "dark" : "light";
+  if (next === "light") document.documentElement.setAttribute("data-theme", "light");
+  else document.documentElement.removeAttribute("data-theme");
+  try { localStorage.setItem("mlx-gear-theme", next); } catch (e) {}
+  updateThemeToggleIcon();
+}
+updateThemeToggleIcon();
 
 // ============================================================
 // AUTH
@@ -441,7 +523,7 @@ async function loadItems() {
   }));
 }
 async function loadLocations() {
-  const { data, error } = await sb.from("locations").select("*").order("name");
+  const { data, error } = await sb.from("locations").select("id, name, location_type, parent_id, color").order("name");
   if (error) { console.error(error); return; }
   locations = data || [];
 }
@@ -459,6 +541,12 @@ function locationBreadcrumb(id) {
 }
 function locationPathFor(item) { return item.location_id ? locationBreadcrumb(item.location_id) : ""; }
 function childrenOf(parentId) { return locations.filter(l => (l.parent_id || null) === (parentId || null)); }
+function hashColor(id) {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
+  return PALETTES[h % PALETTES.length];
+}
+function locationColor(loc) { return loc?.color || (loc ? hashColor(loc.id) : PALETTES[0]); }
 function descendantIds(id) {
   const out = [id];
   childrenOf(id).forEach(c => out.push(...descendantIds(c.id)));
@@ -540,13 +628,13 @@ function renderTable() {
   body.innerHTML = rows.map(i => {
     const sm = STATUS_META[i.status] || STATUS_META.idle;
     return `<tr onclick="openPanel('${i.id}')">
-      <td class="serial">${i.serial}</td>
-      <td class="name">${escapeHtml(i.name)}</td>
-      <td class="dim">${escapeHtml(i.category)}</td>
-      <td class="dim">${escapeHtml(i.locationPath) || "—"}</td>
-      <td><span class="status-pill"><span class="dot" style="background:${sm.color}"></span>${sm.label}</span></td>
-      <td class="dim">${i.purchase_date || "—"}</td>
-      <td class="dim">${i.price ? Number(i.price).toLocaleString() + " Kč" : "—"}</td>
+      <td class="serial" data-label="Serial">${i.serial}</td>
+      <td class="name" data-label="Name">${escapeHtml(i.name)}</td>
+      <td class="dim" data-label="Category">${escapeHtml(i.category)}</td>
+      <td class="dim" data-label="Location">${escapeHtml(i.locationPath) || "—"}</td>
+      <td data-label="Status"><span class="status-pill"><span class="dot" style="background:${sm.color}"></span>${sm.label}</span></td>
+      <td class="dim" data-label="Purchased">${i.purchase_date || "—"}</td>
+      <td class="dim" data-label="Price">${i.price ? Number(i.price).toLocaleString() + " Kč" : "—"}</td>
     </tr>`;
   }).join("");
 }
@@ -562,16 +650,20 @@ function renderLocationsView() {
     list.innerHTML = `<div id="empty-state">No locations yet — add a case, crate, box or bag to start organizing gear.</div>`;
     return;
   }
+  const narrow = window.innerWidth <= 760;
+  const indent = narrow ? 10 : 22;
   function renderNode(loc, depth) {
     const stats = locationStats(loc.id);
     const kids = childrenOf(loc.id);
-    const rowHtml = `<div class="loc-row" style="margin-left:${depth * 22}px" onclick="filterByLocation('${loc.id}')">
-      <div class="loc-icon">${LOC_ICON[loc.location_type] || "📦"}</div>
+    const col = locationColor(loc);
+    const rowHtml = `<div class="loc-row" style="margin-left:${depth * indent}px" onclick="filterByLocation('${loc.id}')">
+      <div class="loc-icon colored" style="background:${col}22;border-color:${col}44">${LOC_ICON[loc.location_type] || "📦"}</div>
       <div class="loc-info">
         <div class="loc-name">${escapeHtml(loc.name)}</div>
         <div class="loc-sub">${loc.location_type}${kids.length ? ` · ${kids.length} inside` : ""}</div>
       </div>
       <div class="loc-stats"><b>${stats.count}</b> item${stats.count===1?"":"s"}<br>${stats.value.toLocaleString()} Kč</div>
+      <button class="loc-add-btn" onclick="event.stopPropagation(); openEditLocationModal('${loc.id}')" title="Edit">✎</button>
       <button class="loc-add-btn" onclick="event.stopPropagation(); openLocationModal('${loc.id}')" title="Add location inside">+</button>
       <button class="loc-add-btn" onclick="event.stopPropagation(); deleteLocation('${loc.id}')" title="Delete">✕</button>
     </div>`;
@@ -585,12 +677,40 @@ function filterByLocation(id) {
   renderFilters();
   renderTable();
 }
+function renderColorGrid(selected) {
+  const grid = document.getElementById("loc-color-grid");
+  grid.innerHTML = PALETTES.map(c =>
+    `<button type="button" class="color-swatch${c === selected ? " active" : ""}" style="background:${c}" data-color="${c}" onclick="selectLocColor(this)"></button>`
+  ).join("");
+}
+function selectLocColor(el) {
+  document.querySelectorAll("#loc-color-grid .color-swatch").forEach(s => s.classList.remove("active"));
+  el.classList.add("active");
+}
+let editingLocationId = null;
 function openLocationModal(parentId) {
+  editingLocationId = null;
   pendingLocationParent = parentId;
+  document.getElementById("loc-modal-title").textContent = "Add location";
+  document.getElementById("loc-modal-submit").textContent = "Add location";
   document.getElementById("loc-name").value = "";
   document.getElementById("loc-type").value = "case";
   populateLocationSelect("loc-parent", { includeEmpty: true });
   document.getElementById("loc-parent").value = parentId || "";
+  renderColorGrid(PALETTES[Math.floor(Math.random() * PALETTES.length)]);
+  document.getElementById("loc-modal-overlay").classList.add("show");
+}
+function openEditLocationModal(id) {
+  const loc = locationById(id);
+  if (!loc) return;
+  editingLocationId = id;
+  document.getElementById("loc-modal-title").textContent = "Edit location";
+  document.getElementById("loc-modal-submit").textContent = "Save changes";
+  document.getElementById("loc-name").value = loc.name;
+  document.getElementById("loc-type").value = loc.location_type;
+  populateLocationSelect("loc-parent", { includeEmpty: true, excludeId: id });
+  document.getElementById("loc-parent").value = loc.parent_id || "";
+  renderColorGrid(locationColor(loc));
   document.getElementById("loc-modal-overlay").classList.add("show");
 }
 function closeLocationModal() { document.getElementById("loc-modal-overlay").classList.remove("show"); }
@@ -598,9 +718,15 @@ async function submitNewLocation() {
   const name = document.getElementById("loc-name").value.trim();
   const location_type = document.getElementById("loc-type").value;
   const parent_id = document.getElementById("loc-parent").value || null;
+  const color = document.querySelector("#loc-color-grid .color-swatch.active")?.dataset.color || null;
   if (!name) { alert("Give the location a name."); return; }
-  const { error } = await sb.from("locations").insert({ name, location_type, parent_id });
-  if (error) { alert("Could not add location: " + error.message); return; }
+  let error;
+  if (editingLocationId) {
+    ({ error } = await sb.from("locations").update({ name, location_type, parent_id, color }).eq("id", editingLocationId));
+  } else {
+    ({ error } = await sb.from("locations").insert({ name, location_type, parent_id, color }));
+  }
+  if (error) { alert("Could not save location: " + error.message); return; }
   closeLocationModal();
   await loadLocations();
   if (currentTab === "locations") renderLocationsView(); else { renderFilters(); renderTable(); }
