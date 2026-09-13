@@ -1490,7 +1490,15 @@ function closeScanner() {
   }
 }
 function onScanSuccess(decodedText) {
-  const code = (decodedText || "").trim();
+  let code = (decodedText || "").trim();
+  // Tags now encode a full lookup URL (https://.../lookup.html?s=SERIAL) so
+  // external phone cameras land on the public page; extract the serial back
+  // out of that for the app's own faster in-app open-item flow.
+  try {
+    const url = new URL(code);
+    const fromParam = url.searchParams.get("s") || url.searchParams.get("serial");
+    if (fromParam) code = fromParam;
+  } catch (e) { /* not a URL — treat decodedText as a bare serial, e.g. from the barcode */ }
   closeScanner();
   const item = items.find(i => (i.serial || "").toLowerCase() === code.toLowerCase());
   if (!item) { toast(`No item found for "${code}"`); return; }
