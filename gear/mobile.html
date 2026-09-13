@@ -59,6 +59,9 @@
     --card-shadow: none;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  *, *::before, *::after {
+    transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, fill 0.35s ease, stroke 0.35s ease;
+  }
   html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--font); }
   body { overflow: hidden; }
   button { font-family: var(--font); cursor: pointer; border: none; background: none; color: inherit; }
@@ -85,23 +88,23 @@
   /* ── NAV ── */
   .nav { padding: calc(var(--safe-top) + 14px) 16px 0; flex-shrink: 0; background: var(--bg); position: sticky; top: 0; z-index: 10; }
   .nav-row { display: flex; align-items: center; gap: 10px; padding-bottom: 12px; }
-  .nav-back { width: 34px; height: 34px; border-radius: 50%; background: var(--surface2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: opacity 0.15s; }
+  .nav-back { width: 34px; height: 34px; border-radius: 50%; background: var(--surface2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: opacity 0.15s, background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease; }
   .nav-back:active { opacity: 0.5; }
   .nav-title { flex: 1; min-width: 0; }
   .nav-title h1 { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .nav-title .breadcrumb { font-size: 12px; color: var(--text3); margin-bottom: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .nav-actions { display: flex; gap: 8px; flex-shrink: 0; }
-  .icon-btn { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--surface2); transition: opacity 0.15s; }
+  .icon-btn { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--surface2); transition: opacity 0.15s, background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease; }
   .icon-btn:active { opacity: 0.5; }
   .icon-btn.danger { background: rgba(255,68,68,0.12); color: #FF4444; }
   .icon-btn.accent { background: var(--accent-soft); color: var(--accent); }
 
   /* ── SEARCH ── */
   .page-search-header { position: sticky; top: 0; background: var(--bg); z-index: 3; padding-bottom: 10px; margin-bottom: 2px; }
-  .search-box { display: flex; align-items: center; gap: 9px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 13px; transition: border-color 0.2s; }
+  .search-box { display: flex; align-items: center; gap: 9px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 13px; transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease; }
   .search-box.focused { border-color: var(--border2); }
   .search-box input { flex: 1; background: none; border: none; font-size: 15px; outline: none; }
-  .search-box button { display: flex; color: var(--text3); transition: opacity 0.15s; }
+  .search-box button { display: flex; color: var(--text3); transition: opacity 0.15s, background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease; }
   .search-box button:active { opacity: 0.5; }
 
   /* ── SCROLL AREA ── */
@@ -114,7 +117,7 @@
 
   /* ── CRATE CARDS ── */
   .crate-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .crate-card { background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 16px; cursor: pointer; position: relative; overflow: hidden; min-height: 130px; display: flex; flex-direction: column; transition: transform 0.18s; box-shadow: var(--card-shadow); }
+  .crate-card { background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 16px; cursor: pointer; position: relative; overflow: hidden; min-height: 130px; display: flex; flex-direction: column; transition: transform 0.18s, background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease; box-shadow: var(--card-shadow); }
   .crate-card:active { transform: scale(0.97); }
   .crate-card-glow { position: absolute; inset: 0; pointer-events: none; }
   .crate-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -126,7 +129,7 @@
   .bar-fill { height: 100%; border-radius: 1px; opacity: 0.6; }
 
   /* ── CONTAINER LIST ── */
-  .container-card { background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 8px; cursor: pointer; transition: background 0.15s; box-shadow: var(--card-shadow); }
+  .container-card { background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 8px; cursor: pointer; transition: background 0.15s, background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease; box-shadow: var(--card-shadow); }
   .container-card:active { background: var(--bg3); }
   .container-card-header { display: flex; align-items: center; gap: 12px; padding: 13px 14px; }
   .container-type-icon { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -138,7 +141,7 @@
   .preview-dot { width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; }
 
   /* ── ITEM ROWS ── */
-  .item-row { display: flex; align-items: center; gap: 10px; padding: 12px 4px; border-bottom: 0.5px solid var(--border); cursor: pointer; transition: background 0.12s; border-radius: 4px; }
+  .item-row { display: flex; align-items: center; gap: 10px; padding: 12px 4px; border-bottom: 0.5px solid var(--border); cursor: pointer; transition: background 0.12s, background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease; border-radius: 4px; }
   .item-row:last-child { border-bottom: none; }
   .item-row:active { background: var(--surface); }
   .item-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
@@ -209,7 +212,7 @@
 
   /* ── FAB ── */
   .fab-wrap { position: fixed; bottom: calc(var(--safe-bottom) + 16px); right: 20px; max-width: calc(480px - 20px); pointer-events: none; display: flex; justify-content: flex-end; }
-  .fab { width: 52px; height: 52px; border-radius: 16px; border: none; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 28px rgba(0,0,0,0.3); pointer-events: all; transition: transform 0.15s; }
+  .fab { width: 52px; height: 52px; border-radius: 16px; border: none; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 28px rgba(0,0,0,0.3); pointer-events: all; transition: transform 0.15s, background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease; }
   .fab:active { transform: scale(0.93); }
 
   /* ── SHEET ── */
@@ -217,12 +220,28 @@
   .sheet { background: var(--bg2); border-radius: 22px 22px 0 0; border: 0.5px solid var(--border); padding: 12px 18px calc(var(--safe-bottom) + 24px); width: 100%; max-width: 480px; animation: sheetUp 0.28s cubic-bezier(0.4,0,0.2,1); max-height: 85vh; overflow-y: auto; overflow-x: hidden; box-shadow: 0 -2px 20px rgba(0,0,0,0.08); }
   .sheet-handle { width: 38px; height: 4px; background: var(--border2); border-radius: 2px; margin: 0 auto 18px; }
   .sheet-title { font-size: 17px; font-weight: 700; margin-bottom: 16px; letter-spacing: -0.3px; }
-  .sheet-input { width: 100%; min-width: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 13px; font-size: 15px; color: var(--text); margin-bottom: 10px; outline: none; transition: border-color 0.2s; }
+  .sheet-input { width: 100%; min-width: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 13px; font-size: 15px; color: var(--text); margin-bottom: 10px; outline: none; transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease; }
   .sheet-input:focus { border-color: var(--border2); }
   textarea.sheet-input { resize: none; line-height: 1.6; min-height: 80px; }
   select.sheet-input { appearance: none; -webkit-appearance: none; text-overflow: ellipsis; }
   .sheet-row-2 { display: flex; gap: 8px; }
   .sheet-row-2 > * { flex: 1; min-width: 0; }
+  .users-list-m { display: flex; flex-direction: column; gap: 2px; max-height: 45vh; overflow-y: auto; }
+  .user-row-m { display: flex; align-items: center; gap: 10px; padding: 10px 2px; border-bottom: 1px solid var(--border); }
+  .user-row-m:last-child { border-bottom: none; }
+  .user-avatar-m { width: 30px; height: 30px; border-radius: 50%; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 11.5px; font-weight: 700; color: var(--text2); flex-shrink: 0; }
+  .user-email-m { flex: 1; min-width: 0; font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .role-badge-m { font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 999px; letter-spacing: 0.3px; text-transform: uppercase; flex-shrink: 0; }
+  .role-badge-m.role-owner { background: rgba(255,209,102,0.18); color: #C9971A; }
+  .role-badge-m.role-admin { background: rgba(76,201,240,0.18); color: #2B9BC4; }
+  .role-badge-m.role-editor { background: rgba(6,214,160,0.18); color: #06A67F; }
+  .role-badge-m.role-guest { background: rgba(107,114,128,0.18); color: #6b7280; }
+  .role-select-m { width: auto; padding: 6px 9px; font-size: 12px; flex-shrink: 0; margin-bottom: 0; }
+  .add-user-row-m { display: flex; gap: 8px; align-items: center; }
+  html[data-theme="dark"] .role-badge-m.role-owner { color: #FFD166; }
+  html[data-theme="dark"] .role-badge-m.role-admin { color: #4CC9F0; }
+  html[data-theme="dark"] .role-badge-m.role-editor { color: #06D6A0; }
+  html[data-theme="dark"] .role-badge-m.role-guest { color: #9aa1ac; }
   .sheet-btn-row { display: flex; gap: 8px; margin-top: 4px; }
   .btn-cancel { flex: 1; background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 13px; font-size: 15px; font-weight: 600; color: var(--text2); }
   .btn-cancel:active { background: var(--surface2); }
@@ -344,6 +363,29 @@ const SUPABASE_URL = "https://depprbklgspiawqhnuev.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_lVIYRLl-dosIn7XvKWrxOg_PC3oT7t-";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// ============================================================
+// ROLES — same four tiers and same user_roles table as the PC dashboard
+// ============================================================
+const ROLE_LABELS = { owner: "Owner", admin: "Admin", editor: "Editor", guest: "Guest" };
+let myRole = null;
+async function loadMyRole() {
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) { myRole = "guest"; return; }
+  const { data } = await sb.from("user_roles").select("role").eq("user_id", user.id).maybeSingle();
+  myRole = data?.role || "guest";
+}
+function canEditItems() { return ["owner", "admin", "editor"].includes(myRole); }
+function canManageRoles() { return ["owner", "admin"].includes(myRole); }
+function canEditTargetRole(targetRole) {
+  if (myRole === "owner") return targetRole !== "owner";
+  if (myRole === "admin") return !["owner", "admin"].includes(targetRole);
+  return false;
+}
+function requireEdit() {
+  if (!canEditItems()) { toast("Guests can only view — no editing on this account."); return false; }
+  return true;
+}
+
 const STATUS_META = {
   idle:      { label: "Idle",      color: "#6b7280" },
   in_use:    { label: "In use",    color: "#4CC9F0" },
@@ -448,6 +490,7 @@ async function enterApp() {
   document.getElementById("login-screen").style.display = "none";
   document.getElementById("app").style.display = "flex";
   setLoading(true);
+  await loadMyRole();
   await loadAll();
   setLoading(false);
   view = "home"; pathStack = []; activeItemId = null; historyStack = []; homePage = 0;
@@ -602,24 +645,25 @@ function renderNav() {
     title = `<div class="page-dots" id="page-dots"><button class="dot${homePage===0?' active':''}" onclick="goToHomePage(0)"></button><button class="dot${homePage===1?' active':''}" onclick="goToHomePage(1)"></button></div>`;
     right = `
       <button class="icon-btn" id="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme"></button>
+      ${canManageRoles() ? `<button class="icon-btn accent" onclick="openUsersSheet()" title="Users">${svgIcon("M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75",16)}</button>` : ""}
       <button class="icon-btn accent" onclick="openScanner()" title="Scan tag">${svgIcon("M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M3 12h18",16)}</button>
-      <button class="icon-btn accent" onclick="openAddLocationSheet(null)" title="New crate">${svgIcon("M12 5v14M5 12h14",16)}</button>`;
+      ${canEditItems() ? `<button class="icon-btn accent" onclick="openAddLocationSheet(null)" title="New crate">${svgIcon("M12 5v14M5 12h14",16)}</button>` : ""}`;
   } else if (view === "location") {
     const crumbs = breadcrumbNames(loc?.id).slice(0, -1).join(" › ");
     left = `<button class="nav-back" onclick="goBack()">${svgIcon("M15 18l-6-6 6-6",20)}</button>`;
     title = `${crumbs ? `<div class="breadcrumb">${escapeHtml(crumbs)}</div>` : ""}<h1>${escapeHtml(loc?.name || "")}</h1>`;
-    right = `
+    right = canEditItems() ? `
       <button class="icon-btn" onclick="openRenameLocationSheet('${loc?.id}')" title="Rename">${svgIcon("M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z",16)}</button>
       <button class="icon-btn" onclick="openColorSheet('${loc?.id}')" style="background:${locationColor(loc)}22;border:0.5px solid ${locationColor(loc)}40"><span style="width:10px;height:10px;border-radius:50%;background:${locationColor(loc)};display:inline-block"></span></button>
-      <button class="icon-btn danger" onclick="openDeleteLocationSheet('${loc?.id}')" title="Delete">${svgIcon("M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2",16)}</button>`;
+      <button class="icon-btn danger" onclick="openDeleteLocationSheet('${loc?.id}')" title="Delete">${svgIcon("M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2",16)}</button>` : "";
   } else if (view === "item") {
     const crumbs = [itemLoc?.name ? breadcrumbNames(itemLoc.id).join(" › ") : "Unassigned"].join("");
     left = `<button class="nav-back" onclick="goBack()">${svgIcon("M15 18l-6-6 6-6",20)}</button>`;
     title = `<div class="breadcrumb">${escapeHtml(crumbs)}</div><h1 style="font-size:15px">${escapeHtml(item?.name || "")}</h1>`;
-    right = `
+    right = canEditItems() ? `
       <button class="icon-btn" onclick="openMoveSheet('${item?.id}')" title="Move">${svgIcon("M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20",16)}</button>
       <button class="icon-btn" onclick="openEditItemSheet('${item?.id}')" title="Edit">${svgIcon("M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z",16)}</button>
-      <button class="icon-btn danger" onclick="deleteItemConfirm('${item?.id}')" title="Delete">${svgIcon("M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2",16)}</button>`;
+      <button class="icon-btn danger" onclick="deleteItemConfirm('${item?.id}')" title="Delete">${svgIcon("M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2",16)}</button>` : "";
   }
   nav.innerHTML = `<div class="nav-row">${left}<div class="nav-title">${title}</div><div class="nav-actions">${right}</div></div>`;
   applyThemeIcon();
@@ -854,10 +898,10 @@ function renderLocationView() {
   loose.forEach((item, i) => { html += itemRowHTML(item, i, ac); });
   html += `</div>`;
 
-  html += `<div class="add-row">
+  html += canEditItems() ? `<div class="add-row">
     <button class="add-btn" onclick="openAddLocationSheet('${loc.id}')">${svgIcon(ICON_PATH.bag,14,0.7)} Add bag/box</button>
     <button class="add-btn" onclick="openAddItemSheet('${loc.id}')">${svgIcon("M12 5v14M5 12h14",14,0.7)} Add item</button>
-  </div></div>`;
+  </div></div>` : `</div>`;
 
   document.getElementById("scroll").innerHTML = html;
   document.getElementById("scroll").scrollTop = 0;
@@ -873,7 +917,7 @@ function itemRowHTML(item, i, accentColor) {
       <div class="item-serial">${escapeHtml(item.serial || "—")}</div>
     </div>
     <span class="item-tier ${tierClass}">${item.tier || "C"}</span>
-    <button class="item-row-btn move" onclick="event.stopPropagation();openMoveSheet('${item.id}')" title="Move">${svgIcon("M5 9l-3 3 3 3M19 9l3 3-3 3M2 12h20",14)}</button>
+    ${canEditItems() ? `<button class="item-row-btn move" onclick="event.stopPropagation();openMoveSheet('${item.id}')" title="Move">${svgIcon("M5 9l-3 3 3 3M19 9l3 3-3 3M2 12h20",14)}</button>` : ""}
   </div>`;
 }
 
@@ -915,9 +959,14 @@ function renderItemView() {
   document.getElementById("scroll").scrollTop = 0;
 
   const statusRow = document.getElementById("status-row-m");
-  statusRow.innerHTML = Object.entries(STATUS_META).map(([key, m]) =>
-    `<button class="status-choice-m${item.status === key ? " active" : ""}" onclick="quickSetStatus('${item.id}','${key}')"><span style="width:6px;height:6px;border-radius:50%;background:${m.color};display:inline-block"></span>${m.label}</button>`
-  ).join("");
+  if (canEditItems()) {
+    statusRow.innerHTML = Object.entries(STATUS_META).map(([key, m]) =>
+      `<button class="status-choice-m${item.status === key ? " active" : ""}" onclick="quickSetStatus('${item.id}','${key}')"><span style="width:6px;height:6px;border-radius:50%;background:${m.color};display:inline-block"></span>${m.label}</button>`
+    ).join("");
+  } else {
+    const sm = STATUS_META[item.status] || STATUS_META.idle;
+    statusRow.innerHTML = `<span class="status-choice-m active"><span style="width:6px;height:6px;border-radius:50%;background:${sm.color};display:inline-block"></span>${sm.label}</span>`;
+  }
 
   loadEvents(item.id);
 }
@@ -929,6 +978,7 @@ async function loadEvents(itemId) {
   log.innerHTML = data.map(e => `<div class="event-row-m"><span>${escapeHtml(e.detail || e.event_type)}</span><span>${new Date(e.occurred_at).toLocaleDateString()}</span></div>`).join("");
 }
 async function quickSetStatus(itemId, status) {
+  if (!requireEdit()) return;
   const item = items.find(i => i.id === itemId);
   if (!item || item.status === status) return;
   const { error } = await sb.from("items").update({ status }).eq("id", itemId);
@@ -944,10 +994,75 @@ async function quickSetStatus(itemId, status) {
 // ============================================================
 function renderFab() {
   const fab = document.getElementById("fab-wrap");
-  if (view === "home" || view === "item") { fab.innerHTML = ""; return; }
+  if (view === "home" || view === "item" || !canEditItems()) { fab.innerHTML = ""; return; }
   const loc = locationById(currentLocationId());
   const ac = locationColor(loc);
   fab.innerHTML = `<button class="fab" style="background:${ac};box-shadow:0 8px 28px ${ac}55" onclick="openAddItemSheet('${loc?.id || ""}')">${svgIcon("M12 5v14M5 12h14",22,1,"#fff")}</button>`;
+}
+
+// ============================================================
+// USERS & ROLES — stripped-down version of the PC dashboard's tab
+// ============================================================
+let userRows = [];
+function initialsFor(email) { return (email || "?").slice(0, 2).toUpperCase(); }
+async function loadUsers() {
+  const { data, error } = await sb.from("user_roles").select("user_id, email, role").order("role");
+  if (error) { toast("Could not load users"); userRows = []; return; }
+  const order = { owner: 0, admin: 1, editor: 2, guest: 3 };
+  userRows = (data || []).sort((a, b) => (order[a.role] ?? 9) - (order[b.role] ?? 9) || (a.email || "").localeCompare(b.email || ""));
+}
+async function openUsersSheet() {
+  if (!canManageRoles()) return;
+  await loadUsers();
+  const { data: { user } } = await sb.auth.getUser();
+  const myId = user?.id;
+  const canManage = canManageRoles();
+  const rows = userRows.map(u => {
+    const canEditThis = canManage && canEditTargetRole(u.role) && u.user_id !== myId;
+    const roleOptions = ["owner","admin","editor","guest"]
+      .filter(r => myRole === "owner" || !["owner","admin"].includes(r))
+      .map(r => `<option value="${r}" ${r===u.role?"selected":""}>${ROLE_LABELS[r]}</option>`).join("");
+    return `<div class="user-row-m">
+      <div class="user-avatar-m">${initialsFor(u.email)}</div>
+      <div class="user-email-m">${escapeHtml(u.email || u.user_id)}${u.user_id===myId ? " (you)" : ""}</div>
+      ${canEditThis
+        ? `<select class="role-select-m" onchange="setUserRole('${u.user_id}', this.value)">${roleOptions}</select>`
+        : `<span class="role-badge-m role-${u.role}">${ROLE_LABELS[u.role] || u.role}</span>`}
+    </div>`;
+  }).join("") || `<p style="font-size:13px;color:var(--text3);padding:8px 0">No one has an assigned role yet.</p>`;
+
+  const assignable = myRole === "owner" ? ["admin","editor","guest"] : ["editor","guest"];
+  const addRow = canManage ? `
+    <div class="sheet-label" style="margin-top:16px">Grant access</div>
+    <div class="add-user-row-m">
+      <input class="sheet-input" id="s-add-user-email" placeholder="Email (must have signed in once)" style="margin-bottom:0;flex:1">
+      <select id="s-add-user-role" style="width:auto">${assignable.map(r => `<option value="${r}">${ROLE_LABELS[r]}</option>`).join("")}</select>
+    </div>
+    <button class="btn-confirm" style="width:100%;margin-top:10px" onclick="submitAddUserRole()">Grant access</button>` : "";
+
+  openSheet(`
+    <div class="sheet-title">Users</div>
+    <div class="users-list-m">${rows}</div>
+    ${addRow}
+  `);
+}
+async function setUserRole(userId, newRole) {
+  const { error } = await sb.from("user_roles").update({ role: newRole }).eq("user_id", userId);
+  if (error) { toast("Could not update role"); return; }
+  toast("Role updated");
+  openUsersSheet();
+}
+async function submitAddUserRole() {
+  const email = document.getElementById("s-add-user-email")?.value.trim();
+  const role = document.getElementById("s-add-user-role")?.value;
+  if (!email) { toast("Enter an email first"); return; }
+  const { data: uid, error: lookupError } = await sb.rpc("get_user_id_by_email", { p_email: email });
+  if (lookupError) { toast("Lookup failed: " + lookupError.message); return; }
+  if (!uid) { toast("No account found — they need to sign in once first"); return; }
+  const { error } = await sb.from("user_roles").upsert({ user_id: uid, email, role });
+  if (error) { toast("Could not grant access: " + error.message); return; }
+  toast("Access granted");
+  openUsersSheet();
 }
 
 // ============================================================
@@ -966,6 +1081,7 @@ function closeSheet() { document.getElementById("sheet-overlay").style.display =
 let _newLocType = "case";
 let _newLocParent = null;
 function openAddLocationSheet(parentId) {
+  if (!requireEdit()) return;
   _newLocParent = parentId || null;
   _newLocType = parentId ? "bag" : "case";
   openSheet(`
@@ -990,6 +1106,7 @@ function selectLocColor(el) {
   if (btn) btn.style.background = el.dataset.color;
 }
 async function submitNewLocation() {
+  if (!requireEdit()) return;
   const name = document.getElementById("s-name")?.value.trim();
   if (!name) return;
   const color = document.querySelector(".color-swatch.active")?.dataset.color || PALETTES[0];
@@ -1001,6 +1118,7 @@ async function submitNewLocation() {
 }
 
 function openRenameLocationSheet(id) {
+  if (!requireEdit()) return;
   const loc = locationById(id);
   openSheet(`
     <div class="sheet-title">Rename</div>
@@ -1011,6 +1129,7 @@ function openRenameLocationSheet(id) {
     </div>`);
 }
 async function submitRenameLocation(id) {
+  if (!requireEdit()) return;
   const name = document.getElementById("s-name")?.value.trim();
   if (!name) return;
   const { error } = await sb.from("locations").update({ name }).eq("id", id);
@@ -1019,6 +1138,7 @@ async function submitRenameLocation(id) {
 }
 
 function openColorSheet(id) {
+  if (!requireEdit()) return;
   const loc = locationById(id);
   openSheet(`
     <div class="sheet-title">Color</div>
@@ -1026,12 +1146,14 @@ function openColorSheet(id) {
     <button class="btn-cancel" onclick="closeSheet()" style="width:100%">Cancel</button>`);
 }
 async function submitColor(id, color) {
+  if (!requireEdit()) return;
   const { error } = await sb.from("locations").update({ color }).eq("id", id);
   if (error) { toast("Could not update color"); return; }
   await loadAll(); closeSheet(); render();
 }
 
 function openDeleteLocationSheet(id) {
+  if (!requireEdit()) return;
   const loc = locationById(id);
   const stats = locationStats(id);
   const kids = childrenOf(id).length;
@@ -1047,6 +1169,7 @@ function openDeleteLocationSheet(id) {
     </div>`);
 }
 async function confirmDeleteLocation(id) {
+  if (!requireEdit()) return;
   const { error } = await sb.from("locations").delete().eq("id", id);
   if (error) { toast("Could not delete: " + error.message); return; }
   await loadAll();
@@ -1058,6 +1181,7 @@ async function confirmDeleteLocation(id) {
 // MOVE SHEET — the fast "put this somewhere else" flow
 // ============================================================
 function openMoveSheet(itemId) {
+  if (!requireEdit()) return;
   const item = items.find(i => i.id === itemId);
   if (!item) return;
   const sorted = [...locations].sort((a,b) => breadcrumbNames(a.id).join(" › ").localeCompare(breadcrumbNames(b.id).join(" › ")));
@@ -1078,6 +1202,7 @@ function openMoveSheet(itemId) {
     <button class="btn-cancel" onclick="closeSheet()" style="width:100%">Cancel</button>`);
 }
 async function confirmMove(itemId, toLocationId) {
+  if (!requireEdit()) return;
   const item = items.find(i => i.id === itemId);
   if (!item) return;
   const { error } = await sb.from("items").update({ location_id: toLocationId }).eq("id", itemId);
@@ -1182,6 +1307,7 @@ function resizeImageToDataUrl(file, maxDim, quality, cb) {
 }
 
 function openAddItemSheet(locationId) {
+  if (!requireEdit()) return;
   _editItemId = null; _editLocationId = locationId || null; _editTier = "C"; _editImageData = null; _removeExistingPhoto = false;
   const loc = locationById(locationId);
   openSheet(`
@@ -1219,6 +1345,7 @@ function openAddItemSheet(locationId) {
 }
 
 async function submitNewItem() {
+  if (!requireEdit()) return;
   const displayName = document.getElementById("s-name").value.trim();
   const category = document.getElementById("m-category").value;
   const type = document.getElementById("m-type").value;
@@ -1257,6 +1384,7 @@ async function submitNewItem() {
 }
 
 function openEditItemSheet(itemId) {
+  if (!requireEdit()) return;
   const item = items.find(i => i.id === itemId);
   if (!item) return;
   _editItemId = itemId; _editTier = item.tier || "C"; _editImageData = null; _removeExistingPhoto = false;
@@ -1286,6 +1414,7 @@ function openEditItemSheet(itemId) {
     </div>`);
 }
 async function submitEditItem() {
+  if (!requireEdit()) return;
   const item = items.find(i => i.id === _editItemId);
   if (!item) return;
   const tags = (document.getElementById("s-tags").value || "").split(",").map(t => t.trim()).filter(Boolean);
@@ -1315,6 +1444,7 @@ async function submitEditItem() {
   activeItemId = item.id; view = "item"; render();
 }
 function deleteItemConfirm(itemId) {
+  if (!requireEdit()) return;
   const item = items.find(i => i.id === itemId);
   if (!item) return;
   if (!confirm(`Delete ${item.serial} (${item.name}) permanently? This can't be undone.`)) return;
