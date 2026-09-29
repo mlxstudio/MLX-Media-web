@@ -318,11 +318,15 @@
   @keyframes modalPop { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
   @keyframes modalPopOut { from { opacity: 1; transform: scale(1) translateY(0); } to { opacity: 0; transform: scale(0.94) translateY(6px); } }
   .modal-deleting { animation: modalPopOut 0.18s ease forwards; }
-  .stage-row { display: flex; align-items: center; gap: 6px; padding: 8px 4px; border-bottom: 1px solid var(--line); font-size: 12.5px; }
+  .stage-row-wrap { border-bottom: 1px solid var(--line); }
+  .stage-row-wrap:last-child { border-bottom: none; }
+  .stage-row { display: flex; align-items: center; gap: 6px; padding: 8px 4px 2px; font-size: 12.5px; }
   .stage-row .stage-name { flex: 1; min-width: 0; }
   .stage-row .stage-name .stage-serial { color: var(--text-faint); font-size: 10.5px; display: block; }
-  .stage-chip { font-size: 10px; font-weight: 700; padding: 4px 7px; border-radius: 6px; background: var(--panel2); color: var(--text-faint); border: 1px solid var(--line); cursor: pointer; white-space: nowrap; }
-  .stage-chip.done { background: rgba(6,214,160,0.16); color: #06D6A0; border-color: rgba(6,214,160,0.3); }
+  .stage-attribution { padding: 0 4px 8px; font-size: 10.5px; color: var(--text-faint); }
+  .stage-chip { font-size: 10px; font-weight: 700; padding: 4px 7px; border-radius: 6px; background: var(--panel2); color: var(--text-faint); border: 1px solid var(--line); cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; }
+  .stage-chip.done { background: rgba(6,214,160,0.2); color: #06D6A0; border-color: rgba(6,214,160,0.45); }
+  .stage-chip.pending { opacity: 0.5; pointer-events: none; }
   .stage-chip[disabled] { cursor: not-allowed; opacity: 0.6; }
   @keyframes panelSectionIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes menuPop { from { opacity: 0; transform: scale(0.92) translateY(4px); } to { opacity: 1; transform: scale(1) translateY(0); } }
@@ -717,20 +721,64 @@
   #ev-conflict-warning { background: rgba(255,107,107,0.1); border: 1px solid rgba(255,107,107,0.35); color: #FF6B6B; font-size: 12px; padding: 10px 12px; border-radius: 8px; margin-top: 10px; display: none; line-height: 1.6; }
   #ev-conflict-warning.show { display: block; }
 
-  #event-modal-overlay, #event-detail-overlay, #perm-modal-overlay, #kit-modal-overlay, #print-modal-overlay, #keybinds-modal-overlay, #custom-dialog-overlay, #doc-editor-overlay, #doc-view-overlay, #doc-move-overlay, #codes-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; }
+  #event-modal-overlay, #event-detail-overlay, #perm-modal-overlay, #kit-modal-overlay, #print-modal-overlay, #keybinds-modal-overlay, #custom-dialog-overlay, #doc-editor-overlay, #doc-view-overlay, #doc-move-overlay, #codes-modal-overlay, #quick-damage-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; }
   #custom-dialog-overlay { z-index: 400; }
   #custom-dialog-overlay.show { display: flex; }
   #custom-dialog { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 22px; width: 92%; max-width: 360px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); animation: modalPop 0.16s ease; }
   #custom-dialog-message { font-size: 13.5px; line-height: 1.6; white-space: pre-line; margin-bottom: 18px; }
   #custom-dialog-actions { display: flex; gap: 8px; justify-content: flex-end; }
   #custom-dialog-actions .btn { flex: none; padding: 8px 16px; font-size: 13px; }
-  #event-modal-overlay.show, #event-detail-overlay.show, #perm-modal-overlay.show, #kit-modal-overlay.show, #print-modal-overlay.show, #keybinds-modal-overlay.show, #doc-editor-overlay.show, #doc-view-overlay.show, #doc-move-overlay.show, #codes-modal-overlay.show { display: flex; animation: overlayFade 0.18s ease; }
-  #event-modal-overlay.show #event-modal, #event-detail-overlay.show #event-detail-modal, #perm-modal-overlay.show #perm-modal, #kit-modal-overlay.show #kit-modal, #print-modal-overlay.show #print-modal, #keybinds-modal-overlay.show #keybinds-modal, #doc-editor-overlay.show #doc-editor-modal, #doc-view-overlay.show #doc-view-modal, #doc-move-overlay.show #doc-move-modal, #codes-modal-overlay.show #codes-modal { animation: modalPop 0.24s cubic-bezier(0.16,1,0.3,1); }
-  #event-modal, #event-detail-modal, #perm-modal, #kit-modal, #print-modal, #keybinds-modal, #doc-editor-modal, #doc-view-modal, #doc-move-modal, #codes-modal { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 24px; width: 92%; max-width: 480px; max-height: 88vh; overflow-y: auto; }
+  #event-modal-overlay.show, #event-detail-overlay.show, #perm-modal-overlay.show, #kit-modal-overlay.show, #print-modal-overlay.show, #keybinds-modal-overlay.show, #doc-editor-overlay.show, #doc-view-overlay.show, #doc-move-overlay.show, #codes-modal-overlay.show, #quick-damage-overlay.show { display: flex; animation: overlayFade 0.18s ease; }
+  #event-modal-overlay.show #event-modal, #event-detail-overlay.show #event-detail-modal, #perm-modal-overlay.show #perm-modal, #kit-modal-overlay.show #kit-modal, #print-modal-overlay.show #print-modal, #keybinds-modal-overlay.show #keybinds-modal, #doc-editor-overlay.show #doc-editor-modal, #doc-view-overlay.show #doc-view-modal, #doc-move-overlay.show #doc-move-modal, #codes-modal-overlay.show #codes-modal, #quick-damage-overlay.show #quick-damage-modal { animation: modalPop 0.24s cubic-bezier(0.16,1,0.3,1); }
+  #event-modal, #event-detail-modal, #perm-modal, #kit-modal, #print-modal, #keybinds-modal, #doc-editor-modal, #doc-view-modal, #doc-move-modal, #codes-modal, #quick-damage-modal { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 24px; width: 92%; max-width: 480px; max-height: 88vh; overflow-y: auto; }
   #doc-editor-modal { max-width: 640px; }
   #doc-view-modal { max-width: 620px; }
-  #codes-modal { max-width: 560px; }
-  .codes-tab.active { background: var(--accent); color: #001217; }
+  #codes-modal { max-width: 880px; }
+  #ed-stage-stamps { margin: 10px 0 6px; }
+  .stage-tracker { display: flex; align-items: flex-start; padding: 12px 10px; background: var(--panel2); border: 1px solid var(--line); border-radius: 12px; }
+  .stage-step { flex: 0 0 auto; width: 74px; display: flex; flex-direction: column; align-items: center; gap: 3px; text-align: center; }
+  .stage-step-icon {
+    width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    background: var(--panel); border: 1.5px solid var(--line2); color: var(--text-faint);
+    transition: background-color .25s ease, border-color .25s ease, color .25s ease, transform .25s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .stage-step.partial .stage-step-icon { border-color: #FFD166; color: #FFD166; background: rgba(255,209,102,0.12); }
+  .stage-step.complete .stage-step-icon { border-color: var(--repaired); color: #001217; background: var(--repaired); animation: chipPop .35s cubic-bezier(0.34,1.56,0.64,1); }
+  .stage-step-label { font-size: 11px; font-weight: 700; color: var(--text-dim); }
+  .stage-step.empty .stage-step-label { color: var(--text-faint); }
+  .stage-step-sub { font-size: 10px; color: var(--text-faint); line-height: 1.25; max-width: 74px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .stage-step.complete .stage-step-sub { color: var(--text-dim); }
+  .stage-step-line { flex: 1; height: 2px; margin-top: 15px; background: var(--line2); border-radius: 2px; transition: background-color .3s ease; min-width: 8px; }
+  .stage-step-line.filled { background: var(--repaired); }
+  .stage-chips { display: inline-flex; align-items: center; flex-shrink: 0; }
+  .stage-connector { width: 8px; height: 2px; background: var(--line2); flex-shrink: 0; transition: background-color .25s ease; }
+  .stage-connector.filled { background: var(--repaired); }
+  .stage-chip.next { border-color: var(--accent); color: var(--accent); animation: nextPulse 2s ease-in-out infinite; }
+  @keyframes nextPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(76,201,240,0.35); } 50% { box-shadow: 0 0 0 4px rgba(76,201,240,0); } }
+  .stage-chip.locked:not(.done) { opacity: 0.35; cursor: not-allowed; }
+  .stage-chip.done.locked { cursor: default; }
+  #tree-columns { display: flex; gap: 12px; margin-bottom: 16px; }
+  .tree-col { flex: 1; min-width: 0; background: var(--panel2); border: 1px solid var(--line); border-radius: 12px; padding: 10px; display: flex; flex-direction: column; }
+  .tree-col-title { font-size: 11px; font-weight: 700; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; padding: 0 2px; }
+  .tree-col-list { flex: 1; min-height: 180px; max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; }
+  .tree-row {
+    display: flex; align-items: center; gap: 8px; padding: 7px 6px; border-radius: 8px; cursor: default;
+    animation: csOptionIn 0.16s ease both; transition: background-color 0.12s ease;
+  }
+  .tree-row.clickable { cursor: pointer; }
+  .tree-row.clickable:hover { background: var(--panel); }
+  .tree-row.selected { background: var(--panel); box-shadow: inset 2px 0 0 var(--accent); }
+  .tree-row .doc-info { flex: 1; min-width: 0; }
+  .tree-row .doc-title { font-size: 12.5px; }
+  .tree-row .doc-sub { font-size: 10.5px; }
+  .tree-chevron { color: var(--text-faint); flex-shrink: 0; }
+  .tree-row .icon-action { width: 24px; height: 24px; flex-shrink: 0; }
+  .tree-edit-fields { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  .tree-edit-fields input { padding: 5px 8px; font-size: 12px; }
+  .tree-add-row { display: flex; gap: 5px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line); }
+  .tree-add-row input:first-child { width: 40px; flex: none; text-align: center; text-transform: uppercase; padding: 7px 4px; }
+  .tree-add-row input:nth-child(2) { flex: 1; min-width: 0; padding: 7px 8px; font-size: 12.5px; }
+  .tree-add-row .icon-action { flex-shrink: 0; background: var(--panel); border: 1px solid var(--line); }
   .ed-item-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
   .ed-item-row:last-child { border-bottom: none; }
 
@@ -812,6 +860,156 @@
     .loc-row { flex-wrap: wrap; }
     #fab { bottom: 20px; right: 20px; }
   }
+
+  /* ============================================================
+     CHECK-IN v8 — PDF menu, sign-offs, signature pad
+     ============================================================ */
+  .pdf-wrap { margin-top: 12px; }
+  .pdf-trigger {
+    position: relative; overflow: hidden; width: 100%; display: flex; align-items: center; gap: 11px;
+    padding: 10px 14px; border-radius: 12px; font-size: 13px; font-weight: 600; color: var(--text); text-align: left;
+    background: linear-gradient(180deg, var(--panel2), var(--panel)); border: 1px solid var(--line2);
+    transition: transform .22s cubic-bezier(0.16,1,0.3,1), border-color .2s ease, box-shadow .25s ease;
+  }
+  .pdf-trigger::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(105deg, transparent 30%, rgba(76,201,240,0.18) 50%, transparent 70%);
+    transform: translateX(-120%); transition: transform .65s ease;
+  }
+  .pdf-trigger:hover { transform: translateY(-1px); border-color: var(--accent); box-shadow: 0 8px 22px -10px rgba(76,201,240,0.55); }
+  .pdf-trigger:hover::before { transform: translateX(120%); }
+  .pdf-trigger:active { transform: translateY(0) scale(0.99); }
+  .pdf-trigger .pdf-ico, .pdf-opt .o-ico {
+    flex: none; width: 30px; height: 30px; border-radius: 9px; display: flex; align-items: center; justify-content: center;
+    background: rgba(76,201,240,0.14); color: var(--accent);
+    transition: transform .28s cubic-bezier(0.34,1.56,0.64,1), background-color .2s ease;
+  }
+  .pdf-trigger:hover .pdf-ico { transform: rotate(-7deg) scale(1.1); }
+  .pdf-trigger .pdf-label small { display: block; font-size: 11px; font-weight: 500; color: var(--text-faint); }
+  .pdf-trigger .pdf-chev { margin-left: auto; color: var(--text-dim); transition: transform .28s cubic-bezier(0.16,1,0.3,1); }
+  .pdf-wrap.open .pdf-chev { transform: rotate(180deg); }
+  .pdf-menu { display: grid; grid-template-rows: 0fr; opacity: 0; visibility: hidden; margin-top: 0;
+    transition: grid-template-rows .3s cubic-bezier(0.16,1,0.3,1), opacity .22s ease, margin-top .3s ease, visibility 0s linear .3s; }
+  .pdf-wrap.open .pdf-menu { grid-template-rows: 1fr; opacity: 1; visibility: visible; margin-top: 8px; transition-delay: 0s; }
+  .pdf-menu-inner { overflow: hidden; min-height: 0; }
+  .pdf-menu-card { display: flex; flex-direction: column; gap: 2px; padding: 6px; background: var(--panel2); border: 1px solid var(--line); border-radius: 12px; }
+  .pdf-sep { font-size: 10px; letter-spacing: .09em; text-transform: uppercase; color: var(--text-faint); font-weight: 700; padding: 10px 10px 4px; }
+  .pdf-sep:first-child { padding-top: 4px; }
+  .pdf-opt {
+    display: flex; align-items: center; gap: 11px; width: 100%; text-align: left; padding: 8px 10px; border-radius: 9px;
+    font-size: 13px; color: var(--text); transition: background-color .15s ease, transform .2s cubic-bezier(0.16,1,0.3,1);
+  }
+  .pdf-opt:hover { background: rgba(76,201,240,0.1); transform: translateX(3px); }
+  .pdf-opt:hover .o-ico { transform: scale(1.1); background: rgba(76,201,240,0.22); }
+  .pdf-opt:active { transform: translateX(3px) scale(0.985); }
+  .pdf-opt .o-title { font-weight: 600; }
+  .pdf-opt .o-sub { font-size: 11px; color: var(--text-faint); }
+  .pdf-opt .o-go { margin-left: auto; color: var(--accent); opacity: 0; transform: translateX(-6px); transition: opacity .18s ease, transform .22s cubic-bezier(0.16,1,0.3,1); }
+  .pdf-opt:hover .o-go { opacity: 1; transform: none; }
+
+  #ed-signatures:empty { display: none; }
+  #ed-signatures { margin-top: 12px; }
+  .sig-stage { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 6px 0; border-bottom: 1px solid var(--line); }
+  .sig-stage:last-child { border-bottom: none; }
+  .sig-stage-head { flex: none; width: 62px; font-size: 11px; font-weight: 700; color: var(--text-dim); }
+  .sig-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--text-faint); }
+  .sig-pill.signed { background: rgba(6,214,160,0.14); color: #06D6A0; border-color: rgba(6,214,160,0.4); }
+  .sig-pill.mine { background: var(--accent); color: #001217; font-weight: 700; border-color: transparent; cursor: pointer; transition: transform .18s cubic-bezier(0.34,1.56,0.64,1); }
+  .sig-pill.mine:hover { transform: scale(1.06); }
+
+  #sign-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 230; align-items: center; justify-content: center; }
+  #sign-modal-overlay.show { display: flex; animation: overlayFade 0.18s ease; }
+  #sign-modal { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 24px; width: 92%; max-width: 460px; max-height: 92vh; overflow-y: auto; }
+  #sign-modal-overlay.show #sign-modal { animation: modalPop 0.24s cubic-bezier(0.16,1,0.3,1); }
+  .sign-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--repaired); margin-bottom: 4px; }
+  .sign-label { display: block; font-size: 11px; font-weight: 700; color: var(--text-dim); margin: 14px 0 5px; }
+  .sign-pad-wrap { position: relative; width: 100%; aspect-ratio: 3 / 1; border-radius: 10px; overflow: hidden; background: #fff; border: 1px solid var(--line2); }
+  #sign-canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: crosshair; }
+  .sign-baseline { position: absolute; left: 6%; right: 6%; bottom: 22%; height: 1px; background: rgba(0,0,0,0.25); pointer-events: none; }
+  .sign-hint { position: absolute; left: 6%; bottom: 8%; font-size: 10px; color: rgba(0,0,0,0.35); pointer-events: none; transition: opacity .2s; }
+  .sign-pad-wrap.inked .sign-hint { opacity: 0; }
+  .sign-note { font-size: 11.5px; color: var(--text-faint); margin-top: 10px; line-height: 1.4; }
+
+  .sign-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 420px) { .sign-row { grid-template-columns: 1fr; gap: 0; } }
+  .sig-stage-head { display: flex; flex-direction: column; gap: 1px; }
+  .sig-count { font-size: 10px; font-weight: 600; color: var(--text-faint); }
+  .sig-count.full { color: var(--repaired); }
+  .sig-pills { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; flex: 1; min-width: 0; }
+  .sig-pill.add { cursor: pointer; background: transparent; border-style: dashed; border-color: var(--line2); color: var(--text-dim); transition: transform .18s cubic-bezier(0.34,1.56,0.64,1), border-color .15s ease, color .15s ease; }
+  .sig-pill.add:hover { transform: scale(1.06); border-color: var(--accent); color: var(--accent); }
+  .sig-pill.signed.own { cursor: pointer; }
+  .sig-setup { font-size: 12px; color: var(--text-dim); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding-top: 6px; }
+  .pdf-chips { display: flex; flex-wrap: wrap; gap: 5px; padding: 2px 10px 8px; }
+  .pdf-chip { font-size: 11px; font-weight: 600; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line2); color: var(--text-dim);
+    transition: transform .18s cubic-bezier(0.34,1.56,0.64,1), background-color .15s ease, color .15s ease, border-color .15s ease; }
+  .pdf-chip:hover { transform: translateY(-1px); border-color: var(--accent); color: var(--text); }
+  .pdf-chip.on { background: var(--accent); border-color: var(--accent); color: #001217; }
+
+  /* v9 additions: lock/seal, saved signature */
+  .sig-pill.signed { display: inline-flex; align-items: center; gap: 5px; }
+  .sig-x, .sig-lock { display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px; border-radius: 999px; opacity: .85; }
+  .sig-x { cursor: pointer; color: #06D6A0; background: rgba(255,255,255,0.14); transition: transform .16s cubic-bezier(0.34,1.56,0.64,1), background-color .15s ease, color .15s ease; }
+  .sig-x:hover { transform: scale(1.18); background: rgba(239,71,111,0.22); color: #EF476F; }
+  .sig-x svg { width: 9px; height: 9px; }
+  .sig-lock { color: rgba(6,214,160,0.75); cursor: default; }
+  .sig-lock svg { width: 9px; height: 9px; }
+  .sig-lock-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 10.5px; color: var(--text-faint); margin-left: auto; }
+  .sig-lock-tag svg { width: 10px; height: 10px; }
+  .sig-wait { font-size: 11.5px; color: var(--text-faint); font-style: italic; }
+  .sign-label-row { display: flex; align-items: baseline; justify-content: space-between; margin: 14px 0 5px; }
+  .sign-link { font-size: 11.5px; font-weight: 600; color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+  .sign-link:hover { opacity: .8; }
+  .sign-pw-panel { display: none; grid-template-columns: 1fr auto auto; gap: 6px; margin-top: 8px; align-items: center; }
+  .sign-pw-panel.show { display: grid; animation: overlayFade .16s ease; }
+  .sign-pw-panel input { grid-column: 1 / -1; }
+  .sign-check { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text-dim); margin-top: 12px; cursor: pointer; }
+  .sign-check input { width: 14px; height: 14px; }
+
+  /* ============================================================
+     SHARE CENTER — client-facing gear list links
+     ============================================================ */
+  #share-wrap .users-section-title { margin-top: 22px; }
+  #share-wrap .users-section-title:first-child { margin-top: 0; }
+  .share-base-row { display: flex; gap: 8px; align-items: center; margin-bottom: 4px; }
+  .share-base-row input { flex: 1; font-family: var(--mono); font-size: 12.5px; }
+  .share-create-card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin-top: 10px; }
+  .share-create-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  @media (max-width: 720px) { .share-create-grid { grid-template-columns: 1fr; } }
+  .share-create-grid label.field-label { font-size: 11px; font-weight: 700; color: var(--text-dim); display: block; margin-bottom: 4px; }
+  .share-fields-title { font-size: 11px; font-weight: 700; color: var(--text-dim); margin: 4px 0 8px; }
+  .share-fields-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px 14px; margin-bottom: 14px; }
+  .share-fields-grid label { display: flex; align-items: center; gap: 7px; font-size: 13px; cursor: pointer; }
+  .share-fields-grid input { width: 15px; height: 15px; flex: none; }
+  .share-links-list, .share-resp-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+  .share-link-card, .share-resp-card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  .share-link-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .share-link-title { font-weight: 700; flex: 1; min-width: 120px; }
+  .share-link-title.inactive { opacity: .45; text-decoration: line-through; }
+  .share-link-meta { font-size: 11.5px; color: var(--text-faint); margin-top: 3px; }
+  .share-url-row { display: flex; align-items: center; gap: 8px; margin-top: 9px; background: var(--panel2); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; }
+  .share-url-row code { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; color: var(--text-dim); }
+  .share-badge { font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: rgba(76,201,240,0.14); color: var(--accent); flex: none; }
+  .share-badge.zero { background: rgba(255,255,255,0.06); color: var(--text-faint); }
+  .share-actions-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 9px; }
+  .share-actions-row button, .share-actions-row .icon-action { font-size: 12px; padding: 6px 10px; border-radius: 8px; background: var(--panel2); border: 1px solid var(--line); color: var(--text-dim); transition: border-color .15s ease, color .15s ease, transform .15s cubic-bezier(0.34,1.56,0.64,1); }
+  .share-actions-row button:hover { border-color: var(--accent); color: var(--text); transform: translateY(-1px); }
+  .share-actions-row button.danger:hover { border-color: #EF476F; color: #EF476F; }
+  .share-toggle-switch { position: relative; width: 34px; height: 19px; border-radius: 999px; background: var(--line2); flex: none; transition: background-color .2s ease; cursor: pointer; }
+  .share-toggle-switch.on { background: var(--repaired); }
+  .share-toggle-switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 15px; height: 15px; border-radius: 50%; background: #fff; transition: transform .2s cubic-bezier(0.34,1.56,0.64,1); }
+  .share-toggle-switch.on::after { transform: translateX(15px); }
+  .share-resp-header { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; cursor: pointer; }
+  .share-resp-name { font-weight: 700; }
+  .share-resp-sub { font-size: 11.5px; color: var(--text-faint); flex: 1; min-width: 120px; }
+  .share-resp-count { font-size: 11.5px; font-weight: 700; color: var(--accent); }
+  .share-resp-note { font-size: 12.5px; color: var(--text-dim); margin-top: 8px; font-style: italic; }
+  .share-resp-items { display: none; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 10px; }
+  .share-resp-items.open { display: block; }
+  .share-resp-item-row { display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; padding: 4px 0; border-bottom: 1px solid var(--line); }
+  .share-resp-item-row:last-child { border-bottom: none; }
+  .share-resp-item-row .missing { color: var(--text-faint); font-style: italic; }
+  .share-empty { font-size: 12.5px; color: var(--text-faint); padding: 12px 2px; }
 </style>
 </head>
 <body>
@@ -835,6 +1033,7 @@
       <button class="tab-btn" id="tab-analytics" onclick="switchTab('analytics')">Analytics</button>
       <button class="tab-btn" id="tab-bookings" onclick="switchTab('bookings')">Bookings</button>
       <button class="tab-btn" id="tab-presets" onclick="switchTab('presets')">Presets</button>
+      <button class="tab-btn" id="tab-share" style="display:none" onclick="switchTab('share')">Share</button>
       <button class="tab-btn" id="tab-docs" onclick="switchTab('docs')">Docs</button>
       <button class="tab-btn" id="tab-activity" style="display:none" onclick="switchTab('activity')">Activity</button>
       <button class="tab-btn" id="tab-users" style="display:none" onclick="switchTab('users')">Users</button>
@@ -1004,6 +1203,45 @@
       </div>
       <div class="note-text">Category-based lists (e.g. "Wedding kit") — pick the exact item from inventory when you apply one to a shoot.</div>
       <div id="kits-list" style="margin-top:14px"></div>
+    </div>
+
+    <div id="share-wrap" style="display:none">
+      <div class="users-section-title">Public link</div>
+      <div class="note-text">Set the web address where you've uploaded <code>gear-share.html</code>, once. Every link you create below is <code>that address + ?t=…</code>.</div>
+      <div class="share-base-row" style="margin-top:8px">
+        <input id="share-base-url" placeholder="https://mlxmedia.cz/gear-share.html">
+        <button class="btn ghost" style="flex:none" onclick="saveShareBaseUrl()">Save</button>
+      </div>
+
+      <div class="users-section-title">Create a gear list link</div>
+      <div class="share-create-card">
+        <div class="share-create-grid">
+          <div>
+            <label class="field-label">Title (you'll see this, not required for them)</label>
+            <input id="share-title" placeholder="e.g. Camera package for Jana">
+          </div>
+          <div>
+            <label class="field-label">Only show one category (optional)</label>
+            <select id="share-category"><option value="">— All categories —</option></select>
+          </div>
+        </div>
+        <div class="share-fields-title">What they can see on each item</div>
+        <div class="share-fields-grid">
+          <label><input type="checkbox" id="share-f-serial" checked> Serial number</label>
+          <label><input type="checkbox" id="share-f-category" checked> Category</label>
+          <label><input type="checkbox" id="share-f-status"> Status</label>
+          <label><input type="checkbox" id="share-f-notes"> Notes</label>
+          <label><input type="checkbox" id="share-f-location"> Location</label>
+          <label><input type="checkbox" id="share-f-qr"> QR code</label>
+        </div>
+        <button class="btn primary" onclick="createShareLink()">Create link</button>
+      </div>
+
+      <div class="users-section-title">Your links</div>
+      <div id="share-links-list" class="share-links-list"></div>
+
+      <div class="users-section-title">What they've sent back</div>
+      <div id="share-responses-list" class="share-resp-list"></div>
     </div>
 
     <div id="docs-wrap" style="display:none">
@@ -1219,28 +1457,43 @@
 <!-- Manage category/type/brand codes -->
 <div id="codes-modal-overlay">
   <div id="codes-modal">
-    <h2>Manage codes</h2>
-    <div class="modal-subtitle">Category, type & brand codes used when adding items.</div>
-    <div class="cal-nav" id="codes-kind-tabs" style="width:fit-content;margin-bottom:16px">
-      <button type="button" class="cal-nav-today codes-tab active" data-kind="category">Category</button>
-      <button type="button" class="cal-nav-today codes-tab" data-kind="type">Type</button>
-      <button type="button" class="cal-nav-today codes-tab" data-kind="brand">Brand</button>
-    </div>
-    <div id="codes-setup-note" class="note-text" style="display:none;margin-bottom:14px"></div>
-    <div class="modal-section">
-      <div class="modal-section-title">Add or edit</div>
-      <div class="form-row three">
-        <div><span class="field-label">Code</span><input id="cm-new-code" maxlength="1" style="text-transform:uppercase;text-align:center"></div>
-        <div style="flex:2"><span class="field-label">Name</span><input id="cm-new-name" placeholder="e.g. Sound"></div>
+    <h2>Gear taxonomy</h2>
+    <div class="modal-subtitle">Category → Type → Brand. Click a category to see its types, click a type to see its brands.</div>
+    <div id="codes-setup-note" class="note-text" style="display:none;margin-bottom:12px"></div>
+    <div id="tree-columns">
+      <div class="tree-col">
+        <div class="tree-col-title">Categories</div>
+        <div class="tree-col-list" id="tree-list-category"></div>
+        <div class="tree-add-row">
+          <input id="tree-add-category-code" maxlength="1" placeholder="Code">
+          <input id="tree-add-category-name" placeholder="New category name">
+          <button class="icon-action" title="Add" onclick="submitTreeAdd('category')">+</button>
+        </div>
       </div>
-      <div class="form-row"><span class="field-label">Description (optional)</span><input id="cm-new-desc" placeholder="What belongs in this category?"></div>
-      <button class="btn primary" style="flex:none;padding:8px 16px" onclick="submitNewCodeEntry()">+ Save code</button>
-    </div>
-    <div class="modal-section">
-      <div class="modal-section-title">Existing</div>
-      <div id="codes-list"></div>
+      <div class="tree-col">
+        <div class="tree-col-title" id="tree-col-type-title">Types</div>
+        <div class="tree-col-list" id="tree-list-type"></div>
+        <div class="tree-add-row">
+          <input id="tree-add-type-code" maxlength="1" placeholder="Code">
+          <input id="tree-add-type-name" placeholder="New type name">
+          <button class="icon-action" title="Add" onclick="submitTreeAdd('type')">+</button>
+        </div>
+      </div>
+      <div class="tree-col">
+        <div class="tree-col-title" id="tree-col-brand-title">Brands</div>
+        <div class="tree-col-list" id="tree-list-brand"></div>
+        <div class="tree-add-row">
+          <input id="tree-add-brand-code" maxlength="1" placeholder="Code">
+          <input id="tree-add-brand-name" placeholder="New brand name">
+          <button class="icon-action" title="Add" onclick="submitTreeAdd('brand')">+</button>
+        </div>
+      </div>
     </div>
     <div class="modal-actions">
+      <button class="btn ghost" onclick="exportTreeCsv()">Export as CSV</button>
+      <button class="btn ghost" onclick="document.getElementById('tree-import-input').click()">Import CSV…</button>
+      <input type="file" id="tree-import-input" accept=".csv,text/csv" style="display:none" onchange="handleTreeImportCsv(this)">
+      <div class="spacer"></div>
       <button class="btn ghost" onclick="closeCodesModal()">Close</button>
     </div>
   </div>
@@ -1260,14 +1513,14 @@
         <div>
           <span class="field-label">Category</span>
           <div style="display:flex;gap:6px">
-            <select id="m-category" onchange="updateSerialPreview()"></select>
+            <select id="m-category" onchange="cascadeFromCategory()"></select>
             <button type="button" class="code-add-btn" onclick="addNewCode('category')" title="Add new category code">+</button>
           </div>
         </div>
         <div>
           <span class="field-label">Type</span>
           <div style="display:flex;gap:6px">
-            <select id="m-type" onchange="updateSerialPreview()"></select>
+            <select id="m-type" onchange="cascadeFromType()"></select>
             <button type="button" class="code-add-btn" onclick="addNewCode('type')" title="Add new type code">+</button>
           </div>
         </div>
@@ -1546,6 +1799,7 @@
     <div id="ed-notes" class="note-text"></div>
     <div id="ed-crew-info" class="note-text"></div>
     <div class="users-section-title">Gear <span id="ed-return-progress" style="font-weight:400;color:var(--text-faint)"></span></div>
+    <div id="ed-stage-stamps"></div>
     <div id="ed-items"></div>
     <div id="ed-mark-all-row" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
       <button class="btn ghost" style="flex:none;padding:7px 12px;font-size:12px" onclick="markAllStage('packed')">Mark all packed</button>
@@ -1553,15 +1807,77 @@
       <button class="btn ghost" style="flex:none;padding:7px 12px;font-size:12px" onclick="markAllStage('wrapped')">Mark all wrapped</button>
       <button class="btn ghost" style="flex:none;padding:7px 12px;font-size:12px" onclick="markAllStage('returned')">Mark all returned</button>
     </div>
+    <div id="ed-signatures"></div>
+    <div id="pdf-wrap" class="pdf-wrap">
+      <button class="pdf-trigger" onclick="togglePdfMenu()">
+        <span class="pdf-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/></svg></span>
+        <span class="pdf-label">Export PDF<small>Report or printable checklist</small></span>
+        <svg class="pdf-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="pdf-menu"><div class="pdf-menu-inner"><div class="pdf-menu-card" id="pdf-menu-card"></div></div></div>
+    </div>
     <div class="modal-actions">
       <button class="btn ghost" onclick="closeEventDetail()">Close</button>
-      <button class="btn ghost" id="ed-packlist-btn" onclick="printPackList()">Pack list PDF</button>
       <button class="btn primary" id="ed-edit-btn" onclick="editEventFromDetail()">Edit</button>
     </div>
   </div>
 </div>
 
+<div id="sign-modal-overlay">
+  <div id="sign-modal">
+    <div class="sign-eyebrow" id="sign-eyebrow"></div>
+    <h2 id="sign-title">Sign off</h2>
+    <div id="sign-sub" class="note-text"></div>
+    <div class="sign-row">
+      <div><label class="sign-label" for="sign-name">Your full name</label><input id="sign-name" type="text" autocomplete="off"></div>
+      <div><label class="sign-label" for="sign-when">Date &amp; time</label><input id="sign-when" type="datetime-local"></div>
+    </div>
+    <div class="sign-label-row">
+      <label class="sign-label" style="margin:0">Signature</label>
+      <button type="button" id="sign-use-saved" class="sign-link" style="display:none" onclick="promptUseSavedSignature()">Use saved signature</button>
+    </div>
+    <div class="sign-pad-wrap" id="sign-pad-wrap">
+      <canvas id="sign-canvas"></canvas>
+      <div class="sign-baseline"></div>
+      <span class="sign-hint">Sign here</span>
+    </div>
+    <div id="sign-pw-panel" class="sign-pw-panel">
+      <input id="sign-pw" type="password" placeholder="Your account password" autocomplete="current-password">
+      <button type="button" class="btn primary" onclick="confirmUseSavedSignature()">Unlock &amp; use</button>
+      <button type="button" class="btn ghost" onclick="cancelUseSavedSignature()">Cancel</button>
+    </div>
+    <label class="sign-check"><input type="checkbox" id="sign-remember"> Save my signature for next time</label>
+    <div class="sign-note" id="sign-note"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="closeSignModal()">Skip for now</button>
+      <button class="btn ghost" onclick="initSignPad()">Clear</button>
+      <button class="btn primary" onclick="saveSignature()">Save signature</button>
+    </div>
+  </div>
+</div>
+
+<!-- Quick damage report (from anywhere an item shows up) -->
+<div id="quick-damage-overlay">
+  <div id="quick-damage-modal">
+    <h2>Report damage</h2>
+    <div class="modal-subtitle" id="qd-item-name"></div>
+    <div class="modal-section">
+      <span class="field-label">What happened?</span>
+      <textarea id="qd-description" rows="3" placeholder="e.g. scratched lens hood, dead pixel, cracked filter…"></textarea>
+    </div>
+    <div class="modal-section" style="margin-bottom:0">
+      <span class="field-label">Photo (optional)</span>
+      <input type="file" id="qd-photo-input" accept="image/*">
+    </div>
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="closeQuickDamage()">Cancel</button>
+      <button class="btn danger" onclick="submitQuickDamage()">Log damage</button>
+    </div>
+  </div>
+</div>
+
 <script>
+
 // ============================================================
 // CONFIG
 // ============================================================
@@ -1638,16 +1954,128 @@ const MONO_ICON = {
   check: svgIcon_('<polyline points="20 6 9 17 4 12"/>', 14),
   printer: svgIcon_('<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>', 14),
   suitcase: svgIcon_('<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>', 16),
+  close: svgIcon_('<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>', 12),
+  lock: svgIcon_('<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>', 12),
 };
 const LOC_ICON = { case: MONO_ICON.suitcase, crate: MONO_ICON.package, box: MONO_ICON.package, bag: MONO_ICON.bag };
 document.getElementById("notif-bell-icon").innerHTML = MONO_ICON.bell;
 const PALETTES = ["#4CC9F0","#FF6B6B","#FFD166","#06D6A0","#7B5EA7","#FF8C42","#F72585","#118AB2","#E76F51","#A8DADC","#6b7280","#9b5de5"];
-const STARTER_CATEGORIES = { C: "Camera", L: "Lens", W: "Wireless", P: "Power", G: "Grip", T: "Tripod/Support", I: "Illumination", A: "Audio" };
+const STARTER_TREE = {
+  C: { name: "Camera", types: {
+    C: { name: "Cinema", brands: { A: "ARRI", R: "RED", S: "Sony", B: "Blackmagic", P: "Panasonic" } },
+    M: { name: "Mirrorless", brands: { S: "Sony", C: "Canon", N: "Nikon", F: "Fujifilm", P: "Panasonic", L: "Leica" } },
+    D: { name: "DSLR", brands: { C: "Canon", N: "Nikon" } },
+    A: { name: "Action / 360", brands: { G: "GoPro", D: "DJI", I: "Insta360" } },
+  } },
+  L: { name: "Lens", types: {
+    Z: { name: "Zoom", brands: { A: "ARRI/Fujinon", C: "Canon", S: "Sony", Z: "Zeiss", N: "Angenieux" } },
+    P: { name: "Prime", brands: { Z: "Zeiss", C: "Canon", S: "Sigma", R: "Rokinon", K: "Cooke" } },
+    M: { name: "Macro", brands: { C: "Canon", L: "Laowa", S: "Sigma" } },
+    B: { name: "Probe", brands: { L: "Laowa", V: "Venus Optics" } },
+    N: { name: "Anamorphic", brands: { K: "Kowa", A: "ARRI", V: "Vazen" } },
+  } },
+  W: { name: "Wireless", types: {
+    V: { name: "Video TX/RX", brands: { T: "Teradek", H: "Hollyland", X: "Vaxis" } },
+    F: { name: "Follow focus", brands: { T: "Tilta", A: "ARRI", D: "DJI" } },
+    I: { name: "Intercom", brands: { H: "Hollyland", C: "Comtek" } },
+  } },
+  P: { name: "Power", types: {
+    B: { name: "Battery", brands: { A: "Anton Bauer", I: "IDX", C: "Core SWX", B: "Blueshape" } },
+    C: { name: "Charger", brands: { A: "Anton Bauer", I: "IDX", C: "Core SWX" } },
+    D: { name: "Power distribution", brands: { A: "Anton Bauer", S: "SmallRig" } },
+  } },
+  G: { name: "Grip", types: {
+    C: { name: "Clamp / mount", brands: { M: "Manfrotto", K: "Kupo", N: "9.Solutions" } },
+    A: { name: "Arm", brands: { M: "Manfrotto", K: "Kupo" } },
+    S: { name: "Stand / sandbag", brands: { M: "Matthews", A: "Avenger" } },
+  } },
+  T: { name: "Tripod/Support", types: {
+    T: { name: "Tripod", brands: { S: "Sachtler", M: "Manfrotto", O: "O'Connor" } },
+    H: { name: "Fluid head", brands: { S: "Sachtler", O: "O'Connor", M: "Miller" } },
+    L: { name: "Slider", brands: { E: "Edelkrone", R: "Rhino" } },
+    J: { name: "Jib / crane", brands: { K: "Kessler", J: "Jimmy Jib" } },
+  } },
+  I: { name: "Illumination", types: {
+    P: { name: "LED panel", brands: { A: "Aputure", N: "Nanlite", L: "Litepanels" } },
+    F: { name: "Fresnel", brands: { A: "ARRI", D: "DeSisti" } },
+    T: { name: "Tube light", brands: { A: "Astera", Q: "Quasar" } },
+    K: { name: "Practical", brands: { N: "Nanlite", G: "Generic" } },
+  } },
+  A: { name: "Audio", types: {
+    L: { name: "Wireless lav", brands: { S: "Sennheiser", L: "Lectrosonics", D: "DPA" } },
+    B: { name: "Boom mic", brands: { S: "Sennheiser", R: "Rode", A: "Audio-Technica" } },
+    R: { name: "Recorder", brands: { S: "Sound Devices", Z: "Zoom", T: "Tascam" } },
+    G: { name: "Shotgun mic", brands: { R: "Rode", S: "Sennheiser", A: "Audio-Technica" } },
+  } },
+  S: { name: "Stabilizer", types: {
+    G: { name: "Gimbal", brands: { D: "DJI", Z: "Zhiyun", F: "Freefly", T: "Tilta" } },
+    C: { name: "Steadicam", brands: { S: "Steadicam/Tiffen", G: "Glidecam" } },
+    E: { name: "Easyrig", brands: { E: "Easyrig" } },
+    D: { name: "Dolly / track", brands: { D: "Dana Dolly", C: "Chapman" } },
+  } },
+};
+const STARTER_CATEGORIES = Object.fromEntries(Object.entries(STARTER_TREE).map(([c, v]) => [c, v.name]));
 let codeRegistry = { category: {}, type: {}, brand: {} };
 let codeRegistryRows = [];
 let codeRegistryAvailable = null;
-const STARTER_TYPES = { C: "Cinema", M: "Mirrorless", P: "Prime", Z: "Zoom" };
-const STARTER_BRANDS = { A: "ARRI", B: "Blackmagic", C: "Canon", S: "Sony", F: "Fujifilm", R: "RED", P: "Panasonic", N: "Nikon", D: "DJI", Z: "Zeiss", G: "Sigma", T: "Teradek" };
+let codesModalCatCtx = null;
+let codesModalTypeCtx = null;
+function treeTypesFor(catCode) { return (STARTER_TREE[catCode] && STARTER_TREE[catCode].types) || {}; }
+function treeBrandsFor(catCode, typeCode) { return (treeTypesFor(catCode)[typeCode] && treeTypesFor(catCode)[typeCode].brands) || {}; }
+function usedTypesForCategory(catCode) {
+  const vals = new Set();
+  items.forEach(i => { const m = i.model_registry; if (m?.category === catCode && m?.type) vals.add(m.type); });
+  return vals;
+}
+function usedBrandsForType(catCode, typeCode) {
+  const vals = new Set();
+  items.forEach(i => { const m = i.model_registry; if (m?.category === catCode && m?.type === typeCode && m?.brand) vals.add(m.brand); });
+  return vals;
+}
+function customTypesFor(catCode) { return codeRegistryRows.filter(r => r.kind === "type" && r.parent_code === catCode); }
+function customBrandsFor(typeCode) { return codeRegistryRows.filter(r => r.kind === "brand" && r.parent_code === typeCode); }
+function mergedTypeNames(catCode) {
+  const out = { ...treeTypesFor(catCode) };
+  const named = {};
+  Object.entries(out).forEach(([c, v]) => { named[c] = v.name; });
+  customTypesFor(catCode).forEach(r => { named[r.code] = r.name; });
+  return named;
+}
+function mergedBrandNames(catCode, typeCode) {
+  const named = { ...treeBrandsFor(catCode, typeCode) };
+  customBrandsFor(typeCode).forEach(r => { named[r.code] = r.name; });
+  return named;
+}
+function populateTypeDropdown(catCode, keepValue) {
+  const sel = document.getElementById("m-type");
+  const names = mergedTypeNames(catCode);
+  const codes = new Set([...Object.keys(names), ...usedTypesForCategory(catCode)]);
+  sel.innerHTML = codes.size
+    ? [...codes].sort().map(c => `<option value="${c}">${c}${names[c] ? " — " + names[c] : ""}</option>`).join("")
+    : `<option value="">No types yet — add one with the +</option>`;
+  if (keepValue && codes.has(keepValue)) sel.value = keepValue;
+}
+function populateBrandDropdown(catCode, typeCode, keepValue) {
+  const sel = document.getElementById("m-brand");
+  if (!typeCode) { sel.innerHTML = `<option value="">Pick a type first</option>`; return; }
+  const names = mergedBrandNames(catCode, typeCode);
+  const codes = new Set([...Object.keys(names), ...usedBrandsForType(catCode, typeCode)]);
+  sel.innerHTML = codes.size
+    ? [...codes].sort().map(c => `<option value="${c}">${c}${names[c] ? " — " + names[c] : ""}</option>`).join("")
+    : `<option value="">No brands yet — add one with the +</option>`;
+  if (keepValue && codes.has(keepValue)) sel.value = keepValue;
+}
+function cascadeFromCategory(keepType, keepBrand) {
+  const cat = document.getElementById("m-category").value;
+  populateTypeDropdown(cat, keepType);
+  cascadeFromType(keepBrand);
+}
+function cascadeFromType(keepBrand) {
+  const cat = document.getElementById("m-category").value;
+  const type = document.getElementById("m-type").value;
+  populateBrandDropdown(cat, type, keepBrand);
+  updateSerialPreview();
+}
 
 let items = [];
 let locations = [];
@@ -2034,6 +2462,7 @@ function refreshTabVisibility() {
   document.getElementById("tab-analytics").style.display = canViewAnalyticsTab() ? "" : "none";
   document.getElementById("tab-bookings").style.display = canManageBookings() ? "" : "none";
   document.getElementById("tab-presets").style.display = canManageBookings() ? "" : "none";
+  document.getElementById("tab-share").style.display = canManageBookings() ? "" : "none";
   document.getElementById("tab-docs").style.display = canManageDocuments() ? "" : "none";
 }
 
@@ -2062,8 +2491,8 @@ function toggleTheme() {
 }
 updateThemeToggleIcon();
 enhanceCustomSelect(document.getElementById("m-category"), { meta: (v) => codeMeta(v, mergedNames("category", STARTER_CATEGORIES)) });
-enhanceCustomSelect(document.getElementById("m-type"), { meta: (v) => codeMeta(v, mergedNames("type", STARTER_TYPES)) });
-enhanceCustomSelect(document.getElementById("m-brand"), { meta: (v) => codeMeta(v, mergedNames("brand", STARTER_BRANDS)) });
+enhanceCustomSelect(document.getElementById("m-type"), { meta: (v) => codeMeta(v, mergedTypeNames(document.getElementById("m-category").value)) });
+enhanceCustomSelect(document.getElementById("m-brand"), { meta: (v) => codeMeta(v, mergedBrandNames(document.getElementById("m-category").value, document.getElementById("m-type").value)) });
 enhanceCustomSelect(document.getElementById("add-user-role"), { meta: (v) => ROLE_META[v] });
 enhanceCustomSelect(document.getElementById("p-location"), { meta: locationMeta });
 enhanceCustomSelect(document.getElementById("m-location"), { meta: locationMeta });
@@ -2110,7 +2539,6 @@ document.getElementById("de-img-btn").addEventListener("click", () => {
 enhanceCustomSelect(document.getElementById("de-font"), { labelFor: (o) => `<span style="font-family:${o.value}">${o.textContent}</span>` });
 enhanceCustomSelect(document.getElementById("de-model-select"), { meta: (v) => v ? codeMeta(docModelMeta[v], mergedNames("category", STARTER_CATEGORIES)) : {} });
 enhanceCustomSelect(document.getElementById("dm-model-select"), { meta: (v) => v ? codeMeta(docModelMeta[v], mergedNames("category", STARTER_CATEGORIES)) : {} });
-document.querySelectorAll(".codes-tab").forEach(b => b.addEventListener("click", () => switchCodesTab(b.dataset.kind)));
 
 // ============================================================
 // AUTH
@@ -2132,7 +2560,7 @@ async function doLogout() {
 async function enterApp(session) {
   await loadMyRole();
   if (myRole === "guest") {
-    alert("Guest accounts are mobile-only. Please use the MLX Gear phone app instead.");
+    customAlert("Guest accounts are mobile-only. Please use the MLX Gear phone app instead.");
     await doLogout();
     return;
   }
@@ -2166,6 +2594,7 @@ function switchTab(tab) {
   document.getElementById("tab-docs").classList.toggle("active", tab === "docs");
   document.getElementById("tab-activity").classList.toggle("active", tab === "activity");
   document.getElementById("tab-users").classList.toggle("active", tab === "users");
+  document.getElementById("tab-share").classList.toggle("active", tab === "share");
   document.getElementById("table-wrap").style.display = tab === "inventory" ? "block" : "none";
   document.getElementById("locations-wrap").style.display = tab === "locations" ? "block" : "none";
   document.getElementById("analytics-wrap").style.display = tab === "analytics" ? "block" : "none";
@@ -2174,6 +2603,7 @@ function switchTab(tab) {
   document.getElementById("docs-wrap").style.display = tab === "docs" ? "block" : "none";
   document.getElementById("activity-wrap").style.display = tab === "activity" ? "block" : "none";
   document.getElementById("users-wrap").style.display = tab === "users" ? "block" : "none";
+  document.getElementById("share-wrap").style.display = tab === "share" ? "block" : "none";
   document.getElementById("filters").style.display = tab === "inventory" ? "flex" : "none";
   updateBulkToolbar();
   document.getElementById("fab").style.display = (tab === "inventory" && canEditItems()) ? "flex" : "none";
@@ -2184,6 +2614,7 @@ function switchTab(tab) {
   else if (tab === "docs") { if (!canManageDocuments()) { switchTab("inventory"); return; } renderDocsTab(); }
   else if (tab === "activity") { if (!canViewActivityTab()) { switchTab("inventory"); return; } renderActivityTab(); }
   else if (tab === "users") { if (!canViewUsersTab()) { switchTab("inventory"); return; } renderUsersTab(); }
+  else if (tab === "share") { if (!canManageBookings()) { switchTab("inventory"); return; } renderShareTab(); }
 }
 
 // ============================================================
@@ -2207,7 +2638,11 @@ async function loadLocations() {
 }
 async function loadBookingEvents() {
   const { data, error } = await sb.from("booking_events").select("*, booking_event_items(item_id, slot_id, packed, packed_at, packed_by_email, arrived, arrived_at, arrived_by_email, wrapped, wrapped_at, wrapped_by_email, returned, returned_at, returned_by_email)").order("start_at");
-  if (error) { console.error(error); bookingEvents = []; return; }
+  if (error) {
+    console.error(error);
+    customAlert(`Couldn't load bookings/calendar: ${error.message}\n\nIf this mentions a missing column (packed, arrived, wrapped, returned, etc.), your booking_event_items table needs those columns added — ask Claude for the setup SQL.`);
+    return;
+  }
   bookingEvents = (data || []).map(e => ({
     ...e,
     itemIds: (e.booking_event_items || []).map(x => x.item_id),
@@ -2428,7 +2863,7 @@ async function applyBulkStatus(status) {
   const ids = [...selectedIds];
   const { error } = await sb.from("items").update({ status }).in("id", ids);
   closeBulkMenus();
-  if (error) { alert("Bulk update failed: " + error.message); return; }
+  if (error) { customAlert("Bulk update failed: " + error.message); return; }
   await logActivity("item.bulk_status", "item", ids.join(","), `Set status to ${status} for ${ids.length} item(s)`);
   clearSelection();
   await loadItems(); renderTable();
@@ -2438,7 +2873,7 @@ async function applyBulkLocation(locId) {
   const ids = [...selectedIds];
   const { error } = await sb.from("items").update({ location_id: locId }).in("id", ids);
   closeBulkMenus();
-  if (error) { alert("Bulk move failed: " + error.message); return; }
+  if (error) { customAlert("Bulk move failed: " + error.message); return; }
   await logActivity("item.bulk_move", "item", ids.join(","), `Moved ${ids.length} item(s)`);
   clearSelection();
   await loadItems(); renderTable();
@@ -2453,7 +2888,7 @@ async function applyBulkDelete() {
   });
   await new Promise(r => setTimeout(r, 180));
   const { error } = await sb.from("items").delete().in("id", ids);
-  if (error) { alert("Bulk delete failed: " + error.message); return; }
+  if (error) { customAlert("Bulk delete failed: " + error.message); return; }
   await logActivity("item.bulk_delete", "item", ids.join(","), `Deleted ${ids.length} item(s)`);
   clearSelection();
   await loadItems(); renderTable();
@@ -2589,25 +3024,25 @@ function openEditLocationModal(id) {
 }
 function closeLocationModal() { document.getElementById("loc-modal-overlay").classList.remove("show"); }
 async function submitNewLocation() {
-  if (!canEditItems()) { alert("You don't have permission to do that."); return; }
+  if (!canEditItems()) { customAlert("You don't have permission to do that."); return; }
   const name = document.getElementById("loc-name").value.trim();
   const location_type = document.getElementById("loc-type").value;
   const parent_id = document.getElementById("loc-parent").value || null;
   const color = document.querySelector("#loc-color-grid .color-swatch.active")?.dataset.color || null;
-  if (!name) { alert("Give the location a name."); return; }
+  if (!name) { customAlert("Give the location a name."); return; }
   let error;
   if (editingLocationId) {
     ({ error } = await sb.from("locations").update({ name, location_type, parent_id, color }).eq("id", editingLocationId));
   } else {
     ({ error } = await sb.from("locations").insert({ name, location_type, parent_id, color }));
   }
-  if (error) { alert("Could not save location: " + error.message); return; }
+  if (error) { customAlert("Could not save location: " + error.message); return; }
   closeLocationModal();
   await loadLocations();
   if (currentTab === "locations") renderLocationsView(); else { renderFilters(); renderTable(); }
 }
 async function deleteLocation(id) {
-  if (!canEditItems()) { alert("You don't have permission to do that."); return; }
+  if (!canEditItems()) { customAlert("You don't have permission to do that."); return; }
   const stats = locationStats(id);
   const msg = stats.count > 0
     ? `This location (and anything nested inside it) holds ${stats.count} item(s). Deleting it will leave those items unassigned, not delete them. Continue?`
@@ -2617,7 +3052,7 @@ async function deleteLocation(id) {
   if (row) row.classList.add("row-deleting");
   await new Promise(r => setTimeout(r, 180));
   const { error } = await sb.from("locations").delete().eq("id", id);
-  if (error) { alert("Could not delete: " + error.message); return; }
+  if (error) { customAlert("Could not delete: " + error.message); return; }
   await Promise.all([loadItems(), loadLocations()]);
   renderLocationsView();
 }
@@ -2868,8 +3303,8 @@ function updateConflictWarning() {
   box.classList.add("show");
   box.innerHTML = MONO_ICON.warning + " Heads up:<br>" + lines.join("<br>");
 }
-async function openEventModal(eventId, prefillDateStr, preselectItemId) {
-  if (!canManageBookings() && !eventId) { alert("You don't have permission to do that."); return; }
+async function openEventModal(eventId, prefillDateStr, preselectItemId, preselectItemIds) {
+  if (!canManageBookings() && !eventId) { customAlert("You don't have permission to do that."); return; }
   editingEventId = eventId;
   selectedEventItemIds = new Set();
   slotAssignments = {};
@@ -2904,6 +3339,7 @@ async function openEventModal(eventId, prefillDateStr, preselectItemId) {
     document.getElementById("ev-start").value = toLocalInputValue(base);
     document.getElementById("ev-end").value = toLocalInputValue(end);
     if (preselectItemId) selectedEventItemIds.add(preselectItemId);
+    if (preselectItemIds) preselectItemIds.forEach(id => selectedEventItemIds.add(id));
   }
   presetSel.value = activePresetKitId || "";
   document.getElementById("ev-gear-search").value = "";
@@ -2950,7 +3386,7 @@ function renderEventCrew() {
 }
 async function insertCrewAndNotify_(eventId, name, email, role, isNewEvent) {
   const { data, error } = await sb.from("event_crew").insert({ event_id: eventId, name, email, role }).select().single();
-  if (error) { alert(`Could not add ${name} to crew: ` + error.message); return; }
+  if (error) { customAlert(`Could not add ${name} to crew: ` + error.message); return; }
   await logActivity("booking.crew_add", "booking_event", eventId, `Added ${name} to crew`);
   fetch(APPS_SCRIPT_EMAIL_URL, {
     method: "POST", mode: "no-cors",
@@ -2962,7 +3398,7 @@ async function addCrewToEvent() {
   const name = document.getElementById("ev-crew-name").value.trim();
   const email = document.getElementById("ev-crew-email").value.trim();
   const role = document.getElementById("ev-crew-role").value.trim() || null;
-  if (!name || !email) { alert("Name and email are both required."); return; }
+  if (!name || !email) { customAlert("Name and email are both required."); return; }
   document.getElementById("ev-crew-name").value = "";
   document.getElementById("ev-crew-email").value = "";
   document.getElementById("ev-crew-role").value = "";
@@ -2983,7 +3419,7 @@ async function addCrewToEvent() {
 async function removeCrewFromEvent(crewId) {
   if (!(await customConfirm("Remove this person from the crew list?", true))) return;
   const { error } = await sb.from("event_crew").delete().eq("id", crewId);
-  if (error) { alert(error.message); return; }
+  if (error) { customAlert(error.message); return; }
   await loadEventCrewFor(editingEventId);
   populateCrewUserPicker();
   renderEventCrew();
@@ -3043,15 +3479,15 @@ function removeFromSlot(slotId, itemId) {
   renderGearPicker();
 }
 async function submitEventModal() {
-  if (!canManageBookings()) { alert("You don't have permission to do that."); return; }
+  if (!canManageBookings()) { customAlert("You don't have permission to do that."); return; }
   const title = document.getElementById("ev-title").value.trim();
   const startVal = document.getElementById("ev-start").value;
   const endVal = document.getElementById("ev-end").value;
   const notes = document.getElementById("ev-notes").value || null;
-  if (!title || !startVal || !endVal) { alert("Give the booking a title and start/end time."); return; }
+  if (!title || !startVal || !endVal) { customAlert("Give the booking a title and start/end time."); return; }
   const startAt = new Date(startVal).toISOString();
   const endAt = new Date(endVal).toISOString();
-  if (new Date(endAt) <= new Date(startAt)) { alert("End must be after start."); return; }
+  if (new Date(endAt) <= new Date(startAt)) { customAlert("End must be after start."); return; }
   const itemIds = [...selectedEventItemIds];
   const conflicts = findConflicts(startAt, endAt, itemIds, editingEventId);
   if (conflicts.length) {
@@ -3071,11 +3507,11 @@ async function submitEventModal() {
   };
   if (eventId) {
     const { error } = await sb.from("booking_events").update(eventPayload).eq("id", eventId);
-    if (error) { alert("Could not save: " + error.message); return; }
+    if (error) { customAlert("Could not save: " + error.message); return; }
     await sb.from("booking_event_items").delete().eq("event_id", eventId);
   } else {
     const { data, error } = await sb.from("booking_events").insert({ ...eventPayload, created_by: user.id, created_by_email: user.email }).select().single();
-    if (error) { alert("Could not save: " + error.message); return; }
+    if (error) { customAlert("Could not save: " + error.message); return; }
     eventId = data.id;
     for (const c of pendingNewCrew) {
       await insertCrewAndNotify_(eventId, c.name, c.email, c.role, true);
@@ -3084,7 +3520,7 @@ async function submitEventModal() {
   }
   if (itemIds.length) {
     const { error: itemsError } = await sb.from("booking_event_items").insert(itemIds.map(id => ({ event_id: eventId, item_id: id, slot_id: slotIdForItem(id) })));
-    if (itemsError) { alert("Booking saved but gear list failed: " + itemsError.message); }
+    if (itemsError) { customAlert("Booking saved but gear list failed: " + itemsError.message); }
   }
   await logActivity(editingEventId ? "booking.update" : "booking.create", "booking_event", eventId, `${editingEventId ? "Updated" : "Created"} booking "${title}"`);
   closeEventModal();
@@ -3093,14 +3529,14 @@ async function submitEventModal() {
   if (panelItemId) renderPanelBookings();
 }
 async function deleteEventFromModal() {
-  if (!canManageBookings()) { alert("You don't have permission to do that."); return; }
+  if (!canManageBookings()) { customAlert("You don't have permission to do that."); return; }
   if (!editingEventId) return;
   if (!(await customConfirm("Delete this booking?", true))) return;
   document.getElementById("event-modal").classList.add("modal-deleting");
   await new Promise(r => setTimeout(r, 160));
   const { error } = await sb.from("booking_events").delete().eq("id", editingEventId);
   document.getElementById("event-modal").classList.remove("modal-deleting");
-  if (error) { alert(error.message); return; }
+  if (error) { customAlert(error.message); return; }
   await logActivity("booking.delete", "booking_event", editingEventId, "Deleted a booking");
   closeEventModal();
   await loadBookingEvents();
@@ -3112,6 +3548,9 @@ async function openEventDetail(eventId) {
   const e = bookingEvents.find(x => x.id === eventId);
   if (!e) return;
   viewingEventId = eventId;
+  ["ed-stage-stamps","ed-items","ed-signatures"].forEach(id => document.getElementById(id).innerHTML = "");
+  togglePdfMenu(false);
+  startBookingRealtime();
   document.getElementById("ed-title").textContent = e.title;
   document.getElementById("ed-dates").textContent = `${new Date(e.start_at).toLocaleString()} → ${new Date(e.end_at).toLocaleString()}`;
   document.getElementById("ed-notes").textContent = e.notes || "";
@@ -3122,6 +3561,7 @@ async function openEventDetail(eventId) {
   if (e.call_time) infoLines.push(`Call time: ${new Date(e.call_time).toLocaleString()}`);
   if (eventCrewList.length) infoLines.push(`Crew: ${eventCrewList.map(c => escapeHtml(c.name) + (c.role ? ` (${escapeHtml(c.role)})` : "")).join(", ")}`);
   document.getElementById("ed-crew-info").innerHTML = infoLines.length ? infoLines.join("<br>") : "";
+  getMe().then(() => loadEventSigs(eventId)).then(() => { if (viewingEventId === eventId) renderSignatures(e); });
   renderEventDetailItems(e);
   document.getElementById("ed-edit-btn").style.display = canManageBookings() ? "" : "none";
   document.getElementById("ed-mark-all-row").style.display = canManageBookings() && e.itemIds.length ? "" : "none";
@@ -3133,12 +3573,51 @@ const STAGE_META = {
   wrapped:  { label: "Wrapped",  icon: MONO_ICON.clapper },
   returned: { label: "Back",     icon: MONO_ICON.check },
 };
-function renderEventDetailItems(e) {
-  const counts = Object.keys(STAGE_META).map(stage => {
-    const done = e.eventItems.filter(x => x[stage]).length;
-    return `${STAGE_META[stage].label} ${done}/${e.itemIds.length}`;
+const STAGE_KEYS = Object.keys(STAGE_META);
+function timeAgo(iso) {
+  if (!iso) return "";
+  const diff = Date.now() - new Date(iso).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  if (days < 7) return `${days}d ago`;
+  return new Date(iso).toLocaleDateString();
+}
+function renderStageTracker(e) {
+  const total = e.itemIds.length;
+  let html = `<div class="stage-tracker">`;
+  STAGE_KEYS.forEach((stage, idx) => {
+    const doneItems = e.eventItems.filter(x => x[stage]);
+    const done = doneItems.length;
+    const complete = total > 0 && done === total;
+    const partial = done > 0 && done < total;
+    const stateClass = complete ? "complete" : partial ? "partial" : "empty";
+    let sub = "—", fullTitle = "";
+    if (complete) {
+      const latest = doneItems.reduce((a, b) => (!a[`${stage}_at`] || (b[`${stage}_at`] && b[`${stage}_at`] > a[`${stage}_at`])) ? b : a, doneItems[0]);
+      const who = latest[`${stage}_by_email`] ? escapeHtml(latest[`${stage}_by_email`].split("@")[0]) : "someone";
+      sub = `${who} · ${timeAgo(latest[`${stage}_at`])}`;
+      fullTitle = `${STAGE_META[stage].label} — ${latest[`${stage}_by_email`] || "someone"}, ${latest[`${stage}_at`] ? new Date(latest[`${stage}_at`]).toLocaleString() : ""}`;
+    } else if (partial) {
+      sub = `${done}/${total}`;
+    }
+    html += `<div class="stage-step ${stateClass}">
+      <div class="stage-step-icon">${complete ? MONO_ICON.check : STAGE_META[stage].icon}</div>
+      <div class="stage-step-label">${STAGE_META[stage].label}</div>
+      <div class="stage-step-sub" title="${escapeHtml(fullTitle)}">${sub}</div>
+    </div>`;
+    if (idx < STAGE_KEYS.length - 1) html += `<div class="stage-step-line${complete ? " filled" : ""}"></div>`;
   });
-  document.getElementById("ed-return-progress").textContent = e.itemIds.length ? `(${counts.join(" · ")})` : "";
+  html += `</div>`;
+  return html;
+}
+function renderEventDetailItems(e) {
+  morphHTML(document.getElementById("ed-stage-stamps"), e.itemIds.length ? renderStageTracker(e) : "");
+  const fullyDone = e.eventItems.filter(x => x.returned).length;
+  document.getElementById("ed-return-progress").textContent = e.itemIds.length ? `— ${fullyDone}/${e.itemIds.length} fully checked in` : "";
   const slots = e.preset_kit_id ? presetKits.find(k => k.id === e.preset_kit_id)?.slots || [] : [];
   const bySlot = {};
   const extras = [];
@@ -3157,7 +3636,8 @@ function renderEventDetailItems(e) {
     if (slots.length) html += `<div style="font-size:11px;color:var(--text-faint);font-weight:600;margin:10px 0 2px">Extras</div>`;
     html += extras.map(ei => eventItemRowHTML(ei)).join("");
   }
-  document.getElementById("ed-items").innerHTML = html || `<div class="note-text">No gear attached.</div>`;
+  morphHTML(document.getElementById("ed-items"), html || `<div class="note-text">No gear attached.</div>`);
+  renderSignatures(e);
 }
 function stageAttribution(ei, stage) {
   if (!ei[stage]) return "";
@@ -3168,53 +3648,40 @@ function stageAttribution(ei, stage) {
 function eventItemRowHTML(ei) {
   const i = items.find(x => x.id === ei.item_id);
   const can = canManageBookings();
-  const chips = Object.entries(STAGE_META).map(([stage, meta]) => {
+  let nextIdx = STAGE_KEYS.findIndex(s => !ei[s]);
+  if (nextIdx === -1) nextIdx = STAGE_KEYS.length;
+  const parts = [];
+  STAGE_KEYS.forEach((stage, idx) => {
+    const meta = STAGE_META[stage];
     const done = !!ei[stage];
-    const title = done ? `${meta.label}${stageAttribution(ei, stage)}` : `Mark ${meta.label.toLowerCase()}`;
-    return `<button class="stage-chip${done ? " done" : ""}" ${can ? "" : "disabled"} title="${title}" onclick="toggleItemStage('${viewingEventId}','${ei.item_id}','${stage}', ${!done})">${meta.icon}</button>`;
-  }).join("");
-  return `<div class="stage-row">
+    const isNext = idx === nextIdx;
+    const canUncheck = done && idx === nextIdx - 1;
+    const clickable = can && ((!done && isNext) || canUncheck);
+    let cls = "stage-chip";
+    if (done) cls += " done";
+    if (isNext && !done) cls += " next";
+    if (!clickable) cls += " locked";
+    let title;
+    if (done) title = canUncheck ? `${meta.label}${stageAttribution(ei, stage)} — click to undo` : `${meta.label}${stageAttribution(ei, stage)} — undo "${STAGE_META[STAGE_KEYS[idx + 1]]?.label}" first`;
+    else title = isNext ? `Mark ${meta.label.toLowerCase()}` : `Mark "${STAGE_META[STAGE_KEYS[nextIdx]]?.label}" first`;
+    const onclick = clickable ? `onclick="toggleItemStage('${viewingEventId}','${ei.item_id}','${stage}', ${!done})"` : "";
+    parts.push(`<button class="${cls}" data-event="${viewingEventId}" data-item="${ei.item_id}" data-stage="${stage}" ${clickable ? "" : "disabled"} title="${title}" ${onclick}>${done ? MONO_ICON.check : meta.icon}</button>`);
+    if (idx < STAGE_KEYS.length - 1) parts.push(`<span class="stage-connector${done ? " filled" : ""}"></span>`);
+  });
+  const doneStages = STAGE_KEYS.filter(s => ei[s]);
+  const attributionLine = doneStages.length
+    ? `<div class="stage-attribution">${doneStages.map(s => `${STAGE_META[s].label}${stageAttribution(ei, s)}`).join(" &nbsp;·&nbsp; ")}</div>`
+    : "";
+  return `<div class="stage-row-wrap" data-item="${ei.item_id}">
+  <div class="stage-row">
     <span class="stage-name">${i ? escapeHtml(i.name) : "(removed)"}<span class="stage-serial">${i?.serial || ""}</span></span>
-    ${chips}
+    <span class="stage-chips">${parts.join("")}</span>
+    ${can ? `<button class="icon-action danger" title="Report damage" onclick="openQuickDamage('${ei.item_id}')">${MONO_ICON.warning}</button>` : ""}
+  </div>
+  ${attributionLine}
   </div>`;
 }
-async function toggleItemStage(eventId, itemId, stage, value) {
-  const { data: { user } } = await sb.auth.getUser();
-  const payload = { [stage]: value, [`${stage}_at`]: value ? new Date().toISOString() : null, [`${stage}_by`]: value ? user.id : null, [`${stage}_by_email`]: value ? user.email : null };
-  const { error } = await sb.from("booking_event_items").update(payload).eq("event_id", eventId).eq("item_id", itemId);
-  if (error) { alert(error.message); return; }
-  const item = items.find(i => i.id === itemId);
-  if (stage === "returned" && value && item && (item.status === "on_set" || item.status === "in_use")) {
-    await sb.from("items").update({ status: "idle" }).eq("id", itemId);
-    item.status = "idle";
-  }
-  await sb.from("item_events").insert({ item_id: itemId, event_type: "checkpoint", detail: `${STAGE_META[stage].label}${value ? "" : " (undone)"} for "${bookingEvents.find(x=>x.id===eventId)?.title || "a booking"}" — ${user.email}` });
-  await logActivity(`booking.${stage}`, "booking_event", eventId, `${STAGE_META[stage].label} ${value ? "✓" : "✗"} — ${item?.name || itemId}`);
-  await loadBookingEvents();
-  const e = bookingEvents.find(x => x.id === eventId);
-  if (e) renderEventDetailItems(e);
-  renderCalendarGrid();
-}
-async function markAllStage(stage) {
-  if (!canManageBookings()) return;
-  const e = bookingEvents.find(x => x.id === viewingEventId);
-  if (!e) return;
-  const { data: { user } } = await sb.auth.getUser();
-  const payload = { [stage]: true, [`${stage}_at`]: new Date().toISOString(), [`${stage}_by`]: user.id, [`${stage}_by_email`]: user.email };
-  const { error } = await sb.from("booking_event_items").update(payload).eq("event_id", e.id);
-  if (error) { alert(error.message); return; }
-  if (stage === "returned") {
-    const idleUpdates = e.itemIds.filter(id => { const it = items.find(i => i.id === id); return it && (it.status === "on_set" || it.status === "in_use"); });
-    if (idleUpdates.length) await sb.from("items").update({ status: "idle" }).in("id", idleUpdates);
-  }
-  await logActivity(`booking.${stage}_all`, "booking_event", e.id, `Marked all gear "${STAGE_META[stage].label}" for "${e.title}"`);
-  await loadItems();
-  await loadBookingEvents();
-  const refreshed = bookingEvents.find(x => x.id === viewingEventId);
-  if (refreshed) renderEventDetailItems(refreshed);
-  renderCalendarGrid();
-}
-function closeEventDetail() { document.getElementById("event-detail-overlay").classList.remove("show"); }
+function closeEventDetail() { togglePdfMenu(false); document.getElementById("event-detail-overlay").classList.remove("show"); }
 function editEventFromDetail() {
   const id = viewingEventId;
   closeEventDetail();
@@ -3257,7 +3724,7 @@ function addKitSlotRow(prefill) {
 }
 let editingKitId = null;
 function openKitModal(kitId) {
-  if (!canManageBookings()) { alert("You don't have permission to do that."); return; }
+  if (!canManageBookings()) { customAlert("You don't have permission to do that."); return; }
   editingKitId = kitId;
   const kit = kitId ? presetKits.find(k => k.id === kitId) : null;
   document.getElementById("kit-modal-title").textContent = kit ? "Edit preset" : "New preset";
@@ -3273,9 +3740,9 @@ function openKitModal(kitId) {
 }
 function closeKitModal() { document.getElementById("kit-modal-overlay").classList.remove("show"); editingKitId = null; }
 async function submitKitModal() {
-  if (!canManageBookings()) { alert("You don't have permission to do that."); return; }
+  if (!canManageBookings()) { customAlert("You don't have permission to do that."); return; }
   const name = document.getElementById("kit-name").value.trim();
-  if (!name) { alert("Give the preset a name."); return; }
+  if (!name) { customAlert("Give the preset a name."); return; }
   const slotRows = [...document.querySelectorAll("#kit-slots-rows .slot-row")].map((row, i) => ({
     category: row.querySelector(".kit-slot-category").value,
     label: row.querySelector(".kit-slot-label").value.trim() || null,
@@ -3287,16 +3754,16 @@ async function submitKitModal() {
   let kitId = editingKitId;
   if (kitId) {
     const { error } = await sb.from("preset_kits").update({ name, notes }).eq("id", kitId);
-    if (error) { alert(error.message); return; }
+    if (error) { customAlert(error.message); return; }
     await sb.from("preset_kit_slots").delete().eq("kit_id", kitId);
   } else {
     const { data, error } = await sb.from("preset_kits").insert({ name, notes, created_by: user.id, created_by_email: user.email }).select().single();
-    if (error) { alert(error.message); return; }
+    if (error) { customAlert(error.message); return; }
     kitId = data.id;
   }
   if (slotRows.length) {
     const { error } = await sb.from("preset_kit_slots").insert(slotRows.map(s => ({ ...s, kit_id: kitId })));
-    if (error) { alert("Preset saved but categories failed: " + error.message); }
+    if (error) { customAlert("Preset saved but categories failed: " + error.message); }
   }
   await logActivity(editingKitId ? "kit.update" : "kit.create", "preset_kit", kitId, `${editingKitId ? "Updated" : "Created"} preset "${name}"`);
   closeKitModal();
@@ -3310,7 +3777,7 @@ async function deleteKitFromModal() {
   await new Promise(r => setTimeout(r, 160));
   const { error } = await sb.from("preset_kits").delete().eq("id", editingKitId);
   document.getElementById("kit-modal").classList.remove("modal-deleting");
-  if (error) { alert(error.message); return; }
+  if (error) { customAlert(error.message); return; }
   await logActivity("kit.delete", "preset_kit", editingKitId, "Deleted a preset");
   closeKitModal();
   await loadPresetKits();
@@ -3333,23 +3800,752 @@ function printKitChecklist(kitId) {
   });
   doc.save(`${kit.name.replace(/[^a-z0-9]+/gi,"-")}-checklist.pdf`);
 }
-function printPackList() {
-  const e = bookingEvents.find(x => x.id === viewingEventId);
-  if (!e || typeof window.jspdf === "undefined") return;
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  doc.setFontSize(16); doc.text(e.title, 14, 18);
-  doc.setFontSize(10); doc.setTextColor(120);
-  doc.text(`${new Date(e.start_at).toLocaleString()} → ${new Date(e.end_at).toLocaleString()}`, 14, 25);
-  doc.autoTable({
-    startY: 32,
-    head: [["☐", "Item", "Serial"]],
-    body: e.itemIds.map(id => { const i = items.find(x=>x.id===id); return ["", i?.name || "(removed)", i?.serial || ""]; }),
-    styles: { fontSize: 11, cellPadding: 4 },
-    columnStyles: { 0: { cellWidth: 14 } },
-    headStyles: { fillColor: [30,30,34] },
+// ============================================================
+// CHECK-IN v9 — in-app locked/sealed signing, saved signature, PDFs
+// ------------------------------------------------------------
+// One-time database setup (run in Supabase SQL editor — safe to re-run):
+//
+//   create table if not exists booking_stage_signatures (
+//     id uuid primary key default gen_random_uuid(),
+//     event_id text not null,
+//     stage text not null check (stage in ('packed','arrived','wrapped','returned')),
+//     signer_id uuid, signer_email text not null, signer_name text,
+//     signature text not null,
+//     signed_at timestamptz not null default now(),
+//     created_at timestamptz not null default now(),   -- server-set, used for the 5-min window
+//     unique (event_id, stage, signer_email)
+//   );
+//   alter table booking_stage_signatures add column if not exists created_at timestamptz not null default now();
+//   alter table booking_stage_signatures enable row level security;
+//   drop policy if exists "sig read"   on booking_stage_signatures;
+//   drop policy if exists "sig insert" on booking_stage_signatures;
+//   drop policy if exists "sig delete" on booking_stage_signatures;
+//   create policy "sig read"   on booking_stage_signatures for select to authenticated using (true);
+//   create policy "sig insert" on booking_stage_signatures for insert to authenticated with check (signer_id = auth.uid());
+//   -- delete allowed for: the signer, within 5 minutes of signing  OR  anyone with role 'owner', any time
+//   create policy "sig delete" on booking_stage_signatures for delete to authenticated using (
+//     (signer_id = auth.uid() and created_at > now() - interval '5 minutes')
+//     or exists (select 1 from user_roles r where r.user_id = auth.uid() and r.role = 'owner')
+//   );
+//   alter publication supabase_realtime add table booking_stage_signatures;
+//   alter publication supabase_realtime add table booking_event_items;
+//
+//   -- optional: lets someone save their signature once and reuse it (password-gated on use)
+//   create table if not exists user_signatures (
+//     user_id uuid primary key,
+//     signature text not null,
+//     updated_at timestamptz not null default now()
+//   );
+//   alter table user_signatures enable row level security;
+//   drop policy if exists "own sig read"   on user_signatures;
+//   drop policy if exists "own sig write"  on user_signatures;
+//   drop policy if exists "own sig update" on user_signatures;
+//   create policy "own sig read"   on user_signatures for select to authenticated using (user_id = auth.uid());
+//   create policy "own sig write"  on user_signatures for insert to authenticated with check (user_id = auth.uid());
+//   create policy "own sig update" on user_signatures for update to authenticated using (user_id = auth.uid());
+// ============================================================
+const SIG_WINDOW_MS = 5 * 60 * 1000;
+function isOwner() { return effectiveRole() === "owner"; }
+let _meCache = null;
+async function getMe() {
+  if (_meCache) return _meCache;
+  const { data: { session } } = await sb.auth.getSession();
+  _meCache = session?.user || (await sb.auth.getUser()).data.user;
+  return _meCache;
+}
+function personName(email) {
+  const n = (email || "someone").split("@")[0].replace(/[._-]+/g, " ");
+  return n.replace(/\b\w/g, c => c.toUpperCase());
+}
+function fmtStamp(iso, withYear) {
+  if (!iso) return "";
+  const o = { day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit" };
+  if (withYear) o.year = "numeric";
+  return new Date(iso).toLocaleString("cs-CZ", o).replace(/\u00a0/g, " ");
+}
+function stageTotals(e, stage) {
+  const total = e.itemIds.length;
+  const done = e.eventItems.filter(x => x[stage]).length;
+  return { total, done, complete: total > 0 && done === total };
+}
+function stageCheckers(e, stage) {
+  const m = new Map();
+  e.eventItems.forEach(ei => {
+    if (!ei[stage]) return;
+    const em = ei[`${stage}_by_email`] || "unknown";
+    const at = ei[`${stage}_at`];
+    const c = m.get(em);
+    if (!c || (at && (!c.at || at > c.at))) m.set(em, { email: em, at });
   });
-  doc.save(`packlist-${e.title.replace(/[^a-z0-9]+/gi,"-")}.pdf`);
+  return [...m.values()].sort((a, b) => (a.at || "").localeCompare(b.at || ""));
+}
+
+// ---------- tiny DOM morpher: updates only what changed, so nothing flickers ----------
+function morphAttrs(a, b) {
+  for (const at of [...a.attributes]) if (!b.hasAttribute(at.name)) a.removeAttribute(at.name);
+  for (const at of b.attributes) if (a.getAttribute(at.name) !== at.value) a.setAttribute(at.name, at.value);
+}
+function morphNode(a, b) {
+  if (a.nodeType !== b.nodeType || a.nodeName !== b.nodeName) { a.replaceWith(b.cloneNode(true)); return; }
+  if (a.nodeType === 3) { if (a.nodeValue !== b.nodeValue) a.nodeValue = b.nodeValue; return; }
+  if (a.nodeType !== 1) return;
+  morphAttrs(a, b);
+  morphKids(a, b);
+}
+function morphKids(a, b) {
+  const ak = [...a.childNodes], bk = [...b.childNodes];
+  for (let i = 0; i < bk.length; i++) { if (ak[i]) morphNode(ak[i], bk[i]); else a.appendChild(bk[i].cloneNode(true)); }
+  for (let i = ak.length - 1; i >= bk.length; i--) ak[i].remove();
+}
+function morphHTML(el, html) {
+  if (!el) return;
+  const t = document.createElement(el.tagName);
+  t.innerHTML = html;
+  morphKids(el, t);
+}
+
+// ---------- signatures ----------
+let eventSigs = {};
+let sigsUnavailable = false;
+async function loadEventSigs(eventId) {
+  const { data, error } = await sb.from("booking_stage_signatures").select("*").eq("event_id", String(eventId)).order("signed_at");
+  if (error) { sigsUnavailable = true; eventSigs[eventId] = []; return []; }
+  sigsUnavailable = false;
+  eventSigs[eventId] = data || [];
+  return eventSigs[eventId];
+}
+const SIG_SQL = `create table if not exists booking_stage_signatures (
+  id uuid primary key default gen_random_uuid(),
+  event_id text not null,
+  stage text not null check (stage in ('packed','arrived','wrapped','returned')),
+  signer_id uuid, signer_email text not null, signer_name text,
+  signature text not null,
+  signed_at timestamptz not null default now(),
+  unique (event_id, stage, signer_email)
+);
+alter table booking_stage_signatures enable row level security;
+create policy "sig read"   on booking_stage_signatures for select to authenticated using (true);
+create policy "sig insert" on booking_stage_signatures for insert to authenticated with check (signer_id = auth.uid());
+create policy "sig delete" on booking_stage_signatures for delete to authenticated using (true);
+alter publication supabase_realtime add table booking_stage_signatures;
+alter publication supabase_realtime add table booking_event_items;`;
+function copySigSql() {
+  navigator.clipboard.writeText(SIG_SQL).then(
+    () => showToast("Setup SQL copied — paste it into the Supabase SQL editor and run it, then reopen this booking"),
+    () => customAlert(SIG_SQL));
+}
+function stageLocked(e, stage) { return (eventSigs[e.id] || []).some(s => s.stage === stage); }
+function renderSignatures(e) {
+  const el = document.getElementById("ed-signatures");
+  if (!el) return;
+  if (!e || !e.itemIds.length) { morphHTML(el, ""); return; }
+  if (sigsUnavailable) {
+    morphHTML(el, `<div class="users-section-title" style="margin-bottom:2px">Sign-offs</div><div class="sig-setup">Signing needs a one-time database table. <button class="sig-pill mine" onclick="copySigSql()">Copy setup SQL</button></div>`);
+    return;
+  }
+  const me = _meCache?.email, can = canManageBookings(), owner = isOwner();
+  const sigs = eventSigs[e.id] || [];
+  let html = "";
+  STAGE_KEYS.forEach(stage => {
+    const t = stageTotals(e, stage);
+    const forStage = sigs.filter(x => x.stage === stage);
+    const mine = forStage.find(x => x.signer_email === me);
+    const checkers = stageCheckers(e, stage);
+    let pills = forStage.map(s => {
+      const own = s.signer_email === me;
+      const ageMin = (Date.now() - new Date(s.created_at || s.signed_at).getTime()) / 60000;
+      const ownRemovable = own && ageMin < 5;
+      const nm = escapeHtml(s.signer_name || personName(s.signer_email));
+      let x;
+      if (owner && !own) x = `<span class="sig-x" title="Remove ${nm}'s signature — unlocks this stage" onclick="event.stopPropagation();ownerDeleteSignature('${e.id}','${stage}','${s.signer_email}')">${MONO_ICON.close}</span>`;
+      else if (ownRemovable) x = `<span class="sig-x" title="Remove — ${Math.max(1, Math.ceil(5 - ageMin))} min left to undo" onclick="event.stopPropagation();deleteOwnSignature('${e.id}','${stage}')">${MONO_ICON.close}</span>`;
+      else if (own) x = `<span class="sig-lock" title="Sealed — more than 5 minutes have passed, only an owner can remove it now">${MONO_ICON.lock}</span>`;
+      else x = "";
+      return `<span class="sig-pill signed${own ? " own" : ""}" title="${escapeHtml(fmtStamp(s.signed_at, true))}">${MONO_ICON.check} ${nm} · ${escapeHtml(fmtStamp(s.signed_at))}${x}</span>`;
+    }).join("");
+    if (t.complete) {
+      pills += checkers.filter(c => c.email !== me && !forStage.some(x => x.signer_email === c.email))
+        .map(c => `<span class="sig-pill" title="Waiting for ${escapeHtml(c.email)} to sign">${escapeHtml(personName(c.email))} · awaiting</span>`).join("");
+      if (can && !mine) {
+        const urgent = checkers.some(c => c.email === me);
+        pills += `<button class="sig-pill ${urgent ? "mine" : "add"}" onclick="openSignModal('${e.id}','${stage}')">${urgent ? "Sign now" : "+ Sign"}</button>`;
+      }
+    } else if (!pills) {
+      pills = `<span class="sig-wait">Complete this stage to sign it</span>`;
+    }
+    const lockTag = forStage.length ? `<span class="sig-lock-tag" title="Item ticks in this stage are locked while it's signed">${MONO_ICON.lock} locked</span>` : "";
+    html += `<div class="sig-stage"><span class="sig-stage-head">${STAGE_META[stage].label}<span class="sig-count${t.complete ? " full" : ""}">${t.done}/${t.total}</span></span><span class="sig-pills">${pills}${lockTag}</span></div>`;
+  });
+  morphHTML(el, `<div class="users-section-title" style="margin-bottom:2px">Sign-offs</div>${html}`);
+}
+let signCtx = null, signInked = false, _sigWarned = false;
+function toLocalInput(d) {
+  const p = n => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+function openSignModal(eventId, stage) {
+  const e = bookingEvents.find(x => x.id === eventId);
+  if (!e) return;
+  if (!stageTotals(e, stage).complete) { customAlert(`"${STAGE_META[stage].label}" isn't fully checked yet — every item needs to be ticked before anyone signs off on it.`); return; }
+  signCtx = { eventId, stage };
+  const own = (eventSigs[eventId] || []).find(s => s.stage === stage && s.signer_email === _meCache?.email);
+  document.getElementById("sign-eyebrow").textContent = `${STAGE_META[stage].label} · complete`;
+  document.getElementById("sign-title").textContent = "Sign off";
+  document.getElementById("sign-sub").textContent = e.title;
+  document.getElementById("sign-name").value = own?.signer_name || personName(_meCache?.email);
+  document.getElementById("sign-when").value = toLocalInput(new Date());
+  document.getElementById("sign-note").textContent = "Optional — the check-in works without it, but it completes the paper trail on the PDFs. You can remove your own signature within 5 minutes; after that only an owner can.";
+  document.getElementById("sign-remember").checked = false;
+  document.getElementById("sign-pw-panel").classList.remove("show");
+  document.getElementById("sign-pw").value = "";
+  document.getElementById("sign-use-saved").style.display = "none";
+  document.getElementById("sign-modal-overlay").classList.add("show");
+  requestAnimationFrame(initSignPad);
+  hasSavedSignature().then(has => {
+    if (signCtx && signCtx.eventId === eventId && signCtx.stage === stage) document.getElementById("sign-use-saved").style.display = has ? "" : "none";
+  });
+}
+function closeSignModal() { document.getElementById("sign-modal-overlay").classList.remove("show"); signCtx = null; }
+let savedSigCache; // undefined = unknown, null = none, dataURL = cached
+async function hasSavedSignature() {
+  if (savedSigCache !== undefined) return !!savedSigCache;
+  try {
+    const me = await getMe();
+    const { data } = await sb.from("user_signatures").select("signature").eq("user_id", me.id).maybeSingle();
+    savedSigCache = data?.signature || null;
+  } catch (_) { savedSigCache = null; }
+  return !!savedSigCache;
+}
+function promptUseSavedSignature() { document.getElementById("sign-pw-panel").classList.add("show"); document.getElementById("sign-pw").focus(); }
+function cancelUseSavedSignature() { document.getElementById("sign-pw-panel").classList.remove("show"); document.getElementById("sign-pw").value = ""; }
+async function confirmUseSavedSignature() {
+  const pw = document.getElementById("sign-pw").value;
+  if (!pw) { customAlert("Enter your account password."); return; }
+  const me = await getMe();
+  const { error } = await sb.auth.signInWithPassword({ email: me.email, password: pw });
+  if (error) { customAlert("That password didn't match your account."); return; }
+  const c = document.getElementById("sign-canvas");
+  const ctx = c.getContext("2d");
+  const img = new Image();
+  img.onload = () => {
+    ctx.clearRect(0, 0, c.clientWidth, c.clientHeight);
+    ctx.drawImage(img, 0, 0, c.clientWidth, c.clientHeight);
+    signInked = true;
+    document.getElementById("sign-pad-wrap").classList.add("inked");
+  };
+  img.src = savedSigCache;
+  cancelUseSavedSignature();
+  showToast("Saved signature applied");
+}
+function initSignPad() {
+  const c = document.getElementById("sign-canvas");
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  c.width = Math.round(c.clientWidth * dpr); c.height = Math.round(c.clientHeight * dpr);
+  const ctx = c.getContext("2d");
+  ctx.scale(dpr, dpr);
+  ctx.lineWidth = 2.2; ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.strokeStyle = "#0b0d12";
+  signInked = false;
+  document.getElementById("sign-pad-wrap").classList.remove("inked");
+  if (c._bound) return;
+  c._bound = true;
+  let drawing = false, last = null;
+  const pt = ev => { const r = c.getBoundingClientRect(); return { x: ev.clientX - r.left, y: ev.clientY - r.top }; };
+  c.addEventListener("pointerdown", ev => { drawing = true; last = pt(ev); c.setPointerCapture(ev.pointerId); const g = c.getContext("2d"); g.beginPath(); g.arc(last.x, last.y, 1.1, 0, 7); g.fillStyle = "#0b0d12"; g.fill(); markInk(); ev.preventDefault(); });
+  c.addEventListener("pointermove", ev => {
+    if (!drawing) return;
+    const p = pt(ev), g = c.getContext("2d"), mid = { x: (last.x + p.x) / 2, y: (last.y + p.y) / 2 };
+    g.beginPath(); g.moveTo(last.x, last.y); g.quadraticCurveTo(last.x, last.y, mid.x, mid.y); g.lineTo(p.x, p.y); g.stroke();
+    last = p; markInk();
+  });
+  const end = () => { drawing = false; };
+  c.addEventListener("pointerup", end); c.addEventListener("pointercancel", end);
+  function markInk() { if (!signInked) { signInked = true; document.getElementById("sign-pad-wrap").classList.add("inked"); } }
+}
+async function saveSignature() {
+  if (!signCtx) return;
+  const name = document.getElementById("sign-name").value.trim();
+  const whenVal = document.getElementById("sign-when").value;
+  if (!name) { customAlert("Write your full name first — it's printed above your signature."); return; }
+  if (!whenVal || isNaN(new Date(whenVal))) { customAlert("Pick the date and time."); return; }
+  if (!signInked) { customAlert("Draw your signature in the box first — or tap “Skip for now”."); return; }
+  const { eventId, stage } = signCtx;
+  const e = bookingEvents.find(x => x.id === eventId);
+  if (!e || !stageTotals(e, stage).complete) { customAlert(`"${STAGE_META[stage].label}" isn't fully checked anymore — sign it again once every item is ticked.`); return; }
+  const me = await getMe();
+  const src = document.getElementById("sign-canvas");
+  const out = document.createElement("canvas"); out.width = 600; out.height = 200;
+  out.getContext("2d").drawImage(src, 0, 0, 600, 200);
+  const png = out.toDataURL("image/png");
+  const row = {
+    event_id: String(eventId), stage, signer_id: me.id, signer_email: me.email, signer_name: name,
+    signature: png, signed_at: new Date(whenVal).toISOString(),
+  };
+  await sb.from("booking_stage_signatures").delete().eq("event_id", String(eventId)).eq("stage", stage).eq("signer_email", me.email);
+  const { error } = await sb.from("booking_stage_signatures").insert(row);
+  if (error) { customAlert("Couldn't save the signature: " + error.message); return; }
+  const { data: fresh } = await sb.from("booking_stage_signatures").select("*").eq("event_id", String(eventId)).eq("stage", stage).eq("signer_email", me.email).maybeSingle();
+  eventSigs[eventId] = (eventSigs[eventId] || []).filter(s => !(s.stage === stage && s.signer_email === me.email)).concat(fresh || row);
+  if (document.getElementById("sign-remember").checked) {
+    sb.from("user_signatures").upsert({ user_id: me.id, signature: png, updated_at: new Date().toISOString() }).then(({ error }) => { if (!error) savedSigCache = png; });
+  }
+  closeSignModal();
+  if (viewingEventId === eventId) renderSignatures(bookingEvents.find(x => x.id === eventId));
+  showToast(`${STAGE_META[stage].label} signed — ${name.split(" ")[0]}`);
+  logActivity("booking.sign", "booking_event", eventId, `${STAGE_META[stage].label} signed by ${name} (${me.email})`);
+}
+async function deleteOwnSignature(eventId, stage) {
+  const me = await getMe();
+  const row = (eventSigs[eventId] || []).find(s => s.stage === stage && s.signer_email === me.email);
+  if (!row) return;
+  const age = Date.now() - new Date(row.created_at || row.signed_at).getTime();
+  if (age > SIG_WINDOW_MS) { customAlert("This signature is sealed — more than 5 minutes have passed. Ask an owner to remove it."); return; }
+  const ok = await customConfirm("Remove your signature?", true);
+  if (!ok) return;
+  const { error } = await sb.from("booking_stage_signatures").delete().eq("event_id", String(eventId)).eq("stage", stage).eq("signer_email", me.email);
+  if (error) { customAlert("Couldn't remove it: " + error.message); return; }
+  eventSigs[eventId] = (eventSigs[eventId] || []).filter(s => !(s.stage === stage && s.signer_email === me.email));
+  if (viewingEventId === eventId) renderSignatures(bookingEvents.find(x => x.id === eventId));
+  showToast("Signature removed");
+  logActivity("booking.unsign", "booking_event", eventId, `${STAGE_META[stage].label} signature removed by ${me.email}`);
+}
+async function ownerDeleteSignature(eventId, stage, signerEmail) {
+  if (!isOwner()) return;
+  const ok = await customConfirm(`Remove ${personName(signerEmail)}'s signature and unlock "${STAGE_META[stage].label}" for editing?`, true);
+  if (!ok) return;
+  const { error } = await sb.from("booking_stage_signatures").delete().eq("event_id", String(eventId)).eq("stage", stage).eq("signer_email", signerEmail);
+  if (error) { customAlert("Couldn't remove it: " + error.message); return; }
+  eventSigs[eventId] = (eventSigs[eventId] || []).filter(s => !(s.stage === stage && s.signer_email === signerEmail));
+  if (viewingEventId === eventId) renderSignatures(bookingEvents.find(x => x.id === eventId));
+  showToast("Signature removed — stage unlocked");
+  const meNow = _meCache?.email || "owner";
+  logActivity("booking.unsign", "booking_event", eventId, `${STAGE_META[stage].label} signature for ${signerEmail} removed by owner ${meNow}`);
+}
+// called after a stage changes: when a stage becomes complete, prompt whoever checked items in it
+async function afterStageChange(e, stage, wasComplete) {
+  const now = stageTotals(e, stage).complete;
+  if (!wasComplete && now) {
+    if (sigsUnavailable) {
+      if (!_sigWarned) { _sigWarned = true; showToast("Signing needs a one-time database table — open Sign-offs and tap “Copy setup SQL”."); }
+    } else {
+      const me = await getMe();
+      const needs = stageCheckers(e, stage).some(c => c.email === me.email) && !(eventSigs[e.id] || []).some(s => s.stage === stage && s.signer_email === me.email);
+      if (needs) openSignModal(e.id, stage);
+    }
+  }
+  if (viewingEventId === e.id) renderSignatures(e);
+}
+
+// ---------- live sync (other people's ticks show up without refresh) ----------
+let bookingRT = null, _rtReload = null;
+const STAGE_FIELDS = STAGE_KEYS.flatMap(s => [s, `${s}_at`, `${s}_by`, `${s}_by_email`]);
+function startBookingRealtime() {
+  if (bookingRT) return;
+  try {
+    bookingRT = sb.channel("booking-live")
+      .on("postgres_changes", { event: "*", schema: "public", table: "booking_event_items" }, p => {
+        const row = p.new || {};
+        const e = bookingEvents.find(x => x.id === row.event_id);
+        const ei = e?.eventItems.find(x => x.item_id === row.item_id);
+        if (p.eventType === "UPDATE" && ei) {
+          STAGE_FIELDS.forEach(f => { if (f in row) ei[f] = row[f]; });
+          if (viewingEventId === e.id) { renderEventDetailItems(e); }
+        } else {
+          clearTimeout(_rtReload);
+          _rtReload = setTimeout(async () => {
+            await loadBookingEvents();
+            const cur = bookingEvents.find(x => x.id === viewingEventId);
+            if (cur) renderEventDetailItems(cur);
+            renderCalendarGrid();
+          }, 500);
+        }
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "booking_stage_signatures" }, async p => {
+        const id = (p.new && p.new.event_id) || (p.old && p.old.event_id);
+        if (id && id === String(viewingEventId)) { await loadEventSigs(id); renderSignatures(bookingEvents.find(x => x.id === id)); }
+      })
+      .subscribe();
+  } catch (err) { console.warn("realtime unavailable", err); }
+}
+
+// ---------- optimistic, in-place stage toggling ----------
+const _stageInflight = new Set();
+const STAGE_FIELD_KEYS = f => [f, `${f}_at`, `${f}_by`, `${f}_by_email`];
+async function toggleItemStage(eventId, itemId, stage, value) {
+  const e = bookingEvents.find(x => x.id === eventId);
+  const ei = e?.eventItems.find(x => x.item_id === itemId);
+  if (!ei) return;
+  if (stageLocked(e, stage)) {
+    customAlert(isOwner()
+      ? `"${STAGE_META[stage].label}" is signed and locked. Remove the signature in Sign-offs first to make changes.`
+      : `"${STAGE_META[stage].label}" is signed and locked. Ask an owner to remove the signature before making changes.`);
+    return;
+  }
+  const idx = STAGE_KEYS.indexOf(stage);
+  if (value) {
+    const missing = STAGE_KEYS.slice(0, idx).find(s => !ei[s]);
+    if (missing) { customAlert(`Mark "${STAGE_META[missing].label}" first — items have to go through the stages in order.`); return; }
+  } else {
+    const blocking = STAGE_KEYS.slice(idx + 1).find(s => ei[s]);
+    if (blocking) { customAlert(`Undo "${STAGE_META[blocking].label}" first.`); return; }
+  }
+  const key = eventId + itemId + stage;
+  if (_stageInflight.has(key)) return;
+  _stageInflight.add(key);
+  const me = await getMe();
+  const now = new Date().toISOString();
+  const payload = { [stage]: value, [`${stage}_at`]: value ? now : null, [`${stage}_by`]: value ? me.id : null, [`${stage}_by_email`]: value ? me.email : null };
+  const prev = {}; STAGE_FIELD_KEYS(stage).forEach(f => prev[f] = ei[f]);
+  const wasComplete = stageTotals(e, stage).complete;
+  Object.assign(ei, payload);
+  renderEventDetailItems(e);                       // instant, in place
+  const revert = msg => { Object.assign(ei, prev); if (viewingEventId === eventId) renderEventDetailItems(e); customAlert(msg); };
+  try {
+    const { data: rows, error } = await sb.from("booking_event_items").update(payload).eq("event_id", eventId).eq("item_id", itemId).select("item_id");
+    if (error) { revert(error.message); return; }
+    if (!rows || rows.length === 0) { revert("This didn't actually save — the database silently rejected the write (0 rows updated). This is almost always a Row Level Security policy on booking_event_items blocking UPDATE."); return; }
+  } finally { _stageInflight.delete(key); }
+  const item = items.find(i => i.id === itemId);
+  if (stage === "returned" && value && item && (item.status === "on_set" || item.status === "in_use")) {
+    item.status = "idle";
+    sb.from("items").update({ status: "idle" }).eq("id", itemId).then(() => {});
+  }
+  sb.from("item_events").insert({ item_id: itemId, event_type: "checkpoint", detail: `${STAGE_META[stage].label}${value ? "" : " (undone)"} for "${e.title || "a booking"}" — ${me.email}` }).then(() => {});
+  logActivity(`booking.${stage}`, "booking_event", eventId, `${STAGE_META[stage].label} ${value ? "✓" : "✗"} — ${item?.name || itemId}`);
+  afterStageChange(e, stage, wasComplete);
+}
+async function markAllStage(stage) {
+  if (!canManageBookings()) return;
+  const e = bookingEvents.find(x => x.id === viewingEventId);
+  if (!e) return;
+  if (stageLocked(e, stage)) {
+    customAlert(isOwner()
+      ? `"${STAGE_META[stage].label}" is signed and locked. Remove the signature in Sign-offs first to make changes.`
+      : `"${STAGE_META[stage].label}" is signed and locked. Ask an owner to remove the signature before making changes.`);
+    return;
+  }
+  const idx = STAGE_KEYS.indexOf(stage);
+  const prereq = idx > 0 ? STAGE_KEYS[idx - 1] : null;
+  const eligible = e.eventItems.filter(ei => !ei[stage] && (!prereq || ei[prereq]));
+  const skipped = e.eventItems.filter(ei => !ei[stage] && prereq && !ei[prereq]).length;
+  if (!eligible.length) {
+    customAlert(skipped ? `Nothing to mark — ${skipped} item${skipped === 1 ? " isn't" : "s aren't"} "${STAGE_META[prereq].label}" yet.` : `Everything is already "${STAGE_META[stage].label}".`);
+    return;
+  }
+  const me = await getMe();
+  const payload = { [stage]: true, [`${stage}_at`]: new Date().toISOString(), [`${stage}_by`]: me.id, [`${stage}_by_email`]: me.email };
+  const wasComplete = stageTotals(e, stage).complete;
+  const backups = eligible.map(ei => { const p = {}; STAGE_FIELD_KEYS(stage).forEach(f => p[f] = ei[f]); return [ei, p]; });
+  eligible.forEach(ei => Object.assign(ei, payload));
+  renderEventDetailItems(e);
+  const eligibleIds = eligible.map(ei => ei.item_id);
+  const { data: rows, error } = await sb.from("booking_event_items").update(payload).eq("event_id", e.id).in("item_id", eligibleIds).select("item_id");
+  if (error || !rows || !rows.length) {
+    backups.forEach(([ei, p]) => Object.assign(ei, p));
+    renderEventDetailItems(e);
+    customAlert(error ? error.message : "This didn't actually save — the database silently rejected the write (0 rows updated). Probably a Row Level Security policy on booking_event_items.");
+    return;
+  }
+  if (stage === "returned") {
+    const ids = eligibleIds.filter(id => { const it = items.find(i => i.id === id); return it && (it.status === "on_set" || it.status === "in_use"); });
+    ids.forEach(id => { items.find(i => i.id === id).status = "idle"; });
+    if (ids.length) sb.from("items").update({ status: "idle" }).in("id", ids).then(() => {});
+  }
+  logActivity(`booking.${stage}_all`, "booking_event", e.id, `Marked ${eligible.length} item(s) "${STAGE_META[stage].label}" for "${e.title}"`);
+  showToast(skipped ? `Marked ${eligible.length} ${STAGE_META[stage].label.toLowerCase()} · ${skipped} skipped (not ${STAGE_META[prereq].label.toLowerCase()} yet)` : `Marked ${eligible.length} ${STAGE_META[stage].label.toLowerCase()}`);
+  afterStageChange(e, stage, wasComplete);
+}
+
+// ---------- PDF export menu: Log (PC) + Print version (paper) ----------
+let pdfPrintStage = "all";
+function setPdfPrintStage(v) {
+  pdfPrintStage = v;
+  document.querySelectorAll(".pdf-chip").forEach(b => b.classList.toggle("on", b.dataset.v === v));
+}
+function runPrintPdf() { exportChecklistPdf(pdfPrintStage === "all" ? undefined : [pdfPrintStage]); togglePdfMenu(false); }
+function togglePdfMenu(force) {
+  const w = document.getElementById("pdf-wrap");
+  if (!w) return;
+  const open = force !== undefined ? force : !w.classList.contains("open");
+  const card = document.getElementById("pdf-menu-card");
+  if (open && !card.children.length) {
+    const logIco = svgIcon_('<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/>', 15);
+    const chips = [["all", "All stages"], ...STAGE_KEYS.map(s => [s, STAGE_META[s].label])]
+      .map(([v, l]) => `<button class="pdf-chip${v === pdfPrintStage ? " on" : ""}" data-v="${v}" onclick="setPdfPrintStage('${v}')">${l}</button>`).join("");
+    card.innerHTML =
+      `<div class="pdf-sep">For the computer</div>` +
+      `<button class="pdf-opt" onclick="exportEventReportPdf();togglePdfMenu(false)"><span class="o-ico">${logIco}</span><span><span class="o-title">Log</span><br><span class="o-sub">Everything ticked and signed, in order — who and when</span></span><span class="o-go">${MONO_ICON.check}</span></button>` +
+      `<div class="pdf-sep">For paper</div>` +
+      `<div class="pdf-chips">${chips}</div>` +
+      `<button class="pdf-opt" onclick="runPrintPdf()"><span class="o-ico">${MONO_ICON.printer}</span><span><span class="o-title">Print version</span><br><span class="o-sub">Empty boxes for what isn't ticked yet · name, date &amp; sign space</span></span><span class="o-go">${MONO_ICON.check}</span></button>`;
+  }
+  w.classList.toggle("open", open);
+}
+
+// ---------- PDF engine ----------
+const PDF_INK = [17, 19, 24], PDF_GRAY = [112, 117, 126], PDF_LINE = [213, 216, 222], PDF_GREEN = [4, 150, 110], PDF_ACC = [76, 201, 240];
+let _pdfFonts = null;
+async function pdfFonts() {
+  if (_pdfFonts !== null) return _pdfFonts;
+  try {
+    const base = "https://cdn.jsdelivr.net/npm/@expo-google-fonts/roboto@0.4.3/";
+    const get = async p => {
+      const r = await fetch(base + p); if (!r.ok) throw new Error(p);
+      const b = new Uint8Array(await r.arrayBuffer()); let s = "";
+      for (let i = 0; i < b.length; i += 0x8000) s += String.fromCharCode.apply(null, b.subarray(i, i + 0x8000));
+      return btoa(s);
+    };
+    const [reg, bold] = await Promise.all([get("400Regular/Roboto_400Regular.ttf"), get("700Bold/Roboto_700Bold.ttf")]);
+    _pdfFonts = { reg, bold };
+  } catch (err) { _pdfFonts = false; }
+  return _pdfFonts;
+}
+async function newMlxPdf(opts, meta) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF(opts);
+  const f = await pdfFonts();
+  if (f) {
+    doc.addFileToVFS("Roboto-Regular.ttf", f.reg); doc.addFont("Roboto-Regular.ttf", "Roboto", "normal");
+    doc.addFileToVFS("Roboto-Bold.ttf", f.bold);   doc.addFont("Roboto-Bold.ttf", "Roboto", "bold");
+  }
+  doc._F = f ? "Roboto" : "helvetica"; doc._uni = !!f;
+  doc.setFont(doc._F, "normal");
+  doc.setProperties({
+    title: meta.title, subject: meta.subject, author: "MLX Media",
+    keywords: ["MLX Media", "mlxmedia.cz", "gear", "equipment", meta.event].filter(Boolean).join(", "),
+    creator: "MLX Gear — MLX Media (mlxmedia.cz)",
+  });
+  return doc;
+}
+const pt = (doc, s) => { s = String(s == null ? "" : s).replace(/\u00a0/g, " "); return doc._uni ? s : s.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); };
+function pdfBand(doc, m, rightText) {
+  const W = doc.internal.pageSize.getWidth(), F = doc._F;
+  doc.setFillColor(...PDF_INK); doc.rect(0, 0, W, 15, "F");
+  doc.setFillColor(...PDF_ACC); doc.rect(0, 15, W, 0.9, "F");
+  doc.setFont(F, "bold"); doc.setFontSize(12); doc.setTextColor(255);
+  doc.text("MLX", m, 9.8);
+  const w1 = doc.getTextWidth("MLX ");
+  doc.setTextColor(...PDF_ACC); doc.text("MEDIA", m + w1, 9.8);
+  doc.setFont(F, "normal"); doc.setFontSize(8); doc.setTextColor(200, 204, 212);
+  doc.text(pt(doc, rightText), W - m, 9.6, { align: "right" });
+}
+function pdfFooters(doc, m, who) {
+  const n = doc.internal.getNumberOfPages(), W = doc.internal.pageSize.getWidth(), H = doc.internal.pageSize.getHeight();
+  for (let p = 1; p <= n; p++) {
+    doc.setPage(p);
+    doc.setDrawColor(...PDF_LINE); doc.setLineWidth(0.2); doc.line(m, H - 12, W - m, H - 12);
+    doc.setFont(doc._F, "normal"); doc.setFontSize(7.5); doc.setTextColor(...PDF_GRAY);
+    doc.text(pt(doc, `MLX Media · mlxmedia.cz · Printed by ${who} · ${fmtStamp(new Date().toISOString(), true)}`), m, H - 7.5);
+    doc.text(`Page ${p} / ${n}`, W - m, H - 7.5, { align: "right" });
+  }
+}
+function pdfMetaLine(e) {
+  return [e.client_name, e.location_name, `${fmtStamp(e.start_at, true)} – ${fmtStamp(e.end_at, true)}`].filter(Boolean).join("   ·   ");
+}
+function pdfCheck(doc, x, y, s, color) {   // vector tick, no font glyph needed
+  doc.setDrawColor(...color); doc.setLineWidth(0.7);
+  doc.line(x + s * 0.2, y + s * 0.55, x + s * 0.42, y + s * 0.78);
+  doc.line(x + s * 0.42, y + s * 0.78, x + s * 0.82, y + s * 0.22);
+}
+// Sign-off area for ONE stage column. Each slot = Name line, Date line, then space + line to sign.
+// o: {draw, blank}. blank=true adds empty slots for people to fill by hand (paper version).
+const SIG_SLOT_H = 28;
+function signSlots(e, stage, o) {
+  const st = stageTotals(e, stage);
+  const sigs = (eventSigs[e.id] || []).filter(s => s.stage === stage);
+  const slots = sigs.map(s => ({ name: s.signer_name || personName(s.signer_email), when: s.signed_at, sig: s.signature }));
+  const signed = new Set(sigs.map(s => s.signer_email));
+  const pending = stageCheckers(e, stage).filter(c => !signed.has(c.email));
+  if (st.complete) pending.forEach(c => slots.push({ name: personName(c.email), when: c.at, pending: true }));
+  else if (o.blank) slots.push({ blank: true });
+  return slots;
+}
+function drawSignColumn(doc, e, stage, x, y, w, o) {
+  const F = doc._F, draw = o.draw !== false;
+  const slots = signSlots(e, stage, o);
+  if (!slots.length) {
+    if (draw) { doc.setFont(F, "normal"); doc.setFontSize(7); doc.setTextColor(165, 168, 175); doc.text("No sign-off yet", x + 1, y + 4); }
+    return 8;
+  }
+  let cy = y;
+  slots.forEach(s => {
+    if (draw) {
+      doc.setFont(F, "normal");
+      // name + date, written ABOVE the signature space
+      doc.setFontSize(6); doc.setTextColor(...PDF_GRAY);
+      doc.text("Name", x + 1, cy + 4.1); doc.text("Date", x + 1, cy + 10.3);
+      doc.setDrawColor(150, 154, 162); doc.setLineWidth(0.22);
+      doc.line(x + 8.5, cy + 4.6, x + w - 1, cy + 4.6); doc.line(x + 8.5, cy + 10.8, x + w - 1, cy + 10.8);
+      doc.setFontSize(7.5); doc.setTextColor(...PDF_INK);
+      if (s.name) doc.text(pt(doc, s.name), x + 9, cy + 3.7, { maxWidth: w - 10 });
+      if (s.when) doc.text(pt(doc, fmtStamp(s.when, true)), x + 9, cy + 9.9, { maxWidth: w - 10 });
+      // signature space
+      if (s.sig) { try { doc.addImage(s.sig, "PNG", x + 2, cy + 12, Math.min(w - 4, 31), 10.3); } catch (_) {} }
+      doc.setDrawColor(70, 74, 82); doc.setLineWidth(0.3); doc.line(x + 1, cy + 23, x + w - 1, cy + 23);
+      doc.setFontSize(5.8); doc.setTextColor(165, 168, 175);
+      doc.text(s.pending ? "Signature — awaiting" : "Signature", x + 1, cy + 26);
+    }
+    cy += SIG_SLOT_H;
+  });
+  return cy - y;
+}
+
+async function pdfPrereq() {
+  const e = bookingEvents.find(x => x.id === viewingEventId);
+  if (!e) return null;
+  if (!window.jspdf || !window.jspdf.jsPDF) { customAlert("PDF library failed to load — check your connection and refresh."); return null; }
+  await loadEventSigs(e.id);
+  return { e, me: await getMe() };
+}
+const slug = s => (s || "booking").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "");
+
+// ---------- Printable checklist (landscape) ----------
+async function exportChecklistPdf(stagesArg) {
+  const ctx = await pdfPrereq(); if (!ctx) return;
+  const { e, me } = ctx;
+  const stages = stagesArg && stagesArg.length ? stagesArg : STAGE_KEYS;
+  const single = stages.length === 1;
+  const title = single ? `${STAGE_META[stages[0]].label} — print version` : "Print version";
+  const doc = await newMlxPdf({ orientation: "landscape", unit: "mm", format: "a4" },
+    { title: `Print checklist — ${e.title}`, subject: "Gear check-in print version", event: e.title });
+  const W = 297, H = 210, m = 12, F = doc._F;
+  const serialW = 40, sw = stages.length === 4 ? 42 : stages.length === 1 ? 70 : 56;
+  const nameW = W - 2 * m - serialW - stages.length * sw;
+  const colX = i => m + nameW + serialW + i * sw;
+  const header = () => {
+    pdfBand(doc, m, "Gear check-in — print version");
+    doc.setFont(F, "bold"); doc.setFontSize(15); doc.setTextColor(...PDF_INK);
+    doc.text(pt(doc, e.title), m, 25);
+    doc.setFont(F, "normal"); doc.setFontSize(9); doc.setTextColor(...PDF_GRAY);
+    doc.text(pt(doc, title), W - m, 25, { align: "right" });
+    doc.text(pt(doc, pdfMetaLine(e)), m, 31, { maxWidth: W - 2 * m });
+  };
+  const list = e.itemIds.map(id => ({ i: items.find(x => x.id === id), ei: e.eventItems.find(x => x.item_id === id) }));
+  doc.autoTable({
+    startY: 36,
+    margin: { top: 36, left: m, right: m, bottom: 16 },
+    head: [["Gear", "Serial", ...stages.map(s => { const t = stageTotals(e, s); return `${STAGE_META[s].label}\n${t.done} / ${t.total}`; })]],
+    body: list.map(r => [pt(doc, r.i?.name || "(removed)"), pt(doc, r.i?.serial || ""), ...stages.map(() => "")]),
+    theme: "grid",
+    styles: { font: F, fontSize: 9.5, cellPadding: 2.2, textColor: PDF_INK, lineColor: PDF_LINE, lineWidth: 0.2, valign: "middle" },
+    headStyles: { fillColor: PDF_INK, textColor: 255, fontStyle: "bold", fontSize: 9, halign: "left" },
+    bodyStyles: { minCellHeight: 15 },
+    alternateRowStyles: { fillColor: [249, 250, 251] },
+    columnStyles: Object.assign({ 0: { cellWidth: nameW, fontStyle: "bold" }, 1: { cellWidth: serialW, font: "courier", fontSize: 8.5, textColor: PDF_GRAY } },
+      ...stages.map((_, k) => ({ [k + 2]: { cellWidth: sw, halign: "center" } }))),
+    didDrawPage: header,
+    didDrawCell: d => {
+      if (d.section !== "body" || d.row.index < 0 || !list[d.row.index] || d.column.index < 2) return;
+      const stage = stages[d.column.index - 2], ei = list[d.row.index].ei;
+      const cx = d.cell.x + d.cell.width / 2, bs = 5.4, bx = cx - bs / 2, by = d.cell.y + 2.2;
+      const done = !!(ei && ei[stage]);
+      if (done) { doc.setFillColor(...PDF_GREEN); doc.setDrawColor(...PDF_GREEN); doc.roundedRect(bx, by, bs, bs, 0.9, 0.9, "FD"); pdfCheck(doc, bx, by, bs, [255, 255, 255]); }
+      else { doc.setDrawColor(70, 74, 82); doc.setLineWidth(0.35); doc.roundedRect(bx, by, bs, bs, 0.9, 0.9, "S"); }
+      if (done) {
+        doc.setFont(F, "bold"); doc.setFontSize(7); doc.setTextColor(...PDF_INK);
+        doc.text(pt(doc, personName(ei[`${stage}_by_email`])), cx, by + bs + 3.1, { align: "center", maxWidth: d.cell.width - 3 });
+        doc.setFont(F, "normal"); doc.setFontSize(6.5); doc.setTextColor(...PDF_GRAY);
+        doc.text(fmtStamp(ei[`${stage}_at`]), cx, by + bs + 6.1, { align: "center" });
+      }
+    },
+  });
+  // sign-off block, aligned under the stage columns
+  let y = (doc.lastAutoTable.finalY || 40) + 6;
+  const need = Math.max(...stages.map(s => drawSignColumn(doc, e, s, 0, 0, sw, { draw: false, blank: true }))) + 10;
+  if (y + need > H - 15) { doc.addPage(); header(); y = 40; }
+  doc.setFont(F, "bold"); doc.setFontSize(8.5); doc.setTextColor(...PDF_INK);
+  doc.text("SIGN-OFF", m, y + 3.5);
+  doc.setFont(F, "normal"); doc.setFontSize(7.5); doc.setTextColor(...PDF_GRAY);
+  doc.text(doc.splitTextToSize(pt(doc, "Boxes ticked in the app are already filled in. Tick the rest by hand. Under every column write your name and the date, then sign. Names and signatures already entered in the app are printed here."), nameW + serialW - 8), m, y + 8);
+  stages.forEach((s, i) => {
+    const t = stageTotals(e, s);
+    doc.setFont(F, "bold"); doc.setFontSize(7.5); doc.setTextColor(...PDF_INK);
+    doc.text(STAGE_META[s].label.toUpperCase(), colX(i) + 1, y + 3.5);
+    doc.setFont(F, "normal"); doc.setFontSize(6.5); doc.setTextColor(...(t.complete ? PDF_GREEN : PDF_GRAY));
+    doc.text(t.complete ? "complete" : `${t.done} / ${t.total} ticked`, colX(i) + sw - 1, y + 3.5, { align: "right" });
+    drawSignColumn(doc, e, s, colX(i), y + 6, sw, { blank: true });
+  });
+  pdfFooters(doc, m, me?.email || "unknown");
+  doc.save(`${slug(e.title)}-print${single ? "-" + stages[0] : ""}.pdf`);
+}
+async function printStageChecklist(stage) { return exportChecklistPdf([stage]); }
+
+// ---------- LOG (portrait, for the computer) ----------
+async function exportEventReportPdf() {
+  const ctx = await pdfPrereq(); if (!ctx) return;
+  const { e, me } = ctx;
+  const doc = await newMlxPdf({ orientation: "portrait", unit: "mm", format: "a4" },
+    { title: `Log — ${e.title}`, subject: "Gear check-in log", event: e.title });
+  const W = 210, H = 297, m = 14, F = doc._F, cw = W - 2 * m;
+  const header = () => pdfBand(doc, m, "Gear check-in log");
+  header();
+  doc.setFont(F, "bold"); doc.setFontSize(20); doc.setTextColor(...PDF_INK);
+  const tl = doc.splitTextToSize(pt(doc, e.title), cw);
+  doc.text(tl, m, 29);
+  let y = 29 + tl.length * 8;
+  doc.setFont(F, "normal"); doc.setFontSize(9.5); doc.setTextColor(...PDF_GRAY);
+  doc.text("Equipment check-in — log of every tick and signature", m, y); y += 8;
+  const crew = (typeof eventCrewList !== "undefined" && eventCrewList || []).map(c => c.name + (c.role ? ` (${c.role})` : "")).join(", ");
+  const info = [
+    ["Dates", `${fmtStamp(e.start_at, true)}  –  ${fmtStamp(e.end_at, true)}`],
+    e.call_time && ["Call time", fmtStamp(e.call_time, true)],
+    e.client_name && ["Client", e.client_name],
+    e.location_name && ["Location", e.location_name + (e.location_address ? ` — ${e.location_address}` : "")],
+    crew && ["Crew", crew],
+    e.notes && ["Notes", e.notes],
+  ].filter(Boolean);
+  info.forEach(([k, v]) => {
+    const lines = doc.splitTextToSize(pt(doc, v), cw - 26);
+    doc.setFont(F, "bold"); doc.setFontSize(8); doc.setTextColor(...PDF_GRAY); doc.text(k.toUpperCase(), m, y);
+    doc.setFont(F, "normal"); doc.setFontSize(9.5); doc.setTextColor(...PDF_INK); doc.text(lines, m + 26, y);
+    y += Math.max(6, lines.length * 4.6 + 1.6);
+  });
+  y += 2;
+  const gap = 3.2, bw = (cw - 3 * gap) / 4;
+  STAGE_KEYS.forEach((s, i) => {
+    const t = stageTotals(e, s), x = m + i * (bw + gap);
+    const sg = (eventSigs[e.id] || []).filter(z => z.stage === s).length;
+    doc.setDrawColor(...PDF_LINE); doc.setLineWidth(0.25); doc.setFillColor(t.complete ? 236 : 250, t.complete ? 249 : 250, t.complete ? 244 : 251);
+    doc.roundedRect(x, y, bw, 19, 2, 2, "FD");
+    doc.setFont(F, "bold"); doc.setFontSize(8); doc.setTextColor(...PDF_GRAY); doc.text(STAGE_META[s].label.toUpperCase(), x + 3, y + 5.5);
+    doc.setFontSize(13); doc.setTextColor(...(t.complete ? PDF_GREEN : PDF_INK)); doc.text(`${t.done} / ${t.total}`, x + 3, y + 12.2);
+    doc.setFont(F, "normal"); doc.setFontSize(7); doc.setTextColor(...PDF_GRAY);
+    doc.text(`${t.complete ? "complete" : t.done ? "in progress" : "not started"} · ${sg} signed`, x + 3, y + 16.4);
+  });
+  y += 25;
+  // chronological log: every tick + every signature
+  const ev = [];
+  e.eventItems.forEach(ei => STAGE_KEYS.forEach(s => {
+    if (!ei[s]) return;
+    const i = items.find(x => x.id === ei.item_id);
+    ev.push({ at: ei[`${s}_at`] || "", stage: s, what: `${i?.name || "(removed)"}${i?.serial ? "  ·  " + i.serial : ""}`, who: personName(ei[`${s}_by_email`]), sign: false });
+  }));
+  (eventSigs[e.id] || []).forEach(sg => ev.push({ at: sg.signed_at || "", stage: sg.stage, what: "Signed off", who: sg.signer_name || personName(sg.signer_email), sign: true }));
+  ev.sort((a, b) => a.at.localeCompare(b.at));
+  doc.autoTable({
+    startY: y, margin: { top: 22, left: m, right: m, bottom: 18 },
+    head: [["When", "Stage", "What", "Who"]],
+    body: ev.length ? ev.map(r => [fmtStamp(r.at, true), STAGE_META[r.stage].label, r.what, r.who].map(x => pt(doc, x))) : [[{ content: "Nothing has been checked yet.", colSpan: 4, styles: { halign: "center", textColor: PDF_GRAY } }]],
+    theme: "grid",
+    styles: { font: F, fontSize: 8.5, cellPadding: 2.2, textColor: PDF_INK, lineColor: PDF_LINE, lineWidth: 0.2, valign: "middle" },
+    headStyles: { fillColor: PDF_INK, textColor: 255, fontStyle: "bold", fontSize: 8.5 },
+    alternateRowStyles: { fillColor: [249, 250, 251] },
+    columnStyles: { 0: { cellWidth: 34 }, 1: { cellWidth: 22 }, 3: { cellWidth: 38 } },
+    didParseCell: d => {
+      if (d.section === "body" && ev[d.row.index] && ev[d.row.index].sign) { d.cell.styles.fillColor = [232, 243, 251]; d.cell.styles.fontStyle = "bold"; }
+    },
+    didDrawPage: d => { if (d.pageNumber > 1) header(); },
+  });
+  y = (doc.lastAutoTable.finalY || y) + 8;
+  const need = Math.max(...STAGE_KEYS.map(s => drawSignColumn(doc, e, s, 0, 0, bw, { draw: false }))) + 12;
+  if (y + need > H - 16) { doc.addPage(); header(); y = 26; }
+  doc.setFont(F, "bold"); doc.setFontSize(10); doc.setTextColor(...PDF_INK); doc.text("Sign-offs", m, y);
+  STAGE_KEYS.forEach((s, i) => {
+    const x = m + i * (bw + gap);
+    doc.setFont(F, "bold"); doc.setFontSize(7.5); doc.setTextColor(...PDF_GRAY); doc.text(STAGE_META[s].label.toUpperCase(), x + 1, y + 6.5);
+    drawSignColumn(doc, e, s, x, y + 8, bw, {});
+  });
+  pdfFooters(doc, m, me?.email || "unknown");
+  doc.save(`${slug(e.title)}-log.pdf`);
 }
 
 
@@ -3387,26 +4583,26 @@ function renderDocsTab() {
   staggerIn(list, ".doc-row");
 }
 async function submitAddDocument() {
-  if (!canManageDocuments()) { alert("You don't have permission to do that."); return; }
+  if (!canManageDocuments()) { customAlert("You don't have permission to do that."); return; }
   const title = document.getElementById("doc-title").value.trim();
   const modelId = document.getElementById("doc-model-select").value || null;
   const file = document.getElementById("doc-file-input").files[0];
   const text = document.getElementById("doc-text-input").value.trim();
-  if (!title) { alert("Give the document a title."); return; }
-  if (!file && !text) { alert("Attach a PDF or paste some text."); return; }
+  if (!title) { customAlert("Give the document a title."); return; }
+  if (!file && !text) { customAlert("Attach a PDF or paste some text."); return; }
   const { data: { user } } = await sb.auth.getUser();
   let fileUrl = null, fileType = text && !file ? "text" : "pdf";
   if (file) {
     const path = `${Date.now()}-${file.name}`;
     const { error: upErr } = await sb.storage.from("gear-docs").upload(path, file, { contentType: file.type });
-    if (upErr) { alert("Upload failed: " + upErr.message); return; }
+    if (upErr) { customAlert("Upload failed: " + upErr.message); return; }
     fileUrl = sb.storage.from("gear-docs").getPublicUrl(path).data.publicUrl;
   }
   const { error } = await sb.from("documents").insert({
     model_id: modelId, title, file_name: file?.name || null, file_url: fileUrl, file_type: fileType,
     body_text: (!file && text) ? text : null, uploaded_by: user.id, uploaded_by_email: user.email,
   });
-  if (error) { alert("Could not save: " + error.message); return; }
+  if (error) { customAlert("Could not save: " + error.message); return; }
   await logActivity("document.create", "document", modelId, `Added document "${title}"`);
   document.getElementById("doc-title").value = "";
   document.getElementById("doc-file-input").value = "";
@@ -3415,12 +4611,12 @@ async function submitAddDocument() {
   renderDocsTab();
 }
 async function deleteDocument(id) {
-  if (!canManageDocuments()) { alert("You don't have permission to do that."); return; }
+  if (!canManageDocuments()) { customAlert("You don't have permission to do that."); return; }
   if (!(await customConfirm("Delete this document?", true))) return;
   document.querySelectorAll(`.doc-row[data-id="${id}"]`).forEach(row => row.classList.add("row-deleting"));
   await new Promise(r => setTimeout(r, 180));
   const { error } = await sb.from("documents").delete().eq("id", id);
-  if (error) { alert(error.message); return; }
+  if (error) { customAlert(error.message); return; }
   await logActivity("document.delete", "document", id, "Deleted a document");
   await loadDocuments();
   refreshDocViews();
@@ -3463,7 +4659,7 @@ function renderPanelDocuments(item) {
 }
 let editingDocId = null;
 function openDocEditor(docId) {
-  if (!canManageDocuments()) { alert("You don't have permission to do that."); return; }
+  if (!canManageDocuments()) { customAlert("You don't have permission to do that."); return; }
   editingDocId = docId;
   const doc = docId ? documents.find(d => d.id === docId) : null;
   document.getElementById("de-heading").textContent = doc ? "Edit document" : "New document";
@@ -3481,21 +4677,21 @@ function closeDocEditor() {
 }
 async function submitDocEditor() {
   const title = document.getElementById("de-title").value.trim();
-  if (!title) { alert("Give the document a title."); return; }
+  if (!title) { customAlert("Give the document a title."); return; }
   const modelId = document.getElementById("de-model-select").value || null;
   const html = document.getElementById("de-editor").innerHTML.trim();
-  if (!html) { alert("Write something in the document."); return; }
+  if (!html) { customAlert("Write something in the document."); return; }
   const { data: { user } } = await sb.auth.getUser();
   if (editingDocId) {
     const { error } = await sb.from("documents").update({ title, model_id: modelId, body_text: html }).eq("id", editingDocId);
-    if (error) { alert("Could not save: " + error.message); return; }
+    if (error) { customAlert("Could not save: " + error.message); return; }
     await logActivity("document.update", "document", editingDocId, `Updated document "${title}"`);
   } else {
     const { error } = await sb.from("documents").insert({
       model_id: modelId, title, file_name: null, file_url: null, file_type: "text",
       body_text: html, uploaded_by: user.id, uploaded_by_email: user.email,
     });
-    if (error) { alert("Could not save: " + error.message); return; }
+    if (error) { customAlert("Could not save: " + error.message); return; }
     await logActivity("document.create", "document", modelId, `Added document "${title}"`);
   }
   closeDocEditor();
@@ -3519,7 +4715,7 @@ function openDocView(id) {
 function closeDocView() { document.getElementById("doc-view-overlay").classList.remove("show"); }
 let movingDocId = null;
 function openDocMove(id) {
-  if (!canManageDocuments()) { alert("You don't have permission to do that."); return; }
+  if (!canManageDocuments()) { customAlert("You don't have permission to do that."); return; }
   movingDocId = id;
   const doc = documents.find(d => d.id === id);
   populateModelSelectFor("dm-model-select", doc?.model_id || "");
@@ -3529,7 +4725,7 @@ function closeDocMove() { document.getElementById("doc-move-overlay").classList.
 async function submitDocMove() {
   const modelId = document.getElementById("dm-model-select").value || null;
   const { error } = await sb.from("documents").update({ model_id: modelId }).eq("id", movingDocId);
-  if (error) { alert("Could not move: " + error.message); return; }
+  if (error) { customAlert("Could not move: " + error.message); return; }
   await logActivity("document.move", "document", movingDocId, "Moved a document to a different item/model");
   closeDocMove();
   await loadDocuments();
@@ -3620,14 +4816,14 @@ async function deleteActivityEntry(id) {
   const row = document.querySelector(`.activity-row[data-id="${id}"]`);
   if (row) { row.classList.add("row-deleting"); await new Promise(r => setTimeout(r, 180)); }
   const { error } = await sb.from("activity_log").delete().eq("id", id);
-  if (error) { alert(error.message); return; }
+  if (error) { customAlert(error.message); return; }
   await renderActivityTab();
 }
 async function clearActivityLog() {
   if (myRole !== "owner") return;
   if (!(await customConfirm("Clear the entire activity log? This can't be undone.", true))) return;
   const { error } = await sb.from("activity_log").delete().neq("id", "00000000-0000-0000-0000-000000000000");
-  if (error) { alert(error.message); return; }
+  if (error) { customAlert(error.message); return; }
   await renderActivityTab();
 }
 
@@ -3658,10 +4854,59 @@ function resizeImageFile(file, maxDim, quality) {
     reader.readAsDataURL(file);
   });
 }
+let quickDamageItemId = null;
+function openQuickDamage(itemId) {
+  if (!canEditItems()) { customAlert("You don't have permission to do that."); return; }
+  quickDamageItemId = itemId;
+  const item = items.find(i => i.id === itemId);
+  document.getElementById("qd-item-name").textContent = item ? `${item.name} — ${item.serial}` : "";
+  document.getElementById("qd-description").value = "";
+  document.getElementById("qd-photo-input").value = "";
+  document.getElementById("quick-damage-overlay").classList.add("show");
+  setTimeout(() => document.getElementById("qd-description").focus(), 60);
+}
+function closeQuickDamage() { document.getElementById("quick-damage-overlay").classList.remove("show"); quickDamageItemId = null; }
+async function submitQuickDamage() {
+  if (!canEditItems() || !quickDamageItemId) { customAlert("You don't have permission to do that."); return; }
+  const description = document.getElementById("qd-description").value.trim();
+  if (!description) { customAlert("Describe what happened first."); return; }
+  const fileInput = document.getElementById("qd-photo-input");
+  const file = fileInput.files[0];
+  let photoUrl = null;
+  if (file) {
+    const blob = await resizeImageFile(file, 1000, 0.75);
+    const path = `damage-${quickDamageItemId}-${Date.now()}.jpg`;
+    const { error: upErr } = await sb.storage.from("gear-photos").upload(path, blob, { contentType: "image/jpeg" });
+    if (upErr) { customAlert("Photo upload failed: " + upErr.message); return; }
+    photoUrl = sb.storage.from("gear-photos").getPublicUrl(path).data.publicUrl;
+  }
+  const { data: { user } } = await sb.auth.getUser();
+  const { error } = await sb.from("item_damage_reports").insert({
+    item_id: quickDamageItemId, event_id: viewingEventId || null,
+    reported_by: user.id, reported_by_email: user.email,
+    description, photo_url: photoUrl,
+  });
+  if (error) { customAlert("Could not log damage: " + error.message); return; }
+  await sb.from("item_events").insert({ item_id: quickDamageItemId, event_type: "damage", detail: `Damage logged by ${user.email}: ${description}` });
+  await logActivity("item.damage", "item", quickDamageItemId, description);
+  const itemId = quickDamageItemId;
+  closeQuickDamage();
+  if (await customConfirm(`Logged. Also mark this item's status as "Damaged" now?`)) {
+    await sb.from("items").update({ status: "damaged" }).eq("id", itemId);
+    const item = items.find(i => i.id === itemId);
+    if (item) item.status = "damaged";
+  }
+  await loadItems();
+  const e = bookingEvents.find(x => x.id === viewingEventId);
+  if (e) renderEventDetailItems(e);
+  if (panelItemId === itemId) { await renderDamageHistory(itemId); }
+  if (currentTab === "table") renderTable(); else if (currentTab === "locations") renderLocationsView();
+  showToast("Damage logged");
+}
 async function submitDamageReport() {
-  if (!canEditItems() || !panelItemId) { alert("You don't have permission to do that."); return; }
+  if (!canEditItems() || !panelItemId) { customAlert("You don't have permission to do that."); return; }
   const description = document.getElementById("dmg-description").value.trim();
-  if (!description) { alert("Describe what happened first."); return; }
+  if (!description) { customAlert("Describe what happened first."); return; }
   const fileInput = document.getElementById("dmg-photo-input");
   const file = fileInput.files[0];
   let photoUrl = null;
@@ -3669,7 +4914,7 @@ async function submitDamageReport() {
     const blob = await resizeImageFile(file, 1000, 0.75);
     const path = `damage-${panelItemId}-${Date.now()}.jpg`;
     const { error: upErr } = await sb.storage.from("gear-photos").upload(path, blob, { contentType: "image/jpeg" });
-    if (upErr) { alert("Photo upload failed: " + upErr.message); return; }
+    if (upErr) { customAlert("Photo upload failed: " + upErr.message); return; }
     photoUrl = sb.storage.from("gear-photos").getPublicUrl(path).data.publicUrl;
   }
   const { data: { user } } = await sb.auth.getUser();
@@ -3678,7 +4923,7 @@ async function submitDamageReport() {
     reported_by: user.id, reported_by_email: user.email,
     description, photo_url: photoUrl,
   });
-  if (error) { alert("Could not log damage: " + error.message); return; }
+  if (error) { customAlert("Could not log damage: " + error.message); return; }
   await sb.from("item_events").insert({ item_id: panelItemId, event_type: "damage", detail: `Damage logged by ${user.email}: ${description}` });
   await logActivity("item.damage", "item", panelItemId, description);
   if (await customConfirm("Logged. Also mark this item's status as \"Damaged\" now?")) {
@@ -3710,10 +4955,10 @@ async function handlePanelPhoto(input) {
   const blob = await resizeImageFile(file, 1000, 0.75);
   const path = `${panelItemId}-${Date.now()}.jpg`;
   const { error: upErr } = await sb.storage.from("gear-photos").upload(path, blob, { contentType: "image/jpeg", upsert: true });
-  if (upErr) { alert("Photo upload failed: " + upErr.message); return; }
+  if (upErr) { customAlert("Photo upload failed: " + upErr.message); return; }
   const url = sb.storage.from("gear-photos").getPublicUrl(path).data.publicUrl;
   const { error } = await sb.from("items").update({ photo_url: url }).eq("id", panelItemId);
-  if (error) { alert("Could not save photo: " + error.message); return; }
+  if (error) { customAlert("Could not save photo: " + error.message); return; }
   const item = items.find(i => i.id === panelItemId);
   if (item) item.photo_url = url;
   document.getElementById("p-photo-preview").src = url;
@@ -3726,8 +4971,8 @@ async function handlePanelPhoto(input) {
 // INSURANCE EXPORT (PDF)
 // ============================================================
 function exportInsurancePdf() {
-  if (!canExportData()) { alert("You don't have permission to do that."); return; }
-  if (typeof window.jspdf === "undefined") { alert("PDF library failed to load — check your connection and refresh."); return; }
+  if (!canExportData()) { customAlert("You don't have permission to do that."); return; }
+  if (typeof window.jspdf === "undefined") { customAlert("PDF library failed to load — check your connection and refresh."); return; }
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation: "landscape" });
   const totalValue = items.reduce((s, i) => s + (Number(i.price) || 0), 0);
@@ -3759,7 +5004,7 @@ const PRINT_COLUMNS = [
   { key: "notes",         label: "Notes",        default: false, get: i => i.notes || "—" },
 ];
 function openPrintInventoryModal() {
-  if (!canExportData()) { alert("You don't have permission to do that."); return; }
+  if (!canExportData()) { customAlert("You don't have permission to do that."); return; }
   document.getElementById("print-columns").innerHTML = PRINT_COLUMNS.map(c =>
     `<label style="display:flex;align-items:center;gap:8px;padding:6px 2px;font-size:13.5px">
       <input type="checkbox" id="print-col-${c.key}" ${c.default ? "checked" : ""}>
@@ -3770,10 +5015,10 @@ function openPrintInventoryModal() {
 }
 function closePrintInventoryModal() { document.getElementById("print-modal-overlay").classList.remove("show"); }
 function submitPrintInventory() {
-  if (!canExportData()) { alert("You don't have permission to do that."); return; }
-  if (typeof window.jspdf === "undefined") { alert("PDF library failed to load — check your connection and refresh."); return; }
+  if (!canExportData()) { customAlert("You don't have permission to do that."); return; }
+  if (typeof window.jspdf === "undefined") { customAlert("PDF library failed to load — check your connection and refresh."); return; }
   const selected = PRINT_COLUMNS.filter(c => document.getElementById(`print-col-${c.key}`)?.checked);
-  if (!selected.length) { alert("Pick at least one column."); return; }
+  if (!selected.length) { customAlert("Pick at least one column."); return; }
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation: selected.length > 5 ? "landscape" : "portrait" });
   doc.setFontSize(16); doc.text("MLX Media — Equipment List", 14, 16);
@@ -3793,23 +5038,23 @@ function submitPrintInventory() {
 // CSV IMPORT (bulk add — each row issues a real serial)
 // ============================================================
 function handleImportCsv(input) {
-  if (!canImportData()) { alert("You don't have permission to do that."); return; }
+  if (!canImportData()) { customAlert("You don't have permission to do that."); return; }
   const file = input.files[0];
   input.value = "";
   if (!file) return;
-  if (typeof Papa === "undefined") { alert("CSV library failed to load — check your connection and refresh."); return; }
+  if (typeof Papa === "undefined") { customAlert("CSV library failed to load — check your connection and refresh."); return; }
   Papa.parse(file, {
     header: true, skipEmptyLines: true,
     complete: async (results) => {
       const rows = results.data;
-      if (!rows.length) { alert("No rows found in that CSV."); return; }
+      if (!rows.length) { customAlert("No rows found in that CSV."); return; }
       if (!(await customConfirm(`Import ${rows.length} row(s) as new items? Each one will issue a real serial number.`))) return;
       await performCsvImport(rows);
     },
   });
 }
 async function performCsvImport(rows) {
-  if (!canImportData()) { alert("You don't have permission to do that."); return; }
+  if (!canImportData()) { customAlert("You don't have permission to do that."); return; }
   let ok = 0, failed = 0;
   for (const row of rows) {
     const displayName = row.display_name || row.name;
@@ -3836,7 +5081,7 @@ async function performCsvImport(rows) {
     if (insertError) failed++; else ok++;
   }
   await logActivity("item.csv_import", "item", "", `CSV import: ${ok} added, ${failed} failed`);
-  alert(`Import finished: ${ok} added, ${failed} failed.`);
+  customAlert(`Import finished: ${ok} added, ${failed} failed.`);
   await Promise.all([loadItems(), loadLocations()]);
   renderFilters(); renderTable();
 }
@@ -3862,7 +5107,7 @@ function closeCustomDialog(result) {
 }
 function customAlert(message) { return showCustomDialog(message, { isConfirm: false }); }
 function customConfirm(message, danger) { return showCustomDialog(message, { isConfirm: true, danger: !!danger }); }
-// Non-blocking replacement for every plain alert(...) call in the app —
+// Non-blocking replacement for every plain customAlert(...) call in the app —
 // these never depended on a return value, so this needed zero call-site
 // changes. confirm() couldn't be swapped this way (its callers need the
 // boolean *before* continuing), so those were converted individually to
@@ -3958,7 +5203,7 @@ async function renderUsersTab() {
 }
 async function setUserRole(userId, newRole) {
   const { error } = await sb.from("user_roles").update({ role: newRole, updated_at: new Date().toISOString() }).eq("user_id", userId);
-  if (error) { alert("Could not update role: " + error.message); }
+  if (error) { customAlert("Could not update role: " + error.message); }
   renderUsersTab();
 }
 async function removeUserAccess(userId, email) {
@@ -3967,7 +5212,7 @@ async function removeUserAccess(userId, email) {
   if (row) row.classList.add("row-deleting");
   await new Promise(r => setTimeout(r, 180));
   const { error } = await sb.from("user_roles").delete().eq("user_id", userId);
-  if (error) { alert("Could not remove: " + error.message); return; }
+  if (error) { customAlert("Could not remove: " + error.message); return; }
   renderUsersTab();
 }
 
@@ -3993,7 +5238,7 @@ async function togglePermission(userId, key, checked) {
   const overrides = { ...(u.permissions || {}) };
   if (checked) delete overrides[key]; else overrides[key] = false;
   const { error } = await sb.from("user_roles").update({ permissions: overrides, updated_at: new Date().toISOString() }).eq("user_id", userId);
-  if (error) { alert("Could not update permissions: " + error.message); return; }
+  if (error) { customAlert("Could not update permissions: " + error.message); return; }
   u.permissions = overrides;
   await logActivity("role.permissions_change", "user_role", userId, `Set "${CAPABILITY_LABELS[key]}" to ${checked ? "allowed" : "restricted"} for ${u.email || userId}`);
 }
@@ -4001,12 +5246,12 @@ function closePermissionsPopover() { document.getElementById("perm-modal-overlay
 async function submitAddUserRole() {
   const email = document.getElementById("add-user-email").value.trim();
   const role = document.getElementById("add-user-role").value;
-  if (!email) { alert("Enter the email of an account that has already signed in once."); return; }
+  if (!email) { customAlert("Enter the email of an account that has already signed in once."); return; }
   const { data: uid, error: lookupError } = await sb.rpc("get_user_id_by_email", { p_email: email });
-  if (lookupError) { alert("Could not look up that email: " + lookupError.message); return; }
-  if (!uid) { alert("No account found for that email. They need to sign in once first (or you create their account in Supabase Studio), then you can grant them a role here."); return; }
+  if (lookupError) { customAlert("Could not look up that email: " + lookupError.message); return; }
+  if (!uid) { customAlert("No account found for that email. They need to sign in once first (or you create their account in Supabase Studio), then you can grant them a role here."); return; }
   const { error } = await sb.from("user_roles").upsert({ user_id: uid, email, role, updated_at: new Date().toISOString() });
-  if (error) { alert("Could not grant access: " + error.message); return; }
+  if (error) { customAlert("Could not grant access: " + error.message); return; }
   document.getElementById("add-user-email").value = "";
   renderUsersTab();
 }
@@ -4028,7 +5273,7 @@ function setSimulatedRole(role) {
   simulatedRole = role === "owner" ? null : role;
   updateSimBanner();
   refreshTabVisibility();
-  const tabNowHidden = { inventory: false, locations: false, analytics: !canViewAnalyticsTab(), bookings: !canManageBookings(), presets: !canManageBookings(), docs: !canManageDocuments(), activity: !canViewActivityTab(), users: !canViewUsersTab() }[currentTab];
+  const tabNowHidden = { inventory: false, locations: false, analytics: !canViewAnalyticsTab(), bookings: !canManageBookings(), presets: !canManageBookings(), share: !canManageBookings(), docs: !canManageDocuments(), activity: !canViewActivityTab(), users: !canViewUsersTab() }[currentTab];
   if (tabNowHidden) { switchTab("inventory"); return; }
   if (currentTab === "users") renderUsersTab();
   if (currentTab === "inventory") { renderFilters(); renderTable(); }
@@ -4041,6 +5286,284 @@ function setSimulatedRole(role) {
   if (panelItemId) openPanel(panelItemId);
 }
 function exitSimulation() { setSimulatedRole("owner"); }
+
+// ============================================================
+// SHARE CENTER — client-facing gear list links
+// ------------------------------------------------------------
+// One-time database setup (run in Supabase SQL editor — safe to re-run).
+// Uses SECURITY DEFINER functions so anonymous visitors never get direct
+// table access — they can only call these three functions, each scoped
+// to one active link token.
+//
+//   create table if not exists gear_share_links (
+//     id uuid primary key default gen_random_uuid(),
+//     token text unique not null,
+//     title text not null default 'Gear list',
+//     owner_id uuid not null,
+//     owner_email text,
+//     fields jsonb not null default '{}'::jsonb,
+//     category_filter text,
+//     active boolean not null default true,
+//     created_at timestamptz not null default now()
+//   );
+//   alter table gear_share_links enable row level security;
+//   drop policy if exists "share links owner all" on gear_share_links;
+//   create policy "share links owner all" on gear_share_links for all to authenticated
+//     using (owner_id = auth.uid()) with check (owner_id = auth.uid());
+//
+//   create table if not exists gear_share_selections (
+//     id uuid primary key default gen_random_uuid(),
+//     link_id uuid not null references gear_share_links(id) on delete cascade,
+//     client_name text,
+//     item_ids text[] not null default '{}',
+//     note text,
+//     submitted_at timestamptz not null default now()
+//   );
+//   alter table gear_share_selections enable row level security;
+//   drop policy if exists "share selections owner read" on gear_share_selections;
+//   create policy "share selections owner read" on gear_share_selections for select to authenticated using (
+//     exists (select 1 from gear_share_links l where l.id = link_id and l.owner_id = auth.uid())
+//   );
+//   drop policy if exists "share selections owner delete" on gear_share_selections;
+//   create policy "share selections owner delete" on gear_share_selections for delete to authenticated using (
+//     exists (select 1 from gear_share_links l where l.id = link_id and l.owner_id = auth.uid())
+//   );
+//
+//   create or replace function get_share_link(p_token text)
+//   returns table (title text, fields jsonb, category_filter text)
+//   language sql security definer set search_path = public as $$
+//     select title, fields, category_filter from gear_share_links where token = p_token and active = true;
+//   $$;
+//   grant execute on function get_share_link(text) to anon, authenticated;
+//
+//   create or replace function get_share_items(p_token text)
+//   returns table (id text, name text, serial text, category text, status text, notes text, location_name text)
+//   language sql security definer set search_path = public as $$
+//     select i.id::text, coalesce(mr.display_name,'(unknown model)'), i.serial, mr.category, i.status, i.notes, loc.name
+//     from gear_share_links l
+//     join items i on true
+//     left join model_registry mr on mr.id = i.model_id
+//     left join locations loc on loc.id = i.location_id
+//     where l.token = p_token and l.active = true
+//       and (l.category_filter is null or mr.category = l.category_filter);
+//   $$;
+//   grant execute on function get_share_items(text) to anon, authenticated;
+//
+//   create or replace function submit_share_selection(p_token text, p_client_name text, p_item_ids text[], p_note text)
+//   returns uuid
+//   language plpgsql security definer set search_path = public as $$
+//   declare v_link_id uuid; v_id uuid;
+//   begin
+//     select id into v_link_id from gear_share_links where token = p_token and active = true;
+//     if v_link_id is null then raise exception 'This link is no longer active.'; end if;
+//     insert into gear_share_selections (link_id, client_name, item_ids, note)
+//       values (v_link_id, nullif(trim(p_client_name), ''), coalesce(p_item_ids, '{}'), nullif(trim(p_note), ''))
+//       returning id into v_id;
+//     return v_id;
+//   end;
+//   $$;
+//   grant execute on function submit_share_selection(text, text, text[], text) to anon, authenticated;
+//
+//   alter publication supabase_realtime add table gear_share_selections;
+// ============================================================
+const SHARE_SQL = " create table if not exists gear_share_links (\n   id uuid primary key default gen_random_uuid(),\n   token text unique not null,\n   title text not null default 'Gear list',\n   owner_id uuid not null,\n   owner_email text,\n   fields jsonb not null default '{}'::jsonb,\n   category_filter text,\n   active boolean not null default true,\n   created_at timestamptz not null default now()\n );\n alter table gear_share_links enable row level security;\n drop policy if exists \"share links owner all\" on gear_share_links;\n create policy \"share links owner all\" on gear_share_links for all to authenticated\n   using (owner_id = auth.uid()) with check (owner_id = auth.uid());\n//\n create table if not exists gear_share_selections (\n   id uuid primary key default gen_random_uuid(),\n   link_id uuid not null references gear_share_links(id) on delete cascade,\n   client_name text,\n   item_ids text[] not null default '{}',\n   note text,\n   submitted_at timestamptz not null default now()\n );\n alter table gear_share_selections enable row level security;\n drop policy if exists \"share selections owner read\" on gear_share_selections;\n create policy \"share selections owner read\" on gear_share_selections for select to authenticated using (\n   exists (select 1 from gear_share_links l where l.id = link_id and l.owner_id = auth.uid())\n );\n drop policy if exists \"share selections owner delete\" on gear_share_selections;\n create policy \"share selections owner delete\" on gear_share_selections for delete to authenticated using (\n   exists (select 1 from gear_share_links l where l.id = link_id and l.owner_id = auth.uid())\n );\n//\n create or replace function get_share_link(p_token text)\n returns table (title text, fields jsonb, category_filter text)\n language sql security definer set search_path = public as $$\n   select title, fields, category_filter from gear_share_links where token = p_token and active = true;\n $$;\n grant execute on function get_share_link(text) to anon, authenticated;\n//\n create or replace function get_share_items(p_token text)\n returns table (id text, name text, serial text, category text, status text, notes text, location_name text)\n language sql security definer set search_path = public as $$\n   select i.id::text, coalesce(mr.display_name,'(unknown model)'), i.serial, mr.category, i.status, i.notes, loc.name\n   from gear_share_links l\n   join items i on true\n   left join model_registry mr on mr.id = i.model_id\n   left join locations loc on loc.id = i.location_id\n   where l.token = p_token and l.active = true\n     and (l.category_filter is null or mr.category = l.category_filter);\n $$;\n grant execute on function get_share_items(text) to anon, authenticated;\n//\n create or replace function submit_share_selection(p_token text, p_client_name text, p_item_ids text[], p_note text)\n returns uuid\n language plpgsql security definer set search_path = public as $$\n declare v_link_id uuid; v_id uuid;\n begin\n   select id into v_link_id from gear_share_links where token = p_token and active = true;\n   if v_link_id is null then raise exception 'This link is no longer active.'; end if;\n   insert into gear_share_selections (link_id, client_name, item_ids, note)\n     values (v_link_id, nullif(trim(p_client_name), ''), coalesce(p_item_ids, '{}'), nullif(trim(p_note), ''))\n     returning id into v_id;\n   return v_id;\n end;\n $$;\n grant execute on function submit_share_selection(text, text, text[], text) to anon, authenticated;\n//\n alter publication supabase_realtime add table gear_share_selections;";
+let shareLinks = [], shareSelections = [], shareUnavailable = false;
+function getShareBaseUrl() { return (localStorage.getItem("mlxShareBaseUrl") || "").trim(); }
+function saveShareBaseUrl() {
+  localStorage.setItem("mlxShareBaseUrl", document.getElementById("share-base-url").value.trim());
+  showToast("Saved");
+}
+function shareUrlFor(token) {
+  const base = getShareBaseUrl();
+  if (!base) return "";
+  return base + (base.includes("?") ? "&" : "?") + "t=" + token;
+}
+function shareToken(n) {
+  n = n || 16;
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
+  const arr = new Uint32Array(n);
+  (window.crypto || window.msCrypto).getRandomValues(arr);
+  let s = ""; for (let i = 0; i < n; i++) s += chars[arr[i] % chars.length];
+  return s;
+}
+async function loadShareLinks() {
+  const { data, error } = await sb.from("gear_share_links").select("*").order("created_at", { ascending: false });
+  if (error) { shareUnavailable = true; shareLinks = []; return; }
+  shareUnavailable = false;
+  shareLinks = data || [];
+}
+async function loadShareSelections() {
+  if (shareUnavailable) { shareSelections = []; return; }
+  const { data, error } = await sb.from("gear_share_selections").select("*, gear_share_links(title, token)").order("submitted_at", { ascending: false });
+  shareSelections = error ? [] : (data || []);
+}
+function shareCategoryOptions() {
+  return [...new Set(items.map(i => i.category).filter(Boolean))].sort();
+}
+async function renderShareTab() {
+  document.getElementById("share-base-url").value = getShareBaseUrl();
+  const catSel = document.getElementById("share-category");
+  catSel.innerHTML = `<option value="">— All categories —</option>` + shareCategoryOptions().map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
+  await Promise.all([loadShareLinks(), loadShareSelections()]);
+  renderShareLinksList();
+  renderShareResponsesList();
+}
+function renderShareLinksList() {
+  const el = document.getElementById("share-links-list");
+  if (shareUnavailable) {
+    el.innerHTML = `<div class="share-empty">Sharing needs a one-time database setup. <button class="btn ghost" style="display:inline-flex;padding:5px 10px;font-size:12px" onclick="copyShareSql()">Copy setup SQL</button></div>`;
+    return;
+  }
+  if (!shareLinks.length) { el.innerHTML = `<div class="share-empty">No links yet — create one above.</div>`; return; }
+  el.innerHTML = shareLinks.map(l => {
+    const count = shareSelections.filter(s => s.link_id === l.id).length;
+    const url = shareUrlFor(l.token);
+    const fieldTags = Object.entries(l.fields || {}).filter(([, v]) => v).map(([k]) => SHARE_FIELD_LABELS[k] || k).join(" · ") || "Name only";
+    return `<div class="share-link-card">
+      <div class="share-link-top">
+        <span class="share-link-title${l.active ? "" : " inactive"}">${escapeHtml(l.title)}</span>
+        <span class="share-badge${count ? "" : " zero"}">${count} response${count === 1 ? "" : "s"}</span>
+        <span class="share-toggle-switch${l.active ? " on" : ""}" title="${l.active ? "Active — click to disable" : "Disabled — click to re-enable"}" onclick="toggleShareLinkActive('${l.id}', ${!l.active})"></span>
+      </div>
+      <div class="share-link-meta">${escapeHtml(fieldTags)}${l.category_filter ? " · " + escapeHtml(l.category_filter) + " only" : ""} · created ${escapeHtml(fmtStamp(l.created_at, true))}</div>
+      <div class="share-url-row"><code>${url ? escapeHtml(url) : "Set your public link address above, then reopen this tab"}</code>${url ? `<button class="icon-action" title="Copy link" onclick="copyShareLink('${l.token}')">${MONO_ICON.check}</button>` : ""}</div>
+      <div class="share-actions-row">
+        <button onclick="deleteShareLink('${l.id}')" class="danger">Delete link</button>
+      </div>
+    </div>`;
+  }).join("");
+}
+const SHARE_FIELD_LABELS = { serial: "Serial", category: "Category", status: "Status", notes: "Notes", location: "Location", qr: "QR code" };
+function copyShareLink(token) {
+  const url = shareUrlFor(token);
+  if (!url) { customAlert("Set your public link address first."); return; }
+  navigator.clipboard.writeText(url).then(() => showToast("Link copied")).catch(() => customAlert(url));
+}
+async function toggleShareLinkActive(id, val) {
+  const { error } = await sb.from("gear_share_links").update({ active: val }).eq("id", id);
+  if (error) { customAlert(error.message); return; }
+  await loadShareLinks(); renderShareLinksList();
+}
+async function deleteShareLink(id) {
+  const ok = await customConfirm("Delete this link? Anyone still holding it will see an inactive page, and its responses go with it.", true);
+  if (!ok) return;
+  const { error } = await sb.from("gear_share_links").delete().eq("id", id);
+  if (error) { customAlert(error.message); return; }
+  await Promise.all([loadShareLinks(), loadShareSelections()]);
+  renderShareLinksList(); renderShareResponsesList();
+  showToast("Link deleted");
+}
+async function createShareLink() {
+  const title = document.getElementById("share-title").value.trim() || "Gear list";
+  const category = document.getElementById("share-category").value || null;
+  const fields = {
+    serial: document.getElementById("share-f-serial").checked,
+    category: document.getElementById("share-f-category").checked,
+    status: document.getElementById("share-f-status").checked,
+    notes: document.getElementById("share-f-notes").checked,
+    location: document.getElementById("share-f-location").checked,
+    qr: document.getElementById("share-f-qr").checked,
+  };
+  const me = await getMe();
+  const token = shareToken();
+  const { error } = await sb.from("gear_share_links").insert({ token, title, owner_id: me.id, owner_email: me.email, fields, category_filter: category });
+  if (error) { customAlert("Couldn't create the link: " + error.message); return; }
+  document.getElementById("share-title").value = "";
+  await loadShareLinks();
+  renderShareLinksList();
+  if (getShareBaseUrl()) copyShareLink(token); else showToast("Link created — set your public address above to copy it");
+}
+function copyShareSql() {
+  const m = document.currentScript ? "" : "";
+  navigator.clipboard.writeText(SHARE_SQL).then(() => showToast("Setup SQL copied — paste it into the Supabase SQL editor and run it"), () => customAlert(SHARE_SQL));
+}
+function renderShareResponsesList() {
+  const el = document.getElementById("share-responses-list");
+  if (shareUnavailable) { el.innerHTML = ""; return; }
+  if (!shareSelections.length) { el.innerHTML = `<div class="share-empty">Nothing sent back yet.</div>`; return; }
+  el.innerHTML = shareSelections.map(s => {
+    const rows = s.item_ids.map(id => items.find(i => i.id === id));
+    const found = rows.filter(Boolean).length, missing = rows.length - found;
+    return `<div class="share-resp-card">
+      <div class="share-resp-header" onclick="this.parentElement.querySelector('.share-resp-items').classList.toggle('open')">
+        <span class="share-resp-name">${escapeHtml(s.client_name || "Someone")}</span>
+        <span class="share-resp-sub">${escapeHtml(s.gear_share_links?.title || "")} · ${escapeHtml(fmtStamp(s.submitted_at, true))}</span>
+        <span class="share-resp-count">${rows.length} item${rows.length === 1 ? "" : "s"}</span>
+      </div>
+      ${s.note ? `<div class="share-resp-note">“${escapeHtml(s.note)}”</div>` : ""}
+      <div class="share-resp-items">
+        ${rows.map((it, i) => it
+          ? `<div class="share-resp-item-row"><span>${escapeHtml(it.name)}</span><span>${escapeHtml(it.serial || "")}</span></div>`
+          : `<div class="share-resp-item-row missing"><span>Item no longer in inventory</span><span></span></div>`).join("") || `<div class="share-empty">No items in this one.</div>`}
+      </div>
+      <div class="share-actions-row">
+        <button onclick="useSelectionInBooking('${s.id}')">Use in new booking</button>
+        <button onclick="exportSelectionCsv('${s.id}')">Export CSV</button>
+        <button onclick="exportSelectionPdf('${s.id}')">Export PDF</button>
+        <button class="danger" onclick="deleteShareSelection('${s.id}')">Delete</button>
+      </div>
+    </div>`;
+  }).join("");
+}
+async function deleteShareSelection(id) {
+  const ok = await customConfirm("Delete this response?", true);
+  if (!ok) return;
+  const { error } = await sb.from("gear_share_selections").delete().eq("id", id);
+  if (error) { customAlert(error.message); return; }
+  await loadShareSelections(); renderShareResponsesList();
+}
+function useSelectionInBooking(id) {
+  const s = shareSelections.find(x => x.id === id);
+  if (!s) return;
+  const ids = s.item_ids.filter(iid => items.some(i => i.id === iid));
+  if (!ids.length) { customAlert("None of these items are still in your inventory."); return; }
+  switchTab("bookings");
+  openEventModal(null, null, null, ids);
+  setTimeout(() => {
+    const cf = document.getElementById("ev-client"); if (cf && s.client_name) cf.value = s.client_name;
+    const nf = document.getElementById("ev-notes"); if (nf && s.note) nf.value = `From shared gear list (${s.gear_share_links?.title || "link"}): ${s.note}`;
+  }, 60);
+}
+function exportSelectionCsv(id) {
+  const s = shareSelections.find(x => x.id === id);
+  if (!s) return;
+  const rows = [["Gear", "Serial", "Category", "Status"]];
+  s.item_ids.forEach(iid => { const it = items.find(i => i.id === iid); if (it) rows.push([it.name, it.serial || "", it.category || "", it.status || ""]); });
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\r\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" }));
+  a.download = `${slug(s.gear_share_links?.title || "gear-list")}-${slug(s.client_name || "selection")}.csv`;
+  a.click();
+}
+async function exportSelectionPdf(id) {
+  const s = shareSelections.find(x => x.id === id);
+  if (!s) return;
+  if (!window.jspdf || !window.jspdf.jsPDF) { customAlert("PDF library failed to load — check your connection and refresh."); return; }
+  const doc = await newMlxPdf({ orientation: "portrait", unit: "mm", format: "a4" }, { title: `Gear list — ${s.client_name || "client"}`, subject: "Shared gear selection", event: s.gear_share_links?.title });
+  const m = 14, F = doc._F, W = 210, cw = W - 2 * m;
+  pdfBand(doc, m, "Shared gear list");
+  doc.setFont(F, "bold"); doc.setFontSize(18); doc.setTextColor(...PDF_INK);
+  doc.text(pt(doc, s.gear_share_links?.title || "Gear list"), m, 28);
+  doc.setFont(F, "normal"); doc.setFontSize(9.5); doc.setTextColor(...PDF_GRAY);
+  doc.text(pt(doc, `Requested by ${s.client_name || "—"}   ·   ${fmtStamp(s.submitted_at, true)}`), m, 35);
+  let y = 42;
+  if (s.note) { const nl = doc.splitTextToSize(pt(doc, `"${s.note}"`), cw); doc.setFont(F, "normal"); doc.text(nl, m, y); y += nl.length * 4.6 + 4; }
+  const rows = s.item_ids.map(iid => items.find(i => i.id === iid)).filter(Boolean);
+  doc.autoTable({
+    startY: y, margin: { top: 22, left: m, right: m, bottom: 16 },
+    head: [["Gear", "Serial", "Category"]],
+    body: rows.length ? rows.map(it => [pt(doc, it.name), pt(doc, it.serial || ""), pt(doc, it.category || "")]) : [["No items — the client sent an empty list.", "", ""]],
+    theme: "grid",
+    styles: { font: F, fontSize: 9.5, cellPadding: 2.4, textColor: PDF_INK, lineColor: PDF_LINE, lineWidth: 0.2 },
+    headStyles: { fillColor: PDF_INK, textColor: 255, fontStyle: "bold" },
+    alternateRowStyles: { fillColor: [249, 250, 251] },
+    didDrawPage: d => { if (d.pageNumber > 1) pdfBand(doc, m, "Shared gear list"); },
+  });
+  const me = await getMe();
+  pdfFooters(doc, m, me?.email || "unknown");
+  doc.save(`${slug(s.gear_share_links?.title || "gear-list")}-${slug(s.client_name || "selection")}.pdf`);
+}
+
 function updateSimBanner() {
   const banner = document.getElementById("sim-banner");
   if (simulatedRole) {
@@ -4116,7 +5639,7 @@ async function loadEvents(itemId) {
   log.innerHTML = data.map(e => `<div class="event-row"><span>${escapeHtml(e.detail || e.event_type)}</span><span>${new Date(e.occurred_at).toLocaleDateString()}</span></div>`).join("");
 }
 async function saveItem() {
-  if (!canEditItems()) { alert("You don't have permission to do that."); return; }
+  if (!canEditItems()) { customAlert("You don't have permission to do that."); return; }
   const item = items.find(i => i.id === panelItemId);
   if (!item) return;
   const newStatus = item._pendingStatus || item.status;
@@ -4132,7 +5655,7 @@ async function saveItem() {
     warranty_expiry: document.getElementById("p-warranty").value || null,
   };
   const { error } = await sb.from("items").update(updates).eq("id", item.id);
-  if (error) { alert("Could not save: " + error.message); return; }
+  if (error) { customAlert("Could not save: " + error.message); return; }
   if (newStatus !== item.status) {
     await sb.from("item_events").insert({ item_id: item.id, event_type: "status_change", detail: `Status changed to ${STATUS_META[newStatus].label}` });
   }
@@ -4146,7 +5669,7 @@ async function saveItem() {
   });
 }
 async function deleteItem() {
-  if (!canEditItems()) { alert("You don't have permission to do that."); return; }
+  if (!canEditItems()) { customAlert("You don't have permission to do that."); return; }
   const item = items.find(i => i.id === panelItemId);
   if (!item) return;
   closePanel();
@@ -4308,7 +5831,6 @@ function mergedNames(kind, starter) {
   Object.entries(codeRegistry[kind]).forEach(([code, row]) => { out[code] = row.name; });
   return out;
 }
-function starterDictFor(kind) { return kind === "category" ? STARTER_CATEGORIES : kind === "type" ? STARTER_TYPES : STARTER_BRANDS; }
 function uniqueRegistryValues(field) {
   const vals = new Set();
   items.forEach(i => { if (i.model_registry?.[field]) vals.add(i.model_registry[field]); });
@@ -4322,124 +5844,251 @@ function populateDropdown(id, starter, extra, kind) {
 }
 function refreshCodeDependentUI() {
   populateDropdown("m-category", STARTER_CATEGORIES, uniqueRegistryValues("category"), "category");
-  populateDropdown("m-type", STARTER_TYPES, uniqueRegistryValues("type"), "type");
-  populateDropdown("m-brand", STARTER_BRANDS, uniqueRegistryValues("brand"), "brand");
-  updateSerialPreview();
+  cascadeFromCategory(document.getElementById("m-type").value, document.getElementById("m-brand").value);
   renderFilters();
   if (currentTab === "table") renderTable();
   renderDocsTab();
 }
-let codesModalKind = "category";
-function openCodesModal(kind) {
-  codesModalKind = kind || "category";
-  document.querySelectorAll(".codes-tab").forEach(b => b.classList.toggle("active", b.dataset.kind === codesModalKind));
-  document.getElementById("cm-new-code").value = "";
-  document.getElementById("cm-new-name").value = "";
-  document.getElementById("cm-new-desc").value = "";
-  renderCodesModal();
-  document.getElementById("codes-modal-overlay").classList.add("show");
-  setTimeout(() => document.getElementById("cm-new-code").focus(), 60);
+function isCodeInUse(kind, code) {
+  if (kind === "category") return uniqueRegistryValues("category").has(code);
+  if (kind === "type") return usedTypesForCategory(codesModalCatCtx).has(code);
+  return usedBrandsForType(codesModalCatCtx, codesModalTypeCtx).has(code);
 }
-function closeCodesModal() { document.getElementById("codes-modal-overlay").classList.remove("show"); }
-function switchCodesTab(kind) {
-  codesModalKind = kind;
-  document.querySelectorAll(".codes-tab").forEach(b => b.classList.toggle("active", b.dataset.kind === kind));
-  document.getElementById("cm-new-code").value = "";
-  document.getElementById("cm-new-name").value = "";
-  document.getElementById("cm-new-desc").value = "";
-  renderCodesModal();
+function firstCategoryCode() { return Object.keys(STARTER_CATEGORIES).sort()[0] || ""; }
+function combinedCategoryRows() {
+  const custom = codeRegistryRows.filter(r => r.kind === "category");
+  const overridden = new Set(custom.map(r => r.code));
+  const builtin = Object.keys(STARTER_CATEGORIES).filter(c => !overridden.has(c)).map(c => ({ code: c, name: STARTER_CATEGORIES[c], description: "", isBuiltin: true }));
+  const customMapped = custom.map(r => ({ code: r.code, name: r.name, description: r.description, isBuiltin: !!STARTER_CATEGORIES[r.code], id: r.id }));
+  return [...customMapped, ...builtin].sort((a, b) => a.code.localeCompare(b.code));
 }
-function renderCodesModal() {
-  const kind = codesModalKind;
-  const starter = starterDictFor(kind);
+function combinedTypeRows(catCode) {
+  const custom = customTypesFor(catCode);
+  const overridden = new Set(custom.map(r => r.code));
+  const treeT = treeTypesFor(catCode);
+  const builtin = Object.keys(treeT).filter(c => !overridden.has(c)).map(c => ({ code: c, name: treeT[c].name, description: "", isBuiltin: true }));
+  const customMapped = custom.map(r => ({ code: r.code, name: r.name, description: r.description, isBuiltin: !!treeT[r.code], id: r.id }));
+  return [...customMapped, ...builtin].sort((a, b) => a.code.localeCompare(b.code));
+}
+function combinedBrandRows(catCode, typeCode) {
+  const custom = customBrandsFor(typeCode);
+  const overridden = new Set(custom.map(r => r.code));
+  const treeB = treeBrandsFor(catCode, typeCode);
+  const builtin = Object.keys(treeB).filter(c => !overridden.has(c)).map(c => ({ code: c, name: treeB[c], description: "", isBuiltin: true }));
+  const customMapped = custom.map(r => ({ code: r.code, name: r.name, description: r.description, isBuiltin: !!treeB[r.code], id: r.id }));
+  return [...customMapped, ...builtin].sort((a, b) => a.code.localeCompare(b.code));
+}
+function treeRowHtml(r, kind, selected) {
+  const color = hashColor(r.code);
+  const clickable = kind !== "brand";
+  return `<div class="tree-row${selected ? " selected" : ""}${clickable ? " clickable" : ""}" data-code="${escapeHtml(r.code)}" ${clickable ? `onclick="selectTreeNode('${kind}','${escapeHtml(r.code)}')"` : ""}>
+    <span class="cs-badge" style="background:${color}22;color:${color};border-color:${color}55">${escapeHtml(r.code)}</span>
+    <div class="doc-info"><div class="doc-title">${escapeHtml(r.name)}</div>${r.description ? `<div class="doc-sub">${escapeHtml(r.description)}</div>` : (r.isBuiltin ? `<div class="doc-sub">Built-in</div>` : "")}</div>
+    ${clickable ? `<svg class="tree-chevron" width="8" height="12" viewBox="0 0 8 12" fill="none"><path d="M1 1l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>` : ""}
+    <button class="icon-action" title="Edit" onclick="event.stopPropagation(); editTreeNode('${kind}','${escapeHtml(r.code)}')">✎</button>
+    ${!r.isBuiltin ? `<button class="icon-action danger" title="Delete" onclick="event.stopPropagation(); deleteTreeNode('${kind}','${escapeHtml(r.code)}','${r.id}')">✕</button>` : ""}
+  </div>`;
+}
+function renderTreeColumns() {
+  const cats = Object.keys(STARTER_CATEGORIES);
+  if (!codesModalCatCtx || !cats.includes(codesModalCatCtx)) codesModalCatCtx = firstCategoryCode();
   const note = document.getElementById("codes-setup-note");
   if (codeRegistryAvailable === false) {
     note.style.display = "";
-    note.textContent = `Custom names aren't saving yet — this needs one small table added to your Supabase project first (ask Claude for the setup SQL if you haven't run it). Until then, new codes will show as a bare letter to everyone.`;
+    note.textContent = `Custom names aren't saving yet — this needs one small table added to your Supabase project first (ask Claude for the setup SQL). Until then, new codes will show as a bare letter to everyone.`;
   } else {
     note.style.display = "none";
   }
-  const rows = codeRegistryRows.filter(r => r.kind === kind).sort((a, b) => a.code.localeCompare(b.code));
-  const overridden = new Set(rows.map(r => r.code));
-  const builtinOnly = Object.keys(starter).filter(c => !overridden.has(c)).sort();
-  const customHtml = rows.map(r => `<div class="doc-row" data-code="${r.code}">
-    <span class="cs-badge" style="background:${hashColor(r.code)}22;color:${hashColor(r.code)};border-color:${hashColor(r.code)}55;flex-shrink:0">${escapeHtml(r.code)}</span>
-    <div class="doc-info"><div class="doc-title">${escapeHtml(r.name)}</div><div class="doc-sub">${r.description ? escapeHtml(r.description) : (starter[r.code] ? "Overrides built-in name" : "Custom code")}</div></div>
-    <button class="icon-action" title="Edit" onclick="editCodeEntry('${r.id}')">✎</button>
-    <button class="icon-action danger" title="Delete" onclick="deleteCodeEntry('${r.id}','${r.code}','${kind}')">✕</button>
-  </div>`).join("");
-  const builtinHtml = builtinOnly.map(c => `<div class="doc-row" data-code="${c}">
-    <span class="cs-badge" style="background:${hashColor(c)}22;color:${hashColor(c)};border-color:${hashColor(c)}55;flex-shrink:0">${escapeHtml(c)}</span>
-    <div class="doc-info"><div class="doc-title">${escapeHtml(starter[c])}</div><div class="doc-sub">Built-in</div></div>
-    <button class="icon-action" title="Add a description or rename" onclick="editBuiltinCode('${c}')">✎</button>
-  </div>`).join("");
-  const list = document.getElementById("codes-list");
-  list.innerHTML = (customHtml + builtinHtml) || `<div class="note-text">No codes yet.</div>`;
-  staggerIn(list, ".doc-row");
+  const catRows = combinedCategoryRows();
+  document.getElementById("tree-list-category").innerHTML = catRows.map(r => treeRowHtml(r, "category", r.code === codesModalCatCtx)).join("") || `<div class="note-text">None yet</div>`;
+
+  const catName = STARTER_CATEGORIES[codesModalCatCtx] || codesModalCatCtx;
+  document.getElementById("tree-col-type-title").textContent = `Types in ${catName}`;
+  const typeRows = combinedTypeRows(codesModalCatCtx);
+  if (!typeRows.some(r => r.code === codesModalTypeCtx)) codesModalTypeCtx = typeRows[0]?.code || "";
+  document.getElementById("tree-list-type").innerHTML = typeRows.length ? typeRows.map(r => treeRowHtml(r, "type", r.code === codesModalTypeCtx)).join("") : `<div class="note-text">No types yet — add one below</div>`;
+
+  const typeName = typeRows.find(r => r.code === codesModalTypeCtx)?.name || codesModalTypeCtx;
+  document.getElementById("tree-col-brand-title").textContent = codesModalTypeCtx ? `Brands in ${typeName}` : "Brands";
+  const brandRows = codesModalTypeCtx ? combinedBrandRows(codesModalCatCtx, codesModalTypeCtx) : [];
+  document.getElementById("tree-list-brand").innerHTML = brandRows.length ? brandRows.map(r => treeRowHtml(r, "brand", false)).join("") : `<div class="note-text">${codesModalTypeCtx ? "No brands yet — add one below" : "Pick a type first"}</div>`;
+
+  staggerIn(document.getElementById("tree-list-category"), ".tree-row");
+  staggerIn(document.getElementById("tree-list-type"), ".tree-row");
+  staggerIn(document.getElementById("tree-list-brand"), ".tree-row");
 }
-async function submitNewCodeEntry() {
-  const code = document.getElementById("cm-new-code").value.trim().toUpperCase();
-  const name = document.getElementById("cm-new-name").value.trim();
-  const description = document.getElementById("cm-new-desc").value.trim() || null;
-  if (!/^[A-Z0-9]$/.test(code)) { alert("Code must be a single letter or digit."); return; }
-  if (!name) { alert("Give it a name."); return; }
-  const kind = codesModalKind;
-  const existing = codeRegistryRows.find(r => r.kind === kind && r.code === code);
+function selectTreeNode(kind, code) {
+  if (kind === "category") { codesModalCatCtx = code; codesModalTypeCtx = ""; }
+  else if (kind === "type") { codesModalTypeCtx = code; }
+  renderTreeColumns();
+}
+function rowsForKind(kind) {
+  if (kind === "category") return combinedCategoryRows();
+  if (kind === "type") return combinedTypeRows(codesModalCatCtx);
+  return combinedBrandRows(codesModalCatCtx, codesModalTypeCtx);
+}
+function editTreeNode(kind, code) {
+  const rowEl = document.querySelector(`#tree-list-${kind} .tree-row[data-code="${code}"]`);
+  const r = rowsForKind(kind).find(x => x.code === code);
+  if (!rowEl || !r) return;
+  rowEl.innerHTML = `
+    <span class="cs-badge" style="background:${hashColor(code)}22;color:${hashColor(code)};border-color:${hashColor(code)}55">${escapeHtml(code)}</span>
+    <div class="tree-edit-fields">
+      <input class="tree-edit-name" value="${escapeHtml(r.name)}" placeholder="Name">
+      <input class="tree-edit-desc" value="${escapeHtml(r.description || "")}" placeholder="Description (optional)">
+    </div>
+    <button class="icon-action" title="Save" onclick="saveTreeNodeEdit('${kind}','${code}')">${MONO_ICON.check}</button>`;
+  rowEl.querySelector(".tree-edit-name").focus();
+}
+async function saveTreeNodeEdit(kind, code) {
+  const rowEl = document.querySelector(`#tree-list-${kind} .tree-row[data-code="${code}"]`);
+  const name = rowEl.querySelector(".tree-edit-name").value.trim();
+  const description = rowEl.querySelector(".tree-edit-desc").value.trim() || null;
+  if (!name) { customAlert("Give it a name."); return; }
+  const parentCode = kind === "category" ? null : kind === "type" ? codesModalCatCtx : codesModalTypeCtx;
+  const existing = codeRegistryRows.find(r => r.kind === kind && r.code === code && (r.parent_code || null) === (parentCode || null));
   try {
     if (existing) {
       const { error } = await sb.from("code_registry").update({ name, description }).eq("id", existing.id);
       if (error) throw error;
     } else {
-      const { error } = await sb.from("code_registry").insert({ kind, code, name, description });
+      const { error } = await sb.from("code_registry").insert({ kind, code, name, description, parent_code: parentCode });
       if (error) throw error;
     }
   } catch (e) {
     codeRegistryAvailable = false;
-    alert("Couldn't save this — see the note above the list for setup steps. (" + e.message + ")");
-    renderCodesModal();
+    customAlert("Couldn't save this — see the note above for setup steps. (" + e.message + ")");
+    renderTreeColumns();
     return;
   }
-  document.getElementById("cm-new-code").value = "";
-  document.getElementById("cm-new-name").value = "";
-  document.getElementById("cm-new-desc").value = "";
   await loadCodeRegistry();
-  renderCodesModal();
+  renderTreeColumns();
   refreshCodeDependentUI();
 }
-function editCodeEntry(id) {
-  const r = codeRegistryRows.find(x => x.id === id);
-  if (!r) return;
-  document.getElementById("cm-new-code").value = r.code;
-  document.getElementById("cm-new-name").value = r.name;
-  document.getElementById("cm-new-desc").value = r.description || "";
-  document.getElementById("cm-new-name").focus();
-}
-function editBuiltinCode(code) {
-  document.getElementById("cm-new-code").value = code;
-  document.getElementById("cm-new-name").value = starterDictFor(codesModalKind)[code] || "";
-  document.getElementById("cm-new-desc").value = "";
-  document.getElementById("cm-new-name").focus();
-}
-async function deleteCodeEntry(id, code, kind) {
-  const inUse = uniqueRegistryValues(kind).has(code);
+async function deleteTreeNode(kind, code, id) {
+  const inUse = isCodeInUse(kind, code);
   const msg = inUse
     ? `Some items already use code "${code}". Deleting this just removes its saved name/description — those items keep the code, it'll just show as a bare letter again. Continue?`
     : `Delete the "${code}" entry?`;
   if (!(await customConfirm(msg, true))) return;
   const { error } = await sb.from("code_registry").delete().eq("id", id);
-  if (error) { alert(error.message); return; }
+  if (error) { customAlert(error.message); return; }
   await loadCodeRegistry();
-  renderCodesModal();
+  renderTreeColumns();
   refreshCodeDependentUI();
 }
-function addNewCode(which) { openCodesModal(which); }
+async function submitTreeAdd(kind) {
+  const codeInput = document.getElementById(`tree-add-${kind}-code`);
+  const nameInput = document.getElementById(`tree-add-${kind}-name`);
+  const code = codeInput.value.trim().toUpperCase();
+  const name = nameInput.value.trim();
+  if (!/^[A-Z0-9]$/.test(code)) { customAlert("Code must be a single letter or digit."); return; }
+  if (!name) { customAlert("Give it a name."); return; }
+  if (kind === "brand" && !codesModalTypeCtx) { customAlert("Pick a type first."); return; }
+  const parentCode = kind === "category" ? null : kind === "type" ? codesModalCatCtx : codesModalTypeCtx;
+  const existing = codeRegistryRows.find(r => r.kind === kind && r.code === code && (r.parent_code || null) === (parentCode || null));
+  try {
+    if (existing) {
+      const { error } = await sb.from("code_registry").update({ name }).eq("id", existing.id);
+      if (error) throw error;
+    } else {
+      const { error } = await sb.from("code_registry").insert({ kind, code, name, parent_code: parentCode });
+      if (error) throw error;
+    }
+  } catch (e) {
+    codeRegistryAvailable = false;
+    customAlert("Couldn't save this — see the note above for setup steps. (" + e.message + ")");
+    renderTreeColumns();
+    return;
+  }
+  codeInput.value = ""; nameInput.value = "";
+  await loadCodeRegistry();
+  if (kind === "category") codesModalCatCtx = code;
+  if (kind === "type") codesModalTypeCtx = code;
+  renderTreeColumns();
+  refreshCodeDependentUI();
+}
+function downloadTextFile(content, filename, mime) {
+  const blob = new Blob([content], { type: mime });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function exportTreeCsv() {
+  const rows = [];
+  Object.entries(STARTER_TREE).forEach(([catCode, cat]) => {
+    const catOverride = codeRegistry.category[catCode];
+    rows.push({ kind: "category", parent_code: "", code: catCode, name: catOverride?.name || cat.name, description: catOverride?.description || "" });
+    Object.entries(cat.types).forEach(([typeCode, type]) => {
+      const typeOverride = codeRegistryRows.find(r => r.kind === "type" && r.code === typeCode && r.parent_code === catCode);
+      rows.push({ kind: "type", parent_code: catCode, code: typeCode, name: typeOverride?.name || type.name, description: typeOverride?.description || "" });
+      Object.entries(type.brands).forEach(([brandCode, brandName]) => {
+        const brandOverride = codeRegistryRows.find(r => r.kind === "brand" && r.code === brandCode && r.parent_code === typeCode);
+        rows.push({ kind: "brand", parent_code: typeCode, code: brandCode, name: brandOverride?.name || brandName, description: brandOverride?.description || "" });
+      });
+    });
+  });
+  codeRegistryRows.forEach(r => {
+    const already = rows.some(x => x.kind === r.kind && x.code === r.code && x.parent_code === (r.parent_code || ""));
+    if (!already) rows.push({ kind: r.kind, parent_code: r.parent_code || "", code: r.code, name: r.name, description: r.description || "" });
+  });
+  if (typeof Papa === "undefined") { customAlert("CSV library failed to load — refresh and try again."); return; }
+  downloadTextFile(Papa.unparse(rows), `mlx-gear-taxonomy-${new Date().toISOString().slice(0,10)}.csv`, "text/csv");
+}
+function handleTreeImportCsv(input) {
+  const file = input.files[0];
+  input.value = "";
+  if (!file) return;
+  if (typeof Papa === "undefined") { customAlert("CSV library failed to load — refresh and try again."); return; }
+  Papa.parse(file, {
+    header: true, skipEmptyLines: true,
+    complete: async (results) => {
+      const rows = results.data.filter(r => r.kind && r.code && r.name);
+      if (!rows.length) { customAlert("No valid rows found. Expected columns: kind, parent_code, code, name, description."); return; }
+      if (!(await customConfirm(`Import ${rows.length} code(s) into the taxonomy?`))) return;
+      let ok = 0, failed = 0;
+      for (const row of rows) {
+        const kind = String(row.kind).toLowerCase().trim();
+        if (!["category", "type", "brand"].includes(kind)) { failed++; continue; }
+        const code = String(row.code).toUpperCase().trim().slice(0, 1);
+        const name = String(row.name).trim();
+        const parent_code = row.parent_code ? String(row.parent_code).toUpperCase().trim() : null;
+        const description = row.description ? String(row.description).trim() : null;
+        if (!code || !name) { failed++; continue; }
+        const existing = codeRegistryRows.find(r => r.kind === kind && r.code === code && (r.parent_code || null) === (parent_code || null));
+        try {
+          if (existing) { const { error } = await sb.from("code_registry").update({ name, description }).eq("id", existing.id); if (error) throw error; }
+          else { const { error } = await sb.from("code_registry").insert({ kind, code, name, description, parent_code }); if (error) throw error; }
+          ok++;
+        } catch (e) { failed++; }
+      }
+      await loadCodeRegistry();
+      renderTreeColumns();
+      refreshCodeDependentUI();
+      customAlert(`Imported ${ok} code${ok === 1 ? "" : "s"}${failed ? `, ${failed} failed (check the kind/code columns)` : ""}.`);
+    },
+  });
+}
+function openCodesModal(kind, ctxCategory, ctxType) {
+  codesModalCatCtx = ctxCategory || document.getElementById("m-category")?.value || firstCategoryCode();
+  codesModalTypeCtx = ctxType || document.getElementById("m-type")?.value || "";
+  renderTreeColumns();
+  document.getElementById("codes-modal-overlay").classList.add("show");
+}
+function closeCodesModal() { document.getElementById("codes-modal-overlay").classList.remove("show"); }
+function addNewCode(which) {
+  const cat = document.getElementById("m-category")?.value;
+  const type = document.getElementById("m-type")?.value;
+  openCodesModal(which, cat, type);
+}
 function openAddModal() {
   if (!canEditItems()) { customAlert("You don't have permission to do that."); return; }
   document.getElementById("modal-success-view").style.display = "none";
   document.getElementById("modal-form-view").style.display = "";
   populateDropdown("m-category", STARTER_CATEGORIES, uniqueRegistryValues("category"), "category");
-  populateDropdown("m-type", STARTER_TYPES, uniqueRegistryValues("type"), "type");
-  populateDropdown("m-brand", STARTER_BRANDS, uniqueRegistryValues("brand"), "brand");
+  cascadeFromCategory();
   populateLocationSelect("m-location", { includeEmpty: true });
   ["m-model-code","m-display-name","m-purchase-date","m-price","m-condition","m-notes"].forEach(id => document.getElementById(id).value = "");
   document.getElementById("m-quantity").value = 1;
@@ -4454,8 +6103,8 @@ function duplicateLastItem() {
   if (!lastAddedPayload) return;
   const p = lastAddedPayload;
   document.getElementById("m-category").value = p.category;
-  document.getElementById("m-type").value = p.type;
-  document.getElementById("m-brand").value = p.brand;
+  populateTypeDropdown(p.category, p.type);
+  populateBrandDropdown(p.category, p.type, p.brand);
   document.getElementById("m-model-code").value = p.modelCode;
   document.getElementById("m-display-name").value = p.displayName;
   document.getElementById("m-location").value = p.locationId || "";
@@ -4558,7 +6207,7 @@ function successPrintTag() {
 // ============================================================
 const EXPORT_FORMAT = "mlxgear.v1";
 async function exportData() {
-  if (!canExportData()) { alert("You don't have permission to do that."); return; }
+  if (!canExportData()) { customAlert("You don't have permission to do that."); return; }
   const models = [];
   const seenModelIds = new Set();
   items.forEach(i => {
@@ -4587,7 +6236,7 @@ async function exportData() {
   URL.revokeObjectURL(a.href);
 }
 function handleImportFile(input) {
-  if (!canImportData()) { alert("You don't have permission to do that."); return; }
+  if (!canImportData()) { customAlert("You don't have permission to do that."); return; }
   const file = input.files[0];
   input.value = "";
   if (!file) return;
@@ -4595,8 +6244,8 @@ function handleImportFile(input) {
   reader.onload = async (e) => {
     let parsed;
     try { parsed = JSON.parse(e.target.result); }
-    catch (err) { alert("That file isn't valid JSON."); return; }
-    if (parsed.format !== EXPORT_FORMAT) { alert(`Unrecognized backup format (expected "${EXPORT_FORMAT}").`); return; }
+    catch (err) { customAlert("That file isn't valid JSON."); return; }
+    if (parsed.format !== EXPORT_FORMAT) { customAlert(`Unrecognized backup format (expected "${EXPORT_FORMAT}").`); return; }
     const c = parsed.counts || {};
     const ok = await customConfirm(`This backup has ${parsed.locations?.length ?? 0} location(s), ${parsed.models?.length ?? 0} model(s) and ${parsed.items?.length ?? 0} item(s), exported ${parsed.exported_at ? new Date(parsed.exported_at).toLocaleString() : "at an unknown time"}.\n\nThis will add/update matching records in your live database (matched by ID) — it will NOT delete anything that isn't in the file. Continue?`);
     if (!ok) return;
@@ -4605,7 +6254,7 @@ function handleImportFile(input) {
   reader.readAsText(file);
 }
 async function performImport(parsed) {
-  if (!canImportData()) { alert("You don't have permission to do that."); return; }
+  if (!canImportData()) { customAlert("You don't have permission to do that."); return; }
   try {
     if (parsed.locations?.length) {
       const { error } = await sb.from("locations").upsert(parsed.locations);
@@ -4619,13 +6268,13 @@ async function performImport(parsed) {
       const { error } = await sb.from("items").upsert(parsed.items.map(i => ({ ...i, model_id: i.model_id })));
       if (error) throw new Error("Items: " + error.message);
     }
-    alert("Import complete.");
+    customAlert("Import complete.");
     await Promise.all([loadItems(), loadLocations()]);
     renderFilters(); renderTable();
     if (currentTab === "locations") renderLocationsView();
     if (currentTab === "analytics") renderAnalytics();
   } catch (err) {
-    alert("Import failed partway through: " + err.message + "\n\nAnything already written stays written — check your data before retrying.");
+    customAlert("Import failed partway through: " + err.message + "\n\nAnything already written stays written — check your data before retrying.");
   }
 }
 
