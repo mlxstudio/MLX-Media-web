@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MLX Media — Gear list</title>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root {
+    --bg: #0A0A0C; --panel: #141417; --panel2: #1C1C20;
+    --line: rgba(255,255,255,0.08); --line2: rgba(255,255,255,0.14);
+    --text: #F5F5F7; --text-dim: rgba(245,245,247,0.6); --text-faint: rgba(245,245,247,0.34);
+    --accent: #4CC9F0; --green: #06D6A0;
+    --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg); color: var(--text); font-family: var(--font); font-size: 15px;
+    padding-bottom: env(safe-area-inset-bottom, 0px); -webkit-font-smoothing: antialiased;
+  }
+  button, input, textarea { font-family: inherit; color: inherit; }
+  #head {
+    position: sticky; top: 0; z-index: 20; background: rgba(10,10,12,0.92); backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line); padding: calc(14px + env(safe-area-inset-top, 0px)) 16px 12px;
+  }
+  .wordmark { font-weight: 800; font-size: 14px; letter-spacing: .02em; color: var(--text-dim); }
+  .wordmark span { color: var(--accent); }
+  #head h1 { font-size: 20px; margin-top: 6px; }
+  #head p { font-size: 12.5px; color: var(--text-faint); margin-top: 3px; }
+  #search-row { display: flex; gap: 8px; margin-top: 12px; }
+  #search { flex: 1; background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font-size: 14px; outline: none; }
+  #search:focus { border-color: var(--line2); }
+  #main { max-width: 720px; margin: 0 auto; padding: 14px 16px 140px; }
+  .cat-heading { font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--text-faint); margin: 18px 2px 8px; }
+  .cat-heading:first-child { margin-top: 4px; }
+  .item-row {
+    display: flex; align-items: flex-start; gap: 12px; background: var(--panel); border: 1px solid var(--line);
+    border-radius: 12px; padding: 12px 13px; margin-bottom: 8px; cursor: pointer; transition: border-color .15s ease, background-color .15s ease;
+  }
+  .item-row:hover { border-color: var(--line2); }
+  .item-row.checked { border-color: var(--accent); background: rgba(76,201,240,0.07); }
+  .item-check {
+    flex: none; width: 22px; height: 22px; border-radius: 7px; border: 1.5px solid var(--line2); margin-top: 1px;
+    display: flex; align-items: center; justify-content: center; transition: background-color .15s ease, border-color .15s ease;
+  }
+  .item-row.checked .item-check { background: var(--accent); border-color: var(--accent); }
+  .item-check svg { width: 13px; height: 13px; opacity: 0; transform: scale(0.5); transition: opacity .15s ease, transform .15s cubic-bezier(0.34,1.56,0.64,1); }
+  .item-row.checked .item-check svg { opacity: 1; transform: scale(1); }
+  .item-body { flex: 1; min-width: 0; }
+  .item-name { font-weight: 600; font-size: 14.5px; }
+  .item-meta { font-size: 12px; color: var(--text-faint); margin-top: 3px; display: flex; flex-wrap: wrap; gap: 4px 10px; }
+  .item-meta .m-serial { font-family: ui-monospace, monospace; }
+  .status-pill { display: inline-block; font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 999px; background: var(--panel2); color: var(--text-dim); }
+  .item-notes { font-size: 12px; color: var(--text-dim); margin-top: 6px; line-height: 1.4; }
+  .item-qr { flex: none; width: 52px; height: 52px; background: #fff; border-radius: 8px; padding: 4px; }
+  .item-qr img, .item-qr canvas { width: 100% !important; height: 100% !important; }
+  #empty-note { text-align: center; color: var(--text-faint); font-size: 13px; padding: 40px 20px; }
+  #bar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; background: rgba(20,20,23,0.96); backdrop-filter: blur(16px);
+    border-top: 1px solid var(--line); padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+    transform: translateY(100%); transition: transform .25s cubic-bezier(0.16,1,0.3,1);
+  }
+  #bar.show { transform: none; }
+  #bar-summary { display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: var(--text-dim); margin-bottom: 10px; }
+  #bar-summary b { color: var(--text); }
+  #bar-summary button { margin-left: auto; font-size: 12.5px; color: var(--accent); background: none; border: none; }
+  #bar-form { display: none; gap: 8px; }
+  #bar-form.open { display: flex; flex-direction: column; }
+  #bar input, #bar textarea { background: var(--panel2); border: 1px solid var(--line); border-radius: 9px; padding: 10px 12px; font-size: 14px; outline: none; width: 100%; }
+  #bar textarea { resize: none; min-height: 54px; }
+  .btn { border: none; border-radius: 10px; padding: 12px 18px; font-size: 14.5px; font-weight: 700; cursor: pointer; transition: transform .15s cubic-bezier(0.34,1.56,0.64,1), opacity .15s ease; }
+  .btn:active { transform: scale(0.97); }
+  .btn.primary { background: var(--accent); color: #001217; width: 100%; }
+  .btn.primary:disabled { opacity: .4; cursor: default; }
+  .btn.ghost { background: var(--panel2); color: var(--text-dim); }
+  #screen { min-height: 100%; display: flex; align-items: center; justify-content: center; padding: 30px; text-align: center; }
+  #screen h2 { font-size: 19px; margin-bottom: 8px; }
+  #screen p { color: var(--text-faint); font-size: 13.5px; max-width: 320px; }
+  #screen .big-check { width: 56px; height: 56px; border-radius: 50%; background: rgba(6,214,160,0.15); color: var(--green); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+</style>
+</head>
+<body>
+
+<div id="head" style="display:none">
+  <div class="wordmark">MLX <span>MEDIA</span></div>
+  <h1 id="page-title">Gear list</h1>
+  <p id="page-sub">Tap anything you'd like for the shoot, then send it over.</p>
+  <div id="search-row">
+    <input id="search" placeholder="Search gear…" oninput="renderList()">
+  </div>
+</div>
+
+<div id="main" style="display:none"></div>
+<div id="screen" style="display:none"></div>
+
+<div id="bar">
+  <div id="bar-summary"><span><b id="bar-count">0</b> selected</span><button onclick="clearSelection()">Clear</button></div>
+  <button class="btn primary" id="bar-open-btn" onclick="openSendForm()">Send this list</button>
+  <div id="bar-form">
+    <input id="client-name" placeholder="Your name">
+    <textarea id="client-note" placeholder="Anything else to add? (optional)"></textarea>
+    <button class="btn primary" id="send-btn" onclick="submitSelection()">Send to MLX Media</button>
+    <button class="btn ghost" onclick="closeSendForm()">Back</button>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = "https://depprbklgspiawqhnuev.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_lVIYRLl-dosIn7XvKWrxOg_PC3oT7t-";
+const LOOKUP_BASE_URL = "https://mlxmedia.cz/gear/lookup.html?s=";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const token = new URLSearchParams(location.search).get("t");
+let linkInfo = null, allItems = [], selected = new Set(), sent = false;
+
+const checkIco = '<svg viewBox="0 0 24 24" fill="none" stroke="#001217" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+const escapeHtml = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+function showScreen(html) {
+  document.getElementById("head").style.display = "none";
+  document.getElementById("main").style.display = "none";
+  document.getElementById("bar").classList.remove("show");
+  const s = document.getElementById("screen");
+  s.style.display = "flex";
+  s.innerHTML = html;
+}
+
+async function init() {
+  if (!token) { showScreen(`<div><h2>No list here</h2><p>This link is missing its code — ask for a fresh one.</p></div>`); return; }
+  const { data: link, error } = await sb.rpc("get_share_link", { p_token: token });
+  if (error || !link || !link.length) { showScreen(`<div><h2>This link isn't active</h2><p>It may have been turned off or deleted — ask MLX Media for a new one.</p></div>`); return; }
+  linkInfo = link[0];
+  const { data: itemData, error: ierr } = await sb.rpc("get_share_items", { p_token: token });
+  if (ierr) { showScreen(`<div><h2>Couldn't load the gear list</h2><p>${escapeHtml(ierr.message)}</p></div>`); return; }
+  allItems = itemData || [];
+  document.getElementById("page-title").textContent = linkInfo.title || "Gear list";
+  document.getElementById("head").style.display = "";
+  document.getElementById("main").style.display = "";
+  renderList();
+}
+
+function fieldOn(key) { return !!(linkInfo.fields && linkInfo.fields[key]); }
+
+function renderList() {
+  const q = document.getElementById("search").value.trim().toLowerCase();
+  const main = document.getElementById("main");
+  const filtered = allItems.filter(i => !q || (i.name || "").toLowerCase().includes(q) || (i.serial || "").toLowerCase().includes(q) || (i.category || "").toLowerCase().includes(q));
+  if (!filtered.length) { main.innerHTML = `<div id="empty-note">${allItems.length ? "Nothing matches that search." : "Nothing here yet."}</div>`; return; }
+  const groups = new Map();
+  filtered.forEach(i => { const k = fieldOn("category") ? (i.category || "Other") : "__flat"; if (!groups.has(k)) groups.set(k, []); groups.get(k).push(i); });
+  let html = "";
+  [...groups.keys()].sort().forEach(cat => {
+    if (cat !== "__flat") html += `<div class="cat-heading">${escapeHtml(cat)}</div>`;
+    groups.get(cat).forEach(i => {
+      const meta = [];
+      if (fieldOn("serial") && i.serial) meta.push(`<span class="m-serial">${escapeHtml(i.serial)}</span>`);
+      if (fieldOn("status") && i.status) meta.push(`<span class="status-pill">${escapeHtml(i.status.replace(/_/g, " "))}</span>`);
+      if (fieldOn("location") && i.location_name) meta.push(`<span>${escapeHtml(i.location_name)}</span>`);
+      html += `<div class="item-row${selected.has(i.id) ? " checked" : ""}" onclick="toggleItem('${i.id}')">
+        <span class="item-check">${checkIco}</span>
+        <div class="item-body">
+          <div class="item-name">${escapeHtml(i.name)}</div>
+          ${meta.length ? `<div class="item-meta">${meta.join("")}</div>` : ""}
+          ${fieldOn("notes") && i.notes ? `<div class="item-notes">${escapeHtml(i.notes)}</div>` : ""}
+        </div>
+        ${fieldOn("qr") && i.serial ? `<div class="item-qr" id="qr-${i.id}"></div>` : ""}
+      </div>`;
+    });
+  });
+  main.innerHTML = html;
+  if (fieldOn("qr") && typeof QRCode !== "undefined") {
+    filtered.forEach(i => {
+      if (!i.serial) return;
+      const host = document.getElementById(`qr-${i.id}`);
+      if (host) { try { new QRCode(host, { text: LOOKUP_BASE_URL + encodeURIComponent(i.serial), width: 44, height: 44, correctLevel: QRCode.CorrectLevel.M }); } catch (e) {} }
+    });
+  }
+}
+function toggleItem(id) {
+  if (selected.has(id)) selected.delete(id); else selected.add(id);
+  renderList();
+  updateBar();
+}
+function clearSelection() { selected.clear(); renderList(); updateBar(); }
+function updateBar() {
+  const bar = document.getElementById("bar");
+  document.getElementById("bar-count").textContent = selected.size;
+  bar.classList.toggle("show", selected.size > 0);
+  if (!selected.size) closeSendForm();
+}
+function openSendForm() {
+  document.getElementById("bar-form").classList.add("open");
+  document.getElementById("bar-open-btn").style.display = "none";
+  document.getElementById("client-name").focus();
+}
+function closeSendForm() {
+  document.getElementById("bar-form").classList.remove("open");
+  document.getElementById("bar-open-btn").style.display = "";
+}
+async function submitSelection() {
+  const name = document.getElementById("client-name").value.trim();
+  if (!name) { document.getElementById("client-name").focus(); return; }
+  const note = document.getElementById("client-note").value.trim();
+  const btn = document.getElementById("send-btn");
+  btn.disabled = true; btn.textContent = "Sending…";
+  const { error } = await sb.rpc("submit_share_selection", { p_token: token, p_client_name: name, p_item_ids: [...selected], p_note: note || null });
+  if (error) { btn.disabled = false; btn.textContent = "Send to MLX Media"; alert("Couldn't send: " + error.message); return; }
+  sent = true;
+  showScreen(`<div><div class="big-check">${checkIco.replace('#001217','currentColor')}</div><h2>Sent!</h2><p>${escapeHtml(name.split(" ")[0])}, your list is on its way. They'll follow up with you directly.</p></div>`);
+}
+init();
+</script>
+</body>
+</html>
