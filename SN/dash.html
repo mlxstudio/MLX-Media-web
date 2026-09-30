@@ -991,9 +991,6 @@
   .sh-sw { width: 26px; height: 26px; border-radius: 50%; border: 2px solid transparent; padding: 0; transition: transform .2s cubic-bezier(0.34,1.56,0.64,1), border-color .2s; }
   .sh-sw:hover { transform: scale(1.15); } .sh-sw.on { border-color: var(--text); transform: scale(1.18); }
   .sh-color { width: 26px; height: 26px; padding: 0; border: 0; background: none; border-radius: 50%; overflow: hidden; cursor: pointer; flex: none; }
-  .sh-seg { display: inline-flex; margin-left: auto; background: var(--panel2); border: 1px solid var(--line); border-radius: 9px; padding: 2px; }
-  .sh-seg button { border: 0; background: none; color: var(--text-faint); padding: 5px 11px; font-size: 12px; font-weight: 600; border-radius: 7px; transition: background-color .2s, color .2s; }
-  .sh-seg button.on { background: var(--panel); color: var(--text); box-shadow: 0 0 0 1px var(--line2); }
   .sh-cta { margin-top: 22px; width: 100%; padding: 13px; font-size: 14px; }
   .sh-prev { position: sticky; top: 10px; align-self: start; border-radius: 16px; padding: 15px; border: 1px solid var(--line); transition: background-color .3s, color .3s; }
   .sh-prev.dark { background: #090B0E; color: #F4F6F8; } .sh-prev.light { background: #F3F4F7; color: #12151A; }
@@ -1037,6 +1034,43 @@
   .share-resp-item-row { display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; padding: 5px 0; border-bottom: 1px solid var(--line); }
   .share-resp-item-row .missing { color: var(--text-faint); font-style: italic; }
   .share-empty { font-size: 12.5px; color: var(--text-faint); padding: 12px 2px; }
+  /* ---- Share tab: layout + polish ---- */
+  #share-wrap { flex: 1; overflow-y: auto; padding: 32px 36px 120px; display: none; }
+  #share-wrap > * { max-width: 1000px; margin-left: auto; margin-right: auto; }
+  @media (max-width: 720px) { #share-wrap { padding: 20px 16px 110px; } }
+  @keyframes shUp { from { opacity: 0; transform: translateY(16px); } }
+  @keyframes shPulse { 50% { transform: scale(1.012); } }
+  #share-wrap.sh-enter > * { animation: shUp .6s cubic-bezier(0.16,1,0.3,1) backwards; }
+  #share-wrap.sh-enter > *:nth-child(2) { animation-delay: .04s; } #share-wrap.sh-enter > *:nth-child(3) { animation-delay: .08s; }
+  #share-wrap.sh-enter > *:nth-child(4) { animation-delay: .12s; } #share-wrap.sh-enter > *:nth-child(5) { animation-delay: .16s; }
+  #share-wrap.sh-enter > *:nth-child(6) { animation-delay: .2s; } #share-wrap.sh-enter > *:nth-child(7) { animation-delay: .24s; }
+  #share-wrap.sh-enter > *:nth-child(8) { animation-delay: .28s; }
+  .sh-hero h2 { font-size: 26px; font-weight: 800; letter-spacing: -.02em; }
+  .sh-hero p { color: var(--text-dim); font-size: 13.5px; margin: 5px 0 22px; }
+  #share-wrap .users-section-title { font-size: 15px; font-weight: 750; color: var(--text); text-transform: none; letter-spacing: 0; margin-bottom: 4px; }
+  .sh-card { border-radius: 22px; padding: 28px; gap: 32px; box-shadow: 0 14px 44px -20px rgba(0,0,0,.55); }
+  #share-title { width: 100%; font-size: 15px; padding: 12px 14px; border-radius: 12px; }
+  .sh-chip { padding: 7px 14px; } .sh-chip:active, .sh-sw:active { transform: scale(.93); }
+  .sh-seg { position: relative; display: inline-grid; grid-auto-flow: column; grid-auto-columns: 1fr; margin-left: auto; background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; padding: 3px; }
+  .sh-seg::before { content: ""; position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc((100% - 6px) / var(--n, 3)); border-radius: 7px; background: var(--panel); box-shadow: 0 0 0 1px var(--line2), 0 2px 8px rgba(0,0,0,.3); transform: translateX(calc(var(--k, 0) * 100%)); transition: transform .38s cubic-bezier(0.34,1.3,0.64,1), opacity .2s; }
+  .sh-seg.none::before { opacity: 0; }
+  .sh-seg button { position: relative; z-index: 1; border: 0; background: none; color: var(--text-faint); padding: 6px 12px; font-size: 12px; font-weight: 600; border-radius: 7px; white-space: nowrap; transition: color .2s; }
+  .sh-seg button.on { color: var(--text); }
+  .sh-cta { background: var(--sh-a); color: var(--sh-on); border: 0; border-radius: 13px; font-weight: 750; transition: transform .22s cubic-bezier(0.34,1.56,0.64,1), box-shadow .25s, background-color .3s, color .3s; }
+  .sh-cta:hover { transform: translateY(-2px); box-shadow: 0 12px 28px -10px var(--sh-a); } .sh-cta:active { transform: scale(.97); }
+  .sh-pc { animation: shIn .4s cubic-bezier(0.16,1,0.3,1) backwards; animation-delay: calc(var(--i, 0) * 60ms); }
+  .share-link-card, .share-resp-card { padding: 16px 18px; border-radius: 15px; }
+  .share-url-row { cursor: pointer; position: relative; transition: border-color .2s, background-color .3s; }
+  .share-url-row:hover { border-color: var(--la, var(--accent)); }
+  .share-url-row code { padding-right: 90px; }
+  .share-url-row::after { content: "Click to copy"; position: absolute; right: 11px; top: 50%; transform: translateY(-50%); font-size: 11px; color: var(--text-faint); opacity: 0; transition: opacity .2s; }
+  .share-url-row:hover::after { opacity: 1; }
+  .share-url-row.copied { background: color-mix(in srgb, var(--la, #4CC9F0) 18%, var(--panel2)); animation: shPulse .5s; }
+  .share-url-row.copied::after { content: "Copied ✓"; opacity: 1; color: var(--text); }
+  .share-empty { text-align: center; padding: 28px 16px; border: 1px dashed var(--line2); border-radius: 14px; }
+  .share-av { transition: transform .28s cubic-bezier(0.34,1.56,0.64,1); } .share-resp-header:hover .share-av { transform: scale(1.1); }
+  .share-resp-count::after { content: "▾"; margin-left: 8px; display: inline-block; transition: transform .32s cubic-bezier(0.16,1,0.3,1); }
+  .share-resp-card.open .share-resp-count::after { transform: rotate(180deg); }
 </style>
 </head>
 <body>
@@ -1233,6 +1267,7 @@
     </div>
 
     <div id="share-wrap" style="display:none">
+      <div class="sh-hero"><h2>Share gear</h2><p>Send a link. They tick what they want. You get the list back, ready for a booking.</p></div>
       <details class="sh-base" id="share-base-box">
         <summary>Public address <code id="share-base-show"></code><span style="margin-left:auto;color:var(--accent)">Edit</span></summary>
         <div class="share-base-row"><input id="share-base-url" placeholder="https://mlxmedia.cz/gear-share.html"><button class="btn ghost" style="flex:none" onclick="saveShareBaseUrl()">Save</button></div>
@@ -5420,39 +5455,54 @@ const shareCatName = c => c ? (mergedNames("category", STARTER_CATEGORIES)[c] ||
 const shareOnCol = c => { const n = parseInt(c.slice(1), 16); return ((n >> 16) * .299 + (n >> 8 & 255) * .587 + (n & 255) * .114) > 150 ? "#04121a" : "#fff"; };
 const shareAccOf = l => /^#[0-9a-f]{6}$/i.test(l.fields?.accent || "") ? l.fields.accent : "#4CC9F0";
 function applyShareVars() { const c = document.getElementById("share-form"); c.style.setProperty("--sh-a", shareDraft.accent); c.style.setProperty("--sh-on", shareOnCol(shareDraft.accent)); }
-function shareSet(k, v, soft) {
+function shareSet(k, v) {
   const d = shareDraft;
   if (k === "f") { d.fields[v] = d.fields[v] ? 0 : 1; d.preset = ""; }
   else if (k === "preset") { d.preset = v; d.fields = { ...SHARE_PRESETS[v] }; }
   else d[k] = v;
-  applyShareVars();
-  if (soft) renderSharePreview(); else renderShareForm();
+  applyShareVars(); syncShareForm();
+}
+function syncShareForm() {
+  const d = shareDraft;
+  document.querySelectorAll("#share-opts [data-k]").forEach(b => {
+    const k = b.dataset.k, v = b.dataset.v;
+    b.classList.toggle("on", k === "f" ? !!d.fields[v] : k === "accent" ? d.accent.toLowerCase() === v.toLowerCase() : d[k] === v);
+  });
+  document.querySelectorAll("#share-opts .sh-seg").forEach(g => {
+    const i = [...g.children].findIndex(b => b.classList.contains("on"));
+    g.style.setProperty("--k", Math.max(i, 0)); g.classList.toggle("none", i < 0);
+  });
+  const ci = document.getElementById("share-color"); if (ci && ci !== document.activeElement) ci.value = d.accent;
+  renderSharePreview();
 }
 function renderShareForm() {
-  const d = shareDraft, cats = shareCategoryOptions();
-  const chip = (on, act, label, n) => `<button class="sh-chip${on ? " on" : ""}" onclick="${act}">${label}${n != null ? `<small>${n}</small>` : ""}</button>`;
-  const seg = (arr, cur, key) => `<span class="sh-seg">${arr.map(([k, l]) => `<button class="${cur === k ? "on" : ""}" onclick="shareSet('${key}','${k}')">${l}</button>`).join("")}</span>`;
+  const cats = shareCategoryOptions();
+  const chip = (k, v, label, n) => `<button class="sh-chip" data-k="${k}" data-v="${escapeHtml(v)}" onclick="shareSet('${k}','${escapeHtml(v)}')">${label}${n != null ? `<small>${n}</small>` : ""}</button>`;
+  const seg = (arr, key) => `<span class="sh-seg" style="--n:${arr.length}">${arr.map(([k, l]) => `<button data-k="${key}" data-v="${k}" onclick="shareSet('${key}','${k}')">${l}</button>`).join("")}</span>`;
   document.getElementById("share-opts").innerHTML = `
     <div class="sh-step"><i>2</i>What to share</div>
-    <div class="sh-chips">${chip(!d.cat, "shareSet('cat','')", "Everything", items.length)}${cats.map(c => chip(d.cat === c, `shareSet('cat','${c}')`, escapeHtml(shareCatName(c)), items.filter(i => i.category === c).length)).join("")}</div>
-    <div class="sh-step"><i>3</i>Show on each item ${seg([["min", "Name only"], ["std", "Standard"], ["full", "Everything"]], d.preset, "preset")}</div>
-    <div class="sh-chips">${Object.entries(SHARE_FIELD_LABELS).map(([k, l]) => chip(d.fields[k], `shareSet('f','${k}')`, l)).join("")}</div>
-    <div class="sh-step"><i>4</i>Look ${seg([["auto", "Auto"], ["dark", "Dark"], ["light", "Light"]], d.theme, "theme")}</div>
-    <div class="sh-chips" style="align-items:center">${SHARE_SWATCHES.map(c => `<button class="sh-sw${d.accent === c ? " on" : ""}" style="background:${c}" onclick="shareSet('accent','${c}')" aria-label="${c}"></button>`).join("")}<input type="color" class="sh-color" value="${d.accent}" oninput="shareSet('accent',this.value,1)" title="Custom colour"></div>`;
-  renderSharePreview();
+    <div class="sh-chips">${chip("cat", "", "Everything", items.length)}${cats.map(c => chip("cat", c, escapeHtml(shareCatName(c)), items.filter(i => i.category === c).length)).join("")}</div>
+    <div class="sh-step"><i>3</i>Show on each item ${seg([["min", "Name only"], ["std", "Standard"], ["full", "Everything"]], "preset")}</div>
+    <div class="sh-chips">${Object.entries(SHARE_FIELD_LABELS).map(([k, l]) => chip("f", k, l)).join("")}</div>
+    <div class="sh-step"><i>4</i>Look ${seg([["auto", "Auto"], ["dark", "Dark"], ["light", "Light"]], "theme")}</div>
+    <div class="sh-chips" style="align-items:center">${SHARE_SWATCHES.map(c => `<button class="sh-sw" data-k="accent" data-v="${c}" style="background:${c}" onclick="shareSet('accent','${c}')" aria-label="${c}"></button>`).join("")}<input type="color" id="share-color" class="sh-color" value="${shareDraft.accent}" oninput="shareSet('accent',this.value)" title="Custom colour"></div>`;
+  syncShareForm();
 }
 function renderSharePreview() {
   const d = shareDraft, el = document.getElementById("share-prev"); if (!el) return;
   el.className = "sh-prev " + (d.theme === "light" ? "light" : "dark");
-  const list = items.filter(i => !d.cat || i.category === d.cat).slice(0, 3);
   const t = document.getElementById("share-title").value.trim() || "Gear list";
-  el.innerHTML = `<h4>${escapeHtml(t)}</h4>` + (list.map((i, n) => `<div class="sh-pc${n === 0 ? " on" : ""}"><b></b><div>${escapeHtml(i.name)}<br>${d.fields.serial && i.serial ? `<span>${escapeHtml(i.serial)}</span>` : ""}${d.fields.category ? `<span>${escapeHtml(shareCatName(i.category))}</span>` : ""}${d.fields.status && i.status ? `<span>${escapeHtml(String(i.status).replace(/_/g, " "))}</span>` : ""}</div></div>`).join("") || `<div class="share-empty">No gear here yet.</div>`) + `<div style="font-size:11px;opacity:.55;margin-top:8px">Live preview</div>`;
+  const sig = JSON.stringify([d.cat, t, d.fields]); if (el.dataset.sig === sig) return; el.dataset.sig = sig;
+  const list = items.filter(i => !d.cat || i.category === d.cat).slice(0, 3);
+  el.innerHTML = `<h4>${escapeHtml(t)}</h4>` + (list.map((i, n) => `<div class="sh-pc${n === 0 ? " on" : ""}" style="--i:${n}"><b></b><div>${escapeHtml(i.name)}<br>${d.fields.serial && i.serial ? `<span>${escapeHtml(i.serial)}</span>` : ""}${d.fields.category ? `<span>${escapeHtml(shareCatName(i.category))}</span>` : ""}${d.fields.status && i.status ? `<span>${escapeHtml(String(i.status).replace(/_/g, " "))}</span>` : ""}</div></div>`).join("") || `<div class="share-empty">No gear here yet.</div>`) + `<div style="font-size:11px;opacity:.55;margin-top:8px">Live preview</div>`;
 }
+function flashCopied(el) { el.classList.remove("copied"); void el.offsetWidth; el.classList.add("copied"); setTimeout(() => el.classList.remove("copied"), 1600); }
 async function renderShareTab() {
   const base = getShareBaseUrl();
   document.getElementById("share-base-url").value = base;
   document.getElementById("share-base-show").textContent = base || "not set yet";
   document.getElementById("share-base-box").open = !base;
+  const w = document.getElementById("share-wrap"); w.classList.remove("sh-enter"); void w.offsetWidth; w.classList.add("sh-enter");
   applyShareVars(); renderShareForm();
   await Promise.all([loadShareLinks(), loadShareSelections()]);
   shareSeenAt = +localStorage.getItem("mlxShareSeen") || 0;
@@ -5479,7 +5529,7 @@ function renderShareLinksList() {
         <span class="share-toggle-switch${l.active ? " on" : ""}" title="${l.active ? "Active — click to disable" : "Disabled — click to re-enable"}" onclick="toggleShareLinkActive('${l.id}', ${!l.active})"></span>
       </div>
       <div class="share-link-meta">${escapeHtml(tags)}${l.category_filter ? " · " + escapeHtml(shareCatName(l.category_filter)) + " only" : ""} · created ${escapeHtml(fmtStamp(l.created_at, true))}</div>
-      <div class="share-url-row"><code>${url ? escapeHtml(url) : "Set your public address above first"}</code></div>
+      <div class="share-url-row"${url ? ` onclick="copyShareLink('${l.token}');flashCopied(this)"` : ""}><code>${url ? escapeHtml(url) : "Set your public address above first"}</code></div>
       <div class="share-actions-row">
         ${url ? `<button onclick="copyShareLink('${l.token}')">Copy link</button><button onclick="window.open(shareUrlFor('${l.token}'),'_blank')">Open</button>` : ""}
         <button onclick="duplicateShareLink('${l.id}')">Duplicate</button>
@@ -5499,7 +5549,7 @@ function duplicateShareLink(id) {
   const f = l.fields || {};
   shareDraft = { cat: l.category_filter || "", preset: "", accent: shareAccOf(l), theme: f.theme || "auto", fields: Object.fromEntries(Object.keys(SHARE_FIELD_LABELS).map(k => [k, f[k] ? 1 : 0])) };
   document.getElementById("share-title").value = l.title + " (copy)";
-  applyShareVars(); renderShareForm();
+  applyShareVars(); syncShareForm();
   document.getElementById("share-form").scrollIntoView({ behavior: "smooth", block: "center" });
 }
 const SHARE_FIELD_LABELS = { serial: "Serial", category: "Category", status: "Status", notes: "Notes", location: "Location", qr: "QR code" };
