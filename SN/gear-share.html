@@ -7,14 +7,15 @@
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
-:root{--bg:#090B0E;--panel:#12151A;--panel2:#1A1E25;--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.16);--text:#F4F6F8;--dim:rgba(244,246,248,.66);--faint:rgba(244,246,248,.4);--accent:#4CC9F0;--accent-bg:rgba(76,201,240,.1);--green:#06D6A0;--font:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif}
+:root{--bg:#090B0E;--panel:#12151A;--panel2:#1A1E25;--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.16);--text:#F4F6F8;--dim:rgba(244,246,248,.66);--faint:rgba(244,246,248,.4);--accent:#4CC9F0;--on:var(--on);--green:#06D6A0;--head:rgba(9,11,14,.94);--barbg:rgba(18,21,26,.96);--font:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;color-scheme:dark;--accent-bg:color-mix(in srgb,var(--accent) 12%,transparent)}
+:root[data-theme=light]{--bg:#F3F4F7;--panel:#fff;--panel2:#ECEEF2;--line:rgba(10,20,30,.09);--line2:rgba(10,20,30,.18);--text:#12151A;--dim:rgba(18,21,26,.68);--faint:rgba(18,21,26,.46);--green:#059669;--head:rgba(243,244,247,.94);--barbg:rgba(255,255,255,.96);color-scheme:light}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{scroll-padding-top:200px}
 body{background:var(--bg);color:var(--text);font:15px/1.4 var(--font);-webkit-font-smoothing:antialiased}
 button,input,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-#head{position:sticky;top:0;z-index:20;background:rgba(9,11,14,.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:calc(12px + env(safe-area-inset-top,0px)) 0 10px}
+#head{position:sticky;top:0;z-index:20;background:var(--head);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:calc(12px + env(safe-area-inset-top,0px)) 0 10px}
 .wrap{max-width:860px;margin:0 auto;padding:0 16px}
 .brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
 .brand h1{font-size:21px;font-weight:750;letter-spacing:-.01em}
@@ -30,8 +31,8 @@ button{cursor:pointer}
 #chips::-webkit-scrollbar{display:none}
 .chip{flex:none;display:flex;align-items:center;gap:6px;background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:7px 12px 7px 10px;font-size:13.5px;font-weight:600;color:var(--dim);transition:background-color .15s,border-color .15s,color .15s}
 .chip .n{font-size:12px;font-weight:600;color:var(--faint)}
-.chip.on{background:var(--accent);border-color:var(--accent);color:#03161C}
-.chip.on .n{color:rgba(3,22,28,.65)}
+.chip.on{background:var(--accent);border-color:var(--accent);color:var(--on)}
+.chip.on .n{color:color-mix(in srgb,var(--on) 65%,transparent)}
 .tools{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
 .seg{display:flex;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:2px}
 .seg button{background:none;border:0;border-radius:8px;padding:6px 11px;font-size:13px;font-weight:600;color:var(--faint)}
@@ -71,14 +72,14 @@ button{cursor:pointer}
 #empty{text-align:center;color:var(--faint);padding:56px 20px}
 #empty p{margin-bottom:14px}
 #empty button{background:var(--panel2);border:1px solid var(--line2);border-radius:10px;padding:9px 16px;font-weight:600}
-#bar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(18,21,26,.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--line);padding:12px 0 calc(12px + env(safe-area-inset-bottom,0px));transform:translateY(105%);transition:transform .28s cubic-bezier(.16,1,.3,1)}
+#bar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--barbg);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--line);padding:12px 0 calc(12px + env(safe-area-inset-bottom,0px));transform:translateY(105%);transition:transform .28s cubic-bezier(.16,1,.3,1)}
 #bar.show{transform:none}
 #bar .wrap{display:flex;align-items:center;gap:12px}
 #bar-txt{flex:1;font-size:14px;color:var(--dim)}
 #bar-txt b{color:var(--text);font-size:16px}
 .btn{border:0;border-radius:12px;padding:12px 20px;font-weight:700;font-size:15px;transition:transform .15s cubic-bezier(.34,1.56,.64,1),opacity .15s}
 .btn:active{transform:scale(.97)}
-.btn.primary{background:var(--accent);color:#03161C}
+.btn.primary{background:var(--accent);color:var(--on)}
 .btn.primary:disabled{opacity:.45}
 .btn.ghost{background:var(--panel2);color:var(--dim)}
 #sheet-bg{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:opacity .2s}
@@ -103,13 +104,36 @@ button{cursor:pointer}
 #screen p{color:var(--faint);max-width:320px;margin:0 auto}
 .bigcheck{width:64px;height:64px;border-radius:50%;background:rgba(6,214,160,.14);color:var(--green);display:grid;place-items:center;margin:0 auto 18px}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+body::before{content:"";position:fixed;inset:0 0 auto;height:340px;background:radial-gradient(55% 100% at 50% 0,var(--accent-bg),transparent);pointer-events:none;z-index:-1}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}}
+@keyframes pop{45%{transform:scale(1.22)}}
+@keyframes bump{40%{transform:scale(1.4)}}
+@keyframes shim{to{background-position:-200% 0}}
+.card{animation:rise .45s cubic-bezier(.16,1,.3,1) backwards;animation-delay:calc(min(var(--i,0),14)*28ms)}
+.card:active{transform:scale(.985)}
+.group-head{animation:rise .4s cubic-bezier(.16,1,.3,1) backwards}
+.card.on .tick{animation:pop .32s}
+.tick svg{color:var(--on)}
+#bar-n.bump{display:inline-block;animation:bump .3s}
+.brand .r{display:flex;align-items:center;gap:12px}
+.icon-btn{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--panel2);color:var(--dim);display:grid;place-items:center;transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+.icon-btn:hover{transform:rotate(20deg)}.icon-btn svg{width:17px;height:17px}
+.group-head .gi{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:18px;background:hsl(var(--h) 70% 55%/.16)}
+.tag.cat{background:hsl(var(--h) 70% 55%/.16);color:var(--text)}
+.skel{height:66px;border-radius:14px;margin:8px 0;background:linear-gradient(100deg,var(--panel) 30%,var(--panel2) 50%,var(--panel) 70%);background-size:200% 100%;animation:shim 1.3s linear infinite}
+#toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;z-index:60;background:var(--text);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:13.5px;font-weight:600;display:flex;gap:14px;align-items:center;transition:opacity .25s,transform .3s cubic-bezier(.16,1,.3,1);pointer-events:none}
+#toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+#toast button{background:none;border:0;color:var(--accent);font-weight:800;filter:brightness(.8)}
+.bigcheck{animation:pop .6s .1s backwards}#screen h2,#screen p{animation:rise .5s .2s backwards}
+#bar .tbtn{flex:none}
 </style>
 </head>
 <body>
 
 <div id="head" style="display:none">
   <div class="wrap">
-    <div class="brand"><h1 id="title">Gear list</h1><small>MLX <b>Media</b></small></div>
+    <div class="brand"><h1 id="title">Gear list</h1><div class="r"><small>MLX <b>Media</b></small><button class="icon-btn" id="theme" aria-label="Switch theme"></button></div></div>
     <p id="sub">Tick what you'd like for the shoot, then send it over.</p>
     <div class="search">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
@@ -126,11 +150,14 @@ button{cursor:pointer}
   </div>
 </div>
 
+<div id="skeleton" class="wrap" style="padding-top:96px"><div class="skel"></div><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>
 <div id="main" style="display:none"></div>
+<div id="toast"></div>
 <div id="screen"></div>
 
 <div id="bar"><div class="wrap">
   <div id="bar-txt"><b id="bar-n">0</b> selected</div>
+  <button class="tbtn" id="clear">Clear</button>
   <button class="btn primary" id="review">Review &amp; send</button>
 </div></div>
 
@@ -141,6 +168,7 @@ button{cursor:pointer}
   <div class="sheet-f">
     <input id="cname" placeholder="Your name" autocomplete="name">
     <textarea id="cnote" placeholder="Anything else to add? (optional)"></textarea>
+    <button class="btn ghost" id="copy">Copy list</button>
     <button class="btn primary" id="send">Send to MLX Media</button>
   </div>
 </div>
@@ -153,38 +181,47 @@ const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 const token=new URLSearchParams(location.search).get("t");
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const tick='<svg viewBox="0 0 24 24" fill="none" stroke="#03161C" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+const tick='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
 let link=null,items=[],byId=new Map(),sel=new Set(),cat="all",sort="cat",selOnly=false,q="",folded=new Set();
 const KEY="mlx-share-"+token;
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
 
-const ICONS=[[/camera|kamer|body/,"📷"],[/lens|objektiv|optic/,"🔭"],[/audio|sound|mic|zvuk|mikro/,"🎙️"],[/light|svět|led/,"💡"],[/tripod|stativ|support|grip|rig|slider/,"📐"],[/gimbal|stabil/,"🌀"],[/drone|dron/,"🚁"],[/monitor|screen|display/,"🖥️"],[/batter|power|akum|napáj|charger/,"🔋"],[/storage|card|disk|ssd|media|pam/,"💾"],[/cable|kabel|adapter/,"🔌"],[/computer|laptop|pc/,"💻"],[/filter/,"🔘"],[/bag|case|kufr|brašn/,"🎒"]];
+const ICONS=[[/illum/,"💡"],[/wireless/,"📡"],[/camera|kamer|body/,"📷"],[/lens|objektiv|optic/,"🔭"],[/audio|sound|mic|zvuk|mikro/,"🎙️"],[/light|svět|led/,"💡"],[/tripod|stativ|support|grip|rig|slider/,"📐"],[/gimbal|stabil/,"🌀"],[/drone|dron/,"🚁"],[/monitor|screen|display/,"🖥️"],[/batter|power|akum|napáj|charger/,"🔋"],[/storage|card|disk|ssd|media|pam/,"💾"],[/cable|kabel|adapter/,"🔌"],[/computer|laptop|pc/,"💻"],[/filter/,"🔘"],[/bag|case|kufr|brašn/,"🎒"]];
 const icon=c=>{const l=(c||"").toLowerCase();for(const[r,e]of ICONS)if(r.test(l))return e;return"📦"};
-const catOf=i=>i.category||"Other";
+const STARTER={C:"Camera",L:"Lens",W:"Wireless",P:"Power",G:"Grip",T:"Tripod/Support",I:"Illumination",A:"Audio",S:"Stabilizer"};
+const ORDER=["Camera","Lens","Audio","Illumination","Tripod/Support","Stabilizer","Grip","Power","Wireless"];
+const catOf=i=>i.category?((link.fields&&link.fields.catNames&&link.fields.catNames[i.category])||STARTER[i.category]||i.category):"Other";
+const rank=c=>{const r=ORDER.indexOf(c);return r<0?99:r};
+const sortCat=(a,b)=>rank(a)-rank(b)||cmp(a,b);
+const hue=c=>[...c].reduce((a,ch)=>(a*31+ch.charCodeAt(0))%360,7);
+let cardN=0;
 const fieldOn=k=>!!(link.fields&&link.fields[k]);
 const cmp=(a,b)=>String(a).localeCompare(String(b),"cs",{numeric:true,sensitivity:"base"});
 
-function showScreen(html){$("head").style.display="none";$("main").style.display="none";$("bar").classList.remove("show");const s=$("screen");s.style.display="flex";s.innerHTML=html}
+function showScreen(html){const k=$("skeleton");if(k)k.remove();$("head").style.display="none";$("main").style.display="none";$("bar").classList.remove("show");const s=$("screen");s.style.display="flex";s.innerHTML=html}
 
 async function init(){
   if(!token)return showScreen(`<div><h2>No list here</h2><p>This link is missing its code. Ask MLX Media for a fresh one.</p></div>`);
   const{data:l,error}=await sb.rpc("get_share_link",{p_token:token});
   if(error||!l||!l.length)return showScreen(`<div><h2>This link isn't active</h2><p>It may have been turned off or deleted. Ask MLX Media for a new one.</p></div>`);
   link=l[0];
+  const ac=(link.fields&&link.fields.accent)||"";
+  if(/^#[0-9a-f]{6}$/i.test(ac)){const r=document.documentElement.style,n=parseInt(ac.slice(1),16);r.setProperty("--accent",ac);r.setProperty("--on",((n>>16)*.299+(n>>8&255)*.587+(n&255)*.114)>150?"#04121a":"#fff")}
+  applyTheme(store.get("mlx-theme")||(link.fields&&link.fields.theme)||(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark"));
   const{data,error:ie}=await sb.rpc("get_share_items",{p_token:token});
   if(ie)return showScreen(`<div><h2>Couldn't load the gear list</h2><p>${esc(ie.message)}</p></div>`);
   items=data||[];items.forEach(i=>byId.set(i.id,i));
   try{JSON.parse(store.get(KEY)||"[]").forEach(id=>byId.has(id)&&sel.add(id))}catch(e){}
   $("cname").value=store.get("mlx-share-name")||"";
   $("title").textContent=link.title||"Gear list";
-  $("head").style.display="";$("main").style.display="";
+  const k=$("skeleton");if(k)k.remove();$("head").style.display="";$("main").style.display="";
   render();updateBar();
 }
 
 function matches(i,ignoreCat){
   if(!ignoreCat&&cat!=="all"&&catOf(i)!==cat)return false;
   if(!q)return true;
-  return [i.name,i.serial,i.category,i.notes].some(v=>(v||"").toLowerCase().includes(q));
+  return [i.name,i.serial,catOf(i),i.notes].some(v=>(v||"").toLowerCase().includes(q));
 }
 const shown=()=>items.filter(i=>matches(i)&&(!selOnly||sel.has(i.id)));
 
@@ -193,17 +230,17 @@ function renderChips(){
   const counts=new Map();let total=0;
   items.forEach(i=>{if(matches(i,true)){counts.set(catOf(i),(counts.get(catOf(i))||0)+1);total++}});
   if(cat!=="all"&&!counts.has(cat))counts.set(cat,0);
-  const all=[["all","All","✨",total],...[...counts.keys()].sort(cmp).map(c=>[c,c,icon(c),counts.get(c)])];
+  const all=[["all","All","✨",total],...[...counts.keys()].sort(sortCat).map(c=>[c,c,icon(c),counts.get(c)])];
   $("chips").innerHTML=all.map(([k,label,ic,n])=>`<button class="chip${cat===k?" on":""}" data-c="${esc(k)}">${k==="all"?"":ic}<span>${esc(label)}</span><span class="n">${n}</span></button>`).join("");
 }
 
 function card(i,showCat){
   const t=[];
-  if(showCat&&fieldOn("category"))t.push(`<span class="tag cat">${icon(catOf(i))} ${esc(catOf(i))}</span>`);
+  if(showCat&&fieldOn("category"))t.push(`<span class="tag cat" style="--h:${hue(catOf(i))}">${icon(catOf(i))} ${esc(catOf(i))}</span>`);
   if(fieldOn("serial")&&i.serial)t.push(`<span class="tag serial">${esc(i.serial)}</span>`);
   if(fieldOn("status")&&i.status)t.push(`<span class="tag st">${esc(i.status.replace(/_/g," "))}</span>`);
   if(fieldOn("location")&&i.location_name)t.push(`<span class="tag">${esc(i.location_name)}</span>`);
-  return `<div class="card${sel.has(i.id)?" on":""}" data-id="${esc(i.id)}" role="checkbox" aria-checked="${sel.has(i.id)}" tabindex="0">
+  return `<div class="card${sel.has(i.id)?" on":""}" style="--i:${cardN++}" data-id="${esc(i.id)}" role="checkbox" aria-checked="${sel.has(i.id)}" tabindex="0">
     <span class="tick">${tick}</span>
     <div class="body"><div class="name">${esc(i.name)}</div>${t.length?`<div class="tags">${t.join("")}</div>`:""}${fieldOn("notes")&&i.notes?`<div class="notes">${esc(i.notes)}</div>`:""}</div>
     ${fieldOn("qr")&&i.serial?`<div class="qr" id="qr-${esc(i.id)}"></div>`:""}
@@ -211,7 +248,7 @@ function card(i,showCat){
 }
 
 function render(){
-  renderChips();
+  cardN=0;renderChips();
   const list=shown(),main=$("main");
   $("selonly").classList.toggle("on",selOnly);
   $("selonly").textContent=selOnly?`Selected only (${sel.size})`:"Selected only";
@@ -223,10 +260,10 @@ function render(){
   let html="";
   if(sort==="cat"&&fieldOn("category")){
     const g=new Map();list.forEach(i=>{const k=catOf(i);(g.get(k)||g.set(k,[]).get(k)).push(i)});
-    [...g.keys()].sort(cmp).forEach(k=>{
+    [...g.keys()].sort(sortCat).forEach(k=>{
       const arr=g.get(k).sort((a,b)=>cmp(a.name,b.name)),all=arr.every(i=>sel.has(i.id));
       html+=`<section class="group${folded.has(k)?" closed":""}" data-g="${esc(k)}">
-        <div class="group-head"><span class="gi">${icon(k)}</span><h2>${esc(k)}</h2><span class="cnt">${arr.length}</span><span class="sp"></span>
+        <div class="group-head"><span class="gi" style="--h:${hue(k)}">${icon(k)}</span><h2>${esc(k)}</h2><span class="cnt">${arr.length}</span><span class="sp"></span>
         <button data-all="${esc(k)}">${all?"Deselect all":"Select all"}</button><button class="fold" data-fold="${esc(k)}" aria-label="Collapse">▾</button></div>
         <div class="grid">${arr.map(i=>card(i,false)).join("")}</div></section>`;
     });
@@ -255,7 +292,7 @@ function afterChange(){
   });
   if($("sheet").classList.contains("open"))renderSheet();
 }
-function updateBar(){$("bar-n").textContent=sel.size;$("bar").classList.toggle("show",sel.size>0)}
+function updateBar(){const bn=$("bar-n");bn.textContent=sel.size;bn.classList.remove("bump");void bn.offsetWidth;bn.classList.add("bump");$("bar").classList.toggle("show",sel.size>0)}
 
 function renderSheet(){
   $("sheet-n").textContent=sel.size;
@@ -295,6 +332,14 @@ $("main").onkeydown=e=>{if((e.key==="Enter"||e.key===" ")&&e.target.classList.co
 $("review").onclick=openSheet;$("sheet-x").onclick=closeSheet;$("sheet-bg").onclick=closeSheet;
 $("sheet-list").onclick=e=>{const b=e.target.closest("[data-rm]");if(b){sel.delete(b.dataset.rm);setCard(b.dataset.rm);afterChange();if(selOnly)render()}};
 $("send").onclick=submit;
+const SUN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+const MOON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
+function applyTheme(t){document.documentElement.dataset.theme=t;$("theme").innerHTML=t==="dark"?SUN:MOON}
+$("theme").onclick=()=>{const t=document.documentElement.dataset.theme==="dark"?"light":"dark";applyTheme(t);store.set("mlx-theme",t)};
+let tt;function toast(m,label,fn){const t=$("toast");t.innerHTML=`<span>${esc(m)}</span>`+(label?`<button>${label}</button>`:"");if(label)t.querySelector("button").onclick=()=>{fn();t.classList.remove("show")};t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),5000)}
+$("clear").onclick=()=>{const prev=[...sel];sel.clear();save();render();updateBar();toast("Selection cleared","Undo",()=>{prev.forEach(id=>sel.add(id));save();render();updateBar()})};
+$("copy").onclick=async()=>{const g={};[...sel].map(id=>byId.get(id)).filter(Boolean).forEach(i=>(g[catOf(i)]=g[catOf(i)]||[]).push(i.name));const txt=Object.keys(g).sort(sortCat).map(c=>c+"\n"+g[c].sort(cmp).map(n=>"• "+n).join("\n")).join("\n\n");try{await navigator.clipboard.writeText(txt);toast("List copied")}catch(e){toast("Couldn't copy")}};
+addEventListener("keydown",e=>{if(e.key==="/"&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName)){e.preventDefault();$("search").focus()}if(e.key==="Escape"){closeSheet();if(document.activeElement===$("search"))$("search").blur()}});
 init();
 </script>
 </body>
