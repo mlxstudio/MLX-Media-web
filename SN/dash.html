@@ -1194,6 +1194,356 @@
   .st-sub-row { display: grid; grid-template-columns: 1fr auto auto; gap: 16px; padding: 6px 8px 6px 34px; font-size: 12px; color: var(--text-dim); transition: color .15s, padding-left .2s; }
   .st-sub-row:hover { color: var(--text); padding-left: 38px; } .st-sub-row span:last-child { font-variant-numeric: tabular-nums; min-width: 70px; text-align: right; }
   @media (max-width: 720px) { .st-frow { grid-template-columns: 14px 1fr auto 16px; } .st-frow .st-bar { display: none; } }
+
+  /* ===== Home tab, skeletons, thumbnails, empty states ===== */
+  #home-wrap { flex: 1; overflow-y: auto; padding: 18px 22px 100px; animation: paneFadeIn 0.22s ease both; }
+  .hm-head { display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:14px; }
+  .hm-head h2 { margin:0; font-size:20px; } .hm-head span { color: var(--text-faint); font-size:13px; }
+  .hm-kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:14px; }
+  .hm-kpi, .hm-card { background: var(--panel); border:1px solid var(--line); border-radius:14px; padding:14px 16px; }
+  .hm-kpi b { display:block; font-size:24px; line-height:1.1; } .hm-kpi small { color: var(--text-faint); font-size:12px; }
+  .hm-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:12px; }
+  .hm-card.wide { grid-column: 1 / -1; }
+  .hm-card h3 { margin:0 0 10px; font-size:13px; color: var(--text-dim); font-weight:600; letter-spacing:.2px; display:flex; justify-content:space-between; }
+  .hm-row { display:flex; gap:10px; align-items:flex-start; padding:8px 6px; border-radius:8px; cursor:pointer; }
+  .hm-row:hover { background: rgba(127,127,127,.09); }
+  .hm-dot { width:8px; height:8px; border-radius:50%; margin-top:6px; flex:none; background: var(--accent); }
+  .hm-dot.bad { background:#ef4444; } .hm-dot.warn { background:#f59e0b; } .hm-dot.ok { background:#22c55e; }
+  .hm-row .t { font-size:13.5px; } .hm-row .m { font-size:12px; color: var(--text-faint); margin-top:1px; }
+  .hm-empty { padding:14px 6px; color: var(--text-faint); font-size:13px; }
+  .hm-bar { display:flex; height:12px; border-radius:99px; overflow:hidden; background: rgba(127,127,127,.15); margin-bottom:10px; }
+  .hm-bar i { display:block; height:100%; }
+  .hm-chips { display:flex; flex-wrap:wrap; gap:6px; }
+  .hm-chips button { border:1px solid var(--line); background:transparent; color:var(--text); border-radius:99px; padding:4px 10px; font-size:12px; cursor:pointer; display:inline-flex; gap:6px; align-items:center; }
+  .skel, .skel-row i, .skel-card { background: linear-gradient(90deg, rgba(127,127,127,.10) 25%, rgba(127,127,127,.20) 37%, rgba(127,127,127,.10) 63%); background-size:400% 100%; animation: skelShimmer 1.3s ease infinite; border-radius:8px; }
+  @keyframes skelShimmer { 0% { background-position:100% 0 } 100% { background-position:0 0 } }
+  .skel-row td { padding:14px 10px; } .skel-row i { display:block; height:12px; width:70%; } .skel-row td:first-child i { width:14px; }
+  .skel-card { height:92px; margin-bottom:12px; }
+  .nm { display:flex; align-items:center; gap:10px; }
+  .thumb { width:36px; height:36px; border-radius:8px; object-fit:cover; flex:none; background: rgba(127,127,127,.14); display:inline-flex; align-items:center; justify-content:center; color: var(--text-faint); }
+  .empty-art { font-size:34px; margin-bottom:8px; opacity:.6; } .empty-title { font-size:16px; font-weight:600; color: var(--text); margin-bottom:4px; }
+  .empty-btn { margin-top:14px; border:0; background: var(--accent); color:#06121a; font-weight:600; padding:9px 16px; border-radius:10px; cursor:pointer; }
+  thead th { z-index: 2; box-shadow: 0 1px 0 var(--line); }
+  @media (max-width: 760px) { #home-wrap { padding: 12px 10px 100px; } }
+  /* ===== Batteries & Cards ===== */
+  #power-wrap { flex: 1; overflow-y: auto; padding: 18px 22px 100px; display: none; animation: paneFadeIn 0.22s ease both; }
+  .pw-head { display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:14px; flex-wrap:wrap; }
+  .pw-head h2 { margin:0; font-size:20px; } .pw-head span { color: var(--text-faint); font-size:13px; }
+  .pw-sec { background: var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px 18px; margin-bottom:16px; }
+  .pw-sec-h { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
+  .pw-sec-h h3 { margin:0; font-size:15px; }
+  .pw-sum { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+  .pw-sum b { font-size:13px; font-weight:700; padding:5px 11px; border-radius:99px; background: var(--panel2); border:1px solid var(--line); display:inline-flex; gap:6px; align-items:center; }
+  .pw-sum b i { width:8px; height:8px; border-radius:50%; display:inline-block; }
+  .pw-btn { padding:6px 12px; border-radius:9px; font-size:12.5px; font-weight:600; background: var(--panel2); border:1px solid var(--line); color: var(--text); }
+  .pw-btn:hover:not(:disabled) { border-color: var(--accent); }
+  .pw-btn.primary { background: var(--accent); color:#001217; border-color:transparent; }
+  .pw-btn:disabled { opacity:.4; cursor:not-allowed; }
+  .pw-chips { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+  .pw-chips button { border:1px solid var(--line); background:transparent; border-radius:99px; padding:4px 11px; font-size:12px; color: var(--text-dim); }
+  .pw-chips button.on { border-color: var(--accent); color: var(--text); background: rgba(76,201,240,.1); }
+  .pw-bulk { display:flex; gap:6px; align-items:center; flex-wrap:wrap; padding:8px 10px; margin-bottom:8px; border-radius:10px; background: var(--panel2); border:1px solid var(--line); font-size:12.5px; }
+  .pw-bulk .n { color: var(--text-dim); margin-right:4px; }
+  .pw-row { display:grid; grid-template-columns: 24px 34px minmax(130px,1.2fr) minmax(210px,1.6fr) minmax(130px,1fr) minmax(110px,.8fr) 34px; gap:10px; align-items:center; padding:9px 6px; border-top:1px solid var(--line); }
+  .pw-row:first-of-type { border-top:0; }
+  .pw-row.sel { background: rgba(76,201,240,.06); }
+  .pw-tick { width:30px; height:30px; border-radius:50%; border:2px solid var(--line2); display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:800; color:transparent; background:transparent; transition: transform .15s, background .15s, border-color .15s; padding:0; }
+  .pw-tick:hover:not(:disabled) { transform: scale(1.1); border-color: var(--accent); }
+  .pw-tick.on { background:#22c55e; border-color:#22c55e; color:#06210f; }
+  .pw-tick.st { background:#f59e0b; border-color:#f59e0b; color:#2a1a00; }
+  .pw-tick.use { background: var(--accent); border-color: var(--accent); color:#001217; }
+  .pw-name { font-size:13.5px; font-weight:600; } .pw-sub { font-size:11.5px; color: var(--text-faint); margin-top:1px; }
+  .pw-seg { display:inline-flex; border:1px solid var(--line); border-radius:9px; overflow:hidden; }
+  .pw-seg button { padding:5px 9px; font-size:11.5px; font-weight:600; color: var(--text-dim); background:transparent; border-right:1px solid var(--line); }
+  .pw-seg button:last-child { border-right:0; }
+  .pw-seg button.on { background: var(--accent); color:#001217; }
+  .pw-seg button:disabled { cursor:not-allowed; }
+  .pw-flag { display:inline-block; font-size:11px; font-weight:600; padding:2px 8px; border-radius:99px; margin:2px 4px 0 0; }
+  .pw-flag.warn { background: rgba(245,158,11,.15); color:#f59e0b; } .pw-flag.bad { background: rgba(239,68,68,.15); color:#ef4444; } .pw-flag.ok { background: rgba(34,197,94,.15); color:#22c55e; }
+  .pw-cyc { height:5px; border-radius:99px; background: rgba(127,127,127,.2); overflow:hidden; margin-top:4px; max-width:110px; } .pw-cyc i { display:block; height:100%; background: var(--accent); }
+  .pw-cyc.hot i { background:#f59e0b; } .pw-cyc.dead i { background:#ef4444; }
+  .pw-mrow { display:grid; grid-template-columns: minmax(140px,1.1fr) minmax(280px,2fr) minmax(170px,1.2fr) 34px; gap:10px; align-items:center; padding:10px 6px; border-top:1px solid var(--line); }
+  .pw-mrow:first-of-type { border-top:0; }
+  .pw-steps { display:flex; gap:4px; flex-wrap:wrap; align-items:center; }
+  .pw-step { padding:4px 9px; border-radius:99px; font-size:11.5px; font-weight:600; border:1px solid var(--line); color: var(--text-faint); background:transparent; }
+  .pw-step.done { color: var(--text-dim); border-color: var(--line2); }
+  .pw-step.cur { background: var(--accent); color:#001217; border-color:transparent; }
+  .pw-next { padding:5px 11px; border-radius:99px; font-size:11.5px; font-weight:700; background: rgba(76,201,240,.14); color: var(--accent); border:1px solid var(--accent); }
+  .pw-fill { display:inline-block; width:46px; height:9px; border-radius:99px; background: rgba(127,127,127,.22); overflow:hidden; vertical-align:middle; margin-right:6px; } .pw-fill i { display:block; height:100%; background: var(--accent); }
+  .pw-mrow select { width:auto; max-width:100%; padding:4px 8px; font-size:12px; margin:2px 4px 0 0; }
+  .pw-more { width:30px; height:30px; border-radius:8px; color: var(--text-faint); font-size:16px; } .pw-more:hover { background: rgba(127,127,127,.15); color: var(--text); }
+  .pw-empty { padding:16px 6px; color: var(--text-faint); font-size:13px; }
+  .pw-setup { margin-bottom:14px; padding:12px 14px; border-radius:12px; background: rgba(245,158,11,.1); border:1px solid rgba(245,158,11,.4); font-size:13px; display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+  #pw-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 40; display: none; align-items: center; justify-content: center; }
+  #pw-modal-overlay.show { display:flex; animation: overlayFade 0.18s ease; }
+  #pw-modal-overlay.show #pw-modal { animation: modalPop 0.24s cubic-bezier(0.16,1,0.3,1); }
+  #pw-modal { background: var(--panel); border:1px solid var(--line); border-radius:16px; width:480px; max-width:92vw; max-height:86vh; overflow-y:auto; padding:24px 26px; }
+  #pw-modal h2 { font-size:18px; margin-bottom:14px; }
+  @media (max-width: 900px) { .pw-row { grid-template-columns: 24px 34px 1fr 34px; } .pw-row > :nth-child(4), .pw-row > :nth-child(5), .pw-row > :nth-child(6) { grid-column: 3 / 4; } .pw-mrow { grid-template-columns: 1fr 34px; } .pw-mrow > :nth-child(2), .pw-mrow > :nth-child(3) { grid-column: 1 / 2; } #power-wrap { padding: 12px 10px 100px; } }
+
+  /* =====================================================================
+     v23 — navigation, shared page header, Home, Batteries, Cards, Storage
+     (appended last so it layers over the older rules)
+     ===================================================================== */
+
+  /* ---------- top navigation ---------- */
+  #tabs { align-items: center; position: relative; }
+  .tab-btn { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; position: relative; }
+  .tab-btn .ti { width: 15px; height: 15px; flex: none; opacity: .7; transition: color .15s, opacity .15s; }
+  .tab-btn:hover .ti { opacity: 1; }
+  .tab-btn.active { box-shadow: 0 0 0 1px var(--line), 0 4px 12px -6px rgba(0,0,0,.45); }
+  .tab-btn.active .ti { opacity: 1; color: var(--accent); }
+  .tab-badge { display: none; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 99px; background: #ef4444; color: #fff; font: 800 10px/16px var(--font); font-style: normal; text-align: center; }
+  .tab-badge.show { display: inline-block; }
+  .tab-badge.warn { background: #f59e0b; color: #2a1a00; }
+  #tab-more { position: relative; display: flex; }
+  .more-pop { display: none; position: absolute; right: 0; top: calc(100% + 10px); min-width: 200px; background: var(--panel); border: 1px solid var(--line2); border-radius: 14px; padding: 6px; box-shadow: 0 24px 60px -20px rgba(0,0,0,.65); z-index: 300; animation: shIn .18s ease; }
+  .more-pop.show { display: block; }
+  .more-pop .tab-btn { display: flex; width: 100%; border-radius: 9px; padding: 9px 11px; font-size: 13px; }
+  .more-pop .tab-btn.active { box-shadow: none; background: var(--panel2); }
+  .chev-sm { width: 12px; height: 12px; opacity: .6; }
+  @media (max-width: 1560px) { body[data-tab="inventory"] #tabs .tab-btn:not(.active) .tl { display: none; } body[data-tab="inventory"] #tabs .tab-btn:not(.active) { padding: 6px 10px; } }
+  @media (max-width: 1330px) { #tabs .tab-btn:not(.active) .tl { display: none; } #tabs .tab-btn:not(.active) { padding: 6px 10px; } }
+  .more-pop .tab-btn .tl { display: inline !important; } .more-pop .tab-btn { padding: 9px 11px !important; }
+  #search { flex: 0 1 220px; min-width: 120px; }
+  #user-email { max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  @media (max-width: 1500px) { #version-tag { display: none; } }
+  @media (max-width: 760px) {
+    #tabs { order: 2; flex: 1 1 100%; min-width: 0; overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; }
+    #tabs::-webkit-scrollbar { display: none; }
+    #tabs .tab-btn .tl { display: inline !important; }
+    #tab-more { display: contents; }
+    #tab-morebtn { display: none !important; }
+    .more-pop { display: contents !important; }
+    .more-pop .tab-btn { width: auto; display: inline-flex; padding: 6px 12px; }
+  }
+
+  /* ---------- shared page header ---------- */
+  .pg-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+  .pg-head h2 { font-size: 26px; font-weight: 800; letter-spacing: -.02em; line-height: 1.15; }
+  .pg-head p { color: var(--text-dim); font-size: 13.5px; margin-top: 5px; max-width: 640px; }
+  .pg-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .pg-btn, .hx-btn { display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 10px; font-size: 13px; font-weight: 650; background: var(--panel); border: 1px solid var(--line2); color: var(--text); transition: border-color .15s, transform .12s, background-color .15s; }
+  .pg-btn:hover, .hx-btn:hover { border-color: var(--accent); }
+  .pg-btn.primary, .hx-btn.primary { background: var(--accent); color: #001217; border-color: transparent; }
+  .pg-btn svg, .hx-btn svg, .pw-btn svg { flex: none; }
+  .pg-btn.spin svg { animation: pgSpin .8s linear infinite; }
+  @keyframes pgSpin { to { transform: rotate(360deg); } }
+  .pg-updated { font-size: 12px; color: var(--text-faint); }
+
+  /* ====================== HOME ====================== */
+  #home-wrap { scroll-behavior: smooth; }
+  .hx { max-width: 1320px; margin: 0 auto; }
+  .hx-hero { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+  .hx-hero h2 { font-size: 30px; font-weight: 800; letter-spacing: -.03em; line-height: 1.1; }
+  .hx-hero p { color: var(--text-dim); font-size: 14px; margin-top: 6px; }
+  .hx-qa { display: flex; gap: 8px; flex-wrap: wrap; }
+  .hx-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin-bottom: 16px; }
+  .hx-kpi { position: relative; text-align: left; display: flex; align-items: center; gap: 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 16px 16px; overflow: hidden; transition: transform .2s cubic-bezier(.16,1,.3,1), border-color .2s, box-shadow .2s; animation: shIn .45s cubic-bezier(.16,1,.3,1) backwards; animation-delay: calc(var(--i, 0) * 45ms); }
+  .hx-kpi:hover { transform: translateY(-3px); border-color: var(--k); box-shadow: 0 16px 36px -22px var(--k); }
+  .hx-kpi .ic { width: 42px; height: 42px; border-radius: 13px; flex: none; display: flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--k) 16%, transparent); color: var(--k); }
+  .hx-kpi .ic svg { width: 20px; height: 20px; }
+  .hx-kpi b { display: block; font-size: 25px; line-height: 1.05; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+  .hx-kpi small { display: block; color: var(--text-dim); font-size: 12px; margin-top: 3px; }
+  .hx-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+  .hx-col { min-width: 0; }
+  @media (max-width: 1000px) { .hx-grid { grid-template-columns: 1fr; } }
+  .hx-card { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 16px 18px 14px; margin-bottom: 14px; animation: shIn .45s cubic-bezier(.16,1,.3,1) backwards; }
+  .hx-card h3 { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 11.5px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase; color: var(--text-faint); margin-bottom: 10px; }
+  .hx-card h3 .cnt { display: inline-flex; gap: 6px; }
+  .hx-pill { font-size: 11px; font-weight: 750; letter-spacing: 0; text-transform: none; padding: 2px 9px; border-radius: 99px; background: var(--panel2); color: var(--text-dim); }
+  .hx-pill.bad { background: rgba(239,68,68,.15); color: #ef4444; } .hx-pill.warn { background: rgba(245,158,11,.15); color: #f59e0b; }
+  .hx-link { font-size: 12px; font-weight: 650; letter-spacing: 0; text-transform: none; color: var(--accent); padding: 2px 6px; border-radius: 6px; }
+  .hx-link:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+  .hx-att { display: flex; gap: 12px; align-items: center; padding: 10px 12px; margin: 0 -6px; border-radius: 12px; cursor: pointer; transition: background-color .15s, transform .15s; position: relative; }
+  .hx-att:hover { background: var(--panel2); transform: translateX(2px); }
+  .hx-att .ic { width: 32px; height: 32px; flex: none; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--c) 15%, transparent); color: var(--c); }
+  .hx-att .ic svg { width: 16px; height: 16px; }
+  .hx-att.bad { --c: #ef4444; } .hx-att.warn { --c: #f59e0b; } .hx-att.ok { --c: #22c55e; } .hx-att.info { --c: var(--accent); }
+  .hx-att .b { flex: 1; min-width: 0; } .hx-att .t { font-size: 13.5px; font-weight: 600; line-height: 1.3; } .hx-att .m { font-size: 12px; color: var(--text-faint); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hx-chev { color: var(--text-faint); font-size: 18px; flex: none; transition: transform .15s; } .hx-att:hover .hx-chev, .hx-ev:hover .hx-chev { transform: translateX(3px); color: var(--text); }
+  .hx-more { width: 100%; margin-top: 6px; padding: 9px; border-radius: 10px; font-size: 12.5px; font-weight: 650; color: var(--text-dim); border: 1px dashed var(--line2); }
+  .hx-more:hover { color: var(--text); border-color: var(--accent); }
+  .hx-clear { display: flex; align-items: center; gap: 14px; padding: 18px 8px; }
+  .hx-clear .ic { width: 44px; height: 44px; border-radius: 50%; background: rgba(34,197,94,.15); color: #22c55e; display: flex; align-items: center; justify-content: center; } .hx-clear b { display: block; font-size: 15px; } .hx-clear span { font-size: 12.5px; color: var(--text-faint); }
+  .hx-ev { display: grid; grid-template-columns: 58px 1fr auto; gap: 12px; align-items: center; padding: 10px 8px; margin: 0 -6px; border-radius: 12px; cursor: pointer; transition: background-color .15s; }
+  .hx-ev:hover { background: var(--panel2); }
+  .hx-ev .tm { font-size: 13px; font-weight: 750; font-variant-numeric: tabular-nums; } .hx-ev .tm small { display: block; font-size: 11px; font-weight: 500; color: var(--text-faint); }
+  .hx-ev .t { font-size: 13.5px; font-weight: 600; } .hx-ev .m { font-size: 12px; color: var(--text-faint); margin-top: 2px; }
+  .hx-prog { height: 5px; border-radius: 99px; background: rgba(127,127,127,.2); overflow: hidden; margin-top: 7px; max-width: 220px; } .hx-prog i { display: block; height: 100%; border-radius: 99px; background: var(--accent); }
+  .hx-prog.done i { background: #22c55e; }
+  .hx-day { font-size: 11px; font-weight: 800; letter-spacing: .6px; text-transform: uppercase; color: var(--text-faint); margin: 10px 0 2px; }
+  .hx-day:first-of-type { margin-top: 0; }
+  .hx-empty { padding: 16px 4px; color: var(--text-faint); font-size: 13px; }
+  .hx-stack { display: flex; height: 12px; border-radius: 99px; overflow: hidden; background: rgba(127,127,127,.15); gap: 2px; margin-bottom: 12px; } .hx-stack i { display: block; height: 100%; min-width: 4px; }
+  .hx-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .hx-chips button { display: inline-flex; gap: 7px; align-items: center; padding: 5px 11px; border-radius: 99px; font-size: 12px; font-weight: 600; border: 1px solid var(--line); color: var(--text); transition: border-color .15s, transform .12s; }
+  .hx-chips button:hover { border-color: var(--line2); transform: translateY(-1px); } .hx-chips .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .hx-pg { display: flex; align-items: center; gap: 14px; padding: 10px; margin: 0 -6px; border-radius: 14px; cursor: pointer; transition: background-color .15s; }
+  .hx-pg:hover { background: var(--panel2); }
+  .hx-ring { width: 54px; height: 54px; flex: none; transform: rotate(-90deg); } .hx-ring circle { fill: none; stroke-width: 5; stroke-linecap: round; } .hx-ring .bg { stroke: var(--panel2); } .hx-ring .fg { transition: stroke-dasharray .8s cubic-bezier(.16,1,.3,1); }
+  .hx-pg .b { flex: 1; min-width: 0; } .hx-pg .t { font-size: 14px; font-weight: 700; } .hx-pg .m { font-size: 12px; color: var(--text-dim); margin-top: 3px; } .hx-pg .m em { font-style: normal; font-weight: 700; }
+  .hx-cat { display: grid; grid-template-columns: minmax(70px, 130px) 1fr 34px; gap: 12px; align-items: center; padding: 5px 0; font-size: 12.5px; }
+  .hx-cat span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; } .hx-cat span:last-child { text-align: right; color: var(--text-dim); font-variant-numeric: tabular-nums; }
+  .hx-cat .bar { height: 7px; border-radius: 99px; background: var(--panel2); overflow: hidden; } .hx-cat .bar i { display: block; height: 100%; border-radius: 99px; background: var(--accent); }
+  .hx-log { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-top: 1px solid var(--line); cursor: pointer; } .hx-log:first-of-type { border-top: 0; }
+  .hx-log .av { width: 26px; height: 26px; flex: none; border-radius: 50%; background: var(--panel2); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: var(--text-dim); }
+  .hx-log .t { font-size: 13px; line-height: 1.35; } .hx-log .m { font-size: 11.5px; color: var(--text-faint); margin-top: 2px; }
+  @media (max-width: 760px) { .hx-hero h2 { font-size: 24px; } .hx-kpis { grid-template-columns: 1fr 1fr; } .hx-kpi { padding: 12px; gap: 10px; } .hx-kpi .ic { width: 36px; height: 36px; } .hx-kpi b { font-size: 21px; } }
+
+  /* ============== BATTERIES & CARDS (shared) ============== */
+  #power-wrap > .pwx { max-width: 1320px; margin: 0 auto; }
+  .pwx-sub { display: inline-flex; background: var(--panel2); border: 1px solid var(--line); border-radius: 11px; padding: 3px; }
+  .pwx-sub button { display: inline-flex; align-items: center; gap: 7px; padding: 6px 13px; border-radius: 8px; font-size: 12.5px; font-weight: 700; color: var(--text-dim); }
+  .pwx-sub button.on { background: var(--panel); color: var(--text); box-shadow: 0 0 0 1px var(--line2); }
+  .pwx-sub button em { font-style: normal; font-size: 11px; padding: 1px 7px; border-radius: 99px; background: var(--panel2); color: var(--text-faint); } .pwx-sub button.on em { background: var(--panel2); color: var(--text-dim); }
+  .pwx-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 14px; }
+  .pwx-stat { text-align: left; position: relative; display: flex; flex-direction: column; gap: 2px; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; overflow: hidden; transition: transform .18s cubic-bezier(.16,1,.3,1), border-color .18s, background-color .18s; }
+  .pwx-stat::before { content: ""; position: absolute; left: 0; top: 14px; bottom: 14px; width: 3px; border-radius: 0 3px 3px 0; background: var(--k); opacity: .9; }
+  .pwx-stat:hover { transform: translateY(-2px); border-color: var(--line2); }
+  .pwx-stat.on { border-color: var(--k); background: color-mix(in srgb, var(--k) 9%, var(--panel)); }
+  .pwx-stat-n { font-size: 28px; font-weight: 800; letter-spacing: -.02em; line-height: 1.05; font-variant-numeric: tabular-nums; }
+  .pwx-stat-l { font-size: 12.5px; font-weight: 700; } .pwx-stat-s { font-size: 11.5px; color: var(--text-faint); }
+  .pwx-banner { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 14px; margin-bottom: 14px; font-size: 13px; background: color-mix(in srgb, var(--c) 10%, var(--panel)); border: 1px solid color-mix(in srgb, var(--c) 35%, transparent); }
+  .pwx-banner .ic { width: 30px; height: 30px; border-radius: 9px; flex: none; display: flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--c) 20%, transparent); color: var(--c); }
+  .pwx-banner b { font-weight: 750; } .pwx-banner span { color: var(--text-dim); }
+  .pwx-bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+  .pwx-search { position: relative; flex: 1 1 240px; max-width: 360px; display: block; }
+  .pwx-search svg { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--text-faint); pointer-events: none; }
+  .pwx-search input { padding-left: 34px; border-radius: 10px; background: var(--panel); }
+  .pwx-sel { width: auto; border-radius: 10px; background-color: var(--panel); font-size: 13px; padding: 9px 30px 9px 12px; }
+  .pwx-views { display: inline-flex; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 2px; margin-left: auto; }
+  .pwx-views button { width: 34px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--text-faint); } .pwx-views button.on { background: var(--panel2); color: var(--text); box-shadow: 0 0 0 1px var(--line2); }
+  .pwx-selrow { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; font-size: 12px; color: var(--text-faint); margin: 2px 0 12px; }
+  .pwx-selrow .pw-btn { padding: 4px 10px; font-size: 12px; background: transparent; }
+  #power-wrap .pw-chips { margin-bottom: 10px; }
+  #power-wrap .pw-chips button { padding: 5px 13px; font-weight: 600; }
+  #power-wrap .pw-btn { display: inline-flex; align-items: center; gap: 6px; }
+  .pwx-sec-h { display: flex; align-items: center; gap: 10px; margin: 18px 0 10px; font-size: 14px; }
+  .pwx-sec-h b { font-weight: 750; } .pwx-sec-h span { color: var(--text-faint); font-size: 12.5px; } .pwx-sec-h .pw-btn { margin-left: auto; }
+  .pwx-empty { text-align: center; padding: 56px 20px; background: var(--panel); border: 1px dashed var(--line2); border-radius: 18px; color: var(--text-dim); }
+  .pwx-empty .big { width: 56px; height: 56px; margin: 0 auto 12px; border-radius: 18px; display: flex; align-items: center; justify-content: center; background: var(--panel2); color: var(--accent); }
+  .pwx-empty b { display: block; font-size: 16px; color: var(--text); margin-bottom: 4px; } .pwx-empty .pw-btn { margin-top: 14px; }
+
+  /* ---------- batteries ---------- */
+  .bt-group { margin-bottom: 18px; }
+  .bt-group-h { display: flex; align-items: center; gap: 10px; margin: 0 2px 8px; }
+  .bt-group-h b { font-size: 14px; font-weight: 750; } .bt-group-h span { font-size: 12px; color: var(--text-faint); }
+  .bt-group-h .pw-btn { margin-left: auto; padding: 3px 10px; font-size: 11.5px; background: transparent; }
+  .bt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 12px; }
+  .bt-list { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 4px 10px; }
+  .bt-card { --c: var(--idle); position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 10px; transition: border-color .15s, box-shadow .15s, transform .15s; animation: shIn .35s cubic-bezier(.16,1,.3,1) backwards; }
+  .bt-card:hover { border-color: var(--line2); }
+  .bt-card.sel { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 12px 30px -18px var(--accent); }
+  .bt-card.bs-charged { --c: #22c55e; } .bt-card.bs-in_use { --c: var(--accent); } .bt-card.bs-storage { --c: #f59e0b; } .bt-card.bs-empty { --c: var(--idle); }
+  .bt-card.bad { border-color: rgba(239,68,68,.55); } .bt-card.warn { border-color: rgba(245,158,11,.4); }
+  .bt-card.retired { opacity: .5; }
+  .bt-top { display: flex; align-items: center; gap: 11px; }
+  .bt-id { flex: 1; min-width: 0; } .bt-id .pw-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .bt-id .pw-sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bt-glyph { position: relative; width: 46px; height: 24px; flex: none; border: 2px solid var(--c); border-radius: 6px; padding: 2px; display: block; }
+  .bt-glyph::after { content: ""; position: absolute; right: -6px; top: 6px; width: 4px; height: 8px; border-radius: 0 2px 2px 0; background: var(--c); }
+  .bt-glyph i { display: block; height: 100%; width: var(--lvl); min-width: 3px; border-radius: 2px; background: var(--c); transition: width .5s cubic-bezier(.16,1,.3,1); }
+  .bs-in_use .bt-glyph i { background-image: linear-gradient(90deg, transparent 0, rgba(255,255,255,.35) 50%, transparent 100%); background-size: 200% 100%; background-color: var(--c); animation: btPulse 1.8s linear infinite; }
+  @keyframes btPulse { to { background-position: -200% 0; } }
+  .bt-seg { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; background: var(--panel2); border-radius: 11px; padding: 3px; }
+  .bt-seg button { padding: 6px 2px; border-radius: 8px; font-size: 11.5px; font-weight: 700; color: var(--text-faint); transition: background-color .15s, color .15s; }
+  .bt-seg button:hover:not(:disabled):not(.on) { color: var(--text); background: rgba(127,127,127,.12); }
+  .bt-seg button.on { color: #04130a; } .bt-seg .s-charged.on { background: #22c55e; } .bt-seg .s-in_use.on { background: var(--accent); color: #001217; } .bt-seg .s-empty.on { background: #8b93a1; color: #0d0f12; } .bt-seg .s-storage.on { background: #f59e0b; color: #2a1a00; }
+  .bt-seg button:disabled { cursor: not-allowed; }
+  .bt-stamp { font-size: 12px; color: var(--text-dim); }
+  .bt-cyc { display: flex; align-items: center; gap: 10px; font-size: 11.5px; color: var(--text-faint); } .bt-cyc .pw-cyc { flex: 1; max-width: none; margin-top: 0; }
+  .bt-flags { display: flex; flex-wrap: wrap; gap: 2px; margin: -4px 0; }
+  .bt-bulk { position: sticky; bottom: 16px; z-index: 40; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: center; width: fit-content; max-width: 100%; margin: 18px auto 0; padding: 8px 10px; border-radius: 16px; background: var(--panel); border: 1px solid var(--line2); box-shadow: 0 22px 60px -14px rgba(0,0,0,.7); animation: shIn .25s cubic-bezier(.16,1,.3,1); }
+  .bt-bulk b { font-size: 13px; padding: 0 8px; } .bt-bulk .sep { width: 1px; height: 20px; background: var(--line2); margin: 0 4px; }
+  .bt-bulk button { padding: 7px 12px; border-radius: 9px; font-size: 12.5px; font-weight: 700; background: var(--panel2); border: 1px solid var(--line); }
+  .bt-bulk button:hover { border-color: var(--accent); } .bt-bulk .go { background: #22c55e; color: #04130a; border-color: transparent; } .bt-bulk .x { background: transparent; border-color: transparent; color: var(--text-faint); }
+
+  /* ---------- cards: board ---------- */
+  .cd-board { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; align-items: start; }
+  .cd-col { --c: var(--idle); background: color-mix(in srgb, var(--panel2) 55%, transparent); border: 1px solid var(--line); border-radius: 18px; padding: 10px; min-height: 140px; }
+  .cd-col.s-in_camera { --c: var(--accent); } .cd-col.s-recorded { --c: #f59e0b; } .cd-col.s-copied { --c: #22c55e; }
+  .cd-col-h { display: flex; align-items: center; gap: 8px; padding: 4px 6px 10px; }
+  .cd-col-h i { width: 9px; height: 9px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 4px color-mix(in srgb, var(--c) 20%, transparent); }
+  .cd-col-h b { font-size: 13.5px; font-weight: 750; } .cd-col-h em { font-style: normal; font-size: 11.5px; font-weight: 700; padding: 1px 8px; border-radius: 99px; background: var(--panel); color: var(--text-dim); }
+  .cd-col-h small { color: var(--text-faint); font-size: 11.5px; margin-left: auto; }
+  .cd-col-h .pw-btn { margin-left: auto; padding: 3px 10px; font-size: 11.5px; }
+  .cd-col-empty { text-align: center; padding: 26px 8px; font-size: 12.5px; color: var(--text-faint); border: 1px dashed var(--line2); border-radius: 12px; }
+  .cd-tile { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 12px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 1px 0 var(--line); animation: shIn .3s cubic-bezier(.16,1,.3,1) backwards; transition: border-color .15s; }
+  .cd-tile:hover { border-color: var(--line2); } .cd-tile.bad { border-color: rgba(239,68,68,.6); box-shadow: 0 10px 28px -20px #ef4444; }
+  .cd-t-top { display: flex; gap: 8px; align-items: flex-start; } .cd-t-top > div { flex: 1; min-width: 0; } .cd-t-top .pw-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cd-t-top .pw-more { width: 26px; height: 26px; font-size: 14px; margin: -3px -3px 0 0; }
+  .cd-fill { display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: var(--text-dim); text-align: left; padding: 2px 0; }
+  .cd-fill .tr { flex: 1; height: 7px; border-radius: 99px; background: rgba(127,127,127,.22); overflow: hidden; } .cd-fill .tr i { display: block; height: 100%; border-radius: 99px; background: var(--accent); transition: width .3s; }
+  .cd-by { font-size: 11.5px; color: var(--text-faint); } .cd-meta { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 11.5px; color: var(--text-dim); } .cd-meta span { display: inline-flex; align-items: center; gap: 4px; }
+  .cd-act { display: flex; gap: 6px; }
+  .cd-act .back { width: 34px; flex: none; border-radius: 9px; border: 1px solid var(--line); color: var(--text-faint); display: flex; align-items: center; justify-content: center; } .cd-act .back:hover:not(:disabled) { border-color: var(--line2); color: var(--text); }
+  .cd-act .next { flex: 1; padding: 8px 10px; border-radius: 9px; font-size: 12.5px; font-weight: 750; background: color-mix(in srgb, var(--c) 16%, transparent); color: var(--text); border: 1px solid color-mix(in srgb, var(--c) 60%, transparent); transition: background-color .15s, transform .12s; }
+  .cd-act .next:hover:not(:disabled) { background: var(--c); color: #001217; } .cd-act .next:disabled { opacity: .45; cursor: not-allowed; }
+  .cd-tile .more { font-size: 11.5px; color: var(--text-faint); text-align: left; padding: 0; } .cd-tile .more:hover { color: var(--text); }
+  .cd-det { display: grid; gap: 6px; padding-top: 4px; } .cd-det select { padding: 6px 28px 6px 9px; font-size: 12px; } .cd-det label { font-size: 10.5px; font-weight: 800; letter-spacing: .6px; text-transform: uppercase; color: var(--text-faint); display: block; margin-bottom: 2px; }
+  .cd-list { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 4px 12px; }
+  @media (max-width: 900px) { .cd-board { grid-template-columns: 1fr; } }
+
+  /* ====================== STORAGE ====================== */
+  #storage-wrap { flex: 1; overflow-y: auto; }
+  #storage-wrap > .st-page { max-width: 1180px; margin: 0 auto; }
+  .st-hero { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; background: var(--panel); border: 1px solid var(--line); border-radius: 20px; padding: 16px 20px; margin-bottom: 16px; }
+  .st-hero .grow { flex: 1; min-width: 200px; } .st-hero .big { font-size: 17px; font-weight: 800; letter-spacing: -.01em; display: flex; align-items: center; gap: 10px; }
+  .st-hero .big i { width: 10px; height: 10px; border-radius: 50%; background: var(--tone); box-shadow: 0 0 0 5px color-mix(in srgb, var(--tone) 22%, transparent); }
+  .st-hero .sub { font-size: 12.5px; color: var(--text-dim); margin-top: 4px; }
+  .st-planbox { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-faint); }
+  .st-grid3 { display: grid; grid-template-columns: 1fr 1fr 1.25fr; gap: 14px; margin-bottom: 14px; }
+  @media (max-width: 980px) { .st-grid3 { grid-template-columns: 1fr 1fr; } .st-grid3 .st-trend { grid-column: 1 / -1; } }
+  @media (max-width: 620px) { .st-grid3 { grid-template-columns: 1fr; } }
+  .st-grid3 .st-ring { height: 100%; justify-content: center; }
+  .st-trend { background: var(--panel); border: 1px solid var(--line); border-radius: 22px; padding: 20px 22px; display: flex; flex-direction: column; gap: 6px; }
+  .st-trend h4, .st-ins h4 { font-size: 11.5px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase; color: var(--text-faint); }
+  .st-trend .num { font-size: 26px; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; margin-top: 4px; } .st-trend .num small { font-size: 12.5px; font-weight: 600; color: var(--text-dim); margin-left: 6px; }
+  .st-trend .cap { font-size: 12px; color: var(--text-dim); }
+  .st-spark { width: 100%; height: 70px; margin-top: auto; overflow: visible; } .st-spark .l { fill: none; stroke: var(--accent); stroke-width: 2; vector-effect: non-scaling-stroke; stroke-linejoin: round; stroke-linecap: round; } .st-spark .a { fill: color-mix(in srgb, var(--accent) 16%, transparent); stroke: none; }
+  .st-trend .hint { margin: auto 0; font-size: 12.5px; color: var(--text-faint); line-height: 1.5; }
+  .st-ins { background: var(--panel); border: 1px solid var(--line); border-radius: 20px; padding: 18px 20px 12px; margin-bottom: 14px; }
+  .st-ins ul { list-style: none; margin-top: 10px; display: grid; gap: 2px; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); column-gap: 24px; }
+  .st-ins li { display: flex; gap: 11px; align-items: flex-start; padding: 8px 0; font-size: 13px; line-height: 1.45; }
+  .st-ins li .d { width: 8px; height: 8px; border-radius: 50%; margin-top: 6px; flex: none; background: var(--c, var(--accent)); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c, var(--accent)) 20%, transparent); }
+  .st-ins li.ok { --c: #06D6A0; } .st-ins li.warn { --c: #FFB020; } .st-ins li.bad { --c: #FF4444; } .st-ins li small { display: block; color: var(--text-faint); font-size: 12px; margin-top: 1px; }
+  .st-row .nm.tw, .st-frow .nm.tw { display: flex; align-items: center; gap: 10px; }
+  .st-row .nm:not(.tw), .st-frow .nm { display: block; }
+  .st-row .nm.tw > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .st-th { width: 34px; height: 34px; border-radius: 8px; object-fit: cover; flex: none; background: var(--panel2); }
+  .st-row .nm small { display: block; }
+
+  #signout { white-space: nowrap; flex: none; }
+
+  /* Analytics v2 */
+  #analytics-wrap{padding:18px 22px 100px}
+  .an-bar{position:sticky;top:-18px;z-index:5;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:flex-end;padding:12px 14px;margin-bottom:6px;background:color-mix(in srgb,var(--panel) 88%,transparent);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:14px}
+  .an-filters,.an-actions,.an-presets{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+  .an-filters label{display:flex;flex-direction:column;gap:4px;font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text-faint)}
+  .an-filters select,.an-filters input{width:auto;min-width:130px;padding:7px 10px;font-size:13px}
+  .an-presets{gap:4px}.an-presets button,.an-tools button,.an-seg button,.an-btn{font-size:12px;font-weight:650;padding:6px 11px;border-radius:8px;background:var(--panel2);border:1px solid var(--line);color:var(--text-dim);transition:all .15s}
+  .an-presets button:hover,.an-tools button:hover,.an-seg button:hover,.an-btn:hover{border-color:var(--accent);color:var(--text)}
+  .an-btn.primary{background:var(--accent);border-color:var(--accent);color:#001217}.an-btn.primary:hover{filter:brightness(1.1);color:#001217}
+  .an-hint{font-size:11.5px;color:var(--text-faint);margin:0 4px 14px}
+  .kpi-sub{font-size:10.5px;color:var(--text-faint);margin-top:2px}
+  .an-attn{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-bottom:16px}
+  .an-attn h3{font-size:13px;font-weight:650;margin-bottom:10px}
+  .an-attn-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+  .an-attn-list button{display:flex;align-items:center;gap:10px;text-align:left;padding:10px 12px;border-radius:10px;background:var(--panel2);border:1px solid var(--line);color:var(--text-faint);font-size:12px}
+  .an-attn-list button b{font-size:20px;color:var(--text-faint)}.an-attn-list button.has{color:var(--text)}.an-attn-list button.has b{color:var(--borrowed)}
+  .an-attn-list button.has:hover{border-color:var(--accent);transform:translateY(-1px)}
+  #analytics-wrap .chart-grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,440px),1fr))}
+  .an-card{animation:anIn .5s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes anIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .an-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+  .an-head .chart-sub{margin-bottom:10px}.an-tools{display:flex;gap:4px;flex:none}
+  .an-tools button{font-size:10.5px;padding:4px 8px}
+  .an-seg{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px}.an-seg button{font-size:11px;padding:4px 9px}
+  .an-seg button.on{background:var(--accent);border-color:var(--accent);color:#001217}
+  #analytics-wrap .chart-canvas-wrap{height:270px}
+  .an-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--text-faint);font-size:13px}
+  .an-chip{font-size:11.5px;font-weight:650;padding:3px 9px;border-radius:999px;background:rgba(76,201,240,.15);color:var(--accent);border:1px solid var(--accent)}
+  @media (prefers-reduced-motion:reduce){.an-card{animation:none}}
 </style>
 </head>
 <body>
@@ -1215,20 +1565,28 @@
   <div id="topbar">
     <div class="wordmark">MLX <span>GEAR</span></div>
     <div id="tabs">
+      <button class="tab-btn" id="tab-home" onclick="switchTab('home')">Home</button>
       <button class="tab-btn active" id="tab-inventory" onclick="switchTab('inventory')">Inventory</button>
       <button class="tab-btn" id="tab-locations" onclick="switchTab('locations')">Locations</button>
       <button class="tab-btn" id="tab-analytics" onclick="switchTab('analytics')">Analytics</button>
       <button class="tab-btn" id="tab-bookings" onclick="switchTab('bookings')">Bookings</button>
       <button class="tab-btn" id="tab-presets" onclick="switchTab('presets')">Presets</button>
-      <button class="tab-btn" id="tab-share" style="display:none" onclick="switchTab('share')">Share</button>
-      <button class="tab-btn" id="tab-storage" style="display:none" onclick="switchTab('storage')">Storage</button>
-      <button class="tab-btn" id="tab-docs" onclick="switchTab('docs')">Docs</button>
-      <button class="tab-btn" id="tab-activity" style="display:none" onclick="switchTab('activity')">Activity</button>
-      <button class="tab-btn" id="tab-users" style="display:none" onclick="switchTab('users')">Users</button>
+      <button class="tab-btn" id="tab-batteries" style="display:none" onclick="switchTab('batteries')">Batteries</button>
+      <button class="tab-btn" id="tab-cards" style="display:none" onclick="switchTab('cards')">Cards</button>
+      <div id="tab-more" style="display:none">
+        <button class="tab-btn" id="tab-morebtn" onclick="toggleMoreMenu(event)">More</button>
+        <div class="more-pop" id="more-pop">
+          <button class="tab-btn" id="tab-share" style="display:none" onclick="switchTab('share')">Share</button>
+          <button class="tab-btn" id="tab-storage" style="display:none" onclick="switchTab('storage')">Storage</button>
+          <button class="tab-btn" id="tab-docs" onclick="switchTab('docs')">Docs</button>
+          <button class="tab-btn" id="tab-activity" style="display:none" onclick="switchTab('activity')">Activity</button>
+          <button class="tab-btn" id="tab-users" style="display:none" onclick="switchTab('users')">Users</button>
+        </div>
+      </div>
     </div>
     <input id="search" placeholder="Search serial or name…" oninput="renderTable()">
     <div class="spacer"></div>
-    <span id="version-tag">v002</span>
+    <span id="version-tag">v003</span>
     <div id="user-email"></div>
     <div style="position:relative">
       <button id="notif-bell-btn" style="display:none" onclick="toggleNotifDropdown()" title="Notifications">
@@ -1272,6 +1630,7 @@
       <button class="bulk-action-btn danger" onclick="applyBulkDelete()">Delete</button>
       <button class="bulk-close-btn" onclick="clearSelection()" title="Clear selection">✕</button>
     </div>
+    <div id="home-wrap" style="display:none"><div class="skel-card"></div><div class="skel-card"></div><div class="skel-card"></div></div>
     <div id="table-wrap">
       <table>
         <thead>
@@ -1286,7 +1645,7 @@
             <th onclick="setSort('price')">Price</th>
           </tr>
         </thead>
-        <tbody id="table-body"></tbody>
+        <tbody id="table-body"><tr class="skel-row"><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td></tr><tr class="skel-row"><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td></tr><tr class="skel-row"><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td></tr><tr class="skel-row"><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td></tr><tr class="skel-row"><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td></tr><tr class="skel-row"><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td></tr><tr class="skel-row"><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td></tr><tr class="skel-row"><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td><td><i></i></td></tr></tbody>
       </table>
       <div id="empty-state" style="display:none">No items match this view.</div>
     </div>
@@ -1299,46 +1658,7 @@
       <div id="locations-list"></div>
     </div>
 
-    <div id="analytics-wrap" style="display:none">
-      <div class="kpi-row" id="kpi-row"></div>
-      <div class="chart-grid">
-        <div class="chart-card">
-          <h3>Items by category</h3>
-          <div class="chart-sub">How your gear breaks down by class</div>
-          <div class="chart-canvas-wrap"><canvas id="chart-category"></canvas></div>
-        </div>
-        <div class="chart-card">
-          <h3>Items by status</h3>
-          <div class="chart-sub">Where everything currently stands</div>
-          <div class="chart-canvas-wrap"><canvas id="chart-status"></canvas></div>
-        </div>
-        <div class="chart-card">
-          <h3>Value by category</h3>
-          <div class="chart-sub">Total purchase value per class (CZK)</div>
-          <div class="chart-canvas-wrap"><canvas id="chart-value"></canvas></div>
-        </div>
-        <div class="chart-card">
-          <h3>Items added over time</h3>
-          <div class="chart-sub">Purchases by month</div>
-          <div class="chart-canvas-wrap"><canvas id="chart-timeline"></canvas></div>
-        </div>
-        <div class="chart-card">
-          <h3>Bookings per month</h3>
-          <div class="chart-sub">Shoots on the calendar, by month</div>
-          <div class="chart-canvas-wrap"><canvas id="chart-events-permonth"></canvas></div>
-        </div>
-        <div class="chart-card">
-          <h3>Gear utilization</h3>
-          <div class="chart-sub">Your 8 most-booked items, by number of shoots</div>
-          <div class="chart-canvas-wrap"><canvas id="chart-utilization"></canvas></div>
-        </div>
-        <div class="chart-card">
-          <h3>Checkpoint activity by person</h3>
-          <div class="chart-sub">Who's confirmed the most pack/arrive/wrap/return checks</div>
-          <div class="chart-canvas-wrap"><canvas id="chart-employee-checkpoints"></canvas></div>
-        </div>
-      </div>
-    </div>
+    <div id="analytics-wrap" style="display:none"><div id="an-root"></div></div>
 
     <div id="users-wrap" style="display:none">
       <div class="users-section-title">Team</div>
@@ -1421,9 +1741,14 @@
     </div>
 
     <div id="storage-wrap" style="display:none">
-      <div class="sh-hero"><h2>Storage</h2><p>How full your Supabase project is, and what is taking the space. Click a ring for the breakdown.</p></div>
-      <div id="st-body"></div>
+      <div class="st-page">
+        <div class="pg-head"><div><h2>Storage</h2><p>How full your Supabase project is, what is taking the space, and how fast it is growing. Click a ring for the breakdown.</p></div>
+          <div class="pg-actions"><span class="pg-updated" id="st-updated"></span><button class="pg-btn" id="st-refresh" onclick="renderStorageTab(true)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/></svg> Refresh</button></div></div>
+        <div id="st-body"></div>
+      </div>
     </div>
+
+    <div id="power-wrap" style="display:none"></div>
 
     <div id="docs-wrap" style="display:none">
       <div class="users-section-title">Manuals & documents</div>
@@ -1509,6 +1834,16 @@
       <div id="p-links"></div>
       <div class="pl-chips" id="p-links-chips"></div>
       <div class="note-text" style="margin-top:8px">Shared by every unit of this model. The button text is what clients see in a shared list, so the long URL stays hidden.</div>
+    </div>
+
+    <div class="panel-section" id="p-sec-power" style="animation-delay:0.105s">
+      <div class="panel-section-title">Battery / memory card tracking</div>
+      <div class="form-row">
+        <span class="field-label">Track this item as</span>
+        <select id="p-pw-kind" onchange="pwKindChanged('p', true)"><option value="">Normal gear (no tracking)</option><option value="battery">🔋 Rechargeable battery</option><option value="media">💾 Memory card / drive</option></select>
+        <div class="note-text" id="p-pw-hint" style="margin-top:6px"></div>
+      </div>
+      <div id="p-pw-fields"></div>
     </div>
 
     <div class="panel-section" id="p-sec-maint" style="animation-delay:0.11s">
@@ -1727,7 +2062,7 @@
         </div>
         <div>
           <span class="field-label">Display name</span>
-          <input id="m-display-name" placeholder="e.g. Blackmagic Pocket 6K">
+          <input id="m-display-name" placeholder="e.g. Blackmagic Pocket 6K" oninput="pwAutoDetect()">
         </div>
       </div>
       <div id="serial-preview-box" style="margin-bottom:0">Serial will generate on save</div>
@@ -1757,6 +2092,16 @@
         <span class="field-label">Notes</span>
         <textarea id="m-notes" rows="2"></textarea>
       </div>
+    </div>
+
+    <div class="modal-section" id="m-pw-sec" style="animation-delay:0.065s">
+      <div class="modal-section-title">Battery / memory card tracking</div>
+      <div class="form-row">
+        <span class="field-label">Track this item as</span>
+        <select id="m-pw-kind" onchange="pwKindChanged('m', true)"><option value="">Normal gear (no tracking)</option><option value="battery">🔋 Rechargeable battery</option><option value="media">💾 Memory card / drive</option></select>
+        <div class="modal-subtitle" id="m-pw-hint" style="margin:6px 0 0"></div>
+      </div>
+      <div id="m-pw-fields"></div>
     </div>
 
     <div class="modal-section" style="animation-delay:0.08s">
@@ -1821,6 +2166,8 @@
     </div>
   </div>
 </div>
+
+<div id="pw-modal-overlay"><div id="pw-modal"></div></div>
 
 <div id="custom-dialog-overlay">
   <div id="custom-dialog">
@@ -2624,6 +2971,8 @@ const CAPS = [
   { k: "item_private", g: "Inventory", l: "Maintenance, documents & history in item menu", h: "Admin and Owner only by default", min: 3 },
   { k: "calendar", g: "Bookings", l: "View calendar", h: "Read-only", min: 1 },
   { k: "bookings", g: "Bookings", l: "Manage bookings & presets", h: "Add/edit events, check-in, preset kits", min: 2 },
+  { k: "power_view", g: "Batteries & cards", l: "View batteries & cards", h: "Charge state, card status, warnings", min: 1 },
+  { k: "power", g: "Batteries & cards", l: "Update batteries & cards", h: "Tick charged, move cards through the copy workflow", min: 2 },
   { k: "share", g: "Sharing", l: "Share Center", h: "Admin and Owner only by default", min: 3 },
   { k: "documents", g: "Documents", l: "Docs tab", h: "Admin and Owner only by default", min: 3 },
   { k: "analytics", g: "Insight", l: "View Analytics", h: "Admin and Owner only by default", min: 3 },
@@ -2636,8 +2985,8 @@ const CAPABILITY_KEYS = CAPS.map(c => c.k);
 const CAPABILITY_LABELS = Object.fromEntries(CAPS.map(c => [c.k, c.l]));
 const _ALL_CAPS_OFF = Object.fromEntries(CAPS.filter(c => !c.lock).map(c => [c.k, false]));
 const PERM_TEMPLATES = {
-  Shooter: { ..._ALL_CAPS_OFF, items: true, bookings: true, calendar: true },
-  Coordinator: { ..._ALL_CAPS_OFF, bookings: true, calendar: true, share: true, documents: true },
+  Shooter: { ..._ALL_CAPS_OFF, items: true, bookings: true, calendar: true, power_view: true, power: true },
+  Coordinator: { ..._ALL_CAPS_OFF, bookings: true, calendar: true, share: true, documents: true, power_view: true },
   Bookkeeper: { ..._ALL_CAPS_OFF, analytics: true, export: true, purchase: true },
   "View only": { ..._ALL_CAPS_OFF, calendar: true },
 };
@@ -2703,6 +3052,9 @@ function refreshTabVisibility() {
   document.getElementById("tab-share").style.display = canShare() ? "" : "none";
   document.getElementById("tab-storage").style.display = canManageRoles() && hasCapability("storage") ? "" : "none";
   document.getElementById("tab-docs").style.display = canManageDocuments() ? "" : "none";
+  document.getElementById("tab-batteries").style.display = canViewPower() ? "" : "none";
+  document.getElementById("tab-cards").style.display = canViewPower() ? "" : "none";
+  syncMore();
   document.body.classList.toggle("no-purchase", !canSeePurchase());
 }
 
@@ -2823,12 +3175,14 @@ async function enterApp(session) {
   document.getElementById("user-email").textContent = session.user.email;
   refreshTabVisibility();
   renderFilters();
-  await Promise.all([loadItems(), loadLocations(), loadBookingEvents(), loadPresetKits(), loadDocuments(), loadCodeRegistry()]);
+  await Promise.all([loadItems(), loadLocations(), loadBookingEvents(), loadPresetKits(), loadDocuments(), loadCodeRegistry(), loadPower()]);
+  startPowerRealtime();
   renderFilters();
   renderTable();
-  refreshNotifBadge();
+  refreshNotifBadge().then(() => { if (currentTab === "home") renderHome(); });
   updateSimBanner();
   refreshCodeDependentUI();
+  switchTab("home");
 }
 async function checkSession() {
   const { data } = await sb.auth.getSession();
@@ -2838,13 +3192,167 @@ async function checkSession() {
 // ============================================================
 // TABS
 // ============================================================
+
+// ============================================================
+// HOME TAB
+// ============================================================
+function homeGo(tab, status) { if (status !== undefined) { activeStatusFilter = status; renderFilters(); renderTable(); } switchTab(tab); }
+let homeAttAll = false;
+function homeToggleAtt() { homeAttAll = !homeAttAll; renderHome(); }
+async function renderHome() {
+  const el = document.getElementById("home-wrap"); if (!el) return;
+  const sy = el.scrollTop;
+  const DAY = 864e5, d0 = new Date(); d0.setHours(0, 0, 0, 0); const t0 = +d0, t1 = t0 + DAY;
+  const showCal = canViewCalendar(), evs = showCal ? bookingEvents : [];
+  const T = x => +new Date(x), fmtT = x => new Date(x).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), fmtD = x => new Date(x).toLocaleDateString([], { weekday: "short", day: "numeric", month: "short" });
+  const today = evs.filter(e => T(e.start_at) < t1 && T(e.end_at) >= t0).sort((a, b) => T(a.start_at) - T(b.start_at));
+  const soon = evs.filter(e => T(e.start_at) >= t1 && T(e.start_at) < t1 + 7 * DAY).sort((a, b) => T(a.start_at) - T(b.start_at));
+  const overdue = evs.filter(e => T(e.end_at) < t0 && (e.eventItems || []).some(x => !x.returned));
+  const counts = {}; items.forEach(i => counts[i.status] = (counts[i.status] || 0) + 1);
+  const out = (counts.in_use || 0) + (counts.on_set || 0) + (counts.borrowed || 0);
+  const value = items.reduce((a, i) => a + (Number(i.price) || 0), 0);
+
+  // ----- needs attention (same rules as before) -----
+  const att = [];
+  overdue.forEach(e => { const n = e.eventItems.filter(x => !x.returned).length; att.push({ tone: "bad", title: `${e.title}: ${n} item${n === 1 ? "" : "s"} not returned`, meta: `Ended ${fmtD(e.end_at)}`, go: "bookings" }); });
+  if (counts.damaged) att.push({ tone: "bad", title: `${counts.damaged} item${counts.damaged === 1 ? "" : "s"} marked damaged`, meta: "Open in inventory", go: "inventory", st: "damaged" });
+  const activeIds = new Set(today.flatMap(e => e.itemIds || [])), stale = items.filter(i => i.status === "on_set" && !activeIds.has(i.id)).length;
+  if (stale) att.push({ tone: "warn", title: `${stale} item${stale === 1 ? "" : "s"} marked On set with no booking today`, meta: "Probably need to be checked back in", go: "inventory", st: "on_set" });
+  const noLoc = items.filter(i => !i.location_id).length;
+  if (noLoc) att.push({ tone: "warn", title: `${noLoc} item${noLoc === 1 ? "" : "s"} have no storage location`, meta: "Open in inventory", go: "inventory", st: null });
+  if (canViewPower()) powerWarnings().forEach(w => att.push(w));
+  let feed = []; try { feed = notifBuild().filter(n => n.prio === 0 || n.prio === 1 || n.prio === 3).slice(0, 6); } catch (e) {}
+  feed.forEach(n => att.push({ tone: n.tone === "acc" ? "info" : n.tone, title: n.title, meta: n.meta, go: n.go || "inventory" }));
+  const rank = { bad: 0, warn: 1, info: 2, ok: 3 }; att.sort((a, b) => (rank[a.tone] ?? 2) - (rank[b.tone] ?? 2));
+  const nBad = att.filter(a => a.tone === "bad").length, nWarn = att.filter(a => a.tone === "warn").length;
+  let log = []; if (canViewActivityTab()) { if (!activityLog.length) await loadActivityLog(); log = activityLog.slice(0, 6); }
+
+  // ----- small builders -----
+  const go = r => `homeGo('${r.go}', ${r.st === undefined ? "undefined" : jsArg(r.st).replace(/^"null"$/, "null")})`;
+  const I = (k, s) => svgIcon_(TAB_ICONS[k] || PWI[k] || "", s || 16);
+  const attIcon = t => t === "bad" ? PWI.alert : t === "warn" ? PWI.alert : t === "ok" ? PWI.check : PWI.bolt;
+  const attRow = r => `<div class="hx-att ${r.tone || "info"}" onclick="${go(r)}"><span class="ic">${svgIcon_(attIcon(r.tone), 16)}</span><div class="b"><div class="t">${escapeHtml(r.title)}</div><div class="m">${escapeHtml(r.meta || "")}</div></div><span class="hx-chev">›</span></div>`;
+  const LIMIT = 5, shownAtt = homeAttAll ? att : att.slice(0, LIMIT);
+  const evRow = e => {
+    const its = e.eventItems || [], pk = its.filter(x => x.packed).length, pct = its.length ? pk / its.length * 100 : 0;
+    return `<div class="hx-ev" onclick="homeGo('bookings')"><div class="tm">${fmtT(e.start_at)}<small>${fmtT(e.end_at)}</small></div><div><div class="t">${escapeHtml(e.title)}</div><div class="m">${its.length ? `Packed ${pk} of ${its.length}` : "No gear assigned yet"}</div>${its.length ? `<div class="hx-prog${pct >= 100 ? " done" : ""}"><i style="width:${pct}%"></i></div>` : ""}</div><span class="hx-chev">›</span></div>`;
+  };
+  const dayKey = x => new Date(x).toLocaleDateString([], { weekday: "long", day: "numeric", month: "short" });
+  let lastDay = "", soonHtml = "";
+  soon.slice(0, 8).forEach(e => { const k = dayKey(e.start_at); if (k !== lastDay) { soonHtml += `<div class="hx-day">${k}</div>`; lastDay = k; } soonHtml += evRow(e); });
+
+  const total = items.length || 1;
+  const stack = Object.keys(STATUS_META).filter(k => counts[k]).map(k => `<i style="width:${counts[k] / total * 100}%;background:${STATUS_META[k].color}" title="${STATUS_META[k].label}"></i>`).join("");
+  const chips = Object.keys(STATUS_META).filter(k => counts[k]).map(k => `<button onclick="homeGo('inventory','${k}')"><span class="dot" style="background:${STATUS_META[k].color}"></span>${STATUS_META[k].label} <b>${counts[k]}</b></button>`).join("");
+
+  // categories
+  let catNames = {}; try { catNames = mergedNames("category", STARTER_CATEGORIES) || {}; } catch (e) {}
+  const cc = {}; items.forEach(i => { const k = i.category || "?"; cc[k] = (cc[k] || 0) + 1; });
+  const cats = Object.entries(cc).sort((a, b) => b[1] - a[1]).slice(0, 5), catMax = cats.length ? cats[0][1] : 1;
+
+  // batteries & cards glance
+  let power = "";
+  if (canViewPower() && !powerErr) {
+    try { pwRebuild(); } catch (e) {}
+    const act = batteries.filter(b => !b.retired), cs = mediaCards;
+    const ring = (frac, col) => `<svg viewBox="0 0 44 44" class="hx-ring"><circle cx="22" cy="22" r="18" class="bg"/><circle cx="22" cy="22" r="18" class="fg" stroke="${col}" stroke-dasharray="${(113.1 * Math.max(0, Math.min(1, frac))).toFixed(1)} 113.1"/></svg>`;
+    const bn = s => act.filter(b => b.state === s).length, bFlag = act.filter(b => batteryFlags(b).length).length;
+    const cn = s => cs.filter(c => c.state === s).length, cFlag = cs.filter(c => mediaFlags(c).length).length;
+    const bRow = act.length ? `<div class="hx-pg" onclick="homeGo('batteries')">${ring(bn("charged") / act.length, bFlag ? "#f59e0b" : "#22c55e")}<div class="b"><div class="t">${bn("charged")} of ${act.length} batteries ready</div><div class="m">${bn("in_use")} in use · ${bn("empty")} empty · ${bn("storage")} stored${bFlag ? ` · <em style="color:#f59e0b">${bFlag} need care</em>` : ""}</div></div><span class="hx-chev">›</span></div>` : "";
+    const cRow = cs.length ? `<div class="hx-pg" onclick="homeGo('cards')">${ring(cs.length ? (cn("empty") + cn("copied")) / cs.length : 0, cFlag ? "#ef4444" : "var(--accent)")}<div class="b"><div class="t">${cn("empty") + cn("copied")} of ${cs.length} cards free to use</div><div class="m">${cn("in_camera")} in camera · ${cn("recorded")} to copy${cFlag ? ` · <em style="color:#ef4444">${cFlag} overdue</em>` : ""}</div></div><span class="hx-chev">›</span></div>` : "";
+    if (bRow || cRow) power = `<div class="hx-card" style="animation-delay:60ms"><h3>Batteries &amp; cards</h3>${bRow}${cRow}</div>`;
+  }
+
+  const em = (document.getElementById("user-email")?.textContent || "").split("@")[0], first = (em.split(/[._\-+0-9]/)[0] || "");
+  const nm = first ? first.charAt(0).toUpperCase() + first.slice(1) : "";
+  const hour = new Date().getHours(), greet = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+  const kpi = (i, k, color, num, label, onclick) => `<button class="hx-kpi" style="--k:${color};--i:${i}" onclick="${onclick}"><span class="ic">${I(k, 20)}</span><span><b>${num}</b><small>${label}</small></span></button>`;
+  let ki = 0;
+  const kpis = [
+    kpi(ki++, "inventory", "#4CC9F0", items.length, "items tracked", "homeGo('inventory', null)"),
+    kpi(ki++, "check", "#06D6A0", counts.idle || 0, "idle, ready to go", "homeGo('inventory','idle')"),
+    kpi(ki++, "bolt", "#9b5de5", out, "out (in use / on set / borrowed)", "homeGo('inventory', null)"),
+    canSeePurchase() ? kpi(ki++, "analytics", "#f4a261", `${value.toLocaleString()} Kč`, "total value", `homeGo('${canViewAnalyticsTab() ? "analytics" : "inventory"}')`) : "",
+    showCal ? kpi(ki++, "bookings", "#F72585", today.length, `booking${today.length === 1 ? "" : "s"} today`, "homeGo('bookings')") : "",
+  ].join("");
+
+  const attCard = `<div class="hx-card"><h3><span>Needs attention</span><span class="cnt">${nBad ? `<span class="hx-pill bad">${nBad} urgent</span>` : ""}${nWarn ? `<span class="hx-pill warn">${nWarn} to check</span>` : ""}${!att.length ? `<span class="hx-pill">All good</span>` : ""}</span></h3>
+    ${att.length ? shownAtt.map(attRow).join("") + (att.length > LIMIT ? `<button class="hx-more" onclick="homeToggleAtt()">${homeAttAll ? "Show less" : `Show all ${att.length}`}</button>` : "") : `<div class="hx-clear"><span class="ic">${svgIcon_(PWI.check, 22)}</span><div><b>All clear</b><span>Nothing needs your attention right now.</span></div></div>`}</div>`;
+  const todayCard = showCal ? `<div class="hx-card" style="animation-delay:40ms"><h3><span>Today</span><button class="hx-link" onclick="homeGo('bookings')">Open calendar</button></h3>${today.length ? today.map(evRow).join("") : `<div class="hx-empty">No bookings today — a quiet one.</div>`}</div>
+    <div class="hx-card" style="animation-delay:80ms"><h3><span>Next 7 days</span></h3>${soon.length ? soonHtml : `<div class="hx-empty">Nothing booked in the next week.</div>`}</div>` : "";
+  const statusCard = `<div class="hx-card" style="animation-delay:100ms"><h3><span>Gear status</span><button class="hx-link" onclick="homeGo('inventory', null)">View all</button></h3>${items.length ? `<div class="hx-stack">${stack}</div><div class="hx-chips">${chips}</div>` : `<div class="hx-empty">No gear yet. Add your first item in Inventory.</div>`}</div>`;
+  const catCard = cats.length ? `<div class="hx-card" style="animation-delay:120ms"><h3><span>Biggest categories</span></h3>${cats.map(([k, n]) => `<div class="hx-cat"><span title="${escapeHtml(catNames[k] || k)}">${escapeHtml(catNames[k] || k)}</span><span class="bar"><i style="width:${n / catMax * 100}%"></i></span><span>${n}</span></div>`).join("")}</div>` : "";
+  const logCard = canViewActivityTab() ? `<div class="hx-card" style="animation-delay:140ms"><h3><span>Recent activity</span><button class="hx-link" onclick="homeGo('activity')">See all</button></h3>${log.length ? log.map(a => `<div class="hx-log" onclick="homeGo('activity')"><span class="av">${escapeHtml(((a.email || "?").charAt(0) || "?").toUpperCase())}</span><div><div class="t">${escapeHtml(a.detail || a.action)}</div><div class="m">${escapeHtml((a.email || "").split("@")[0])} · ${new Date(a.created_at).toLocaleString([], { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</div></div></div>`).join("") : `<div class="hx-empty">No activity yet.</div>`}</div>` : "";
+
+  const qa = `<div class="hx-qa">${canEditItems() ? `<button class="hx-btn primary" onclick="openAddModal()">${svgIcon_(PWI.plus, 15)} Add item</button>` : ""}${canManageBookings() ? `<button class="hx-btn" onclick="openEventModal()">${svgIcon_(TAB_ICONS.bookings, 15)} New booking</button>` : ""}</div>`;
+  el.innerHTML = `<div class="hx"><div class="hx-hero"><div><h2>${greet}${nm ? ", " + escapeHtml(nm) : ""}</h2><p>${new Date().toLocaleDateString([], { weekday: "long", day: "numeric", month: "long" })} · ${att.length ? `${att.length} thing${att.length === 1 ? "" : "s"} to look at` : "everything is in order"}</p></div>${qa}</div>
+    <div class="hx-kpis">${kpis}</div>
+    <div class="hx-grid"><div class="hx-col">${attCard}${todayCard}</div><div class="hx-col">${power}${statusCard}${catCard}${logCard}</div></div></div>`;
+  el.scrollTop = sy;
+}
+
+// ============================================================
+// NAVIGATION — icons, "More" menu, power badges
+// ============================================================
+const TAB_ICONS = {
+  home: '<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  inventory: '<path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/>',
+  locations: '<path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/>',
+  analytics: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  bookings: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  presets: '<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/><path d="m3 17.5 9 5 9-5"/>',
+  batteries: '<rect x="2" y="7" width="17" height="10" rx="2"/><path d="M22 11v2M6 11v2M10 11v2"/>',
+  cards: '<path d="M7 3h8l4 4v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M9 7v3M12 7v3M15 7v3"/>',
+  share: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/>',
+  storage: '<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>',
+  docs: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
+  activity: '<path d="M3 12h4l3-8 4 16 3-8h4"/>',
+  users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M21.5 20a6.5 6.5 0 0 0-4-6"/>',
+  morebtn: '<circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/>',
+};
+function decorateTabs() {
+  document.querySelectorAll("#tabs .tab-btn").forEach(b => {
+    if (b.dataset.dec) return; b.dataset.dec = "1";
+    const k = b.id.replace("tab-", ""), label = b.textContent.trim();
+    b.title = label;
+    const ic = svgIcon_(TAB_ICONS[k] || "", 15).replace("<svg ", '<svg class="ti" ');
+    const badge = (k === "batteries" || k === "cards") ? `<i class="tab-badge" id="badge-${k}"></i>` : "";
+    b.innerHTML = `${ic}<span class="tl">${label}</span>${badge}`;
+  });
+}
+function toggleMoreMenu(e) { if (e) e.stopPropagation(); document.getElementById("more-pop").classList.toggle("show"); }
+document.addEventListener("click", e => { const p = document.getElementById("more-pop"); if (p && !e.target.closest("#tab-more")) p.classList.remove("show"); });
+function syncMore() {
+  const wrap = document.getElementById("tab-more"); if (!wrap) return;
+  const kids = [...document.querySelectorAll("#more-pop .tab-btn")];
+  wrap.style.display = kids.some(b => b.style.display !== "none") ? "" : "none";
+  const act = kids.find(b => b.classList.contains("active")), mb = document.getElementById("tab-morebtn");
+  if (mb) { mb.classList.toggle("active", !!act); const tl = mb.querySelector(".tl"); if (tl) tl.textContent = act ? act.title : "More"; }
+  const p = document.getElementById("more-pop"); if (p) p.classList.remove("show");
+  try { const a = document.querySelector("#tabs .tab-btn.active:not(#tab-morebtn)"); if (a && a.offsetParent && window.innerWidth <= 760) a.scrollIntoView({ inline: "center", block: "nearest" }); } catch (e) {}
+}
+function pwSetBadges() {
+  try {
+    const set = (id, n, tone) => { const el = document.getElementById(id); if (!el) return; el.textContent = n > 9 ? "9+" : n; el.classList.toggle("show", n > 0); el.classList.toggle("warn", tone === "warn"); };
+    const bn = batteries.filter(b => !b.retired && batteryFlags(b).length), cn = mediaCards.filter(c => mediaFlags(c).length);
+    set("badge-batteries", bn.length, bn.some(b => batteryFlags(b).some(f => f.tone === "bad")) ? "bad" : "warn");
+    set("badge-cards", cn.length, "bad");
+  } catch (e) {}
+}
+const isPowerTab = () => currentTab === "batteries" || currentTab === "cards";
+
 function switchTab(tab) {
+  if (tab === "power") tab = "batteries";
   currentTab = tab;
+  document.getElementById("tab-home").classList.toggle("active", tab === "home");
+  document.getElementById("home-wrap").style.display = tab === "home" ? "block" : "none";
   document.getElementById("tab-inventory").classList.toggle("active", tab === "inventory");
   document.getElementById("tab-locations").classList.toggle("active", tab === "locations");
   document.getElementById("tab-analytics").classList.toggle("active", tab === "analytics");
   document.getElementById("tab-bookings").classList.toggle("active", tab === "bookings");
   document.getElementById("tab-presets").classList.toggle("active", tab === "presets");
+  document.getElementById("tab-batteries").classList.toggle("active", tab === "batteries");
+  document.getElementById("tab-cards").classList.toggle("active", tab === "cards");
   document.getElementById("tab-docs").classList.toggle("active", tab === "docs");
   document.getElementById("tab-activity").classList.toggle("active", tab === "activity");
   document.getElementById("tab-users").classList.toggle("active", tab === "users");
@@ -2855,23 +3363,29 @@ function switchTab(tab) {
   document.getElementById("analytics-wrap").style.display = tab === "analytics" ? "block" : "none";
   document.getElementById("bookings-wrap").style.display = tab === "bookings" ? "block" : "none";
   document.getElementById("presets-wrap").style.display = tab === "presets" ? "block" : "none";
+  document.getElementById("power-wrap").style.display = (tab === "batteries" || tab === "cards") ? "block" : "none";
   document.getElementById("docs-wrap").style.display = tab === "docs" ? "block" : "none";
   document.getElementById("activity-wrap").style.display = tab === "activity" ? "block" : "none";
   document.getElementById("users-wrap").style.display = tab === "users" ? "block" : "none";
   document.getElementById("share-wrap").style.display = tab === "share" ? "block" : "none";
   document.getElementById("storage-wrap").style.display = tab === "storage" ? "block" : "none";
   document.getElementById("filters").style.display = tab === "inventory" ? "flex" : "none";
+  syncMore();
+  document.body.dataset.tab = tab;
+  document.getElementById("search").style.display = tab === "inventory" ? "" : "none";
   updateBulkToolbar();
   document.getElementById("fab").style.display = (tab === "inventory" && canEditItems()) ? "flex" : "none";
   if (tab === "locations") renderLocationsView();
   else if (tab === "analytics") { if (!canViewAnalyticsTab()) { switchTab("inventory"); return; } renderAnalytics(); }
   else if (tab === "bookings") { if (!canViewCalendar()) { switchTab("inventory"); return; } renderBookingsTab(); }
   else if (tab === "presets") { if (!canManageBookings()) { switchTab("inventory"); return; } renderPresetsTab(); }
+  else if (tab === "batteries" || tab === "cards") { if (!canViewPower()) { switchTab("inventory"); return; } renderPower(); }
   else if (tab === "docs") { if (!canManageDocuments()) { switchTab("inventory"); return; } renderDocsTab(); }
   else if (tab === "activity") { if (!canViewActivityTab()) { switchTab("inventory"); return; } renderActivityTab(); }
   else if (tab === "users") { if (!canViewUsersTab()) { switchTab("inventory"); return; } renderUsersTab(); }
   else if (tab === "share") { if (!canShare()) { switchTab("inventory"); return; } renderShareTab(); }
   else if (tab === "storage") { if (!canManageRoles() || !hasCapability("storage")) { switchTab("inventory"); return; } renderStorageTab(); }
+  else if (tab === "home") renderHome();
 }
 
 // ============================================================
@@ -2996,6 +3510,7 @@ function renderFilters() {
   enhanceCustomSelect(document.getElementById("cat-filter"), { meta: (v) => v === "all" ? { color: "#6b7280", badge: "∗" } : codeMeta(v, mergedNames("category", STARTER_CATEGORIES)) });
   enhanceCustomSelect(document.getElementById("loc-filter"), { meta: (v) => (v === "all" || v === "none") ? { color: "#6b7280", badge: v === "all" ? "∗" : "—" } : locationMeta(v) });
 }
+function clearAllFilters() { analyticsIdFilter = null; activeStatusFilter = null; activeLocationFilter = null; activeCategoryFilter = null; minPriceFilter = null; document.getElementById("search").value = ""; renderFilters(); renderTable(); }
 function setStatusFilter(status) { activeStatusFilter = status; renderFilters(); renderTable(); }
 function setLocationFilter(val) { activeLocationFilter = val === "all" ? null : val; renderTable(); }
 function setCategoryFilter(val) { activeCategoryFilter = val === "all" ? null : val; renderTable(); }
@@ -3017,6 +3532,7 @@ function renderTable() {
     if (activeLocationFilter && activeLocationFilter !== "none" && i.location_id !== activeLocationFilter) return false;
     if (activeCategoryFilter && i.category !== activeCategoryFilter) return false;
     if (minPriceFilter !== null && !(Number(i.price) >= minPriceFilter)) return false;
+    if (analyticsIdFilter && !analyticsIdFilter.ids.has(i.id)) return false;
     if (q && !(i.serial.toLowerCase().includes(q) || i.name.toLowerCase().includes(q))) return false;
     return true;
   });
@@ -3035,14 +3551,21 @@ function renderTable() {
     const totalValue = rows.reduce((s, i) => s + (Number(i.price) || 0), 0);
     statsBar.innerHTML = canSeePurchase() ? `<b>${rows.length}</b> item${rows.length===1?"":"s"} · <b>${totalValue.toLocaleString()} Kč</b> total` : `<b>${rows.length}</b> item${rows.length===1?"":"s"}`;
   }
-  if (rows.length === 0) { body.innerHTML = ""; empty.style.display = "block"; return; }
+  if (statsBar && analyticsIdFilter) statsBar.innerHTML = `<button class="an-chip" onclick="anClearIds()" title="Clear analytics filter">${escapeHtml(analyticsIdFilter.label)} ✕</button> ` + statsBar.innerHTML;
+  if (rows.length === 0) {
+    body.innerHTML = "";
+    empty.innerHTML = items.length === 0
+      ? `<div class="empty-art">📦</div><div class="empty-title">No gear yet</div>Add your first item to start tracking serials, locations and bookings.${canEditItems() ? `<br><button class="empty-btn" onclick="openAddModal()">+ Add your first item</button>` : ""}`
+      : `<div class="empty-art">🔍</div><div class="empty-title">Nothing matches these filters</div>Try a different search, or reset the filters.<br><button class="empty-btn" onclick="clearAllFilters()">Clear filters</button>`;
+    empty.style.display = "block"; return;
+  }
   empty.style.display = "none";
   body.innerHTML = rows.map(i => {
     const sm = STATUS_META[i.status] || STATUS_META.idle;
     return `<tr data-id="${i.id}" class="${selectedIds.has(i.id)?"row-selected":""}" onclick="handleRowClick('${i.id}')">
       <td onclick="event.stopPropagation()"><input type="checkbox" ${selectedIds.has(i.id)?"checked":""} onchange="toggleRowSelect('${i.id}', this.checked)"></td>
       <td class="serial" data-label="Serial">${i.serial}</td>
-      <td class="name" data-label="Name">${escapeHtml(i.name)}</td>
+      <td class="name" data-label="Name"><div class="nm">${i.photo_url ? `<img class="thumb" loading="lazy" alt="" src="${escapeHtml(i.photo_url)}">` : `<span class="thumb"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="13" rx="2"/><circle cx="12" cy="12.5" r="3.5"/></svg></span>`}<span>${escapeHtml(i.name)}</span></div></td>
       <td class="dim" data-label="Category">${escapeHtml(i.category)}</td>
       <td class="dim" data-label="Location">${escapeHtml(i.locationPath) || "—"}</td>
       <td data-label="Status"><span class="status-pill"><span class="dot" style="background:${sm.color}"></span>${sm.label}</span></td>
@@ -3333,119 +3856,201 @@ function chartColors() {
     accent: style.getPropertyValue("--accent").trim() || "#4CC9F0",
   };
 }
-const CHART_PALETTE = ["#4CC9F0","#FF6B6B","#FFD166","#06D6A0","#7B5EA7","#FF8C42","#F72585","#118AB2","#E76F51","#A8DADC"];
+// ============================================================
+// ANALYTICS v2 — switchable charts, PNG/CSV/PDF export, shared
+// filters, click-through to inventory
+// ============================================================
+let analyticsIdFilter = null; // { ids:Set, label } — set by chart click-through
+const AN = { from: "", to: "", cat: "", damage: [], types: {}, built: false, rows: {} };
+try { AN.types = JSON.parse(localStorage.getItem("mlx-an-types") || "{}"); } catch (e) {}
+const AN_TYPES = [["bar", "Bar"], ["hbar", "Horizontal"], ["line", "Line"], ["pie", "Pie"], ["doughnut", "Donut"]];
+const CHART_PALETTE = ["#4CC9F0","#FF6B6B","#FFD166","#06D6A0","#7B5EA7","#FF8C42","#F72585","#118AB2","#E76F51","#A8DADC","#9b5de5","#6b7280"];
 function destroyChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
-function renderAnalytics() {
-  if (typeof Chart === "undefined") {
-    document.getElementById("analytics-wrap").innerHTML = `<div class="note-text" style="color:var(--damaged)">Could not load the charting library (check your internet connection) — try refreshing the page.</div>`;
-    return;
-  }
-  const col = chartColors();
-  Chart.defaults.color = col.text;
-  Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
-
-  const totalValue = items.reduce((s, i) => s + (Number(i.price) || 0), 0);
-  const kpi = document.getElementById("kpi-row");
-  kpi.innerHTML = `
-    <div class="kpi-card"><div class="kpi-val">${items.length}</div><div class="kpi-label">Total items</div></div>
-    <div class="kpi-card"><div class="kpi-val">${locations.length}</div><div class="kpi-label">Locations</div></div>
-    <div class="kpi-card"><div class="kpi-val">${totalValue.toLocaleString()} Kč</div><div class="kpi-label">Total value</div></div>
-    <div class="kpi-card"><div class="kpi-val">${new Set(items.map(i=>i.category).filter(Boolean)).size}</div><div class="kpi-label">Categories in use</div></div>
-  `;
-
-  // Items by category
-  const catCounts = {};
-  items.forEach(i => { const c = i.category || "?"; catCounts[c] = (catCounts[c] || 0) + 1; });
-  const catLabels = Object.keys(catCounts).sort();
-  destroyChart("chart-category");
-  charts["chart-category"] = new Chart(document.getElementById("chart-category"), {
-    type: "doughnut",
-    data: { labels: catLabels.map(c => `${c} — ${STARTER_CATEGORIES[c] || "Custom"}`), datasets: [{ data: catLabels.map(c => catCounts[c]), backgroundColor: CHART_PALETTE, borderWidth: 0 }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: "right", labels: { boxWidth: 10, font: { size: 11 } } } } },
+function anIn(d) { if (!d) return !AN.from && !AN.to; const s = String(d).slice(0, 10); return (!AN.from || s >= AN.from) && (!AN.to || s <= AN.to); }
+function anBrand(i) { const m = i.model_registry || {}; return STARTER_TREE[m.category]?.types?.[m.type]?.brands?.[m.brand] || codeRegistry.brand?.[m.brand]?.name || m.brand || "Unknown"; }
+function anCatName(c) { const n = mergedNames("category", STARTER_CATEGORIES)[c]; return n ? `${c} — ${n}` : (c || "?"); }
+function anTally(list, keyFn, valFn, extra, sortKey) {
+  const m = new Map();
+  list.forEach(it => {
+    const k = keyFn(it); if (k == null) return;
+    const r = m.get(k) || { label: k, value: 0, ids: [], ...(extra ? extra(it) : {}) };
+    r.value += valFn ? valFn(it) : 1; r.ids.push(it.id); m.set(k, r);
   });
-
-  // Items by status
-  const statusKeys = Object.keys(STATUS_META);
-  const statusCounts = statusKeys.map(k => items.filter(i => i.status === k).length);
-  destroyChart("chart-status");
-  charts["chart-status"] = new Chart(document.getElementById("chart-status"), {
-    type: "bar",
-    data: { labels: statusKeys.map(k => STATUS_META[k].label), datasets: [{ data: statusCounts, backgroundColor: statusKeys.map(k => getComputedStyle(document.documentElement).getPropertyValue("--" + k).trim() || col.accent), borderRadius: 6 }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: col.grid }, ticks: { precision: 0 } } } },
+  const a = [...m.values()];
+  return sortKey ? a.sort((x, y) => x.label < y.label ? -1 : 1) : a.sort((x, y) => y.value - x.value);
+}
+async function anLoadDamage() {
+  try { const { data } = await sb.from("item_damage_reports").select("item_id, created_at, description").limit(5000); AN.damage = data || []; } catch (e) { AN.damage = []; }
+}
+function anCompute() {
+  const its = items.filter(i => !AN.cat || i.category === AN.cat);
+  const ids = new Set(its.map(i => i.id));
+  const byId = Object.fromEntries(items.map(i => [i.id, i]));
+  const evs = bookingEvents.filter(e => anIn(e.start_at));
+  const use = {}; evs.forEach(e => new Set(e.itemIds).forEach(id => { if (ids.has(id)) use[id] = (use[id] || 0) + 1; }));
+  const dmg = AN.damage.filter(d => ids.has(d.item_id) && anIn(d.created_at));
+  const idle = its.filter(i => !use[i.id]);
+  const pr = i => Number(i.price) || 0;
+  const nm = id => byId[id]?.name || "(removed)";
+  const top = (a, n) => a.slice(0, n);
+  const R = {};
+  R.cat = anTally(its, i => i.category || "?", null, i => ({ filter: { cat: i.category } })).map(r => ({ ...r, code: r.label, label: anCatName(r.label) }));
+  R.status = Object.keys(STATUS_META).map(k => ({ label: STATUS_META[k].label, value: its.filter(i => i.status === k).length, ids: its.filter(i => i.status === k).map(i => i.id), filter: { status: k }, color: getComputedStyle(document.documentElement).getPropertyValue("--" + k).trim() }));
+  R.valcat = anTally(its, i => i.category || "?", pr, i => ({ filter: { cat: i.category } })).map(r => ({ ...r, label: anCatName(r.label) }));
+  R.valloc = top(anTally(its, i => i.location_id ? locationBreadcrumb(i.location_id) : "Unassigned", pr, i => ({ filter: i.location_id ? { loc: i.location_id } : { loc: "none" } })), 10);
+  R.use = top(Object.entries(use).sort((a, b) => b[1] - a[1]).map(([id, v]) => ({ label: nm(id), value: v, ids: [id] })), 10);
+  R.idle = anTally(idle, i => anCatName(i.category));
+  R.dmgitem = top(anTally(dmg, d => nm(d.item_id), null, d => ({}), false).map(r => r), 10).map(r => ({ ...r, ids: [...new Set(r.ids)] }));
+  R.dmgbrand = anTally(dmg.filter(d => byId[d.item_id]), d => anBrand(byId[d.item_id])).map(r => ({ ...r, ids: [...new Set(r.ids)] }));
+  R.brand = top(anTally(its, anBrand), 10);
+  R.bookings = anTally(evs.filter(e => e.start_at), e => String(e.start_at).slice(0, 7), null, null, true).map(r => ({ ...r, ids: [] }));
+  R.buys = anTally(its.filter(i => anIn(i.purchase_date || i.created_at) && (i.purchase_date || i.created_at)), i => String(i.purchase_date || i.created_at).slice(0, 7), null, null, true);
+  const pc = {}; evs.forEach(e => e.eventItems.forEach(ei => ["packed_by_email", "arrived_by_email", "wrapped_by_email", "returned_by_email"].forEach(f => { if (ei[f]) pc[ei[f]] = (pc[ei[f]] || 0) + 1; })));
+  R.people = top(Object.entries(pc).sort((a, b) => b[1] - a[1]).map(([l, v]) => ({ label: l, value: v, ids: [] })), 8);
+  const today = new Date().toISOString().slice(0, 10), in90 = new Date(Date.now() + 90 * 864e5).toISOString().slice(0, 10);
+  R._attn = [
+    ["Never booked in this period", idle],
+    ["Currently damaged", its.filter(i => i.status === "damaged")],
+    ["Service overdue", its.filter(i => i.next_service_due && i.next_service_due < today)],
+    ["Warranty ends within 90 days", its.filter(i => i.warranty_expiry && i.warranty_expiry >= today && i.warranty_expiry <= in90)],
+  ];
+  R._k = { n: its.length, value: its.reduce((s, i) => s + pr(i), 0), idle: idle.length, idleVal: idle.reduce((s, i) => s + pr(i), 0), ev: evs.length, dmg: dmg.length, util: its.length ? Math.round(100 * (its.length - idle.length) / its.length) : 0 };
+  return R;
+}
+const AN_DEFS = [
+  { id: "cat", title: "Items by category", sub: "Click a slice to filter inventory", def: "doughnut" },
+  { id: "status", title: "Items by status", sub: "Where everything stands right now", def: "bar" },
+  { id: "valcat", title: "Value by category", sub: "Purchase value, CZK", def: "bar", money: true },
+  { id: "valloc", title: "Value by location", sub: "Top 10 locations, CZK", def: "hbar", money: true },
+  { id: "use", title: "Most used gear", sub: "Bookings per item in the selected period", def: "hbar" },
+  { id: "idle", title: "Idle gear", sub: "Items never booked in the period, by category", def: "bar" },
+  { id: "dmgitem", title: "Damage by item", sub: "Reports in the period, top 10", def: "hbar" },
+  { id: "dmgbrand", title: "Damage by brand", sub: "Which brands come back broken", def: "doughnut" },
+  { id: "brand", title: "Gear by brand", sub: "Top 10 brands in the fleet", def: "hbar" },
+  { id: "bookings", title: "Bookings per month", sub: "Shoots on the calendar", def: "bar" },
+  { id: "buys", title: "Purchases over time", sub: "Items added per month", def: "line" },
+  { id: "people", title: "Checkpoint activity", sub: "Pack / arrive / wrap / return confirmations", def: "hbar" },
+];
+function anBuildShell() {
+  const cats = [...new Set(items.map(i => i.category).filter(Boolean))].sort();
+  document.getElementById("an-root").innerHTML = `
+    <div class="an-bar">
+      <div class="an-filters">
+        <label>Category <select id="an-cat" onchange="AN.cat=this.value;anDraw()"><option value="">All</option>${cats.map(c => `<option value="${c}">${escapeHtml(anCatName(c))}</option>`).join("")}</select></label>
+        <label>From <input type="date" id="an-from" onchange="AN.from=this.value;anDraw()"></label>
+        <label>To <input type="date" id="an-to" onchange="AN.to=this.value;anDraw()"></label>
+        <div class="an-presets">${[["30d", 30], ["90d", 90], ["1y", 365], ["All", 0]].map(([l, d]) => `<button onclick="anPreset(${d})">${l}</button>`).join("")}</div>
+      </div>
+      <div class="an-actions">
+        <button class="an-btn" onclick="anCsvAll()">All data CSV</button>
+        <button class="an-btn primary" onclick="anPdf()">Export full report (PDF)</button>
+      </div>
+    </div>
+    <div class="an-hint">Category applies to every chart. Dates apply to bookings, usage, idle gear, damage and purchases.</div>
+    <div class="kpi-row" id="kpi-row"></div>
+    <div class="an-attn" id="an-attn"></div>
+    <div class="chart-grid" id="an-grid"></div>`;
+  AN.built = true;
+}
+function anPreset(d) {
+  const t = new Date(); AN.to = d ? t.toISOString().slice(0, 10) : ""; AN.from = d ? new Date(Date.now() - d * 864e5).toISOString().slice(0, 10) : "";
+  document.getElementById("an-from").value = AN.from; document.getElementById("an-to").value = AN.to; anDraw();
+}
+async function renderAnalytics() {
+  if (typeof Chart === "undefined") { document.getElementById("an-root").innerHTML = `<div class="note-text" style="color:var(--damaged)">Charting library failed to load — check your connection and refresh.</div>`; return; }
+  if (!AN.built) anBuildShell();
+  await anLoadDamage(); anDraw();
+}
+function anDraw() {
+  const col = chartColors(); Chart.defaults.color = col.text; Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
+  Chart.defaults.animation = { duration: 750, easing: "easeOutQuart" };
+  const R = AN.rows = anCompute(), K = R._k, showMoney = canSeePurchase();
+  const k = (v, l, s) => `<div class="kpi-card"><div class="kpi-val">${v}</div><div class="kpi-label">${l}</div>${s ? `<div class="kpi-sub">${s}</div>` : ""}</div>`;
+  document.getElementById("kpi-row").innerHTML = k(K.n, "Items") + (showMoney ? k(K.value.toLocaleString() + " Kč", "Total value") : "") + k(K.util + "%", "Utilization", "items booked in period") + k(K.idle, "Idle items", showMoney ? K.idleVal.toLocaleString() + " Kč sitting still" : "") + k(K.ev, "Bookings") + k(K.dmg, "Damage reports");
+  document.getElementById("an-attn").innerHTML = `<h3>Needs attention</h3><div class="an-attn-list">${R._attn.map(([l, a], n) => `<button ${a.length ? `onclick="anAttn(${n})"` : "disabled"} class="${a.length ? "has" : ""}"><b>${a.length}</b><span>${l}</span></button>`).join("")}</div>`;
+  const grid = document.getElementById("an-grid");
+  if (!grid.children.length) grid.innerHTML = AN_DEFS.map((d, n) => `<div class="chart-card an-card" id="card-${d.id}" style="animation-delay:${n * 40}ms">
+      <div class="an-head"><div><h3>${d.title}</h3><div class="chart-sub">${d.sub}</div></div>
+      <div class="an-tools"><button title="Download PNG" onclick="anPng('${d.id}')">PNG</button><button title="Download CSV" onclick="anCsv('${d.id}')">CSV</button></div></div>
+      <div class="an-seg">${AN_TYPES.map(([t, l]) => `<button data-t="${t}" onclick="anSetType('${d.id}','${t}')">${l}</button>`).join("")}</div>
+      <div class="chart-canvas-wrap"><canvas id="chart-${d.id}"></canvas></div></div>`).join("");
+  AN_DEFS.forEach(d => {
+    const card = document.getElementById("card-" + d.id), hide = d.money && !showMoney;
+    card.style.display = hide ? "none" : "";
+    if (!hide) anChart(d);
   });
-
-  // Value by category
-  const catValues = {};
-  items.forEach(i => { const c = i.category || "?"; catValues[c] = (catValues[c] || 0) + (Number(i.price) || 0); });
-  const valLabels = Object.keys(catValues).sort();
-  destroyChart("chart-value");
-  charts["chart-value"] = new Chart(document.getElementById("chart-value"), {
-    type: "bar",
-    data: { labels: valLabels, datasets: [{ data: valLabels.map(c => catValues[c]), backgroundColor: col.accent, borderRadius: 6 }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => ctx.parsed.y.toLocaleString() + " Kč" } } }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: col.grid }, ticks: { callback: (v) => v.toLocaleString() } } } },
-  });
-
-  // Items added over time (by month, using purchase_date, falling back to created_at)
-  const monthCounts = {};
-  items.forEach(i => {
-    const d = i.purchase_date || i.created_at;
-    if (!d) return;
-    const key = String(d).slice(0, 7); // YYYY-MM
-    monthCounts[key] = (monthCounts[key] || 0) + 1;
-  });
-  const months = Object.keys(monthCounts).sort();
-  destroyChart("chart-timeline");
-  charts["chart-timeline"] = new Chart(document.getElementById("chart-timeline"), {
-    type: "line",
-    data: { labels: months, datasets: [{ data: months.map(m => monthCounts[m]), borderColor: col.accent, backgroundColor: col.accent + "22", fill: true, tension: 0.3, pointRadius: 3 }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: col.grid }, ticks: { precision: 0 } } } },
-  });
-
-  // Bookings per month
-  const eventMonthCounts = {};
-  bookingEvents.forEach(e => {
-    if (!e.start_at) return;
-    const key = String(e.start_at).slice(0, 7);
-    eventMonthCounts[key] = (eventMonthCounts[key] || 0) + 1;
-  });
-  const eventMonths = Object.keys(eventMonthCounts).sort();
-  destroyChart("chart-events-permonth");
-  charts["chart-events-permonth"] = new Chart(document.getElementById("chart-events-permonth"), {
-    type: "bar",
-    data: { labels: eventMonths, datasets: [{ data: eventMonths.map(m => eventMonthCounts[m]), backgroundColor: col.accent, borderRadius: 6 }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: col.grid }, ticks: { precision: 0 } } } },
-  });
-
-  // Gear utilization — most-booked items across all events
-  const bookingCounts = {};
-  bookingEvents.forEach(e => e.itemIds.forEach(id => { bookingCounts[id] = (bookingCounts[id] || 0) + 1; }));
-  const topBooked = Object.entries(bookingCounts).sort((a, b) => b[1] - a[1]).slice(0, 8);
-  destroyChart("chart-utilization");
-  charts["chart-utilization"] = new Chart(document.getElementById("chart-utilization"), {
-    type: "bar",
-    data: {
-      labels: topBooked.map(([id]) => items.find(i => i.id === id)?.name || "(removed)"),
-      datasets: [{ data: topBooked.map(([, c]) => c), backgroundColor: CHART_PALETTE, borderRadius: 6 }],
+}
+function anSetType(id, t) { AN.types[id] = t; try { localStorage.setItem("mlx-an-types", JSON.stringify(AN.types)); } catch (e) {} anChart(AN_DEFS.find(d => d.id === id)); }
+function anChart(d) {
+  const rows = AN.rows[d.id] || [], type = AN.types[d.id] || d.def, id = "chart-" + d.id, col = chartColors();
+  destroyChart(id);
+  const card = document.getElementById("card-" + d.id);
+  card.querySelectorAll(".an-seg button").forEach(b => b.classList.toggle("on", b.dataset.t === type));
+  const wrap = card.querySelector(".chart-canvas-wrap");
+  wrap.querySelector(".an-empty")?.remove();
+  const cv = document.getElementById(id); cv.style.display = rows.length ? "" : "none";
+  if (!rows.length) { wrap.insertAdjacentHTML("beforeend", `<div class="an-empty">No data for these filters</div>`); return; }
+  const round = type === "pie" || type === "doughnut", fmt = v => d.money ? v.toLocaleString() + " Kč" : v.toLocaleString();
+  const colors = rows.map((r, n) => r.color || CHART_PALETTE[n % CHART_PALETTE.length]);
+  const ds = { data: rows.map(r => r.value) };
+  if (round) Object.assign(ds, { backgroundColor: colors, borderWidth: 2, borderColor: getComputedStyle(document.documentElement).getPropertyValue("--panel").trim(), hoverOffset: 10 });
+  else if (type === "line") Object.assign(ds, { borderColor: col.accent, backgroundColor: col.accent + "30", fill: true, tension: 0.35, pointRadius: 4, pointHoverRadius: 7, borderWidth: 2.5 });
+  else Object.assign(ds, { backgroundColor: rows.some(r => r.color) ? colors : col.accent, borderRadius: 8, borderSkipped: false, maxBarThickness: 38 });
+  const sc = type === "hbar" ? { x: { beginAtZero: true, grid: { color: col.grid }, ticks: { precision: 0 } }, y: { grid: { display: false }, ticks: { font: { size: 11 }, callback(v) { const s = this.getLabelForValue(v); return s.length > 24 ? s.slice(0, 23) + "…" : s; } } } }
+    : { x: { grid: { display: false }, ticks: { maxRotation: 40, callback(v) { const s = this.getLabelForValue(v); return s.length > 14 ? s.slice(0, 13) + "…" : s; } } }, y: { beginAtZero: true, grid: { color: col.grid }, ticks: { precision: 0 } } };
+  charts[id] = new Chart(cv, {
+    type: type === "hbar" ? "bar" : type,
+    data: { labels: rows.map(r => r.label), datasets: [ds] },
+    options: {
+      responsive: true, maintainAspectRatio: false, indexAxis: type === "hbar" ? "y" : "x",
+      layout: { padding: 4 }, scales: round ? {} : sc,
+      plugins: { legend: { display: round, position: "right", labels: { boxWidth: 10, usePointStyle: true, font: { size: 11 } } }, tooltip: { padding: 10, cornerRadius: 8, callbacks: { label: c => " " + fmt(c.raw) + (round ? ` (${Math.round(100 * c.raw / rows.reduce((s, r) => s + r.value, 0))}%)` : "") } } },
+      onHover: (e, els) => { e.native.target.style.cursor = els.length && (rows[els[0].index].filter || rows[els[0].index].ids?.length) ? "pointer" : "default"; },
+      onClick: (e, els) => { if (els.length) anGo(rows[els[0].index]); },
     },
-    options: { indexAxis: "y", responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, grid: { color: col.grid }, ticks: { precision: 0 } }, y: { grid: { display: false }, ticks: { font: { size: 10.5 } } } } },
   });
-  if (!topBooked.length) document.getElementById("chart-utilization").parentElement.innerHTML = `<div class="note-text">No bookings yet — this fills in once gear starts getting assigned to shoots.</div>`;
-
-  // Checkpoint activity by person — who's confirmed the most pack/arrive/wrap/return checks
-  const personCounts = {};
-  bookingEvents.forEach(e => e.eventItems.forEach(ei => {
-    ["packed_by_email", "arrived_by_email", "wrapped_by_email", "returned_by_email"].forEach(field => {
-      if (ei[field]) personCounts[ei[field]] = (personCounts[ei[field]] || 0) + 1;
-    });
-  }));
-  const topPeople = Object.entries(personCounts).sort((a, b) => b[1] - a[1]).slice(0, 8);
-  destroyChart("chart-employee-checkpoints");
-  charts["chart-employee-checkpoints"] = new Chart(document.getElementById("chart-employee-checkpoints"), {
-    type: "bar",
-    data: { labels: topPeople.map(([email]) => email), datasets: [{ data: topPeople.map(([, c]) => c), backgroundColor: col.accent, borderRadius: 6 }] },
-    options: { indexAxis: "y", responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, grid: { color: col.grid }, ticks: { precision: 0 } }, y: { grid: { display: false }, ticks: { font: { size: 10.5 } } } } },
+}
+function anGo(r) {
+  if (!r || (!r.filter && !(r.ids && r.ids.length))) return;
+  activeStatusFilter = null; activeLocationFilter = null; activeCategoryFilter = null; minPriceFilter = null; analyticsIdFilter = null;
+  document.getElementById("search").value = "";
+  const f = r.filter || {};
+  if (f.cat) activeCategoryFilter = f.cat; else if (f.status) activeStatusFilter = f.status; else if (f.loc) activeLocationFilter = f.loc;
+  else analyticsIdFilter = { ids: new Set(r.ids), label: r.label };
+  switchTab("inventory"); renderFilters(); renderTable();
+}
+function anAttn(n) { const [l, a] = AN.rows._attn[n]; anGo({ ids: a.map(i => i.id), label: l }); }
+function anClearIds() { analyticsIdFilter = null; renderTable(); }
+function anDownload(blob, name) { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); }
+function anPngUrl(id) {
+  const src = charts["chart-" + id]?.canvas; if (!src) return null;
+  const t = document.createElement("canvas"); t.width = src.width; t.height = src.height; const x = t.getContext("2d");
+  x.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--panel").trim() || "#141417"; x.fillRect(0, 0, t.width, t.height); x.drawImage(src, 0, 0);
+  return t.toDataURL("image/png");
+}
+function anPng(id) { const u = anPngUrl(id); if (!u) return; fetch(u).then(r => r.blob()).then(b => anDownload(b, `mlx-${id}.png`)); }
+function anCsvText(rows) { const q = v => `"${String(v).replace(/"/g, '""')}"`; return "\ufeff" + [["label", "value"], ...rows.map(r => [r.label, r.value])].map(r => r.map(q).join(",")).join("\n"); }
+function anCsv(id) { anDownload(new Blob([anCsvText(AN.rows[id] || [])], { type: "text/csv" }), `mlx-${id}.csv`); }
+function anCsvAll() {
+  const q = v => `"${String(v).replace(/"/g, '""')}"`, out = [["chart", "label", "value"]];
+  AN_DEFS.forEach(d => (AN.rows[d.id] || []).forEach(r => out.push([d.title, r.label, r.value])));
+  anDownload(new Blob(["\ufeff" + out.map(r => r.map(q).join(",")).join("\n")], { type: "text/csv" }), "mlx-analytics-all.csv");
+}
+function anPdf() {
+  if (!window.jspdf) { customAlert("PDF library failed to load — check your connection."); return; }
+  const doc = new window.jspdf.jsPDF({ unit: "mm", format: "a4" }), K = AN.rows._k;
+  doc.setFontSize(18); doc.text("MLX Gear — Analytics report", 14, 18);
+  doc.setFontSize(10); doc.setTextColor(110);
+  doc.text(`Generated ${new Date().toLocaleString()}  |  Category: ${AN.cat || "all"}  |  Period: ${AN.from || "start"} to ${AN.to || "today"}`, 14, 25);
+  doc.setTextColor(0); doc.setFontSize(11);
+  doc.text([`Items: ${K.n}` + (canSeePurchase() ? `   Value: ${K.value.toLocaleString()} CZK` : ""), `Utilization: ${K.util}%   Idle items: ${K.idle}   Bookings: ${K.ev}   Damage reports: ${K.dmg}`], 14, 34);
+  AN_DEFS.filter(d => !(d.money && !canSeePurchase()) && (AN.rows[d.id] || []).length).forEach(d => {
+    doc.addPage(); doc.setFontSize(14); doc.text(d.title, 14, 18); doc.setFontSize(9); doc.setTextColor(110); doc.text(d.sub, 14, 23); doc.setTextColor(0);
+    const u = anPngUrl(d.id); let y = 28;
+    if (u) { const c = charts["chart-" + d.id].canvas, w = 180, h = Math.min(95, w * c.height / c.width); doc.addImage(u, "PNG", 14, y, w, h); y += h + 6; }
+    doc.autoTable({ startY: y, head: [["Label", "Value"]], body: AN.rows[d.id].slice(0, 25).map(r => [r.label, r.value.toLocaleString()]), styles: { fontSize: 9 }, headStyles: { fillColor: [30, 30, 36] } });
   });
-  if (!topPeople.length) document.getElementById("chart-employee-checkpoints").parentElement.innerHTML = `<div class="note-text">No checkpoint confirmations yet — this fills in as gear gets packed/checked in on shoots.</div>`;
+  doc.save(`mlx-analytics-${new Date().toISOString().slice(0, 10)}.pdf`);
 }
 
 // ============================================================
@@ -5046,6 +5651,7 @@ function notifBuild() {
     if (i.next_service_due) { const t = new Date(i.next_service_due).getTime(), dd = inDays(t); if (t < now) out.push({ kind: "alert", prio: 3, t, tone: "bad", title: `Service overdue — ${i.name}`, meta: `${i.serial || ""} · was due ${new Date(t).toLocaleDateString()}` }); else if (dd <= 14) out.push({ kind: "alert", prio: 3, t, tone: "warn", title: `Service due in ${dd} day${dd === 1 ? "" : "s"} — ${i.name}`, meta: i.serial || "" }); }
     if (i.warranty_expiry) { const t = new Date(i.warranty_expiry).getTime(), dd = inDays(t); if (t > now && dd <= 30) out.push({ kind: "alert", prio: 3, t, tone: "warn", title: `Warranty ends in ${dd} day${dd === 1 ? "" : "s"} — ${i.name}`, meta: i.serial || "" }); }
   });
+  try { const d0 = new Date(); d0.setHours(0, 0, 0, 0); powerWarnings().forEach(w => out.push({ kind: "alert", prio: 2, t: +d0, tone: w.tone, go: w.go || "batteries", title: w.title, meta: w.meta })); } catch (e) {}
   const dis = notifDis();
   return out.filter(n => !dis.has(nKey(n))).sort((a, b) => a.prio - b.prio || (a.prio >= 4 ? b.t - a.t : a.t - b.t));
 }
@@ -5425,6 +6031,588 @@ async function performCsvImport(rows) {
 }
 
 // ============================================================
+// BATTERIES & CARDS — one tab, two sections
+//  • Batteries: charged / in use / empty / storage (~70%) with age stamps,
+//    cycle counts, bulk actions and care reminders.
+//  • Media cards: Empty → In camera → Recorded → Copied → (cleared) Empty,
+//    each step stamped with who + when, with a "can't clear until copied" guard.
+// Data lives in two Supabase tables; the setup SQL is copyable from the tab.
+// ============================================================
+const POWER_SQL = `create table if not exists item_power (
+  item_id text primary key,
+  kind text not null,
+  state text not null default 'charged',
+  state_at timestamptz not null default now(),
+  charged_at timestamptz,
+  checked_at timestamptz,
+  cycles int not null default 0,
+  cycle_limit int not null default 300,
+  retired boolean not null default false,
+  fits text,
+  media_type text,
+  size_gb numeric,
+  fill text not null default 'empty',
+  booking_id text,
+  copies int not null default 0,
+  state_by text,
+  recorded_at timestamptz,
+  copied_at timestamptz,
+  copied_by text,
+  created_at timestamptz not null default now()
+);
+alter table item_power enable row level security;
+drop policy if exists "item power all" on item_power;
+create policy "item power all" on item_power for all to authenticated using (true) with check (true);
+grant select, insert, update, delete on item_power to authenticated;
+do $$ begin alter publication supabase_realtime add table item_power; exception when others then null; end $$;`;
+function copyPowerSql() { navigator.clipboard.writeText(POWER_SQL).then(() => showToast("Copied — paste it into the Supabase SQL editor and run it"), () => customAlert(POWER_SQL)); }
+
+let powerRows = [], batteries = [], mediaCards = [], powerErr = null, pwSel = new Set(), pwKind = "all", pwShowRetired = false, pwRT = null, pwBusy = 0, pwMeEmail = "";
+const PW_DAY = 864e5;
+const PW_DEF = { emptyDays: 14, fullDays: 7, storageDays: 90, copyHours: 24, minReady: 4 };
+const PW_BSTATE = { charged: "Charged", in_use: "In use", empty: "Empty", storage: "Storage ~70%" };
+const PW_MORDER = ["empty", "in_camera", "recorded", "copied"];
+const PW_MSTEP = { empty: "Empty", in_camera: "In camera", recorded: "Recorded", copied: "Copied" };
+const PW_NEXT = { empty: "Put in camera", in_camera: "Mark recorded", recorded: "Mark copied", copied: "Clear card ✓" };
+const PW_FILL = { empty: 0, half: 0.5, full: 1 };
+const PW_MTYPES = ["SD", "microSD", "CFexpress", "CFast", "SSD", "HDD", "Other"];
+function pwCfg() { try { return { ...PW_DEF, ...JSON.parse(localStorage.getItem("mlxPowerCfg") || "{}") }; } catch (e) { return { ...PW_DEF }; } }
+function canViewPower() { return hasCapability("power_view") || hasCapability("power"); }
+function canEditPower() { return hasCapability("power"); }
+const pwAge = t => t ? Date.now() - new Date(t).getTime() : 0;
+const pwDays = t => Math.floor(pwAge(t) / PW_DAY);
+function pwAgo(t) {
+  if (!t) return "never"; const ms = pwAge(t), m = Math.floor(ms / 6e4), h = Math.floor(ms / 36e5), d = Math.floor(ms / PW_DAY);
+  return m < 1 ? "just now" : m < 60 ? m + " min ago" : h < 24 ? h + " h ago" : d < 60 ? d + " d ago" : Math.floor(d / 30) + " mo ago";
+}
+const pwBat = n => n === 1 ? "battery" : "batteries";
+const pwSize = gb => !gb ? "—" : gb >= 1000 ? (+(gb / 1000).toFixed(2)) + " TB" : (+gb) + " GB";
+const pwWho = e => (e || "").split("@")[0];
+// Power rows live in item_power, one per inventory item. Labels come from the item itself,
+// so photos, QR tags, documents, notes and bookings all keep working as for any other item.
+function pwRebuild() {
+  const byId = new Map(items.map(i => [i.id, i]));
+  const live = powerRows.filter(r => byId.has(r.item_id));
+  live.forEach(r => { const it = byId.get(r.item_id); r.id = r.item_id; r.item = it; r.label = it.name; r.serial = it.serial; });
+  batteries = live.filter(r => r.kind === "battery").sort((a, b) => a.label.localeCompare(b.label, undefined, { numeric: true }) || (a.serial || "").localeCompare(b.serial || ""));
+  mediaCards = live.filter(r => r.kind === "media").sort((a, b) => a.label.localeCompare(b.label, undefined, { numeric: true }) || (a.serial || "").localeCompare(b.serial || ""));
+  pwSetBadges();
+}
+const pwName = r => `${r.label} ${r.serial || ""}`.trim();
+async function loadPower() {
+  powerErr = null;
+  if (!canViewPower()) { powerRows = []; pwRebuild(); return; }
+  try { const { data: { user } } = await sb.auth.getUser(); pwMeEmail = user?.email || ""; } catch (e) {}
+  const { data, error } = await sb.from("item_power").select("*");
+  if (error) { console.error(error); powerErr = error.message; powerRows = []; pwRebuild(); return; }
+  powerRows = data || []; pwRebuild();
+}
+function startPowerRealtime() {
+  if (pwRT || !canViewPower()) return;
+  try {
+    pwRT = sb.channel("power-live")
+      .on("postgres_changes", { event: "*", schema: "public", table: "item_power" }, pwRtReload)
+      .subscribe();
+  } catch (e) { console.warn("realtime unavailable", e); }
+}
+let _pwRtT = null;
+function pwRtReload() {
+  clearTimeout(_pwRtT);
+  _pwRtT = setTimeout(async () => {
+    if (pwBusy) { pwRtReload(); return; }
+    await loadPower();
+    if (isPowerTab()) renderPower(); else if (currentTab === "home") renderHome();
+  }, 450);
+}
+function pwRefreshViews() { if (isPowerTab()) renderPower(); else if (currentTab === "home") renderHome(); }
+
+// ---------- care rules ----------
+function batteryFlags(b) {
+  const c = pwCfg(), f = []; if (b.retired) return f;
+  const d = pwDays(b.state_at);
+  if (b.state === "empty" && d >= c.emptyDays) f.push({ k: "empty", tone: d >= c.emptyDays * 2 ? "bad" : "warn", t: `Empty ${d}d — charge it` });
+  if (b.state === "charged" && d >= c.fullDays) f.push({ k: "full", tone: "warn", t: `Full for ${d}d — store at ~70%` });
+  if (b.state === "storage") { const dc = pwDays(b.checked_at || b.state_at); if (dc >= c.storageDays) f.push({ k: "check", tone: "warn", t: `Storage check due (${dc}d)` }); }
+  const lim = b.cycle_limit || 300, cy = b.cycles || 0;
+  if (cy >= lim) f.push({ k: "retire", tone: "bad", t: `${cy}/${lim} cycles — retire` });
+  else if (cy >= lim * 0.9) f.push({ k: "retire", tone: "warn", t: "Nearing cycle limit" });
+  return f;
+}
+function mediaFlags(c) {
+  const cfg = pwCfg(), f = [];
+  if ((c.state === "recorded") && pwAge(c.state_at) >= cfg.copyHours * 36e5) f.push({ k: "copy", tone: "bad", t: `Not copied after ${Math.floor(pwAge(c.state_at) / 36e5)}h` });
+  return f;
+}
+function powerWarnings() {
+  const out = []; if (!canViewPower() || powerErr) return out; pwRebuild();
+  const c = pwCfg(), act = batteries.filter(b => !b.retired), g = k => act.filter(b => batteryFlags(b).some(f => f.k === k));
+  const e = g("empty"); if (e.length) out.push({ tone: e.some(b => pwDays(b.state_at) >= c.emptyDays * 2) ? "bad" : "warn", go: "batteries", title: `${e.length} ${pwBat(e.length)} left empty for ${c.emptyDays}+ days`, meta: "Don't leave lithium batteries flat — charge them" });
+  const fu = g("full"); if (fu.length) out.push({ tone: "warn", go: "batteries", title: `${fu.length} fully charged ${pwBat(fu.length)} should be stored at ~70%`, meta: "Sitting at 100% wears them out faster" });
+  const ck = g("check"); if (ck.length) out.push({ tone: "warn", go: "batteries", title: `${ck.length} stored ${pwBat(ck.length)} due a storage check`, meta: `Every ${c.storageDays} days — top up to ~70% if they've drifted` });
+  const rt = g("retire"); if (rt.length) out.push({ tone: rt.some(b => (b.cycles || 0) >= (b.cycle_limit || 300)) ? "bad" : "warn", go: "batteries", title: `${rt.length} ${pwBat(rt.length)} at or near the cycle limit`, meta: rt.slice(0, 4).map(b => b.label).join(", ") });
+  const nc = mediaCards.filter(x => mediaFlags(x).length); if (nc.length) out.push({ tone: "bad", go: "cards", title: `${nc.length} card${nc.length === 1 ? "" : "s"} recorded but not copied (${c.copyHours}h+)`, meta: nc.slice(0, 4).map(x => x.label).join(", ") });
+  if (c.minReady > 0 && act.length >= c.minReady && canViewCalendar()) {
+    const now = Date.now(), soon = bookingEvents.filter(ev => { const t = new Date(ev.start_at).getTime(); return t > now && t < now + 3 * PW_DAY; }).sort((a, b) => new Date(a.start_at) - new Date(b.start_at));
+    const ready = act.filter(b => b.state === "charged").length;
+    if (soon.length && ready < c.minReady) out.push({ tone: "warn", go: "batteries", title: `${soon[0].title}${soon.length > 1 ? ` +${soon.length - 1} more` : ""}: only ${ready} charged ${pwBat(ready)} (want ${c.minReady}+)`, meta: `Starts ${new Date(soon[0].start_at).toLocaleString()}` });
+  }
+  return out;
+}
+
+// ---------- batteries: actions ----------
+function pwBatteryPatch(b, state) {
+  const now = new Date().toISOString(), p = { state, state_at: now };
+  if (state === "charged") { p.charged_at = now; if (b.state === "empty" || b.state === "in_use") p.cycles = (b.cycles || 0) + 1; }
+  if (state === "storage") p.checked_at = now;
+  return p;
+}
+async function pwWrite(fn) { pwBusy++; try { return await fn(); } finally { pwBusy--; } }
+async function pwSetBatteries(ids, state) {
+  if (!canEditPower()) return;
+  const jobs = batteries.filter(b => ids.includes(b.id) && b.state !== state).map(b => ({ b, snap: { ...b }, patch: pwBatteryPatch(b, state) }));
+  if (!jobs.length) return;
+  jobs.forEach(j => Object.assign(j.b, j.patch)); renderPower();
+  const res = await pwWrite(() => Promise.all(jobs.map(j => sb.from("item_power").update(j.patch).eq("item_id", j.b.id))));
+  const bad = res.find(r => r.error);
+  if (bad) { jobs.forEach(j => Object.assign(j.b, j.snap)); renderPower(); showToast("Couldn't save: " + bad.error.message); return; }
+  logActivity("battery.state", "battery", jobs.length === 1 ? jobs[0].b.id : "", jobs.length === 1 ? `${pwName(jobs[0].b)} → ${PW_BSTATE[state]}` : `${jobs.length} batteries → ${PW_BSTATE[state]}`);
+}
+function pwTick(id) { const b = batteries.find(x => x.id === id); if (b) pwSetBatteries([id], b.state === "charged" ? "empty" : "charged"); }
+function pwBulk(state) { const ids = [...pwSel]; pwSel.clear(); pwSetBatteries(ids, state); }
+async function pwMarkChecked() {
+  if (!canEditPower()) return;
+  const list = batteries.filter(b => pwSel.has(b.id) && b.state === "storage"); if (!list.length) { showToast("Select batteries that are in storage first"); return; }
+  const now = new Date().toISOString(); pwSel.clear();
+  list.forEach(b => b.checked_at = now); renderPower();
+  const res = await pwWrite(() => Promise.all(list.map(b => sb.from("item_power").update({ checked_at: now }).eq("item_id", b.id))));
+  if (res.find(r => r.error)) { await loadPower(); renderPower(); showToast("Couldn't save the check"); return; }
+  logActivity("battery.check", "battery", "", `Storage check done on ${list.length} ${pwBat(list.length)}`);
+}
+function pwSelToggle(id, on) { on ? pwSel.add(id) : pwSel.delete(id); renderPower(); }
+function pwSetKind(k) { pwKind = k; renderPower(); }
+function pwToggleRetired() { pwShowRetired = !pwShowRetired; renderPower(); }
+
+// ---------- cards: actions ----------
+function pwCanEmpty(c) { return c.state === "empty" || c.state === "copied" || (c.state === "in_camera" && c.fill === "empty"); }
+function pwMediaPatch(c, state) {
+  const now = new Date().toISOString(), p = { state, state_at: now, state_by: pwMeEmail };
+  if (state === "empty") Object.assign(p, { fill: "empty", copies: 0, booking_id: null, recorded_at: null, copied_at: null, copied_by: null });
+  if (state === "in_camera") Object.assign(p, { copies: 0, copied_at: null, copied_by: null });
+  if (state === "recorded") Object.assign(p, { recorded_at: now, copies: 0, copied_at: null, copied_by: null, fill: c.fill === "empty" ? "full" : c.fill });
+  if (state === "copied") Object.assign(p, { copied_at: now, copied_by: pwMeEmail, copies: Math.max(1, c.copies || 0) });
+  return p;
+}
+async function pwMediaGo(id, state) {
+  const c = mediaCards.find(x => x.id === id); if (!canEditPower() || !c || c.state === state) return;
+  if (state === "empty" && !pwCanEmpty(c)) {
+    if (!canManageRoles()) { customAlert(`"${pwName(c)}" hasn't been copied yet. Mark it Copied before clearing it, so footage can't be wiped by accident.`); return; }
+    if (!(await customConfirm(`"${pwName(c)}" is marked ${PW_MSTEP[c.state]} but NOT copied. Clearing it may destroy footage. Clear anyway?`, true))) return;
+  }
+  const snap = { ...c }, patch = pwMediaPatch(c, state);
+  Object.assign(c, patch); renderPower();
+  const { error } = await pwWrite(() => sb.from("item_power").update(patch).eq("item_id", id));
+  if (error) { Object.assign(c, snap); renderPower(); showToast("Couldn't save: " + error.message); return; }
+  logActivity("media.step", "media_card", id, `${pwName(c)}: ${state === "empty" ? "Cleared" : PW_MSTEP[state]}`);
+}
+function pwMediaNext(id) { const c = mediaCards.find(x => x.id === id); if (!c) return; const i = PW_MORDER.indexOf(c.state); pwMediaGo(id, PW_MORDER[(i + 1) % PW_MORDER.length]); }
+async function pwMediaPatchField(id, patch, logMsg) {
+  const c = mediaCards.find(x => x.id === id); if (!canEditPower() || !c) return;
+  const snap = { ...c }; Object.assign(c, patch); renderPower();
+  const { error } = await pwWrite(() => sb.from("item_power").update(patch).eq("item_id", id));
+  if (error) { Object.assign(c, snap); renderPower(); showToast("Couldn't save: " + error.message); return; }
+  if (logMsg) logActivity("media.update", "media_card", id, `${pwName(c)}: ${logMsg}`);
+}
+function pwMediaFill(id) { const c = mediaCards.find(x => x.id === id); if (c) pwMediaPatchField(id, { fill: { empty: "half", half: "full", full: "empty" }[c.fill] || "empty" }); }
+function pwMediaCopies(id) { const c = mediaCards.find(x => x.id === id); if (c && c.state === "copied") pwMediaPatchField(id, { copies: (c.copies || 1) >= 2 ? 1 : 2 }, (c.copies || 1) >= 2 ? "second copy unticked" : "copied to 2 places"); }
+function pwMediaField(id, field, val) { pwMediaPatchField(id, { [field]: val === "" ? null : val }, field === "booking_id" ? "booking changed" : ""); }
+// "Where it is" is the item's real inventory location (a case, a bag, the editor…), same as any other gear.
+async function pwMediaLocation(id, locId) {
+  const c = mediaCards.find(x => x.id === id); if (!c || !canEditItems()) { renderPower(); return; }
+  const old = c.item.location_id; c.item.location_id = locId || null; renderPower();
+  const { error } = await pwWrite(() => sb.from("items").update({ location_id: locId || null }).eq("id", id));
+  if (error) { c.item.location_id = old; renderPower(); showToast("Couldn't move it: " + error.message); return; }
+  logActivity("item.update", "item", id, `${pwName(c)} moved to ${locId ? locationBreadcrumb(locId) : "no location"}`);
+}
+
+function pwCloseModal() { document.getElementById("pw-modal-overlay").classList.remove("show"); }
+
+// ---------- reminder settings (saved on this device) ----------
+function pwOpenSettings() {
+  const c = pwCfg(), f = (id, l, v, h) => `<div class="form-row"><span class="field-label">${l}</span><input id="${id}" type="number" min="0" value="${v}"><div class="modal-subtitle" style="margin:4px 0 0">${h}</div></div>`;
+  document.getElementById("pw-modal").innerHTML = `<h2>Reminder settings</h2><div class="modal-subtitle">When should the dashboard nag you? Saved on this device.</div>
+  ${f("pw-s-empty", "Empty battery warning after (days)", c.emptyDays, "Empty lithium cells shouldn't sit flat for long.")}
+  ${f("pw-s-full", "Fully charged warning after (days)", c.fullDays, "Long-term storage is best at about 70%, not 100%.")}
+  ${f("pw-s-store", "Storage check every (days)", c.storageDays, "90 = every 3 months, 365 = once a year. Check stored batteries still sit near 70%.")}
+  ${f("pw-s-copy", "Recorded but not copied warning after (hours)", c.copyHours, "Flags cards that came off set without being copied.")}
+  ${f("pw-s-min", "Charged batteries wanted before a shoot", c.minReady, "Warns when a booking starts within 3 days and fewer are charged. 0 turns it off.")}
+  <div class="modal-actions"><div style="flex:1"></div><button class="btn ghost" style="flex:none;padding:10px 16px" onclick="pwCloseModal()">Cancel</button><button class="btn primary" style="flex:none;padding:10px 18px" onclick="pwSaveSettings()">Save</button></div>`;
+  document.getElementById("pw-modal-overlay").classList.add("show");
+}
+function pwSaveSettings() {
+  const n = (id, d) => { const v = parseInt(document.getElementById(id).value); return Number.isFinite(v) && v >= 0 ? v : d; };
+  localStorage.setItem("mlxPowerCfg", JSON.stringify({ emptyDays: Math.max(1, n("pw-s-empty", 14)), fullDays: Math.max(1, n("pw-s-full", 7)), storageDays: Math.max(1, n("pw-s-store", 90)), copyHours: Math.max(1, n("pw-s-copy", 24)), minReady: n("pw-s-min", 4) }));
+  pwCloseModal(); renderPower(); showToast("Reminder settings saved");
+}
+
+// ---------- rendering ----------
+function pwLocOptions(sel) { return locations.map(l => ({ id: l.id, p: locationBreadcrumb(l.id) })).sort((a, b) => a.p.localeCompare(b.p)).map(l => `<option value="${l.id}" ${l.id === sel ? "selected" : ""}>${escapeHtml(l.p)}</option>`).join(""); }
+// ---------- shared bits for the two pages ----------
+const PWI = {
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  sliders: '<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>',
+  list: '<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+  grid: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+  board: '<rect x="3" y="3" width="5" height="18" rx="1"/><rect x="10" y="3" width="5" height="12" rx="1"/><rect x="17" y="3" width="4" height="8" rx="1"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+  check: '<path d="M20 6 9 17l-5-5"/>',
+  alert: '<path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/>',
+  back: '<path d="M19 12H5M12 19l-7-7 7-7"/>',
+  pin: '<path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/>',
+  cal: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  bolt: '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
+};
+const pwIc = (k, s = 16) => svgIcon_(PWI[k] || TAB_ICONS[k] || "", s);
+let pwBState = "all", pwQ = "", pwSort = "name", pwCState = "all", pwCType = "all", pwCQ = "", pwOpenC = new Set();
+const pwStore = { get: (k, d) => { try { return localStorage.getItem(k) || d; } catch (e) { return d; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} } };
+let pwView = pwStore.get("mlxPwView", "grid"), pwCView = pwStore.get("mlxPwCView", "board");
+
+function pwHead(kind, edit) {
+  const meta = kind === "battery"
+    ? { t: "Batteries", p: "See what's charged, what's out and what needs care — one tap to update.", add: "Add batteries" }
+    : { t: "Cards & drives", p: "Follow every card from empty to recorded to copied — and never wipe footage that isn't backed up.", add: "Add cards" };
+  const sw = `<div class="pwx-sub"><button class="${kind === "battery" ? "on" : ""}" onclick="switchTab('batteries')">${pwIc("batteries", 14)} Batteries <em>${batteries.filter(b => !b.retired).length}</em></button><button class="${kind === "media" ? "on" : ""}" onclick="switchTab('cards')">${pwIc("cards", 14)} Cards <em>${mediaCards.length}</em></button></div>`;
+  return `<div class="pg-head"><div><h2>${meta.t}</h2><p>${meta.p}</p></div><div class="pg-actions">${sw}${edit ? `<button class="pg-btn" onclick="pwOpenSettings()">${pwIc("sliders", 15)} Reminders</button><button class="pg-btn primary" onclick="pwAddFromTab('${kind === "battery" ? "battery" : "media"}')">${pwIc("plus", 15)} ${meta.add}</button>` : ""}</div></div>`;
+}
+function pwSetupBanner() {
+  if (!powerErr) return "";
+  const missing = /find the table|does not exist|42P01|schema cache/i.test(powerErr);
+  return `<div class="pw-setup"><span>${missing ? "Batteries & cards need a one-time database setup. Copy the SQL, run it in the Supabase SQL editor, then reload." : "Couldn't load: " + escapeHtml(powerErr)}</span><button class="pw-btn primary" onclick="copyPowerSql()">Copy setup SQL</button></div>`;
+}
+function pwRelWhen(t) { const d = Math.ceil((t - Date.now()) / PW_DAY); return d <= 0 ? "today" : d === 1 ? "tomorrow" : `in ${d} days`; }
+function pwKeepFocus(id, pos) { const i = document.getElementById(id); if (i) { i.focus(); try { i.setSelectionRange(pos, pos); } catch (e) {} } }
+
+// ---------- batteries: filters + actions ----------
+function pwVisibleBatteries() {
+  const q = pwQ.trim().toLowerCase();
+  let out = batteries.filter(b => (pwShowRetired || !b.retired) && (pwKind === "all" || b.label === pwKind));
+  if (pwBState === "attention") out = out.filter(b => batteryFlags(b).length);
+  else if (pwBState !== "all") out = out.filter(b => b.state === pwBState);
+  if (q) out = out.filter(b => `${b.label} ${b.serial || ""} ${b.fits || ""}`.toLowerCase().includes(q));
+  const cmp = {
+    attention: (a, b) => batteryFlags(b).length - batteryFlags(a).length,
+    oldest: (a, b) => new Date(a.state_at || 0) - new Date(b.state_at || 0),
+    cycles: (a, b) => (b.cycles || 0) - (a.cycles || 0),
+    charged: (a, b) => new Date(b.charged_at || 0) - new Date(a.charged_at || 0),
+  }[pwSort];
+  return cmp ? [...out].sort(cmp) : out;
+}
+function pwSelect(mode) {
+  pwSel.clear();
+  const pool = mode === "all" ? pwVisibleBatteries() : batteries.filter(b => pwKind === "all" || b.label === pwKind);
+  pool.filter(b => !b.retired && (mode === "all" || b.state === mode)).forEach(b => pwSel.add(b.id));
+  renderPower();
+}
+function pwSelectGroup(label) {
+  const g = pwVisibleBatteries().filter(b => !b.retired && b.label === label), all = g.every(b => pwSel.has(b.id));
+  g.forEach(b => all ? pwSel.delete(b.id) : pwSel.add(b.id)); renderPower();
+}
+function pwSetBState(k) { pwBState = pwBState === k ? "all" : k; renderPower(); }
+function pwSetSort(v) { pwSort = v; renderPower(); }
+function pwSetView(v) { pwView = v; pwStore.set("mlxPwView", v); renderPower(); }
+function pwSearch(inp) { pwQ = inp.value; const p = inp.selectionStart; renderPower(); pwKeepFocus("pw-q", p); }
+
+function pwGlyph(b) {
+  const lvl = { charged: 100, in_use: 55, empty: 7, storage: 70 }[b.state] ?? 0;
+  return `<span class="bt-glyph" style="--lvl:${lvl}%"><i></i></span>`;
+}
+function pwBatStamp(b) {
+  return { charged: `Charged ${pwAgo(b.state_at)}`, empty: `Empty since ${pwAgo(b.state_at)}`, in_use: `In use since ${pwAgo(b.state_at)}`, storage: `Stored ${pwAgo(b.state_at)} · checked ${pwAgo(b.checked_at || b.state_at)}` }[b.state] || "";
+}
+function pwBatCard(b, edit, i) {
+  const fl = batteryFlags(b), cy = b.cycles || 0, lim = b.cycle_limit || 300, pct = Math.min(100, cy / lim * 100), can = edit && !b.retired;
+  const seg = Object.keys(PW_BSTATE).map(s => `<button class="s-${s}${b.state === s ? " on" : ""}" ${can ? "" : "disabled"} onclick="pwSetBatteries(['${b.id}'],'${s}')">${s === "storage" ? "~70%" : PW_BSTATE[s]}</button>`).join("");
+  const sub = [b.serial, b.fits && "fits " + b.fits].filter(Boolean).join(" · ") || "—";
+  return `<div class="bt-card bs-${b.state}${pwSel.has(b.id) ? " sel" : ""}${b.retired ? " retired" : ""}${fl.some(f => f.tone === "bad") ? " bad" : fl.length ? " warn" : ""}" style="animation-delay:${Math.min(i, 14) * 18}ms">
+    <div class="bt-top">
+      <input type="checkbox" ${pwSel.has(b.id) ? "checked" : ""} ${can ? "" : "disabled"} onchange="pwSelToggle('${b.id}',this.checked)">
+      ${pwGlyph(b)}
+      <div class="bt-id"><div class="pw-name">${escapeHtml(b.label)}${b.retired ? " (retired)" : ""}</div><div class="pw-sub">${escapeHtml(sub)}</div></div>
+      ${edit ? `<button class="pw-more" title="Edit" onclick="openPanel('${b.id}')">✎</button>` : ""}
+    </div>
+    <div class="bt-seg">${seg}</div>
+    <div class="bt-stamp">${pwBatStamp(b)}</div>
+    ${fl.length ? `<div class="bt-flags">${fl.map(f => `<span class="pw-flag ${f.tone}">${escapeHtml(f.t)}</span>`).join("")}</div>` : ""}
+    <div class="bt-cyc"><span>${cy}/${lim} cycles</span><div class="pw-cyc ${cy >= lim ? "dead" : cy >= lim * .9 ? "hot" : ""}"><i style="width:${pct}%"></i></div></div>
+  </div>`;
+}
+function pwBatRow(b, edit) {
+  const fl = batteryFlags(b), cy = b.cycles || 0, lim = b.cycle_limit || 300, pct = Math.min(100, cy / lim * 100), can = edit && !b.retired;
+  const cls = b.state === "charged" ? "on" : b.state === "storage" ? "st" : b.state === "in_use" ? "use" : "";
+  const seg = Object.keys(PW_BSTATE).map(s => `<button class="${b.state === s ? "on" : ""}" ${can ? "" : "disabled"} onclick="pwSetBatteries(['${b.id}'],'${s}')">${s === "storage" ? "~70%" : PW_BSTATE[s]}</button>`).join("");
+  return `<div class="pw-row${pwSel.has(b.id) ? " sel" : ""}" style="${b.retired ? "opacity:.5" : ""}">
+    <input type="checkbox" ${pwSel.has(b.id) ? "checked" : ""} ${can ? "" : "disabled"} onchange="pwSelToggle('${b.id}',this.checked)">
+    <button class="pw-tick ${cls}" ${can ? "" : "disabled"} onclick="pwTick('${b.id}')" title="Tick = charged, untick = empty">${b.state === "in_use" ? "●" : "✓"}</button>
+    <div><div class="pw-name">${escapeHtml(b.label)}${b.retired ? " (retired)" : ""}</div><div class="pw-sub">${escapeHtml([b.serial, b.fits && "fits " + b.fits].filter(Boolean).join(" · ") || "—")}</div></div>
+    <div><div class="pw-seg">${seg}</div></div>
+    <div><div class="pw-sub" style="margin:0">${pwBatStamp(b)}</div>${fl.map(f => `<span class="pw-flag ${f.tone}">${escapeHtml(f.t)}</span>`).join("")}</div>
+    <div><div class="pw-sub" style="margin:0">${cy}/${lim} cycles</div><div class="pw-cyc ${cy >= lim ? "dead" : cy >= lim * .9 ? "hot" : ""}"><i style="width:${pct}%"></i></div></div>
+    ${edit ? `<button class="pw-more" title="Edit" onclick="openPanel('${b.id}')">✎</button>` : "<span></span>"}</div>`;
+}
+
+// ---------- BATTERIES page ----------
+function renderBatteries() {
+  const el = document.getElementById("power-wrap"); if (!el) return; pwRebuild();
+  const sy = el.scrollTop, edit = canEditPower(), cfg = pwCfg();
+  const act = batteries.filter(b => !b.retired), retiredN = batteries.length - act.length;
+  const n = s => act.filter(b => b.state === s).length, flagged = act.filter(b => batteryFlags(b).length).length;
+  const kinds = [...new Set(act.map(b => b.label))].sort();
+  if (pwKind !== "all" && !kinds.includes(pwKind)) pwKind = "all";
+  if (pwBState !== "all" && pwBState !== "attention" && !PW_BSTATE[pwBState]) pwBState = "all";
+  const stat = (k, label, num, sub, col) => `<button class="pwx-stat${pwBState === k ? " on" : ""}" style="--k:${col}" onclick="pwSetBState('${k}')"><span class="pwx-stat-n">${num}</span><span class="pwx-stat-l">${label}</span><span class="pwx-stat-s">${sub}</span></button>`;
+  const stats = act.length ? `<div class="pwx-stats">
+    ${stat("charged", "Ready to go", n("charged"), `of ${act.length} batteries`, "#22c55e")}
+    ${stat("in_use", "In use", n("in_use"), "out on a shoot", "var(--accent)")}
+    ${stat("empty", "Empty", n("empty"), n("empty") ? "need charging" : "all good", "#8b93a1")}
+    ${stat("storage", "In storage", n("storage"), "kept at ~70%", "#f59e0b")}
+    ${stat("attention", "Needs care", flagged, flagged ? "tap to see which" : "nothing to do", flagged ? "#ef4444" : "#22c55e")}
+  </div>` : "";
+
+  // is the next shoot covered?
+  let banner = "";
+  if (act.length && canViewCalendar()) {
+    const now = Date.now(), nx = bookingEvents.filter(e => { const t = new Date(e.start_at).getTime(); return t > now && t < now + 7 * PW_DAY; }).sort((a, b) => new Date(a.start_at) - new Date(b.start_at))[0];
+    if (nx) {
+      const ready = n("charged"), ok = ready >= Math.max(cfg.minReady, 1), when = pwRelWhen(new Date(nx.start_at).getTime());
+      banner = `<div class="pwx-banner" style="--c:${ok ? "#22c55e" : "#f59e0b"}"><span class="ic">${pwIc(ok ? "check" : "alert", 16)}</span><div><b>${escapeHtml(nx.title)}</b> <span>starts ${when} · </span><b>${ready} charged</b> <span>${ok ? "— you're covered." : `— you wanted ${Math.max(cfg.minReady, 1)}+. Charge ${Math.max(cfg.minReady, 1) - ready} more.`}</span></div></div>`;
+    }
+  }
+
+  const chips = kinds.length > 1 ? `<div class="pw-chips"><button class="${pwKind === "all" ? "on" : ""}" onclick="pwSetKind('all')">All models · ${act.length}</button>${kinds.map(k => { const ks = act.filter(b => b.label === k); return `<button class="${pwKind === k ? "on" : ""}" onclick="pwSetKind(${jsArg(k)})">${escapeHtml(k)} · ${ks.filter(b => b.state === "charged").length}/${ks.length}</button>`; }).join("")}</div>` : "";
+  const bar = act.length || retiredN ? `<div class="pwx-bar">
+    <label class="pwx-search">${pwIc("search", 15)}<input id="pw-q" placeholder="Search name, serial or camera…" value="${escapeHtml(pwQ)}" oninput="pwSearch(this)"></label>
+    <select class="pwx-sel" onchange="pwSetSort(this.value)" title="Sort">${[["name", "Sort: Model"], ["attention", "Sort: Needs care first"], ["oldest", "Sort: Longest in this state"], ["charged", "Sort: Recently charged"], ["cycles", "Sort: Most cycles"]].map(([v, l]) => `<option value="${v}" ${pwSort === v ? "selected" : ""}>${l}</option>`).join("")}</select>
+    ${retiredN ? `<button class="pw-btn" onclick="pwToggleRetired()">${pwShowRetired ? "Hide" : "Show"} retired (${retiredN})</button>` : ""}
+    <div class="pwx-views"><button class="${pwView === "grid" ? "on" : ""}" title="Cards" onclick="pwSetView('grid')">${pwIc("grid", 16)}</button><button class="${pwView === "list" ? "on" : ""}" title="List" onclick="pwSetView('list')">${pwIc("list", 16)}</button></div>
+  </div>${chips}${edit ? `<div class="pwx-selrow">Quick select: <button class="pw-btn" onclick="pwSelect('all')">All shown</button><button class="pw-btn" onclick="pwSelect('empty')">All empty</button><button class="pw-btn" onclick="pwSelect('charged')">All charged</button>${pwSel.size ? `<button class="pw-btn" onclick="pwSel.clear();renderPower()">Clear (${pwSel.size})</button>` : ""}</div>` : ""}` : "";
+
+  const shown = pwVisibleBatteries();
+  const wrap = list => pwView === "list" ? `<div class="bt-list">${list.map(b => pwBatRow(b, edit)).join("")}</div>` : `<div class="bt-grid">${list.map((b, i) => pwBatCard(b, edit, i)).join("")}</div>`;
+  let body;
+  if (!batteries.length) {
+    body = powerErr ? "" : `<div class="pwx-empty"><div class="big">${pwIc("batteries", 26)}</div><b>No batteries yet</b>Add your batteries and see at a glance which are charged, which are empty, and which need care.${edit ? `<br><button class="pg-btn primary" onclick="pwAddFromTab('battery')">${pwIc("plus", 15)} Add batteries</button>` : ""}<div class="pw-sub" style="margin-top:12px">Or open any inventory item and switch on “track as a battery”.</div></div>`;
+  } else if (!shown.length) {
+    body = `<div class="pwx-empty"><b>Nothing matches</b>Try another filter or clear the search.<br><button class="pg-btn" onclick="pwBState='all';pwKind='all';pwQ='';renderPower()">Reset filters</button></div>`;
+  } else if (pwSort === "name" && pwKind === "all" && kinds.length > 1) {
+    const groups = new Map(); shown.forEach(b => { if (!groups.has(b.label)) groups.set(b.label, []); groups.get(b.label).push(b); });
+    body = [...groups].map(([k, list]) => `<div class="bt-group"><div class="bt-group-h"><b>${escapeHtml(k)}</b><span>${list.filter(b => b.state === "charged").length}/${list.length} charged</span>${edit ? `<button class="pw-btn" onclick="pwSelectGroup(${jsArg(k)})">Select group</button>` : ""}</div>${wrap(list)}</div>`).join("");
+  } else body = wrap(shown);
+
+  const bulk = edit && pwSel.size ? `<div class="bt-bulk"><b>${pwSel.size} selected</b><span class="sep"></span>
+    <button class="go" onclick="pwBulk('charged')">Charged</button><button onclick="pwBulk('in_use')">In use</button><button onclick="pwBulk('empty')">Empty</button><button onclick="pwBulk('storage')">Storage ~70%</button><button onclick="pwMarkChecked()" title="Log that you checked the stored batteries">Storage checked</button><span class="sep"></span><button class="x" title="Clear selection" onclick="pwSel.clear();renderPower()">✕</button></div>` : "";
+
+  el.innerHTML = `<div class="pwx">${pwHead("battery", edit)}${pwSetupBanner()}${stats}${banner}${bar}${body}${bulk}</div>`;
+  el.scrollTop = sy;
+}
+
+// ---------- cards: actions + parts ----------
+function pwCSetState(k) { pwCState = pwCState === k ? "all" : k; renderPower(); }
+function pwCSetType(v) { pwCType = v; renderPower(); }
+function pwCSetView(v) { pwCView = v; pwStore.set("mlxPwCView", v); renderPower(); }
+function pwCSearch(inp) { pwCQ = inp.value; const p = inp.selectionStart; renderPower(); pwKeepFocus("pw-cq", p); }
+function pwToggleCard(id) { pwOpenC.has(id) ? pwOpenC.delete(id) : pwOpenC.add(id); renderPower(); }
+function pwMediaBack(id) { const c = mediaCards.find(x => x.id === id); if (!c) return; const i = PW_MORDER.indexOf(c.state); if (i > 0) pwMediaGo(id, PW_MORDER[i - 1]); }
+async function pwClearCopied() {
+  if (!canEditPower()) return;
+  const list = mediaCards.filter(c => c.state === "copied"); if (!list.length) return;
+  if (!(await customConfirm(`Clear ${list.length} copied card${list.length === 1 ? "" : "s"}? They go back to Empty, ready to use again.`))) return;
+  for (const c of list) await pwMediaGo(c.id, "empty");
+  showToast(`${list.length} card${list.length === 1 ? "" : "s"} cleared`);
+}
+function pwEvOpts(c) {
+  const now = Date.now(), evs = (canViewCalendar() ? bookingEvents : []).filter(e => { const t = new Date(e.start_at).getTime(); return (t > now - 21 * PW_DAY && t < now + 60 * PW_DAY) || String(e.id) === String(c.booking_id); }).sort((a, b) => new Date(b.start_at) - new Date(a.start_at));
+  let h = `<option value="">No booking</option>`;
+  if (c.booking_id && !evs.some(e => String(e.id) === String(c.booking_id))) h += `<option value="${escapeHtml(c.booking_id)}" selected>(booking)</option>`;
+  return h + evs.map(e => `<option value="${escapeHtml(String(e.id))}" ${String(e.id) === String(c.booking_id) ? "selected" : ""}>${escapeHtml(e.title)} · ${new Date(e.start_at).toLocaleDateString([], { day: "numeric", month: "short" })}</option>`).join("");
+}
+function pwCardBy(c) { return c.state_by || c.state !== "empty" ? `${c.state === "empty" && c.state_by ? "Cleared" : PW_MSTEP[c.state]} · ${pwWho(c.state_by) || "someone"} · ${pwAgo(c.state_at)}` : ""; }
+function pwCardSub(c) { return [c.serial, c.media_type, pwSize(c.size_gb)].filter(x => x && x !== "—").join(" · "); }
+function pwCardTile(c, edit, i) {
+  const fl = mediaFlags(c), idx = PW_MORDER.indexOf(c.state), open = pwOpenC.has(c.id), dis = edit ? "" : "disabled";
+  const fillPct = (PW_FILL[c.fill] ?? 0) * 100, fillLbl = { empty: "Empty", half: "Half full", full: "Full" }[c.fill] || "Empty";
+  const loc = c.item.location_id ? locationBreadcrumb(c.item.location_id) : "", bk = c.booking_id ? (bookingEvents.find(e => String(e.id) === String(c.booking_id))?.title || "Booking") : "";
+  const copied = c.state === "copied" ? (edit ? `<button class="pw-btn" style="align-self:flex-start" onclick="pwMediaCopies('${c.id}')">${(c.copies || 1) >= 2 ? "✓ Copied to 2 places" : "+ Mark 2nd copy"}</button>` : `<span class="pw-flag ok">${c.copies >= 2 ? "Copied ×2" : "Copied ×1"}</span>`) : "";
+  const nextLbl = PW_NEXT[c.state];
+  return `<article class="cd-tile${fl.length ? " bad" : ""}" style="animation-delay:${Math.min(i, 12) * 20}ms">
+    <div class="cd-t-top"><div><div class="pw-name">${escapeHtml(c.label)}</div><div class="pw-sub">${escapeHtml(pwCardSub(c)) || "&nbsp;"}</div></div>${edit ? `<button class="pw-more" title="Edit" onclick="openPanel('${c.id}')">✎</button>` : ""}</div>
+    <button class="cd-fill" ${dis} onclick="pwMediaFill('${c.id}')" title="Click to change how full it is"><span class="tr"><i style="width:${fillPct}%"></i></span>${fillLbl}</button>
+    ${fl.map(f => `<span class="pw-flag ${f.tone}" style="align-self:flex-start">${escapeHtml(f.t)}</span>`).join("")}${copied}
+    <div class="cd-by">${escapeHtml(pwCardBy(c))}</div>
+    ${loc || bk ? `<div class="cd-meta">${loc ? `<span>${pwIc("pin", 12)}${escapeHtml(loc)}</span>` : ""}${bk ? `<span>${pwIc("cal", 12)}${escapeHtml(bk)}</span>` : ""}</div>` : ""}
+    ${edit ? `<div class="cd-act"><button class="back" title="Step back" ${idx <= 0 ? "disabled" : ""} onclick="pwMediaBack('${c.id}')">${pwIc("back", 14)}</button><button class="next" onclick="pwMediaNext('${c.id}')">${nextLbl} →</button></div>` : ""}
+    <button class="more" onclick="pwToggleCard('${c.id}')">${open ? "Hide details ▴" : "Location & booking ▾"}</button>
+    ${open ? `<div class="cd-det"><div><label>Where it is</label><select ${edit && canEditItems() ? "" : "disabled"} onchange="pwMediaLocation('${c.id}',this.value)"><option value="">No location</option>${pwLocOptions(c.item.location_id)}</select></div><div><label>Booking</label><select ${dis} onchange="pwMediaField('${c.id}','booking_id',this.value)">${pwEvOpts(c)}</select></div></div>` : ""}
+  </article>`;
+}
+function pwCardRow(c, edit) {
+  const fl = mediaFlags(c), idx = PW_MORDER.indexOf(c.state), dis = edit ? "" : "disabled";
+  const steps = PW_MORDER.map((s, i) => `<button class="pw-step ${i < idx ? "done" : i === idx ? "cur" : ""}" ${dis} onclick="pwMediaGo('${c.id}','${s}')">${PW_MSTEP[s]}</button>`).join("");
+  const copied = c.state === "copied" ? (edit ? `<button class="pw-btn" onclick="pwMediaCopies('${c.id}')">${(c.copies || 1) >= 2 ? "✓ Copied to 2 places" : "+ 2nd copy"}</button>` : `<span class="pw-flag ok">${c.copies >= 2 ? "Copied ×2" : "Copied ×1"}</span>`) : "";
+  const fillPct = (PW_FILL[c.fill] ?? 0) * 100, fillLbl = { empty: "Empty", half: "Half", full: "Full" }[c.fill] || "Empty";
+  return `<div class="pw-mrow">
+    <div><div class="pw-name">${escapeHtml(c.label)}</div><div class="pw-sub">${escapeHtml(pwCardSub(c))}</div>${fl.map(f => `<span class="pw-flag ${f.tone}">${escapeHtml(f.t)}</span>`).join("")}</div>
+    <div><div class="pw-steps">${steps}${edit ? `<button class="pw-next" onclick="pwMediaNext('${c.id}')">${PW_NEXT[c.state]} →</button>` : ""}${copied}</div><div class="pw-sub">${escapeHtml(pwCardBy(c))}</div></div>
+    <div><button class="pw-btn" ${dis} onclick="pwMediaFill('${c.id}')" title="Tap to change how full it is"><span class="pw-fill"><i style="width:${fillPct}%"></i></span>${fillLbl}</button><br>
+      <select ${edit && canEditItems() ? "" : "disabled"} onchange="pwMediaLocation('${c.id}',this.value)" title="Where it is right now (an inventory location)"><option value="">No location</option>${pwLocOptions(c.item.location_id)}</select>
+      <select ${dis} onchange="pwMediaField('${c.id}','booking_id',this.value)" title="Which booking this footage belongs to">${pwEvOpts(c)}</select></div>
+    ${edit ? `<button class="pw-more" title="Edit" onclick="openPanel('${c.id}')">✎</button>` : "<span></span>"}</div>`;
+}
+
+// ---------- CARDS page ----------
+function renderCards() {
+  const el = document.getElementById("power-wrap"); if (!el) return; pwRebuild();
+  const sy = el.scrollTop, edit = canEditPower(), cfg = pwCfg();
+  const all = mediaCards, mc = s => all.filter(c => c.state === s).length;
+  const types = [...new Set(all.map(c => c.media_type).filter(Boolean))].sort();
+  if (pwCType !== "all" && !types.includes(pwCType)) pwCType = "all";
+  const q = pwCQ.trim().toLowerCase();
+  const shown = all.filter(c => (pwCType === "all" || c.media_type === pwCType) && (!q || `${c.label} ${c.serial || ""} ${c.media_type || ""}`.toLowerCase().includes(q)));
+  const flagged = all.filter(c => mediaFlags(c).length);
+  const cap = all.reduce((a, c) => a + (+c.size_gb || 0), 0), free = all.reduce((a, c) => a + (+c.size_gb || 0) * (1 - (PW_FILL[c.fill] ?? 0)), 0);
+  const stat = (k, label, num, sub, col) => `<button class="pwx-stat${pwCState === k ? " on" : ""}" style="--k:${col}" onclick="pwCSetState('${k}')"><span class="pwx-stat-n">${num}</span><span class="pwx-stat-l">${label}</span><span class="pwx-stat-s">${sub}</span></button>`;
+  const stats = all.length ? `<div class="pwx-stats">
+    ${stat("empty", "Empty", mc("empty"), "ready to use", "#8b93a1")}
+    ${stat("in_camera", "In camera", mc("in_camera"), "shooting now", "var(--accent)")}
+    ${stat("recorded", "To copy", mc("recorded"), flagged.length ? `${flagged.length} overdue` : "recorded, not backed up", flagged.length ? "#ef4444" : "#f59e0b")}
+    ${stat("copied", "Safe to clear", mc("copied"), "footage is backed up", "#22c55e")}
+    ${cap ? `<div class="pwx-stat" style="--k:#9b5de5"><span class="pwx-stat-n">${pwSize(Math.round(free))}</span><span class="pwx-stat-l">Free space</span><span class="pwx-stat-s">of ${pwSize(Math.round(cap))} total</span></div>` : ""}
+  </div>` : "";
+  const banner = flagged.length ? `<div class="pwx-banner" style="--c:#ef4444"><span class="ic">${pwIc("alert", 16)}</span><div><b>${flagged.length} card${flagged.length === 1 ? "" : "s"} recorded but not copied</b> <span>for ${cfg.copyHours}h+ — ${escapeHtml(flagged.slice(0, 4).map(c => pwName(c)).join(", "))}. Copy them before they get reused.</span></div></div>` : "";
+  const chips = types.length > 1 ? `<div class="pw-chips"><button class="${pwCType === "all" ? "on" : ""}" onclick="pwCSetType('all')">All types · ${all.length}</button>${types.map(t => `<button class="${pwCType === t ? "on" : ""}" onclick="pwCSetType(${jsArg(t)})">${escapeHtml(t)} · ${all.filter(c => c.media_type === t).length}</button>`).join("")}</div>` : "";
+  const bar = all.length ? `<div class="pwx-bar">
+    <label class="pwx-search">${pwIc("search", 15)}<input id="pw-cq" placeholder="Search name, serial or type…" value="${escapeHtml(pwCQ)}" oninput="pwCSearch(this)"></label>
+    ${pwCState !== "all" ? `<button class="pw-btn" onclick="pwCSetState('${pwCState}')">Showing: ${PW_MSTEP[pwCState]} ✕</button>` : ""}
+    <div class="pwx-views"><button class="${pwCView === "board" ? "on" : ""}" title="Board" onclick="pwCSetView('board')">${pwIc("board", 16)}</button><button class="${pwCView === "list" ? "on" : ""}" title="List" onclick="pwCSetView('list')">${pwIc("list", 16)}</button></div>
+  </div>${chips}` : "";
+
+  let body;
+  if (!all.length) {
+    body = powerErr ? "" : `<div class="pwx-empty"><div class="big">${pwIc("cards", 26)}</div><b>No cards or drives yet</b>Track every card through the workflow: empty → in camera → recorded → copied → cleared.${edit ? `<br><button class="pg-btn primary" onclick="pwAddFromTab('media')">${pwIc("plus", 15)} Add cards</button>` : ""}<div class="pw-sub" style="margin-top:12px">Or open any inventory item and switch on “track as a card / drive”.</div></div>`;
+  } else if (pwCView === "list") {
+    const list = shown.filter(c => pwCState === "all" || c.state === pwCState);
+    body = list.length ? `<div class="cd-list">${list.map(c => pwCardRow(c, edit)).join("")}</div>` : `<div class="pwx-empty"><b>Nothing matches</b>Try another filter.</div>`;
+  } else {
+    const hints = { empty: "Ready to use", in_camera: "Shooting now", recorded: "Needs copying", copied: "Safe to clear" };
+    body = `<div class="cd-board">${PW_MORDER.filter(s => pwCState === "all" || pwCState === s).map(s => {
+      const col = shown.filter(c => c.state === s);
+      const head = s === "copied" && edit && col.length ? `<button class="pw-btn" onclick="pwClearCopied()">Clear all (${col.length})</button>` : `<small>${hints[s]}</small>`;
+      return `<section class="cd-col s-${s}"><div class="cd-col-h"><i></i><b>${PW_MSTEP[s]}</b><em>${col.length}</em>${head}</div>${col.length ? col.map((c, i) => pwCardTile(c, edit, i)).join("") : `<div class="cd-col-empty">No cards here</div>`}</section>`;
+    }).join("")}</div>`;
+  }
+  el.innerHTML = `<div class="pwx">${pwHead("media", edit)}${pwSetupBanner()}${stats}${banner}${bar}${body}</div>`;
+  el.scrollTop = sy;
+}
+
+function renderPower() { if (currentTab === "cards") renderCards(); else renderBatteries(); }
+
+// ---------- integration with the normal Add item form + item panel ----------
+// A battery / card is an ordinary inventory item (photo, QR tag, documents, notes, bookings, location…).
+// Choosing the category/type/name "Battery" (or SSD, SD card…) switches on these extra fields.
+const PW_RX_BATT = /batter|akumul|\bnp-?f\d|\blp-?e\d|v-?mount|gold ?mount|li-?ion|\bbp-?\d{3}/i;
+const PW_RX_MEDIA = /\bssd\b|\bhdd\b|memory ?card|\bsd ?card|micro ?sd|\bsdxc\b|cfexpress|cfast|\bcf ?card|karta|hard ?drive|external drive|\bt7\b|\bdisk\b/i;
+const PW_RX_NOT = /charger|distribution|adapter|plate|cable|reader|case/i;
+let pwAddManual = false, pwPanelRow = null;
+function pwGuessKind(catCode, typeCode, name) {
+  const cn = mergedNames("category", STARTER_CATEGORIES)[catCode] || "", tn = (mergedTypeNames(catCode) || {})[typeCode] || "";
+  const hay = `${tn} ${name || ""}`, hay2 = `${cn} ${tn} ${name || ""}`;
+  if (PW_RX_NOT.test(tn)) return "";
+  if (PW_RX_BATT.test(hay)) return "battery";
+  if (PW_RX_MEDIA.test(hay2)) return "media";
+  return "";
+}
+function pwFormFields(p, kind, rec) {
+  const o = v => escapeHtml(String(v ?? "")), isNew = !rec;
+  const fits = [...new Set(powerRows.map(r => r.fits).filter(Boolean))];
+  if (kind === "battery") {
+    const states = isNew ? ["charged", "empty", "storage"] : Object.keys(PW_BSTATE);
+    return `<div class="form-row two"><div><span class="field-label">${isNew ? "Starting state" : "State"}</span><select id="${p}-pw-state">${states.map(s => `<option value="${s}" ${(rec?.state || "charged") === s ? "selected" : ""}>${PW_BSTATE[s]}</option>`).join("")}</select></div>
+      <div><span class="field-label">Fits (camera / device)</span><input id="${p}-pw-fits" list="${p}-pw-dl" value="${o(rec?.fits)}" placeholder="e.g. URSA Mini Pro G2"><datalist id="${p}-pw-dl">${fits.map(f => `<option value="${o(f)}">`).join("")}</datalist></div></div>
+      <div class="form-row two"><div><span class="field-label">Cycle limit (retire warning)</span><input id="${p}-pw-limit" type="number" min="1" value="${rec?.cycle_limit || 300}"></div>
+      ${isNew ? "<div></div>" : `<div><span class="field-label">Cycles used</span><input id="${p}-pw-cycles" type="number" min="0" value="${rec.cycles || 0}"></div>`}</div>
+      ${isNew ? "" : `<div class="form-row"><label style="display:flex;gap:8px;align-items:center;font-size:13px"><input id="${p}-pw-retired" type="checkbox" ${rec.retired ? "checked" : ""}> Retired (hide from totals and warnings)</label></div>`}`;
+  }
+  if (kind === "media") {
+    const gb = +rec?.size_gb || 0, tb = gb >= 1000 && gb % 1000 === 0;
+    return `<div class="form-row two"><div><span class="field-label">Type</span><select id="${p}-pw-mtype">${PW_MTYPES.map(k => `<option ${rec?.media_type === k ? "selected" : ""}>${k}</option>`).join("")}</select></div>
+      <div><span class="field-label">Size</span><div style="display:flex;gap:6px"><input id="${p}-pw-size" type="number" min="0" step="any" value="${gb ? (tb ? gb / 1000 : gb) : ""}" placeholder="512"><select id="${p}-pw-unit" style="width:84px"><option ${tb ? "" : "selected"}>GB</option><option ${tb ? "selected" : ""}>TB</option></select></div></div></div>
+      <div class="form-row"><span class="field-label">How full</span><select id="${p}-pw-fill">${[["empty", "Empty"], ["half", "Half full"], ["full", "Full"]].map(([k, l]) => `<option value="${k}" ${(rec?.fill || "empty") === k ? "selected" : ""}>${l}</option>`).join("")}</select></div>
+      ${isNew ? "" : `<div class="note-text">Workflow (in camera → recorded → copied → cleared) is handled in the Cards page. Where it is now = the Location above.</div>`}`;
+  }
+  return "";
+}
+function pwKindChanged(p, manual) {
+  const sel = document.getElementById(p + "-pw-kind"), box = document.getElementById(p + "-pw-fields"); if (!sel || !box) return;
+  if (manual && p === "m") pwAddManual = true;
+  const rec = p === "p" && pwPanelRow && pwPanelRow.kind === sel.value ? pwPanelRow : null;
+  box.innerHTML = pwFormFields(p, sel.value, rec);
+  const hint = document.getElementById(p + "-pw-hint");
+  if (hint && !manual) hint.textContent = sel.value ? `Looks like a ${sel.value === "battery" ? "battery" : "card / drive"} — tracking switched on. Change it if that's wrong.` : "";
+  else if (hint) hint.textContent = "";
+}
+function pwAutoDetect() {
+  if (pwAddManual || !canEditPower()) return;
+  const sel = document.getElementById("m-pw-kind"); if (!sel) return;
+  const g = pwGuessKind(document.getElementById("m-category").value, document.getElementById("m-type").value, document.getElementById("m-display-name").value);
+  if (sel.value !== g) { sel.value = g; pwKindChanged("m", false); }
+}
+function pwAddReset(opts) {
+  const sec = document.getElementById("m-pw-sec"); if (!sec) return;
+  sec.style.display = canEditPower() ? "" : "none";
+  pwAddManual = false;
+  const sel = document.getElementById("m-pw-kind"); sel.value = ""; document.getElementById("m-pw-fields").innerHTML = ""; document.getElementById("m-pw-hint").textContent = "";
+  if (opts?.power && canEditPower()) {
+    sel.value = opts.power; pwAddManual = true; pwKindChanged("m", true);
+    if (opts.power === "battery") { const c = document.getElementById("m-category"); if ([...c.options].some(o => o.value === "P")) { c.value = "P"; cascadeFromCategory("B"); } }
+  }
+}
+function pwAddFromTab(kind) { if (!canEditItems()) { customAlert("You don't have permission to do that."); return; } openAddModal({ power: kind }); }
+// values from a form (prefix m = add modal, p = item panel) → item_power columns
+function pwCollect(p, kind, rec) {
+  const v = id => (document.getElementById(`${p}-pw-${id}`)?.value ?? "").trim(), now = new Date().toISOString();
+  if (kind === "battery") {
+    const state = v("state") || "charged", out = { kind, fits: v("fits") || null, cycle_limit: Math.max(1, parseInt(v("limit")) || 300) };
+    if (rec) {
+      out.cycles = Math.max(0, parseInt(v("cycles")) || 0); out.retired = !!document.getElementById(`${p}-pw-retired`)?.checked;
+      if (state !== rec.state) Object.assign(out, pwBatteryPatch(rec, state), { cycles: out.cycles });
+    } else Object.assign(out, { state, state_at: now, charged_at: state === "charged" ? now : null, checked_at: state === "storage" ? now : null });
+    return out;
+  }
+  const size = (parseFloat(v("size")) || 0) * (v("unit") === "TB" ? 1000 : 1);
+  const out = { kind, media_type: v("mtype") || null, size_gb: size || null, fill: v("fill") || "empty" };
+  if (!rec) Object.assign(out, { state: "empty", state_at: now, state_by: pwMeEmail, copies: 0 });
+  return out;
+}
+function pwPanelLoad(item) {
+  const sec = document.getElementById("p-sec-power"); if (!sec) return;
+  pwPanelRow = powerRows.find(r => r.item_id === item.id) || null;
+  const show = canEditPower() && canEditItems(); sec.style.display = show ? "" : "none";
+  const sel = document.getElementById("p-pw-kind"); sel.value = pwPanelRow?.kind || "";
+  document.getElementById("p-pw-fields").innerHTML = pwFormFields("p", sel.value, pwPanelRow);
+  const g = !pwPanelRow ? pwGuessKind(item.model_registry?.category, item.model_registry?.type, item.name) : "";
+  document.getElementById("p-pw-hint").textContent = g ? `This looks like a ${g === "battery" ? "battery" : "card / drive"} — you can track it here.` : "";
+}
+async function pwPanelSave(item) {
+  const sel = document.getElementById("p-pw-kind"); if (!sel || !canEditPower() || !canEditItems()) return true;
+  const kind = sel.value, row = pwPanelRow;
+  if (!kind && !row) return true;
+  if (!kind) { const { error } = await sb.from("item_power").delete().eq("item_id", item.id); if (error) { customAlert("Item saved, but removing tracking failed: " + error.message); return false; } return true; }
+  const rec = row && row.kind === kind ? row : null, patch = pwCollect("p", kind, rec);
+  if (!rec && row) Object.assign(patch, kind === "battery" ? { state: "charged", state_at: new Date().toISOString(), charged_at: new Date().toISOString() } : { state: "empty", state_at: new Date().toISOString(), copies: 0 });
+  const { error } = await sb.from("item_power").upsert({ item_id: item.id, ...patch }, { onConflict: "item_id" });
+  if (error) { customAlert("Item saved, but the battery / card details didn't: " + (/find the table|does not exist|schema cache/i.test(error.message) ? "run the Batteries & Cards setup SQL first (open that tab and tap “Copy setup SQL”)." : error.message)); return false; }
+  return true;
+}
+
+// ============================================================
 // SMALL QUALITY-OF-LIFE
 // ============================================================
 let _dialogResolve = null;
@@ -5478,7 +6666,7 @@ document.addEventListener("keydown", (e) => {
     openKeybindsModal();
   }
   if (e.key === "Escape") {
-    const openOverlays = ["keybinds-modal-overlay","print-modal-overlay","kit-modal-overlay","perm-modal-overlay","event-detail-overlay","event-modal-overlay","loc-modal-overlay","modal-overlay"];
+    const openOverlays = ["keybinds-modal-overlay","print-modal-overlay","kit-modal-overlay","perm-modal-overlay","event-detail-overlay","event-modal-overlay","pw-modal-overlay","loc-modal-overlay","modal-overlay"];
     for (const id of openOverlays) {
       const el = document.getElementById(id);
       if (el && el.classList.contains("show")) { el.classList.remove("show"); return; }
@@ -5511,7 +6699,7 @@ async function renderUsersTab() {
   const list = document.getElementById("users-list");
   cleanupPortaledPanels(list);
   // Status line so it's obvious how the page sees the signed-in account
-  const diag = `<span style="opacity:.6">dash_20 · signed in as ${escapeHtml(_meCache?.email || user?.email || "?")} · rank: ${myRole} · Owner+ flag: ${myIsOwnerPlus ? "yes" : "no"}${ownerPlusColumnOk ? "" : " (column unreadable)"}</span>`;
+  const diag = `<span style="opacity:.6">dash_21 · signed in as ${escapeHtml(_meCache?.email || user?.email || "?")} · rank: ${myRole} · Owner+ flag: ${myIsOwnerPlus ? "yes" : "no"}${ownerPlusColumnOk ? "" : " (column unreadable)"}</span>`;
   const who = isOwnerPlus() ? "You are <b>Owner+</b> — you can change, restrict or remove Owners."
     : !ownerPlusColumnOk && myRole === "owner" ? "⚠ The page can't read <b>user_roles.is_owner_plus</b>. Run <b>mlx_setup.sql</b> in Supabase, then reload this page."
     : myRole === "owner" && !simulatedRole ? "You are an <b>Owner</b> but not Owner+: your row has no Owner+ flag. Run <b>mlx_setup.sql</b> (it must match your exact login email), then reload."
@@ -5653,7 +6841,7 @@ function setSimulatedRole(role) {
   simulatedRole = role === "owner" ? null : role;
   updateSimBanner();
   refreshTabVisibility();
-  const tabNowHidden = { inventory: false, locations: false, analytics: !canViewAnalyticsTab(), bookings: !canManageBookings(), presets: !canManageBookings(), share: !canShare(), storage: !canManageRoles(), docs: !canManageDocuments(), activity: !canViewActivityTab(), users: !canViewUsersTab() }[currentTab];
+  const tabNowHidden = { inventory: false, locations: false, analytics: !canViewAnalyticsTab(), bookings: !canManageBookings(), presets: !canManageBookings(), share: !canShare(), storage: !canManageRoles(), docs: !canManageDocuments(), activity: !canViewActivityTab(), users: !canViewUsersTab(), batteries: !canViewPower(), cards: !canViewPower() }[currentTab];
   if (tabNowHidden) { switchTab("inventory"); return; }
   if (currentTab === "users") renderUsersTab();
   if (currentTab === "inventory") { renderFilters(); renderTable(); }
@@ -5961,12 +7149,16 @@ const fmtB = n => n >= 1073741824 ? (n / 1073741824).toFixed(2) + " GB" : n >= 1
 const stTone = p => p >= 90 ? "#FF4444" : p >= 70 ? "#FFB020" : "#06D6A0";
 function stCalc() { const L = stLimits(), files = stData.buckets.reduce((a, b) => a + (+b.bytes), 0); return { L, files, dbP: stData.db_bytes / L.db * 100, fP: files / L.files * 100 }; }
 function copyStorageSql() { navigator.clipboard.writeText(STORAGE_SQL).then(() => showToast("Setup SQL copied — paste it into the Supabase SQL editor and run it"), () => customAlert(STORAGE_SQL)); }
-async function renderStorageTab() {
+async function renderStorageTab(manual) {
   const w = document.getElementById("storage-wrap"); w.classList.remove("sh-enter"); void w.offsetWidth; w.classList.add("sh-enter");
-  document.getElementById("st-body").innerHTML = `<div class="share-empty">Reading usage…</div>`;
+  const body = document.getElementById("st-body"), btn = document.getElementById("st-refresh");
+  if (!stData || stErr) body.innerHTML = `<div class="share-empty">Reading usage…</div>`;
+  if (btn) btn.classList.add("spin");
   const { data, error } = await sb.rpc("get_storage_usage");
   stErr = error ? error.message : null; stData = error ? null : data;
+  if (btn) btn.classList.remove("spin");
   drawStorage();
+  if (manual && !stErr) showToast("Storage numbers refreshed");
 }
 function stRing(pct, key, title, sub) {
   const C = 2 * Math.PI * 54, tone = stTone(pct);
@@ -5974,6 +7166,48 @@ function stRing(pct, key, title, sub) {
     <svg viewBox="0 0 140 140"><circle cx="70" cy="70" r="54" class="bg"/><circle cx="70" cy="70" r="54" class="fg" stroke-dasharray="${C}" stroke-dashoffset="${C}" data-off="${C * (1 - Math.min(pct, 100) / 100)}"/></svg>
     <div class="st-ring-c"><b data-count="${pct}">0%</b><span>used</span></div>
     <div class="st-ring-t">${title}</div><div class="st-ring-s">${sub}</div><div class="st-ring-h">Click for details</div></button>`;
+}
+
+// ---- growth history: one snapshot every few hours, kept on this device ----
+function stSnapshot() {
+  try {
+    const k = "mlxStorageHist"; let h = JSON.parse(localStorage.getItem(k) || "[]"); if (!Array.isArray(h)) h = [];
+    const c = stCalc(), now = Date.now(), last = h[h.length - 1], cur = { t: now, db: +stData.db_bytes, f: c.files };
+    if (last && now - last.t < 6 * 36e5) { last.db = cur.db; last.f = cur.f; } else h.push(cur);
+    h = h.slice(-120); localStorage.setItem(k, JSON.stringify(h)); return h;
+  } catch (e) { return []; }
+}
+function stTrend(h) {
+  if (!h || h.length < 2) return null;
+  const a = h[0], b = h[h.length - 1], days = (b.t - a.t) / 864e5; if (days < 0.5) return null;
+  const L = stLimits(), d = (b.db + b.f) - (a.db + a.f), dbPer = (b.db - a.db) / days, fPer = (b.f - a.f) / days;
+  const eta = (used, lim, per) => per > 0 ? (lim - used) / per : Infinity;
+  return { days, d, perWeek: (d / days) * 7, etaDays: Math.min(eta(b.db, L.db, dbPer), eta(b.f, L.files, fPer)) };
+}
+function stFmtEta(d) { return d < 14 ? `${Math.max(1, Math.round(d))} days` : d < 120 ? `${Math.round(d / 7)} weeks` : d < 730 ? `${Math.round(d / 30)} months` : `${(d / 365).toFixed(1)} years`; }
+function stSpark(h) {
+  const W = 240, H = 70, P = 3, xs = h.map(p => p.t), ys = h.map(p => p.db + p.f);
+  const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  const X = t => P + (x1 === x0 ? .5 : (t - x0) / (x1 - x0)) * (W - 2 * P), Y = v => H - P - (y1 === y0 ? .5 : (v - y0) / (y1 - y0)) * (H - 2 * P - 6) - 3;
+  const pts = h.map(p => `${X(p.t).toFixed(1)},${Y(p.db + p.f).toFixed(1)}`), line = "M" + pts.join("L");
+  return `<svg class="st-spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><path class="a" d="${line}L${X(x1).toFixed(1)},${H}L${X(x0).toFixed(1)},${H}Z"/><path class="l" d="${line}"/></svg>`;
+}
+function stTrendCard(h, tr, total) {
+  if (!tr) return `<div class="st-trend"><h4>Growth</h4><div class="num">${fmtB(total)}<small>used in total</small></div><div class="hint">Growth shows up here after you've opened this page on a couple of different days — a snapshot is saved on this device each time.</div></div>`;
+  const grow = tr.d >= 0, flat = Math.abs(tr.d) < 1024;
+  const cap = flat ? "Usage is flat — no sign of filling up." : !grow ? "Usage went down — nice." : isFinite(tr.etaDays) && tr.etaDays > 0 ? `At this pace you'd hit your limit in about ${stFmtEta(tr.etaDays)}.` : "";
+  return `<div class="st-trend"><h4>Growth</h4><div class="num">${flat ? "±0" : (grow ? "+" : "−") + fmtB(Math.abs(tr.d))}<small>in ${Math.max(1, Math.round(tr.days))} day${Math.round(tr.days) === 1 ? "" : "s"}</small></div><div class="cap">${!flat && grow ? `About ${fmtB(Math.abs(tr.perWeek))} per week. ` : ""}${cap}</div>${stSpark(h)}</div>`;
+}
+function stInsights(c, tr) {
+  const d = stData, out = [], tot = d.db_bytes + c.files, tone = p => p >= 90 ? "bad" : p >= 70 ? "warn" : "ok";
+  out.push({ t: tone(c.dbP), h: `Database is ${c.dbP.toFixed(1)}% full`, s: `${fmtB(Math.max(c.L.db - d.db_bytes, 0))} left of ${fmtB(c.L.db)}` });
+  out.push({ t: tone(c.fP), h: `File storage is ${c.fP.toFixed(1)}% full`, s: `${fmtB(Math.max(c.L.files - c.files, 0))} left of ${fmtB(c.L.files)}` });
+  const tt = d.tables[0]; if (tt && d.db_bytes) out.push({ t: "ok", h: `“${tt.name}” is your biggest table`, s: `${fmtB(+tt.bytes)} · ${(+tt.bytes / d.db_bytes * 100).toFixed(1)}% of the database` });
+  const al = d.tables.find(t => t.name === "activity_log"); if (al && d.db_bytes && +al.bytes / d.db_bytes > .1) out.push({ t: "warn", h: "The activity log is getting heavy", s: `${fmtB(+al.bytes)} · ${(+al.bytes / d.db_bytes * 100).toFixed(0)}% of the database — worth trimming old entries if space gets tight` });
+  const tb = d.buckets[0]; if (tb && c.files) { const sh = +tb.bytes / c.files, heavy = sh > .6 && c.fP > 50; out.push({ t: heavy ? "warn" : "ok", h: `“${tb.name}” holds ${(sh * 100).toFixed(0)}% of your files`, s: `${(+tb.files).toLocaleString()} files · ${fmtB(+tb.bytes)}${heavy ? " — shrinking photos before upload would stretch your space" : ""}` }); }
+  const big = d.top_files[0]; if (big) out.push({ t: "ok", h: `Largest single file is ${fmtB(+big.bytes)}`, s: `${big.bucket} / ${big.name}` });
+  if (items.length && tot) out.push({ t: "ok", h: `About ${fmtB(tot / items.length)} per inventory item`, s: `${items.length} items, counting everything stored` });
+  const rank = { bad: 0, warn: 1, ok: 2 }; return out.sort((a, b) => rank[a.t] - rank[b.t]);
 }
 function drawStorage() {
   const el = document.getElementById("st-body");
@@ -5983,18 +7217,28 @@ function drawStorage() {
       <div class="note-text" style="margin-top:12px">Paste it in Supabase → SQL Editor → Run, then reopen this tab.</div></div>`;
     return;
   }
-  const { L, files, dbP, fP } = stCalc(), worst = Math.max(dbP, fP), p = stPlan(), idx = Math.max(["free", "pro", "custom"].indexOf(p.k), 0);
-  const topT = stData.tables[0];
+  const c = stCalc(), { L, files, dbP, fP } = c, worst = Math.max(dbP, fP), p = stPlan(), idx = Math.max(["free", "pro", "custom"].indexOf(p.k), 0);
+  const hist = stSnapshot(), tr = stTrend(hist), total = stData.db_bytes + files, ins = stInsights(c, tr);
+  const upd = document.getElementById("st-updated"); if (upd) upd.textContent = "Updated " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const heading = worst >= 90 ? "Nearly full" : worst >= 70 ? "Getting full" : "Plenty of room";
   el.innerHTML = `
-    <div class="st-top" style="--tone:${stTone(worst)}"><span class="st-status"><i></i>${worst >= 90 ? "Nearly full" : worst >= 70 ? "Getting full" : "Plenty of room"}</span>
-      <span class="note-text" style="margin:0;flex:1">${topT ? `Biggest table: ${escapeHtml(topT.name)} (${fmtB(+topT.bytes)}).` : ""}</span>
-      <span class="note-text" style="margin:0">Plan</span>
-      <span class="sh-seg" style="--n:3;--k:${idx}">${[["free", "Free"], ["pro", "Pro"], ["custom", "Custom"]].map(([k, l]) => `<button class="${p.k === k || (!p.k && k === "free") ? "on" : ""}" onclick="stPlanSet('${k}')">${l}</button>`).join("")}</span></div>
+    <div class="st-hero" style="--tone:${stTone(worst)}"><div class="grow"><div class="big"><i></i>${heading}</div>
+      <div class="sub">${fmtB(total)} used across database and files · ${fmtB(Math.max(L.db + L.files - total, 0))} free on the ${p.k === "custom" ? "custom" : p.k === "pro" ? "Pro" : "Free"} plan</div></div>
+      <div class="st-planbox">Your Supabase plan
+      <span class="sh-seg" style="--n:3;--k:${idx}">${[["free", "Free"], ["pro", "Pro"], ["custom", "Custom"]].map(([k, l]) => `<button class="${p.k === k || (!p.k && k === "free") ? "on" : ""}" onclick="stPlanSet('${k}')">${l}</button>`).join("")}</span></div></div>
     ${p.k === "custom" ? `<div class="st-custom">Database limit (MB) <input type="number" id="st-c-db" value="${Math.round(L.db / 1048576)}"> File storage limit (MB) <input type="number" id="st-c-files" value="${Math.round(L.files / 1048576)}"> <button class="btn ghost" onclick="stPlanSet('custom',true)">Apply</button></div>` : ""}
-    <div class="st-rings">${stRing(dbP, "db", "Database", `${fmtB(stData.db_bytes)} of ${fmtB(L.db)}`)}${stRing(fP, "files", "File storage", `${fmtB(files)} of ${fmtB(L.files)}`)}</div>
-    <div class="st-dwrap${stOpen ? " open" : ""}" id="st-dwrap"><div><div class="st-dcard" id="st-detail">${stOpen ? stDetailHtml(stOpen) : ""}</div></div></div>${stFeaturesHtml()}`;
+    <div class="st-grid3">${stRing(dbP, "db", "Database", `${fmtB(stData.db_bytes)} of ${fmtB(L.db)}`)}${stRing(fP, "files", "File storage", `${fmtB(files)} of ${fmtB(L.files)}`)}${stTrendCard(hist, tr, total)}</div>
+    <div class="st-dwrap${stOpen ? " open" : ""}" id="st-dwrap"><div><div class="st-dcard" id="st-detail">${stOpen ? stDetailHtml(stOpen) : ""}</div></div></div>
+    <div class="st-ins" style="margin-top:14px"><h4>Worth knowing</h4><ul>${ins.map(i => `<li class="${i.t}"><span class="d"></span><div>${escapeHtml(i.h)}<small>${escapeHtml(i.s)}</small></div></li>`).join("")}</ul></div>
+    ${stFeaturesHtml()}`;
   stAnimate(); stHooks();
 }
+function stRow(name, meta, w, size, i, link) {
+  const th = link && /\.(png|jpe?g|webp|gif|avif)(\?|$)/i.test(name) ? `<img class="st-th" loading="lazy" src="${escapeHtml(link)}" alt="" onerror="this.remove()">` : "";
+  const label = `${escapeHtml(name)}${meta ? `<small>${escapeHtml(meta)}</small>` : ""}`;
+  return `<div class="st-row" style="--i:${i}"><span class="nm${th ? " tw" : ""}" title="${escapeHtml(name)}">${th ? `${th}<span>${label}</span>` : label}</span><div class="st-bar"><i data-w="${Math.max(w, 1.5)}%"></i></div><span class="sz">${size}${link ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener">Open</a>` : ""}</span></div>`;
+}
+
 function stPlanSet(k, apply) {
   const cur = stPlan(); let p = { k };
   if (k === "custom") { p.db = apply ? +document.getElementById("st-c-db").value : cur.db; p.files = apply ? +document.getElementById("st-c-files").value : cur.files; }
@@ -6012,9 +7256,6 @@ function stAnimate() {
   }, 40));
 }
 function stBars() { setTimeout(() => document.querySelectorAll(".st-bar i[data-w]").forEach(i => i.style.width = i.dataset.w), 30); }
-function stRow(name, meta, w, size, i, link) {
-  return `<div class="st-row" style="--i:${i}"><span class="nm" title="${escapeHtml(name)}">${escapeHtml(name)}${meta ? `<small>${escapeHtml(meta)}</small>` : ""}</span><div class="st-bar"><i data-w="${Math.max(w, 1.5)}%"></i></div><span class="sz">${size}${link ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener">Open</a>` : ""}</span></div>`;
-}
 function stDetailHtml(key) {
   const d = stData, c = stCalc();
   if (key === "db") {
@@ -6208,6 +7449,7 @@ async function openPanel(id) {
   document.getElementById("p-condition").value = item.condition || "";
   document.getElementById("p-notes").value = item.notes || "";
   plLoad(item);
+  pwPanelLoad(item);
   document.getElementById("p-last-serviced").value = item.last_serviced_date || "";
   document.getElementById("p-next-service").value = item.next_service_due || "";
   document.getElementById("p-warranty").value = item.warranty_expiry || "";
@@ -6306,10 +7548,11 @@ async function saveItem() {
     await sb.from("item_events").insert({ item_id: item.id, event_type: "status_change", detail: `Status changed to ${STATUS_META[newStatus].label}` });
   }
   await plSave(item);
+  if (await pwPanelSave(item)) { await loadPower(); }
   await logActivity("item.update", "item", item.id, `Updated ${item.serial}`);
   closePanel();
   await loadItems();
-  if (currentTab === "locations") renderLocationsView(); else renderTable();
+  if (currentTab === "locations") renderLocationsView(); else if (isPowerTab()) renderPower(); else renderTable();
   requestAnimationFrame(() => {
     const row = document.querySelector(`#table-body tr[data-id="${item.id}"]`);
     if (row) { row.classList.add("save-flash"); setTimeout(() => row.classList.remove("save-flash"), 700); }
@@ -6335,6 +7578,7 @@ async function deleteItem() {
 }
 async function finalizeDelete(item) {
   await sb.from("item_events").delete().eq("item_id", item.id);
+  await sb.from("item_power").delete().eq("item_id", item.id);
   const { error } = await sb.from("items").delete().eq("id", item.id);
   if (!error) await logActivity("item.delete", "item", item.id, `Deleted ${item.serial} (${item.name})`);
   pendingDelete = null;
@@ -6731,7 +7975,7 @@ function addNewCode(which) {
   const type = document.getElementById("m-type")?.value;
   openCodesModal(which, cat, type);
 }
-function openAddModal() {
+function openAddModal(opts) {
   if (!canEditItems()) { customAlert("You don't have permission to do that."); return; }
   document.getElementById("modal-success-view").style.display = "none";
   document.getElementById("modal-form-view").style.display = "";
@@ -6741,6 +7985,7 @@ function openAddModal() {
   ["m-model-code","m-display-name","m-purchase-date","m-price","m-condition","m-notes"].forEach(id => document.getElementById(id).value = "");
   document.getElementById("m-quantity").value = 1;
   document.getElementById("serial-preview-box").textContent = "Serial will generate on save";
+  pwAddReset(opts);
   document.getElementById("duplicate-last-btn").style.display = lastAddedPayload ? "" : "none";
   document.getElementById("modal-overlay").classList.add("show");
   document.getElementById("fab").classList.add("active");
@@ -6773,6 +8018,7 @@ function updateSerialPreview() {
     box.textContent = "Fill in category, type, brand & model code to preview";
   }
   box.classList.remove("pulse"); void box.offsetWidth; box.classList.add("pulse");
+  try { pwAutoDetect(); } catch (e) {}
 }
 let successAddedModelId = null, successAddedSerial = null;
 async function submitNewItem() {
@@ -6791,6 +8037,8 @@ async function submitNewItem() {
     return;
   }
   let added = 0, lastSerial = "", lastModelId = null;
+  const pwKindSel = document.getElementById("m-pw-kind")?.value || "", pwRows = [];
+  const pwBase = pwKindSel && canEditPower() ? pwCollect("m", pwKindSel, null) : null;
   for (let n = 0; n < quantity; n++) {
     const { data: serialData, error: serialError } = await sb.rpc("issue_serial", {
       p_category: category, p_type: type, p_brand: brand, p_model_code: modelCode,
@@ -6798,20 +8046,27 @@ async function submitNewItem() {
     });
     if (serialError) { customAlert(`Could not generate serial for item ${n+1}/${quantity}: ` + serialError.message); break; }
     const row = serialData[0];
-    const { error: insertError } = await sb.from("items").insert({
+    const { data: newItem, error: insertError } = await sb.from("items").insert({
       serial: row.serial, model_id: row.model_id, unit_id: row.unit_id,
       purchase_date: document.getElementById("m-purchase-date").value || null,
       price, condition, notes: document.getElementById("m-notes").value || null,
       location_id: locationId, status: "idle",
-    });
+    }).select("id").single();
+    if (!insertError && pwBase && newItem?.id) pwRows.push({ item_id: newItem.id, ...pwBase });
     if (insertError) { customAlert(`Serial ${row.serial} generated but saving failed: ` + insertError.message); break; }
     added++; lastSerial = row.serial; lastModelId = row.model_id;
   }
   if (added === 0) return;
+  if (pwRows.length) {
+    const { error: pwErr } = await sb.from("item_power").insert(pwRows);
+    if (pwErr) customAlert("Items were added, but the battery / card tracking wasn't saved: " + (/find the table|does not exist|schema cache/i.test(pwErr.message) ? "run the Batteries & Cards setup SQL first (open that tab and tap “Copy setup SQL”)." : pwErr.message));
+    await loadPower();
+  }
   lastAddedPayload = { category, type, brand, modelCode, displayName, locationId, price, condition };
   await logActivity("item.create", "item", lastSerial, quantity > 1 ? `Added ${added} × ${displayName}` : `Added ${lastSerial} (${displayName})`);
   await loadItems();
   if (currentTab === "locations") renderLocationsView(); else renderTable();
+  if (isPowerTab()) renderPower();
   showAddSuccess(lastSerial, added, displayName, lastModelId);
 }
 function showAddSuccess(serial, added, displayName, modelId) {
@@ -6928,6 +8183,7 @@ async function performImport(parsed) {
 }
 
 (function () { const on = rememberOn(); document.getElementById("login-remember").checked = on; const em = localStorage.getItem("mlxLoginEmail"); if (on && em) document.getElementById("login-email").value = em; })();
+decorateTabs(); syncMore();
 checkSession();
 
 // Offline banner: writes fail silently on bad signal, so say so
